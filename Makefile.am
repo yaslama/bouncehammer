@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.18 2010/02/22 05:58:48 ak Exp $
+# $Id: Makefile.am,v 1.19 2010/02/24 05:11:15 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 
 # Define macros #############################################################
@@ -211,10 +211,4 @@ clean:
 	rm -fr ./.temp/ 2> /dev/null ;\
 	rm -fr ./dist/ 2> /dev/null ;\
 	rm -fr ./.test 2> /dev/null
-
-uninstall:
-	test -w $(KANADZUCHI_BIN) && rm -fr $(KANADZUCHI_BIN)/ ;\
-	test -w $(KANADZUCHI_LIB) && rm -fr $(KANADZUCHI_LIB)/ ;\
-	test -w $(KANADZUCHI_SBIN) && rm -fr $(KANADZUCHI_SBIN)/ ;\
-	test -w $(KANADZUCHI_DATUM) && rm -fr $(KANADZUCHI_DATUM)/ ;
 
