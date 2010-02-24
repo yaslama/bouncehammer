@@ -1,0 +1,177 @@
+[%- SET showsearchcondition = 'none' -%]
+<div id = 'queryform'>
+	<form action = '[% scriptname %]/search/recipient' method = 'POST'>
+	<fieldset>
+		<legend>宛先アドレスで検索(3)</legend>
+		<input type = 'search' name = 'recipient' accesskey = '3' style = 'width: 430px;'
+			placeholder = '宛先アドレス' autosave = '[% systemname %].recipient' results = '16' />
+		<input type = 'submit' value = '検索(4)' id = 'dosearch' accesskey = '4' />
+		<input type = 'reset' value = '消去(0)' accesskey = '0' /><br />
+
+		<div style = 'margin: 8px 8px 4px 8px;'>
+			<a href = "javascript:void(0)" onClick = "toggleIt('search-condition');"
+				accesskey = '9'>&#9997; 検索条件を追加(9)</a>
+		</div>
+
+		<div id = 'search-condition' style = 'display: [% showsearchcondition %];'> 
+			<table>
+			<tbody>
+				<tr>
+					<td class = 'key'>発信者アドレス</td>
+					<td class = 'value'>
+						<input type = 'search' name = 'addresser' style = 'width: 288px;' 
+							placeholder = '発信者アドレス' autosave = '[% systemname %].addresser' 
+							results = '16' onChange = "checksa.innerHTML='&#9745; 使用';"/>
+					</td>
+					<td class = 'extra' id = 'checksa'></td>
+				</tr>
+				<tr>
+					<td class = 'key'>発信者ドメイン</td>
+					<td class = 'value'>
+						<input type = 'search' name = 'senderdomain' style = 'width: 288px;' 
+							placeholder = '発信者ドメイン' autosave = '[% systemname %].senderdomain' 
+							results = '16' onChange = "checksd.innerHTML='&#9745; 使用';"/>
+					</td>
+					<td class = 'extra' id = 'checksd'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>宛先ドメイン</td>
+					<td class = 'value'>
+						<input type = 'search' name = 'destination' style = 'width: 288px;' 
+							placeholder = '宛先ドメイン' autosave = '[% systemname %].destination' 
+							results = '16' onChange = "checkdd.innerHTML='&#9745; 使用';"/>
+					</td>
+					<td class = 'extra' id = 'checkdd'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>差戻理由</td>
+					<td class = 'value'>
+						[% INCLUDE "select-reason.${mylanguage}.html" %]
+					</td>
+					<td class = 'extra' id = 'checkrw'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>宛先分類</td>
+					<td class = 'value'>
+						[% INCLUDE "select-hostgroup.${mylanguage}.html" %]
+					</td>
+					<td class = 'extra' id = 'checkhc'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>トークン(MD5)</td>
+					<td class = 'value'>
+						<input type = 'search' name = 'token' results = '16' style = 'width: 288px;'
+							placeholder = 'トークン(16進数)32文字' autosave = '[% systemname %].token' 
+							onChange = "checkmd.innerHTML = '&#9745; 使用';"/>
+					</td>
+					<td class = 'extra' id = 'checkmd'></td>
+				</tr>
+
+
+				<tr>
+					<td class = 'key'>差戻日時</td>
+					<td class = 'value'>
+						<select name = 'howrecent' id = 'howrecent' onChange = "checkbd.innerHTML = '&#9745; 使用';">
+							<option value = '0' selected>指定なし</option>
+							<option value = '12h'>12時間以内</option>
+							<option value = '1d'>24時間以内</option>
+							<option value = '1w'>1週間以内</option>
+							<option value = '1f'>2週間以内</option>
+							<option value = '1l'>1ヶ月(30日)以内</option>
+							<option value = '0.5y'>半年以内</option>
+							<option value = '1y'>1年以内</option>
+							<option value = '1o'>4年以内</option>
+						</select>
+					</td>
+					<td class = 'extra' id = 'checkbd'></td>
+				</tr>
+				
+				<tr class = 'boundary'><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+
+				<tr>
+					<td class = 'key'>並び順</td>
+					<td class = 'value'>
+						<fieldset style = 'border-width: 1px;'>
+							<legend>項目名</legend>
+							<span><input type = 'radio' name = 'orderby' value = 'id' checked /> ID</span> &nbsp; &nbsp; 
+							<span><input type = 'radio' name = 'orderby' value = 'addresser' /> 発信者アドレス</span> &nbsp; &nbsp; 
+							<span><input type = 'radio' name = 'orderby' value = 'recipient' /> 宛先アドレス</span> &nbsp; &nbsp; 
+							<span><input type = 'radio' name = 'orderby' value = 'senderdomain' /> 発信者ドメイン</span> &nbsp; &nbsp; 
+							<span><input type = 'radio' name = 'orderby' value = 'destination' /> 宛先ドメイン</span> <br />
+							<span><input type = 'radio' name = 'orderby' value = 'bounced' /> 差戻日時</span> &nbsp; &nbsp; 
+							<span><input type = 'radio' name = 'orderby' value = 'frequency' /> 差戻回数</span>
+						</fieldset>
+					</td>
+					<td class = 'extra' id = 'checkob'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>降順</td>
+					<td class = 'value'>
+						<input type = 'checkbox' name = 'descend' /> 降順(大きい順)で並べる
+					</td>
+					<td class = 'extra' id = 'checkod'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>表示件数/頁</td>
+					<td class = 'value'>
+						<select name = 'resultsperpage' id = 'resultsperpage'>
+							[%- FOREACH RPP IN [5,10,25,50,75,100] -%]
+								<option value = '[%- RPP -%]' [%- IF RPP == 10 -%] selected [%- END -%]>
+									[% RPP %]
+								</option>
+							[%- END -%]
+						</select>
+						<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
+					</td>
+					<td class = 'extra'></td>
+				</tr>
+
+				<tr class = 'boundary'><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+
+				<tr>
+					<td class = 'key'>ダウンロード</td>
+					<td class = 'value'>
+						<input type = 'checkbox' name = 'enabledownload' 
+							onChange = "
+								if( this.checked == true ){
+									disableIt('resultsperpage');
+									dosearch.value = 'ダウンロード(4)';
+								}
+								else{
+									enableIt('resultsperpage');
+									dosearch.value = '検索(4)';
+								}"/>
+						検索結果をダウンロードする
+					</td>
+					<td class = 'extra' id = 'checkdl'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>ファイル形式</td>
+					<td class = 'value'>
+						<fieldset style = 'border-width: 1px;'>
+							<legend>形式</legend>
+							<span><input type = 'radio' name = 'downloadformat' value = 'yaml' checked /> YAML</span> &nbsp; &nbsp; 
+							<span><input type = 'radio' name = 'downloadformat' value = 'csv' /> CSV</span> &nbsp; &nbsp; 
+							<span><input type = 'radio' name = 'downloadformat' value = 'sendmail' /> access.db(Sendmail)</span> &nbsp; &nbsp; 
+							<span><input type = 'radio' name = 'downloadformat' value = 'postfix' /> access.db(Postfix)</span>
+						</fieldset>
+					</td>
+					<td class = 'extra' id = 'checkff'></td>
+				</tr>
+			</tbody>
+			</table>
+
+		</div>
+		[%- IF hascondition -%]
+			[% INCLUDE "form-search-query.${mylanguage}.html" %]
+		[%- END -%]
+	</fieldset>
+	</form>
+</div>

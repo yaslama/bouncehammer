@@ -1,0 +1,88 @@
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% systemname %]/トークン</title>
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+	[% INCLUDE bouncehammer.css %]
+	[% INCLUDE record.css %]
+	-->
+	</style>
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% head1title %]/トークン</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.${mylanguage}.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[% INCLUDE "div-index.${mylanguage}.html" %]
+		</div>
+		<div id = 'East-Ward'>
+			[% INCLUDE "h-messagetoken-descr.${mylanguage}.html" %]
+		</div>
+
+		<div id = 'Central-Ward'>
+			<h2>トークン(MD5)を生成</h2>
+			<div class = 'result'>
+				[%- prototype.form_remote_tag( {
+						url => "${scriptname}/token",
+						update => 'here_is_new_message_token',
+						position => 'Before',
+						before => "disableIt('make_token');",
+						loaded => "enableIt('make_token'); ra.value = ''; sa.value = ''; make_token.value = 'Make';",
+					});
+				-%]
+				<fieldset>
+					<legend>発信者アドレスと宛先アドレスを入力</legend>
+					<table>
+					<tbody>
+						<tr>
+							<td class = 'key'>発信者アドレス</td>
+							<td class = 'value'>
+								<input type = 'text' name = 'addresser' style = 'width: 384px;' id = 'sa' 
+									placeholder = '発信者アドレス' autosave = '[% systemname %].addresser' 
+									results = '16' onChange = "checksa.innerHTML='&#9745; OK';"/>
+							</td>
+							<td class = 'extra' id = 'checksa'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>宛先アドレス</td>
+							<td class = 'value'>
+								<input type = 'text' name = 'recipient' style = 'width: 384px;' id = 'ra' 
+									placeholder = '宛先アドレス' autosave = '[% systemname %].recipient'
+									results = '16' onChange = "checkra.innerHTML='&#9745; OK';" />
+							</td>
+							<td class = 'extra' id = 'checkra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>
+								<input type = 'hidden' name = 'makenewtoken' value = '1' />
+								<input type = 'submit' value = '生成' id = 'make_token'
+									onClick = "this.value = '生成中...';" />
+							</td>
+							<td class = 'value'> </td>
+							<td class = 'extra'> </td>
+						</tr>
+					</tbody>
+					</table>
+				</fieldset>
+				</form>
+			</div>
+			<div class = 'result'>
+				<div id = 'here_is_new_message_token'></div>
+			</div>
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+	</div>
+</body>
+</html>
+

@@ -1,0 +1,104 @@
+[%- SET IFRAMEHEIGHT = 128 -%]
+[%- IF parsedmessages -%]
+	[%- SET IFRAMEHEIGHT = ( IFRAMEHEIGHT + ( parsedmessages + 600 ) ) %]
+[%- END -%]
+[% IF onlineparse == 1 %]
+	<body style = 'margin: 0; padding: 0; width: 600px;' 
+		onLoad = "parent.document.getElementById('parseddata').style.height = '[% IFRAMEHEIGHT %]';
+				parent.document.getElementById('doparse').value = 'Parse';"
+		onAbort = "parent.document.getElementById('doparse').disabled = false;">
+		
+		[% prototype.define_javascript_functions %]
+		<script type = 'text/javascript'>
+			[% INCLUDE bouncehammer.js %]
+		</script>
+		<style type = 'text/css'>
+		<!--
+		html { overflow-x: hidden; overflow-y: auto; margin: 0; padding: 0; }
+		[% INCLUDE bouncehammer.css %]
+		[% INCLUDE record.css %]
+		-->
+		</style>
+
+		<h2>Parsed Message[%- IF parsedmessages > 1 -%]s[%- END -%]</h2>
+		<div class = 'result' style = 'margin:0; padding: 0;'>
+			<div class = 'upload-summary'>
+				<table>
+					<tbody>
+						<tr>
+							<td class = 'key'>Data source</td>
+							<td class = 'value'>[% parsedfilename %] </td>
+							<td class = 'extra'> </td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>Data size</td>
+							<td class = 'value'>
+								[% IF parseerror == "toobig" %]
+									<span class = 'errortext'>Exceed limit</span>
+								[% ELSIF parseerror == "nottext" %]
+									? Bytes
+								[% ELSE %]
+									about [% parsedfilesize %] Bytes
+								[% END %]
+							</td>
+							<td class = 'extra'> </td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>Messages</td>
+							<td class = 'value'>[% parsedmessages %]</td>
+							<td class = 'extra'> </td>
+						</tr>
+
+						[% IF onlineupdate == 1 %]
+							<tr>
+								<td class = 'key'>Registered</td>
+								<td class = 'value'>[% updateresult.insert %]</td>
+								<td class = 'extra'></td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>Updated</td>
+								<td class = 'value'>[% updateresult.update %]</td>
+								<td class = 'extra'></td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>Skipped</td>
+								<td class = 'value'>
+									[% updateresult.skip %]
+									[% IF updateresult.skip > 0 %]
+										(
+										No SenderDomain: [% updateresult.asitis.nosender %],
+										Too Old: [% updateresult.asitis.older %],
+										Whitelist: [% updateresult.asitis.whitelist %],
+										Exceed Limit: [% updateresult.asitis.exceedlimit %]
+										)
+									[% END %]
+								</td>
+								<td class = 'extra'></td>
+							</tr>
+						[% END %]
+					</tbody>
+				</table>
+			</div>
+
+			[%- IF parsedmessages -%]
+				[% IF outputformat == "html" %]
+					[% INCLUDE "div-result.${mylanguage}.html" %]
+				[% ELSE %]
+					<pre>[% parseddatatext %]</pre>
+				[% END %]
+			[%- ELSE -%]
+				[%- IF parseerror == "toobig" -%]
+					File size too big.
+				[%- ELSIF parseerror == "nottext" %]
+					File is not email(text) file.
+				[%- ELSE -%]
+					No bounce message in the e-mail or the mailbox.
+				[%- END -%]
+			[%- END -%]
+		</div>
+	</body>
+[% END %]

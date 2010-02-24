@@ -1,0 +1,30 @@
+<div id = 'create_a_new_record' class = 'mastertable' style = 'display: none;'>
+	[%- prototype.form_remote_tag( {
+			url => "${scriptname}/tables/${tablename}/create",
+			update => "here_is_new_record",
+			position => 'Before',
+			before => "disableIt('create_a_new_one');",
+			loaded => "newname.value = ''; newdesc.value = ''; create_a_new_one.value = 'Create';",
+		});
+	-%]
+		<div class = 'theID'>
+			<strong>[New]</strong>
+			<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
+		</div>
+		<div class = 'theMethod'>
+			&nbsp;<input type = 'submit' id = 'create_a_new_one' value = 'Create' 
+				onClick = "this.value = 'Creating...';" disabled />
+		</div>
+		<div class = 'theName'>
+			<input type = 'text' id = 'newname' name = 'newname' 
+				class = 'rewritabletext' onChange = "enableIt('create_a_new_one');" />
+		</div>
+		<div class = 'theDescription'>
+			&nbsp; <input type = 'text' id = 'newdesc' name = 'newdesc' class = 'rewritabletext' />
+		</div>
+	</form>
+</div>
+<div style = 'margin: 8px 0 0 0;'>
+	<a href = "javascript:void(0);" onClick = 'create_a_new_record.style.display = "block";'>
+		&#9997; Create a new record</a>
+</div>

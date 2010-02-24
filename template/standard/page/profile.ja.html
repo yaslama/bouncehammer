@@ -1,0 +1,73 @@
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% systemname %]/システム情報</title>
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+		[% INCLUDE bouncehammer.css %]
+		[% INCLUDE profile.css %]
+	-->
+	</style>
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% head1title %]/システム情報</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.${mylanguage}.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[% INCLUDE "div-index.${mylanguage}.html" %]
+		</div>
+		<div id = 'East-Ward'> </div>
+
+		<div id = 'Central-Ward'>
+
+			<div class = 'profile'>
+				<h2>システム</h2>
+				<table>
+					<tbody>
+						<tr>
+							<td class = 'key'>システム名称</td>
+							<td class = 'value'>[% systemname %]</td>
+							<td class = 'extra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>システムバージョン</td>
+							<td class = 'value'>[% sysversion %]</td>
+							<td class = 'extra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>設定ファイルバージョン</td>
+							<td class = 'value'>[% cfversion %]</td>
+							<td class = 'extra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>既定の言語</td>
+							<td class = 'value'>[% syslanguage %]</td>
+							<td class = 'extra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>起動時間/負荷</td>
+							<td class = 'value'>[% sysuptime %]</td>
+							<td class = 'extra'></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+
+	</div>
+</body>
+</html>
+

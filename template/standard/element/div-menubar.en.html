@@ -1,0 +1,51 @@
+[%- SET ThisURI = thepageuri -%]
+[%- IF encryptedforuri -%]
+	[%- SET colname = pagersinthequery.colnameorderby -%]
+	[%- SET descend = pagersinthequery.descendorderby -%]
+	[%- IF pagersinthequery.currentpagenum -%]
+		[%- SET page = pagersinthequery.currentpagenum -%]
+		[%- SET DownloadLink = "${ThisURI}/download" -%]
+		[%- IF pagersinthequery.resultsperpage -%]
+			[%- SET rpp = pagersinthequery.resultsperpage -%]
+			[%- SET ThisURI = "${ThisURI}/search/condition/${encryptedforuri}/${colname},${descend}/${page}/${rpp}" -%]
+		[%- ELSE -%]
+			[%- SET ThisURI = "${ThisURI}/search/condition/${encryptedforuri}/${colname},${descend}/${page}" -%]
+		[%- END -%]
+	[%- ELSE -%]
+		[%- SET ThisURI = "${ThisURI}/search/condition/${encryptedforuri}/${colname},${descend}" -%]
+	[%- END -%]
+[%- ELSE -%]
+	[%- SET ThisURI = "${ThisURI}${pathinfo}" -%]
+[%- END -%]
+<div id = 'MenuBar'>
+	[%- IF DownloadLink -%]
+		[%- SET DLLYAML = "${DownloadLink}/yaml/${encryptedforuri}/${colname},${descend}" -%]
+		[%- SET DLLCSVF = "${DownloadLink}/csv/${encryptedforuri}/${colname},${descend}" -%]
+		[%- SET DLLADSM = "${DownloadLink}/sendmail/${encryptedforuri}/${colname},${descend}" -%]
+		[%- SET DLLADPF = "${DownloadLink}/postfix/${encryptedforuri}/${colname},${descend}" -%]
+		<select onChange = "window.open(this.options[this.selectedIndex].value)" style = 'font-size:10px;'>
+			<option value = '#' >Download the results</option>
+			<option value = '[% DLLYAML %]'>YAML</option>
+			<option value = '[% DLLCSVF %]'>CSV</option>
+			<option value = '[% DLLADSM %]'>access.db(Sendmail)</option>
+			<option value = '[% DLLADPF %]'>access.db(Postfix)</option>
+		</select>
+	[%- END -%]
+
+	<form action = '[% ThisURI %]' method = 'POST' id = 'SelectLanguage' style = 'display: inline;'>
+		[% INCLUDE "select-language.html" %]
+		<span class = 'flatbutton'>
+			<a href = "javascript:void(0);" onClick = "SelectLanguage.submit(); return(false);">SW</a>
+		</span>
+	</form>
+
+	<span class = 'flatbutton'>
+		<a href = "javascript:void(0);" onClick = "toggleIt('PageURI');">URI</a>
+	</span>
+	<div id = 'PageURI' style = 'display: none;'>
+		<input type = 'text' value = '[% ThisURI %]' class = 'flat' onClick = "ThisURI.select();" />
+	</div>
+
+
+</div>
+

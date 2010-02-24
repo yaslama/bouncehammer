@@ -1,0 +1,99 @@
+# test-run.cf
+# $Id: test-run.cf,v 1.7 2010/02/20 08:32:39 ak Exp $
+# This config file is YAML/JSON format. bin/* scripts read this file by
+# using (YAML|JSON)::Syck Perl module.
+#  ______   ______ _____ _____ __  __ 
+# / ___\ \ / / ___|_   _| ____|  \/  |
+# \___ \\ V /\___ \ | | |  _| | |\/| |
+#  ___) || |  ___) || | | |___| |  | |
+# |____/ |_| |____/ |_| |_____|_|  |_|
+# 
+# System name and configuration file version, 
+# *** Do not change these key and value ***
+system: 'BounceHammer'
+version: '2.0.0'
+
+#  _____ ___ _     _____ 
+# |  ___|_ _| |   | ____|
+# | |_   | || |   |  _|  
+# |  _|  | || |___| |___ 
+# |_|   |___|_____|_____|
+# 
+file:
+  # MaxSize: <n> Bytes
+  maxsize: 134217728
+
+  # Temporary log file
+  templog:
+    prefix: 'hammer'
+    suffix: 'tmp'
+
+  # Stored log files
+  storage:
+    prefix: 'hammer'
+    suffix: 'log'
+
+#  ____ ___ ____  _____ ____ _____ ___  ______   __
+# |  _ \_ _|  _ \| ____/ ___|_   _/ _ \|  _ \ \ / /
+# | | | | || |_) |  _|| |     | || | | | |_) \ V / 
+# | |_| | ||  _ <| |__| |___  | || |_| |  _ < | |  
+# |____/___|_| \_\_____\____| |_| \___/|_| \_\|_|  
+#
+directory:
+  conf: '/tmp'
+  pid: '/tmp'
+
+  # Log storage, -o(--output) option of bin/mailboxparser command over-
+  # rides this value.
+  log: '/tmp'
+
+  # Working directory of commandline tools in bin/ directory.
+  tmp: '/tmp'
+  cache: '/tmp'
+  spool: '/tmp'
+
+  # Upload directory used by mailboxparser -d option
+  incoming: '/tmp'
+
+#  _   _ _____ _______        _____  ____  _  __
+# | \ | | ____|_   _\ \      / / _ \|  _ \| |/ /
+# |  \| |  _|   | |  \ \ /\ / / | | | |_) | ' / 
+# | |\  | |___  | |   \ V  V /| |_| |  _ <| . \ 
+# |_| \_|_____| |_|    \_/\_/  \___/|_| \_\_|\_\
+# 
+# For Future Release
+smtp:
+  relayhost: '127.0.0.1'
+  port: 25
+  authentication:
+    smtpauth: 0
+    mechanism: 'MD5'
+    username: ''
+    password: ''
+  from: 'postmaster@'
+
+#  ____    _  _____  _    ____    _    ____  _____ 
+# |  _ \  / \|_   _|/ \  | __ )  / \  / ___|| ____|
+# | | | |/ _ \ | | / _ \ |  _ \ / _ \ \___ \|  _|  
+# | |_| / ___ \| |/ ___ \| |_) / ___ \ ___) | |___ 
+# |____/_/   \_\_/_/   \_\____/_/   \_\____/|_____|
+# 
+database:
+  # Database type(Available values are PostgreSQL, MySQL or SQLite)
+  # If you use SQLite database, please specify a path into the dbname value.
+  # dbtype: 'SQLite'
+  # dbname: '__KANADZUCHIVAR__/db/bouncehammer.db'
+  dbtype: 'PostgreSQL'
+  dbname: 'bouncehammer'
+
+  # Database name, username and password of the db-user
+  username: 'bouncehammer'
+  password: ''
+
+  # Database host or IP address, and port number
+  #  Postgresql = 5432, MySQL = 3306 by default. If the dbtype value is
+  #  'SQLite', the system ignores the 'port' value.
+  hostname: '127.0.0.1'
+  port: 5432
+
+...

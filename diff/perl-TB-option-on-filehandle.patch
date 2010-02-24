@@ -1,0 +1,33 @@
+--- src/lib/Kanadzuchi/Mbox.pm	2010-02-22 05:24:12.000000000 +0900
++++ src/lib/Kanadzuchi/Mbox.pm	2010-02-22 13:26:21.000000000 +0900
+@@ -219,9 +219,8 @@
+ 	unless( ref($file) eq q|SCALAR| )
+ 	{
+ 		return(0) if( $file =~ m{[\n\r]} || $file =~ m{[\x00-\x1f\x7f]} );
+-		return(0) if(
+-			! ( -f $file && -T _ && -s _ ) &&
+-			! ( ref($file) eq q|GLOB| && -T $file ) );
++		# -T and -B not implemented on filehandles
++		return(0) if( ! ( -f $file && -s _ ) && ! ( ref($file) eq q|GLOB| ) );
+ 	}
+ 
+ 	$self->{'emails'} = [];
+--- t/041_mbox.t	2010-02-18 01:07:58.000000000 +0900
++++ t/041_mbox.t	2010-02-22 14:39:43.000000000 +0900
+@@ -11,7 +11,7 @@
+ use Kanadzuchi::Mbox;
+ use Time::Piece;
+ use File::Copy;
+-use Test::More ( tests => 1785 );
++use Test::More ( tests => 1781 );
+ 
+ #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
+ # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
+@@ -149,6 +149,7 @@
+ 	}
+ 
+ 	SLURPIT: {
++		next() if( $y =~ m{/binary\z} );
+ 		is( $object->slurpit(), 0, q{->slurpit() = 0} );
+ 		is( $object->nmails(), 0, q{->nmails = 0} );
+ 		isa_ok( $object->emails(), q|ARRAY| );

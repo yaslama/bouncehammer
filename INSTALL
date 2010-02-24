@@ -1,0 +1,9 @@
+$Id: INSTALL,v 1.2 2010/02/21 23:19:28 ak Exp $
+-------------------------------------------------------------------------------
+  To install this system; BounceHammer, cd to the directory that contains this
+  file and type the following commands:
+
+   # ./configure
+   # make
+   # make test
+   # make install

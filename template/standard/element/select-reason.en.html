@@ -1,0 +1,34 @@
+[%- SET reasons = { 
+		'_'		=> '- Select the reason -',
+		'undefined'	=> 'Undefined', 
+		'userunknown'	=> 'User unknown',
+		'hostunknown'	=> 'Host unknown',
+		'hasmoved'	=> 'Has moved',
+		'filtered'	=> 'Filtered',
+		'mailboxfull'	=> 'Mailbox full',
+		'exceedlimit'	=> 'Exceed limit',
+		'systemfull'	=> 'Mail system full',
+		'notaccept'	=> 'Not accept',
+		'mesgtoobig'	=> 'Message too big',
+		'whitelisted'	=> 'Whitelisted',
+		'unstable'	=> 'Unstable',
+		'mailererror'	=> 'Unknown mailer error',
+		'securityerr'	=> 'Security error',
+		'onhold'	=> 'On hold'
+	}
+-%]
+[%- SET isselected = '' -%]
+[% IF B.id %]
+	<select name = 'reason' onChange = "enableIt('do-update-[% B.id %]');">
+[% ELSE %]
+	<select name = 'reason' onChange = "checkrw.innerHTML = '&#9745; Use';">
+[% END %]
+		[%- FOREACH r IN reasons -%]
+			[%- IF r.key == B.reason -%]
+				[%- SET isselected = 'selected' -%]
+			[%- ELSE -%]
+				[%- SET isselected = '' -%]
+			[%- END -%]
+			<option value = '[% r.key %]' [%- isselected -%]>[% r.value %]</option>
+		[%- END -%]
+	</select>

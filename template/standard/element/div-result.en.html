@@ -1,0 +1,129 @@
+[%- IF onlineparse == 1 -%]
+	[%- SET UpdatedName = "Parsed at" -%]
+	[%- SET DisplayProp = "none" -%]
+[%- ELSE -%]
+	[%- SET UpdatedName = "Updated at" -%]
+	[%- SET DisplayProp = "inline" -%]
+[%- END -%]
+[% FOREACH B = bouncemessages %]
+	[%- IF isupdated == 1 -%]
+		[%- SET displayproperty = 'block' -%]
+	[%- ELSE -%]
+		[%- SET displayproperty = 'none' -%]
+	[%- END -%]
+	<div id = 'record-of-[% B.id %]' class = 'record'>
+		<div class = 'recordsummary' id = 'summary-of-[% B.id %]'>
+			<div class = 'number-in-summary'>
+				<span class = '[% B.reason %]'>&nbsp; &nbsp; &nbsp;</span>&nbsp;
+				# [% B.id %]
+			</div>
+			<div class = 'status-in-summary'>
+				<a href = "javascript:void(0)" 
+					onClick = "toggleIt('details-of-[% B.id %]');">&#9997; Details</a>
+			</div>
+			<div class = 'fields-in-summary'>
+				From: <strong>[% B.addresser %]</strong> ([% B.frequency %])<br />
+				To: <strong>&lt;[% B.recipient %]&gt;</strong><br />
+				Returned for the reason <strong>[[% B.reason %]]</strong> at [% B.bounced %]
+				[%- IF tzoffset != B.tzoffset -%] [% tzoffset %][%- END -%]
+			</div>
+
+			<div class = 'recorddetails' id = 'details-of-[% B.id %]' style = 'display: [% displayproperty %];'>
+				<h4>Record Details</h4>
+				[%- prototype.form_remote_tag( {
+						url => "${scriptname}/update/${B.id}",
+						update => "record-of-${B.id}",
+						loading => "disableIt('do-update-${B.id}');",
+					});
+				-%]
+				<table>
+				<tbody>
+					<tr>
+						<td class = 'key'>Record ID</td>
+						<td class = 'value'>[% B.id %]</td>
+						<td class = 'extra'>
+							<input type = 'hidden' name = 'id' value = '[% B.id %]' />
+							<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
+						</td>
+					</tr>
+
+					<tr>
+						<td class = 'key'>Sender Address(From:)</td>
+						<td class = 'value'>[% B.addresser %] / [% B.senderdomain %]</td>
+						<td class = 'extra'></td>
+					</tr>
+
+					<tr>
+						<td class = 'key'>Recipient Address(To:)</td>
+						<td class = 'value'> [% B.recipient %] / [% B.destination %] </td>
+						<td class = 'extra'></td>
+					</tr>
+
+					<tr>
+						<td class = 'key'>Frequency</td>
+						<td class = 'value'>[% B.frequency %]</td>
+						<td class = 'extra'></td>
+					</tr>
+
+					<tr>
+						<td class = 'key'>Reason</td>
+						<td class = 'value'>[% INCLUDE "select-reason.${mylanguage}.html" %]</td>
+						<td class = 'extra'></td>
+					</tr>
+
+					<tr>
+						<td class = 'key'>Host Group</td>
+						<td class = 'value'>[% INCLUDE "select-hostgroup.${mylanguage}.html" %]</td>
+						<td class = 'extra'></td>
+					</tr>
+
+					<tr>
+						<td class = 'key'>Description</td>
+						<td class = 'value' style = "font-style: italic;">[% B.diagnosticcode %]</td>
+						<td class = 'extra'></td>
+					</tr>
+
+					<tr>
+						<td class = 'key'>Message Token(MD5)</td>
+						<td class = 'value'>
+							<input type = 'text' class = 'flat' style = 'width: 320px;' value = '[% B.token %]' />
+						</td>
+						<td class = 'extra'>
+							<input type = 'hidden' name = 'token' value = '[% B.token %]' />
+						</td>
+					</tr>
+
+					<tr>
+						<td class = 'key'>Bounced at</td>
+						<td class = 'value'>
+							[% B.bounced %]
+							[%- IF tzoffset != B.tzoffset -%] [% tzoffset %] &lt;- ([% B.tzoffset %])[%- END -%]
+						</td>
+						<td class = 'extra'></td>
+					</tr>
+
+					<tr>
+						<td class = 'key'>[% UpdatedName %]</td>
+						<td class = 'value'>
+							[%- IF isupdated == 1 -%]<strong>[%- END -%]
+							[% B.updated %]
+							[%- IF isupdated == 1 -%]</strong>[%- END -%]
+						</td>
+						<td class = 'extra'></td>
+					</tr>
+
+					<tr>
+						<td class = 'key'>
+							<input type = 'submit' id = 'do-update-[% B.id %]' style = 'display: [% DisplayProp %];' 
+								value = 'Update' disabled onClick = "this.value = 'Updating...';" />
+						</td >
+						<td class = 'value'> </td>
+						<td class = 'extra'> </td>
+					</tr>
+				</tbody>
+				</table>
+				</form>
+			</div>
+		</div>
+	</div>
+[% END %]

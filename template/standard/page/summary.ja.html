@@ -1,0 +1,174 @@
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% systemname %]/登録済データの概要</title>
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+		[% INCLUDE bouncehammer.css %]
+		[% INCLUDE summary.css %]
+	-->
+	</style>
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% head1title %]/登録済データの概要</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.${mylanguage}.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[% INCLUDE "div-index.${mylanguage}.html" %]
+		</div>
+		<div id = 'East-Ward'> </div>
+
+		<div id = 'Central-Ward'>
+
+			<div class = 'summary'>
+				<h2>[% tablesumm.bouncelogs.screenname %] テーブル</h2>
+				<table>
+					<tbody>
+						<tr>
+							<td class = 'key'>最大登録可能数</td>
+							<td class = 'value'>
+								[% IF tableconf.bouncelogs.maxrecords == 0 %]
+									無制限
+								[% ELSE %]
+									[% tableconf.bouncelogs.maxrecords.chunk(-3).join(',') %] 件
+								[% END %]
+							</td>
+							<td class = 'extra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>使用量</td>
+							<td class = 'value'>[% tablesumm.bouncelogs.totalentries.chunk(-3).join(',') %] 件</td>
+							<td class = 'extra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>利用可能(残り)</td>
+							<td class = 'value'>
+								[% IF tableconf.bouncelogs.maxrecords == 0 %]
+									無制限
+								[% ELSE %]
+									[% SET available = tableconf.bouncelogs.maxrecords - tablesumm.bouncelogs.totalentries %]
+									[% available.chunk(-3).join(',') %] 件
+								[% END %]
+							</td>
+							<td class = 'extra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>使用割合</td>
+							<td class = 'value'>
+								[% SET capacitywidth = tablesumm.bouncelogs.capacity * 320 %]
+								<div class = 'graph'>
+									<div class = 'used' style = 'width: [% capacitywidth %]px;'>&nbsp;
+									</div>
+								</div>
+							</td>
+							<td class = 'extra'>
+								[% IF tableconf.bouncelogs.maxrecords == 0 %]
+									無制限
+								[% ELSE %]
+									[% tablesumm.bouncelogs.capacity * 100 %] %
+								[% END %]
+							</td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>追加</td>
+							<td class = 'value'>
+								[% IF tableconf.bouncelogs.readonly > 0 %]
+									不可
+								[% ELSE %]
+									可
+									<a href = '[% thepageuri %]/test/'>(追加)</a>
+								[% END %]
+							</td>
+							<td class = 'extra'></td>
+						</tr>
+					</tbody>
+				</table>
+
+				[% FOREACH T IN [ 'senderdomains','destinations' ] %]
+					<h2>[% tablesumm.${T}.screenname %] テーブル</h2>
+					<table>
+						<tbody>
+							<tr>
+								<td class = 'key'>最大登録可能数</td>
+								<td class = 'value'>
+									[% IF tableconf.${T}.maxrecords == 0 %]
+										無制限
+									[% ELSE %]
+										[% tableconf.${T}.maxrecords.chunk(-3).join(',') %] ドメイン
+									[% END %]
+								</td>
+								<td class = 'extra'></td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>使用量</td>
+								<td class = 'value'>[% tablesumm.${T}.totalentries.chunk(-3).join(',') %] ドメイン</td>
+								<td class = 'extra'></td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>利用可能(残り)</td>
+								<td class = 'value'>
+									[% IF tableconf.${T}.maxrecords == 0 %]
+										無制限
+									[% ELSE %]
+										[% SET available = tableconf.${T}.maxrecords - tablesumm.${T}.totalentries %]
+										[% available.chunk(-3).join(',') %] ドメイン
+									[% END %]
+								</td>
+								<td class = 'extra'></td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>使用割合</td>
+								<td class = 'value'>
+									[% SET capacitywidth = tablesumm.${T}.capacity * 320 %]
+									<div class = 'graph'>
+										<div class = 'used' style = 'width: [% capacitywidth %]px;'>&nbsp;
+										</div>
+									</div>
+								</td>
+								<td class = 'extra'>
+									[% IF tableconf.${T}.maxrecords == 0 %]
+										無制限
+									[% ELSE %]
+										[% tablesumm.${T}.capacity * 100 %] %
+									[% END %]
+								</td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>追加/削除</td>
+								<td class = 'value'>
+									[% IF tableconf.${T}.readonly > 0 %]
+										不可
+									[% ELSE %]
+										可
+										<a href = '[% thepageuri %]/tables/[% T %]/list'>(編集)</a>
+									[% END %]
+								</td>
+								<td class = 'extra'></td>
+							</tr>
+						</tbody>
+					</table>
+				[% END %]
+			</div>
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+
+	</div>
+</body>
+</html>
+

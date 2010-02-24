@@ -1,0 +1,174 @@
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% systemname %]/Statistics</title>
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+		[% INCLUDE bouncehammer.css %]
+		[% INCLUDE statistics.css %]
+	-->
+	</style>
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% head1title %]/Statistics</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.${mylanguage}.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[% INCLUDE "div-index.${mylanguage}.html" %]
+		</div>
+		<div id = 'East-Ward'> </div>
+
+		<div id = 'Central-Ward'>
+
+			<div class = 'statistics'>
+				<h2>[% tablestat.bouncelogs.screenname %] table</h2>
+				<table>
+					<tbody>
+						<tr>
+							<td class = 'key'>Max(Limit)</td>
+							<td class = 'value'>
+								[% IF tableconf.bouncelogs.maxrecords == 0 %]
+									Unlimited
+								[% ELSE %]
+									[% tableconf.bouncelogs.maxrecords.chunk(-3).join(',') %] records
+								[% END %]
+							</td>
+							<td class = 'extra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>Used</td>
+							<td class = 'value'>[% tablestat.bouncelogs.totalentries.chunk(-3).join(',') %] records</td>
+							<td class = 'extra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>Available</td>
+							<td class = 'value'>
+								[% IF tableconf.bouncelogs.maxrecords == 0 %]
+									Unlimited
+								[% ELSE %]
+									[% SET available = tableconf.bouncelogs.maxrecords - tablestat.bouncelogs.totalentries %]
+									[% available.chunk(-3).join(',') %] records
+								[% END %]
+							</td>
+							<td class = 'extra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>Capacity</td>
+							<td class = 'value'>
+								[% SET capacitywidth = tablestat.bouncelogs.capacity * 320 %]
+								<div class = 'graph'>
+									<div class = 'used' style = 'width: [% capacitywidth %]px;'>&nbsp;
+									</div>
+								</div>
+							</td>
+							<td class = 'extra'>
+								[% IF tableconf.bouncelogs.maxrecords == 0 %]
+									Unlimited
+								[% ELSE %]
+									[% tablestat.bouncelogs.capacity * 100 %] %
+								[% END %]
+							</td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>Add</td>
+							<td class = 'value'>
+								[% IF tableconf.bouncelogs.readonly > 0 %]
+									Not Permitted
+								[% ELSE %]
+									Permitted
+									<a href = '[% thepageuri %]/test/'>(Add)</a>
+								[% END %]
+							</td>
+							<td class = 'extra'></td>
+						</tr>
+					</tbody>
+				</table>
+
+				[% FOREACH T IN [ 'senderdomains','destinations' ] %]
+					<h2>[% tablestat.${T}.screenname %] table</h2>
+					<table>
+						<tbody>
+							<tr>
+								<td class = 'key'>Max(Limit)</td>
+								<td class = 'value'>
+									[% IF tableconf.${T}.maxrecords == 0 %]
+										Unlimited
+									[% ELSE %]
+										[% tableconf.${T}.maxrecords.chunk(-3).join(',') %] domains
+									[% END %]
+								</td>
+								<td class = 'extra'></td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>Used</td>
+								<td class = 'value'>[% tablestat.${T}.totalentries.chunk(-3).join(',') %] domains</td>
+								<td class = 'extra'></td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>Available</td>
+								<td class = 'value'>
+									[% IF tableconf.${T}.maxrecords == 0 %]
+										Unlimited
+									[% ELSE %]
+										[% SET available = tableconf.${T}.maxrecords - tablestat.${T}.totalentries %]
+										[% available.chunk(-3).join(',') %] domains
+									[% END %]
+								</td>
+								<td class = 'extra'></td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>Capacity</td>
+								<td class = 'value'>
+									[% SET capacitywidth = tablestat.${T}.capacity * 320 %]
+									<div class = 'graph'>
+										<div class = 'used' style = 'width: [% capacitywidth %]px;'>&nbsp;
+										</div>
+									</div>
+								</td>
+								<td class = 'extra'>
+									[% IF tableconf.${T}.maxrecords == 0 %]
+										Unlimited
+									[% ELSE %]
+										[% tablestat.${T}.capacity * 100 %] %
+									[% END %]
+								</td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>Add/Remove</td>
+								<td class = 'value'>
+									[% IF tableconf.${T}.readonly > 0 %]
+										Not Permitted
+									[% ELSE %]
+										Permitted
+										<a href = '[% thepageuri %]/tables/[% T %]/list'>(Edit)</a>
+									[% END %]
+								</td>
+								<td class = 'extra'></td>
+							</tr>
+						</tbody>
+					</table>
+				[% END %]
+			</div>
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+
+	</div>
+</body>
+</html>
+

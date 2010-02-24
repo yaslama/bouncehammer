@@ -1,0 +1,10 @@
+# neighbor-domains
+# $Id: neighbor-domains-example,v 1.4 2010/02/20 08:32:38 ak Exp $
+# Kanadzuchi::Mail::Group::Neighbor reads this file(YAML)
+#
+# Example
+#  provider-name: [ 'domain1', 'domain2', ... ]
+#    snakeoil: [ 'snake.example.jp', 'hebi.example.jp', 'nyoro.example.jp' ]
+#    oursites: [ 'snakeoil-online.example.com', 'snakeoil-sales.example.com' ]
+
+...

@@ -1,0 +1,88 @@
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% systemname %]/MessageToken</title>
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+	[% INCLUDE bouncehammer.css %]
+	[% INCLUDE record.css %]
+	-->
+	</style>
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% head1title %]/MessageToken</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.${mylanguage}.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[% INCLUDE "div-index.${mylanguage}.html" %]
+		</div>
+		<div id = 'East-Ward'>
+			[% INCLUDE "h-messagetoken-descr.${mylanguage}.html" %]
+		</div>
+
+		<div id = 'Central-Ward'>
+			<h2>Message Token(MD5)</h2>
+			<div class = 'result'>
+				[%- prototype.form_remote_tag( {
+						url => "${scriptname}/token",
+						update => 'here_is_new_message_token',
+						position => 'Before',
+						before => "disableIt('make_token');",
+						loaded => "enableIt('make_token'); ra.value = ''; sa.value = ''; make_token.value = 'Make';",
+					});
+				-%]
+				<fieldset>
+					<legend>Input a sender address and a recipient address</legend>
+					<table>
+					<tbody>
+						<tr>
+							<td class = 'key'>Sender address</td>
+							<td class = 'value'>
+								<input type = 'text' name = 'addresser' style = 'width: 384px;' id = 'sa' 
+									placeholder = 'Sender address' autosave = '[% systemname %].addresser' 
+									results = '16' onChange = "checksa.innerHTML='&#9745; OK';"/>
+							</td>
+							<td class = 'extra' id = 'checksa'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>Recipient address</td>
+							<td class = 'value'>
+								<input type = 'text' name = 'recipient' style = 'width: 384px;' id = 'ra' 
+									placeholder = 'Recipient Address' autosave = '[% systemname %].recipient'
+									results = '16' onChange = "checkra.innerHTML='&#9745; OK';" />
+							</td>
+							<td class = 'extra' id = 'checkra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>
+								<input type = 'hidden' name = 'makenewtoken' value = '1' />
+								<input type = 'submit' value = 'Make' id = 'make_token'
+									onClick = "this.value = 'Making...';" />
+							</td>
+							<td class = 'value'> </td>
+							<td class = 'extra'> </td>
+						</tr>
+					</tbody>
+					</table>
+				</fieldset>
+				</form>
+			</div>
+			<div class = 'result'>
+				<div id = 'here_is_new_message_token'></div>
+			</div>
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+	</div>
+</body>
+</html>
+

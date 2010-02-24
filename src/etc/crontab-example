@@ -1,0 +1,23 @@
+# $Id: crontab-example,v 1.2 2010/02/20 08:32:38 ak Exp $
+# A part of /etc/crontab for example
+#
+PARSER="__KANADZUCHIBIN__/mailboxparser"
+LOGGER="__KANADZUCHIBIN__/logger"
+DBCTRL="__KANADZUCHIBIN__/databasectl"
+TBCTRL="__KANADZUCHIBIN__/tablectl"
+
+# Parse mailbox every hour
+00	*	*	*	*	root	$PARSER --log /path/to/mailbox --remove
+
+# Parse Maildir every hour
+01	*	*	*	*	root	$PARSER --log /home/who/Maildir/cur
+
+# Concatenate logfiles
+10	*	*	*	*	root	$LOGGER -c --remove
+
+# Update stored log file of today
+50	*	*	*	*	root	$DBCTRL --update --today
+
+# Update stored log file of yesterday
+00	01	*	*	*	root	$DBCTRL --upate --yesterday
+

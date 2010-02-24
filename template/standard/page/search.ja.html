@@ -1,0 +1,79 @@
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% systemname %]/検索結果</title>
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+	[% INCLUDE bouncehammer.css %]
+	[% INCLUDE pager.css %]
+	[% INCLUDE record.css %]
+	-->
+	</style>
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% head1title %]/検索結果</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.${mylanguage}.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[% INCLUDE "div-index.${mylanguage}.html" %]
+		</div>
+		<div id = 'East-Ward'>
+			[% INCLUDE "h-download-input.${mylanguage}.html" %]
+			[% INCLUDE "h-recordid-descr.${mylanguage}.html" %]
+			[% INCLUDE "h-senderdomain-descr.${mylanguage}.html" %]
+			[% INCLUDE "h-recipient-address-descr.${mylanguage}.html" %]
+			[% INCLUDE "h-frequency-descr.${mylanguage}.html" %]
+			[% INCLUDE "h-description.${mylanguage}.html" %]
+			[% INCLUDE "h-messagetoken-descr.${mylanguage}.html" %]
+			[% INCLUDE "h-bounceddate.${mylanguage}.html" %]
+			[% INCLUDE "h-updateddate.${mylanguage}.html" %]
+			[% INCLUDE "h-record-update.${mylanguage}.html" %]
+		</div>
+
+		<div id = 'Central-Ward'>
+			[% INCLUDE "form-search-by-recipient.${mylanguage}.html" %]
+			<h2>検索結果
+				<span style = 'font-size:11px;'>(並び順:
+					[%- IF pagersinthequery.colnameorderby == 'id' -%]
+						ID
+					[%- ELSIF pagersinthequery.colnameorderby == 'recipient' -%]
+						宛先アドレス
+					[%- ELSIF pagersinthequery.colnameorderby == 'senderdomain' -%]
+						発信者ドメイン
+					[%- ELSIF pagersinthequery.colnameorderby == 'destination' -%]
+						宛先ドメイン
+					[%- ELSIF pagersinthequery.colnameorderby == 'bounced' -%]
+						差戻日時
+					[%- ELSIF pagersinthequery.colnameorderby == 'frequency' -%]
+						差戻回数
+					[%- END -%]
+					[%- IF pagersinthequery.descendorderby == 1 -%]
+						, 降順(大きい方から)
+					[%- END -%] )
+				</span>
+			</h2>
+			<div class = 'pager'>
+				[% INCLUDE "div-pager.${mylanguage}.html" %]
+			</div>
+			<div class = 'result'>
+				[% INCLUDE "div-result.${mylanguage}.html" %]
+			</div>
+			[%- IF pagersinthequery.resultsperpage > 4 AND pagersinthequery.totalentries > 4 AND hascondition > 0 -%]
+				<div class = 'pager'>
+					[% INCLUDE "div-pager.${mylanguage}.html" %]
+				</div>
+			[%- END -%]
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+	</div>
+</body>
+</html>
+

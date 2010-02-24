@@ -1,0 +1,61 @@
+<div style = 'margin: 8px 8px 4px 8px;'>
+	<a href = "javascript:void(0)" onClick = "toggleIt('search-query');" accesskey = '8'>
+		&#9997; 検索した条件(8)
+	</a>
+</div>
+<div id = 'search-query' style = 'display: none;'>
+	[%- SET c = searchcondition -%]
+	[% IF c.recipient %] 
+		<div class = 'key'>宛先アドレス</div>
+		<div class = 'extra'></div>
+		<div class = 'value'>
+			<input type = 'text' class = 'flat' style = 'width: 384px;' 
+				value = '[% c.recipient %]' readonly = 'readonly' />
+		</div>
+	[% END %]
+
+	[% IF c.senderdomain %] 
+		<div class = 'key'>発信者ドメイン</div>
+		<div class = 'extra'></div>
+		<div class = 'value'>
+			<input type = 'text' class = 'flat' style = 'width: 384px;' 
+				value = '[% c.senderdomain %]' readonly = 'readonly' />
+		</div>
+	[% END %]
+
+	[% IF c.destination %] 
+		<div class = 'key'>宛先ドメイン</div>
+		<div class = 'extra'></div>
+		<div class = 'value'>
+			<input type = 'text' class = 'flat' style = 'width: 384px;' 
+				value = '[% c.destination %]' readonly = 'readonly' />
+		</div>
+	[% END %]
+
+	[% IF c.reason %] 
+		<div class = 'key'>差戻理由</div>
+		<div class = 'extra'></div>
+		<div class = 'value'>
+			<input type = 'text' class = 'flat' style = 'width: 384px;' 
+				value = '[% c.reason %]' readonly = 'readonly' />
+		</div>
+	[% END %]
+
+	[% IF c.hostgroup %] 
+		<div class = 'key'>宛先分類</div>
+		<div class = 'extra'></div>
+		<div class = 'value'>
+			<input type = 'text' class = 'flat' style = 'width: 384px;' 
+				value = '[% c.hostgroup %]' readonly = 'readonly' />
+		</div>
+	[% END %]
+
+	[% IF c.token %] 
+		<div class = 'key'>トークン(MD5)</div>
+		<div class = 'extra'></div>
+		<div class = 'value'>
+			<input type = 'text' class = 'flat' style = 'width: 384px;' 
+				value = '[% c.token %]' readonly = 'readonly' />
+		</div>
+	[% END %]
+</div>

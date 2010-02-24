@@ -1,0 +1,70 @@
+/* $Id: record.css,v 1.1 2009/12/17 19:12:36 ak Exp $ */
+/* Record classes */
+div.record {
+	margin: 2px 0;
+	padding: 2px 0;
+	text-align: left;
+}
+
+div.record .recordsummary {
+	margin: 0;
+	padding: 4px 1px 1px 1px;
+	border-style: dotted;
+	border-width: 1px;
+	border-color: #524e4d; /* Keshizumi-iro */
+	background: #fffffc; /* Gofun-iro */
+}
+
+div.record .recorddetails {
+	margin: 4px 0 0 0;
+	padding: 1px 0 22px 0;
+	border-style: dotted;
+	border-width: 1px 0 0 0;
+	border-color: #524e4d; /* Keshizumi-iro */
+	background: #fffffc; /* Gofun-iro */
+}
+
+div.record .number-in-summary {
+	margin: 0;
+	padding: 12px 2px 3px 4px;
+	width: 96px;
+	size: 13px;
+	font-weight: bold;
+	float: left;
+}
+
+div.record .fields-in-summary {
+	margin: 0 64px 0 96px;
+	padding: 0;
+}
+
+div.record .status-in-summary {
+	width: 64px;
+	margin: 0;
+	padding: 20px 4px 0 0;
+	float: right;
+	vertical-align: bottom;
+	text-align: right;
+}
+
+tr.boundary td { 
+	margin: 0;
+	padding: 0;
+}
+
+td.key { /* LHS */
+	margin: 2px 0;
+	padding: 2px 8px 2px 2px;
+	font-weight: bold;
+	vertical-align: middle;
+	font-size: 11px;
+}
+
+td.value, td.extra {
+	margin: 2px 0;
+	padding: 2px 0 2px 2px;
+	font-size: 11px;
+}
+}
+
+

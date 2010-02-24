@@ -1,0 +1,37 @@
+/* $Id: profile.css,v 1.1 2009/12/17 19:12:36 ak Exp $ */
+
+div.profile {
+	/* Based on 'result' class */
+	margin: 5px 1px 15px 25px;
+	padding: 0px;
+}
+
+div.profile table {
+	border-width: 0;
+	border-style: solid;
+	border-color: #d4dcd6; /* Sobakiri-iro */
+	margin: 0 0 0 16px;
+	width: 512px;
+	font-size: 11px;
+}
+
+div.profile table td {
+	border-width: 0 0 1px 0;
+	border-style: dotted;
+	border-color: #d4dcd6; /* Sobakiri-iro */
+	padding: 1px 8px 1px 4px;
+}
+
+div.profile td.key { /* LHS */
+	width: 144px;
+	margin: 2px 0;
+	padding: 2px 8px 2px 2px;
+	font-weight: bold;
+	vertical-align: middle;
+}
+
+div.profile td.value, td.extra {
+	margin: 2px 0;
+	padding: 2px 0 2px 2px;
+}
+

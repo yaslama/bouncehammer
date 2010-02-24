@@ -1,0 +1,53 @@
+/* $Id: summary.css,v 1.1 2009/12/17 19:12:36 ak Exp $ */
+
+div.summary {
+	/* Based on 'result' class */
+	margin: 5px 1px 15px 25px;
+	padding: 0px;
+}
+
+div.summary table {
+	border-width: 0;
+	border-style: solid;
+	border-color: #d4dcd6; /* Sobakiri-iro */
+	margin: 0 0 16px 16px;
+	width: 512px;
+}
+
+div.summary table td {
+	border-width: 0 0 1px 0;
+	border-style: dotted;
+	border-color: #d4dcd6; /* Sobakiri-iro */
+	padding: 1px 8px 1px 4px;
+}
+
+div.summary td.key { /* LHS */
+	width: 96px;
+	margin: 2px 0;
+	padding: 2px 8px 2px 2px;
+	font-weight: bold;
+	font-size: 11px;
+	vertical-align: middle;
+}
+
+div.summary td.value, td.extra {
+	margin: 2px 0;
+	padding: 2px 0 2px 2px;
+	font-size: 11px;
+}
+
+div.graph {
+	width: 320px;
+	margin: 2px 5px 2px 0;
+	padding: 0;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #727171; /* Nibi-iro */
+}
+
+div.graph div.used {
+	margin: 0;
+	padding: 1px;
+	background: #727171; /* Nibi-iro */
+}
+

@@ -1,0 +1,144 @@
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% systemname %]/TestParse</title>
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+		[% INCLUDE bouncehammer.css %]
+		[% INCLUDE record.css %]
+	-->
+	</style>
+	[%- SET DOPARSE = 'Parse' -%]
+	[%- SET PARSING = 'Parsing...' -%]
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% head1title %]/TestParse</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.${mylanguage}.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[% INCLUDE "div-index.${mylanguage}.html" %]
+		</div>
+		<div id = 'East-Ward'>
+			[% INCLUDE "h-parsed-messages.${mylanguage}.html" %]
+			[% INCLUDE "h-senderdomain-descr.${mylanguage}.html" %]
+			[% INCLUDE "h-recipient-address-descr.${mylanguage}.html" %]
+			[% INCLUDE "h-frequency-descr.${mylanguage}.html" %]
+			[% INCLUDE "h-description.${mylanguage}.html" %]
+			[% INCLUDE "h-messagetoken-descr.${mylanguage}.html" %]
+			[% INCLUDE "h-bounceddate.${mylanguage}.html" %]
+			[% INCLUDE "h-updateddate.${mylanguage}.html" %]
+			[% INCLUDE "h-record-update.${mylanguage}.html" %]
+		</div>
+
+		<div id = 'Central-Ward'>
+
+			<div id = 'ChooseFile'>
+				<form action = '[% scriptname %]/test/parse' method = 'POST' target = 'parseddata' id = 'parseform'
+					enctype = 'multipart/form-data' 
+					onSubmit = " doparse.disabled = true; doparse.value = '[% PARSING %]';
+					setTimeout( function(){ doparse.disabled = false; }, 8000 );
+					" >
+					<fieldset>
+						<legend>Parse e-mail or mailbox</legend>
+						<table>
+						<tbody>
+							<tr>
+								<td class = 'key'>e-Mail(mbox) file</td>
+								<td class = 'value'>
+									<input type = 'file' name = 'emailfile' style = 'border: 1px dotted #b2b2b2; padding: 4px;'
+										onChange = "checkef.innerHTML = '&#9745; Use'; doparse.disabled = false;" />&nbsp; 
+									[%- IF maxsize == 0 -%]
+										<strong> &lt; Unlimit </strong>
+									[%- ELSE -%]
+										<strong> &lt; [% maxsize %] Bytes </strong>
+									[%- END -%]
+								</td>
+								<td class = 'extra' id = 'checkef'> </td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>
+									<a href = "javascript:void(0);" onClick = "toggleIt('emailtextarea');">
+										Whole message text &gt;&gt;
+									</a>
+								</td>
+								<td class = 'value' >
+									Copy &amp; paste into the following text area &nbsp;
+									<a href = "javascript:void(0);" onClick = "toggleIt('emailtextarea');">&darr;</a><br />
+									<textarea name = 'emailtext' id = 'emailtextarea' onKeyUp = "doparse.disabled = false;"
+										onChange = "checket.innerHTML = '&#9745; Use';"
+										style = 'width: 420px; height: 384px; display: none; border: 1px dotted #b2b2b2;
+											margin: 4px 0; padding: 0 0 0 1px; overflow-y: auto;'></textarea>
+								</td>
+								<td class = 'extra' id = 'checket'> </td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>Parse</td>
+								<td class = 'value'>
+									First 
+									<select name = 'parsenmessages' onChange = "doparse.disabled = false;">
+										<option value = '1' >1</option>
+										<option value = '3' selected>3</option>
+										<option value = '5' >5</option>
+									</select>
+									Messages in a mailbox
+								</td>
+								<td class = 'extra' id = 'checkof'> </td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>Output Format</td>
+								<td class = 'value'>
+									<span><input type = 'radio' name = 'format' value = 'html' checked /> HTML</span> &nbsp; 
+									<!--
+									<span><input type = 'radio' name = 'format' value = 'yaml' /> YAML</span> &nbsp; 
+									<span><input type = 'radio' name = 'format' value = 'csv' /> CSV</span> &nbsp; 
+									-->
+									<span><input type = 'radio' name = 'format' value = 'asciitable' /> ASCII Table</span> &nbsp; 
+								</td>
+								<td class = 'extra' id = 'checkof'> </td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>Register into DB</td>
+								<td class = 'value'>
+									<input type = 'checkbox' name = 'register' />
+									Register results into BounceLogs database after parsing.
+								</td>
+								<td class = 'extra'></td>
+							</tr>
+
+							<tr>
+								<td style = 'margin: 4px 0;'>
+									<br />
+									<input type = 'submit' id = 'doparse' value = '[% DOPARSE %]' disabled />&nbsp;
+									<input type = 'reset' value = 'Reset' />&nbsp;
+								</td>
+							</tr>
+						</tbody>
+						</table>
+					</fieldset>
+				</form>
+			</div>
+
+			<div style = 'margin: 12px 0; padding: 0;'>
+				<iframe name = 'parseddata' id = 'parseddata' frameborder = '1' width = '794'
+					height = '1' marginheight = '0' marginwidth = '0' 
+					style = 'border: 0px solid; margin: 0;'></iframe>
+			</div>
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+
+	</div>
+</body>
+</html>
+

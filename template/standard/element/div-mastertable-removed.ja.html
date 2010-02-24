@@ -1,0 +1,10 @@
+[% FOREACH RR IN removedrecord %]
+	<div class = 'removedrecord'>
+		<div class = 'mastertable'>
+			<div class = 'theID'>&nbsp; [% RR.id %]</div>
+			<div class = 'theMethod'><strong>削除済み</strong></div>
+			<div class = 'theName'>&nbsp; [% RR.name %]</div>
+			<div class = 'theDescription'>&nbsp; [% RR.description %]</div>
+		</div>
+	</div>
+[% END %]
