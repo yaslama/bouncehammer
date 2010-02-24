@@ -5,7 +5,7 @@ dnl # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 AC_PREREQ(2.59)
 AC_INIT([BounceHammer], [2.0.0], [bouncehammer@cubicroot.jp])
 AM_INIT_AUTOMAKE([foreign])
-AC_PREFIX_DEFAULT(/usr/local/kanadzuchi)
+AC_PREFIX_DEFAULT(/usr/local/bouncehammer)
 AC_CANONICAL_HOST
 
 AC_SUBST(TARGET_OSTYPE)
