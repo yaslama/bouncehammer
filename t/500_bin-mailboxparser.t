@@ -1,4 +1,4 @@
-# $Id: 500_bin-mailboxparser.t,v 1.8 2010/02/22 03:56:07 ak Exp $
+# $Id: 500_bin-mailboxparser.t,v 1.9 2010/02/24 05:11:36 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -111,7 +111,7 @@ SKIP: {
 		ok( $E->syntax(), q{->syntax()} );
 		ok( $E->version(), q{->version()} );
 		ok( $E->help(), q{->help()} );
-		ok( $E->error('-p'), q{->error()} );
+		ok( $E->error(), q{->error()} );
 	}
 
 	ERROR_MESSAGES: {
