@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.8 2010/02/21 20:46:42 ak Exp $
+# $Id: Web.pm,v 1.9 2010/02/25 18:59:46 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                         
@@ -110,7 +110,6 @@ sub setup
 		'Profile' => 'profile_ontheweb',
 		'Summary' => 'summary_ontheweb',
 		'TableList' => 'tablelist_ontheweb',
-		'Statistics' => 'statistics_ontheweb',
 		'TableControl' => 'tablectl_ontheweb',
 	);
 }
