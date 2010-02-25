@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.3 2010/02/21 20:27:11 ak Exp $
+# $Id: Bounced.pm,v 1.4 2010/02/25 09:01:28 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::
                                                  
@@ -299,7 +299,7 @@ sub eatit
 		# Set hash values to the object.
 		# Keys: rcpt,send,date, and stat are required to processing.
 		next() if( $bouncemesg->{'addresser'}->address =~ m{[@]localhost.localdomain\z} );
-		eval{ $tempstring = Time::Piece->strptime( $bouncemesg->{'arrivaldate'}, q{%A, %d %b %Y %T} ); };
+		eval{ $tempstring = Time::Piece->strptime( $bouncemesg->{'arrivaldate'}, q{%a, %d %b %Y %T} ); };
 
 		$thisobject = __PACKAGE__->new(
 				'addresser' => $bouncemesg->{'addresser'},
