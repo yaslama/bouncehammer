@@ -1,4 +1,4 @@
-# $Id: 102_rdb-table-mastertables.t,v 1.5 2010/02/22 03:49:21 ak Exp $
+# $Id: 102_rdb-table-mastertables.t,v 1.6 2010/02/25 09:33:28 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -101,7 +101,7 @@ EACH_TABLE: {
 
 	my $K = new Kanadzuchi();
 	my $E = new Kanadzuchi::Test::CLI(
-			'command' => q(/bin/[),
+			'command' => q(/bin/sh),
 			'config' => q(./src/etc/prove.cf),
 			'input' => $MTM->example->stringify().q(/17-messages.eml),
 			'output' => $MTM->example->stringify().q(/hammer.1970-01-01.ffffffff.000000.tmp),

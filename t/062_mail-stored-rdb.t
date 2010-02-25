@@ -1,4 +1,4 @@
-# $Id: 062_mail-stored-rdb.t,v 1.4 2010/02/22 20:10:21 ak Exp $
+# $Id: 062_mail-stored-rdb.t,v 1.5 2010/02/25 09:33:28 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -106,7 +106,7 @@ SEARCH_AND_NEW:
 
 	my $K = new Kanadzuchi();
 	my $E = new Kanadzuchi::Test::CLI(
-			'command' => q(/bin/[),
+			'command' => q(/bin/sh),
 			'config' => q(./src/etc/prove.cf),
 			'input' => $T->example->stringify().q(/17-messages.eml),
 			'output' => $T->example->stringify().q(/hammer.1970-01-01.ffffffff.000000.tmp),
