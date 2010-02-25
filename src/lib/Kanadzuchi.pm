@@ -1,4 +1,4 @@
-# $Id: Kanadzuchi.pm,v 1.8 2010/02/21 20:47:07 ak Exp $
+# $Id: Kanadzuchi.pm,v 1.9 2010/02/25 09:01:11 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 
  ##  ##                           ##                      ##      ##    
@@ -15,7 +15,6 @@ package Kanadzuchi;
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 use 5.008001;
-use strict;
 use warnings;
 use base 'Class::Accessor::Fast::XS';
 use Kanadzuchi::Exceptions;
