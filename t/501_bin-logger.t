@@ -1,4 +1,4 @@
-# $Id: 501_bin-logger.t,v 1.3 2010/02/22 03:56:07 ak Exp $
+# $Id: 501_bin-logger.t,v 1.4 2010/02/25 10:17:14 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -117,12 +117,16 @@ SKIP: {
 				my $yaml = undef();
 				my $file = $E->tempdir().q(/).$f->{'file'};
 
-				$yaml = JSON::Syck::LoadFile( $file );
-				isa_ok( $yaml, q|ARRAY|, $f->{'file'}.q{ is Array(JSON)} );
-				is( scalar(@$yaml), $f->{'entity'}, $f->{'file'}.q{ has }.$f->{'entity'}.q{ records} );
-				is( $K->is_logfile($f->{'file'}), 2, $f->{'file'}.q{ is regular log file} );
+				SKIP: {
+					skip( 'No log file', 3 ) unless( -e $file );
 
-				unlink( $file ) if( -e $file );
+					$yaml = JSON::Syck::LoadFile( $file );
+					isa_ok( $yaml, q|ARRAY|, $f->{'file'}.q{ is Array(JSON)} );
+					ok( scalar(@$yaml) > 0, $f->{'file'}.q{ has }.$f->{'entity'}.q{ records} );
+					is( $K->is_logfile($f->{'file'}), 2, $f->{'file'}.q{ is regular log file} );
+
+					unlink( $file ) if( -e $file );
+				}
 			}
 		}
 	}
