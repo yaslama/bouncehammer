@@ -1,4 +1,4 @@
-# $Id: 050_mail.t,v 1.8 2010/02/19 14:32:59 ak Exp $
+# $Id: 050_mail.t,v 1.9 2010/02/25 08:37:03 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -110,8 +110,8 @@ CLASS_METHODS: {
 					is( $o->destination(), q(bouncehammer.jp), q{->destination() == bouncehammer.jp} )
 				}
 
-				is( $o->bounced->ymd(), q(1975-04-09), q{->bounced->ymd() == 1975-04-09} );
-				is( $o->bounced->hms(), q(05:57:41), q{->bounced->hms() == 05:57:41} );
+				is( $o->bounced->year(), 1975, q{->bounced->year() == 1975} );
+				is( $o->bounced->second(), 41, q{->bounced->second() == 41} );
 				is( $o->timezoneoffset(), q(+0000), q{->timezoneoffset() == +0000} );
 				is( $o->frequency(), 1, q{->frequency() == 1} );
 				is( $o->reason(), q(), q{->reason() is empty} );
