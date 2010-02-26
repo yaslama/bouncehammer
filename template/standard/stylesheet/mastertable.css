@@ -1,116 +1,99 @@
-/* $Id: mastertable.css,v 1.1 2009/12/17 19:12:36 ak Exp $ */
+/* $Id: mastertable.css,v 1.2 2010/02/26 12:34:42 ak Exp $ */
+/* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Master table classes */
-div.mastertable .theID {
-	margin: 0;
-	padding: 2px 0 0 0;
+table.stored {
+	border-collapse: collapse;
+}
+
+table.tableheadings {
+	margin: 2px 0 8px 0;
+}
+
+thead.mastertable {
+	margin:	0;
+	font-weight: bold;
+	font-size: 11px;
+}
+
+thead.mastertable tr th {
+	margin: 2px 0 4px 0;
+	padding: 2px 0 2px 2px;
+	text-align: left;
+	vertical-align: middle;
+}
+
+tbody.mastertable {
+	font-size: 10px;
+}
+
+tbody.mastertable tr td {
+	margin: 2px 0 4px 0;
+	padding: 2px 0 2px 2px;
+	text-align: left;
+	vertical-align: middle;
+	border-color: #afafb0; /* Gin-nezu */
+	border-width: 0 0 1px 0;
+	border-style: dotted;
+}
+
+.mastertable .theID {
 	width: 48px;
-	height: 20px;
-	vertical-align: middle;
-	border-style: dotted;
-	border-width: 0 0 1px 0;
-	border-color: #9ea1a3; /* Suzu-iro */
-	float: left;
+	font-weight: bold;
 }
 
-div.mastertable .theName {
-	margin: 0;
-	padding: 2px 0 0 0;
-	width: 192px;
-	height: 20px;
-	vertical-align: middle;
-	border-style: dotted;
-	border-width: 0 0 1px 0;
-	border-color: #9ea1a3; /* Suzu-iro */
-	float: left;
-}
-
-div.mastertable .shortName {
-	margin: 0;
-	padding: 2px 0 0 0;
-	width: 96px;
-	height: 20px;
-	vertical-align: middle;
-	border-style: dotted;
-	border-width: 0 0 1px 0;
-	border-color: #9ea1a3; /* Suzu-iro */
-	float: left;
-}
-
-div.mastertable .theDescription {
-	margin: 0 96px 0 240px;
-	padding: 2px 0 0 0;
-	height: 20px;
-	vertical-align: middle;
-	border-style: dotted;
-	border-width: 0 0 1px 0;
-	border-color: #9ea1a3; /* Suzu-iro */
-}
-
-div.mastertable .longDescription {
-	margin: 0 8px 0 144px;
-	padding: 2px 0 0 0;
-	height: 20px;
-	vertical-align: middle;
-	border-style: dotted;
-	border-width: 0 0 1px 0;
-	border-color: #9ea1a3; /* Suzu-iro */
-}
-div.mastertable .theDescription input.rewritabletext {
-	margin: 0;
-	padding: 2px 0 0 2px;
-	border-style: solid;
-	border-color: #d4dcd6;	/* Sobakiri-iro */
-	border-width: 1px;
-	color: #383c3c; /* Youkan-iro */
-	width: 224px;
-}
-
-div.mastertable .theName input.rewritabletext {
-	margin: 0;
-	padding: 2px 0 0 2px;
-	border-style: solid;
-	border-color: #d4dcd6;	/* Sobakiri-iro */
-	border-width: 1px;
-	color: #383c3c; /* Youkan-iro */
+.mastertable .theName {
 	width: 169px;
 }
 
-div.mastertable .theMethod {
-	margin: 0;
-	padding: 2px 0 0 0;
+.mastertable .shortName {
 	width: 96px;
-	height: 20px;
-	vertical-align: middle;
-	border-style: dotted;
-	border-width: 0 0 1px 0;
-	border-color: #9ea1a3; /* Suzu-iro */
-	float: right;
+	padding: 4px 0 4px 0;
 }
 
-div.mastertable .null {
-	margin: 0;
-	padding: 2px 0 0 0;
-	width: 8px;
-	height: 20px;
-	vertical-align: middle;
-	border-style: dotted;
-	border-width: 0 0 1px 0;
-	border-color: #9ea1a3; /* Suzu-iro */
-	float: right;
+.mastertable .theDescription {
+	width: 256px;
 }
 
-div.errorstring {
+.mastertable .longDescription {
+	width: 320px;
+	padding: 4px 0 4px 0;
+}
+
+.mastertable input.rewritabletext {
+	padding: 3px;
+	border-style: solid;
+	border-color: #d4dcd6;	/* Sobakiri-iro */
+	border-width: 1px;
+	color: #383c3c; /* Youkan-iro */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+
+.mastertable .theName input.rewritabletext {
+	width: 160px;
+}
+
+.mastertable .theDescription input.rewritabletext {
+	width: 248px;
+}
+
+.mastertable .theMethod {
+	width: 96px;
 	padding: 0;
-	vertical-align: middle;
-	background: #e2041b; /* Shoujouhi */
-	color: #f3f3f2; /* Shironeri */
 }
 
-div.removedrecord {
+.mastertable .null {
+}
+
+.errorstring {
+	font-weight: bold;
+	color: #e2041b; /* Shoujouhi */
+}
+
+.removedrecord {
 	padding: 0;
-	vertical-align: middle;
-	background: #9ea1a3; /* Suzu-iro */
-	color: #727171; /* Nibi-iro */
+	color: #9ea1a3; /* Suzu-iro */
 }
 
 

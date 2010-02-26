@@ -1,5 +1,6 @@
-/* $Id: summary.css,v 1.1 2009/12/17 19:12:36 ak Exp $ */
-
+/* $Id: summary.css,v 1.2 2010/02/26 12:34:42 ak Exp $ */
+/* Copyright 2009,2010 Cubicroot Co. Ltd. */
+/* Summary classes */
 div.summary {
 	/* Based on 'result' class */
 	margin: 5px 1px 15px 25px;

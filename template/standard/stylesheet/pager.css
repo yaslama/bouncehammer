@@ -1,11 +1,15 @@
-/* $Id: pager.css,v 1.1 2009/12/17 19:12:36 ak Exp $ */
+/* $Id: pager.css,v 1.2 2010/02/26 12:34:42 ak Exp $ */
+/* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Pager Classes */
 div.pager {
 	margin: 0;
-	padding: 1px;
+	padding: 1px 2px;
 	background: #383c3c; /* Youkan-iro */
 	color: #e5e4e6; /* Shiraumenezu */
 	font-size: 10px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
 }
 
 div.pager a:link, a:hover, a:visited, a:visited:hover {
@@ -40,4 +44,7 @@ div.pager .thispage {
 	border-width: 1px;
 	border-style: solid;
 	border-color: #afafb0; /* Gin-nezu */
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	-opera-border-radius: 2px;
 }

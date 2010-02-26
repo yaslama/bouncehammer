@@ -1,14 +1,14 @@
-/* $Id: bouncehammer.css,v 1.1 2009/12/17 19:12:36 ak Exp $ */
-
+/* $Id: bouncehammer.css,v 1.2 2010/02/26 12:34:42 ak Exp $ */
+/* Copyright 2009,2010 Cubicroot Co. Ltd. */
 #ThePage {
-	margin: 0px auto;
+	margin:	0px auto;
 	padding: 0px;
 	width: 900px;
 	text-align: left;
 }
 
 #North-Ward {
-	height: 32px;
+	height: 48px;
 	margin: 2px 0;
 	padding: 5px;
 	width: 888px;
@@ -17,7 +17,7 @@
 
 #South-Ward {
 	clear: both;
-	height: 2px;
+	height: 8px;
 	margin: 2px 0;
 	padding: 5px;
 	width: 888px;
@@ -54,7 +54,7 @@
 
 #PageURI {
 	margin: 0;
-	padding: 2px 0;
+	padding: 0;
 	font-size: 10px;
 	text-align: left;
 	width: 880px;
@@ -62,16 +62,22 @@
 
 #PageURI input {
 	width: 880px;
+	margin: 4px 0 4px 0;
+	padding: 8px;
 	color: #524e4d; /* Keshizumi-iro */
+	background: #e5e4e6; /* Shiraumenezu */
 	border-color: #d4dcd6;	/* Sobakiri-iro */
-	border-width: 1px;
+	border-width: 0px;
 	border-style: solid;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
 }
 
 #Copyright, #Product {
 	margin: 2px 4px;
 	font-size: 9px;
-	color: #afafb0; /* Gin-nezu */
+	color: #727171; /* Nibi-iro */
 	display: inline;
 }
 
@@ -130,6 +136,7 @@ h1 {
 	font-family: 'Trebuchet MS', Verdana;
 	border-style: solid;
 	border-width: 0 0 2px 0;
+	text-shadow: 0px 1px 0px #bbbbbb;
 }
 
 h2 {
@@ -165,23 +172,6 @@ h6 {
 
 sup { font-size: 16px; }
 
-dl { 
-	margin: 1px;
-	padding: 1px;
-	font-size: 10px;
-}
-dl dt { 
-	font-weight: bold;
-	margin-top: 2px;
-}
-dl dd {}
-ol { 
-	margin: 2px 2px 4px 1px;
-	padding: 2px 2px 2px 16px;
-}
-
-ol li { margin: 1px 0; }
-
 legend { 
 	font-size: 10px;
 	color: #7b7c7d; /* Namari-iro */
@@ -211,33 +201,108 @@ a:visited {
 	text-decoration: none; 
 }
 
+span.baguette {
+	padding: 2px 8px;
+	color: #afafb0; /* Gin-nezu */
+	background: #383c3c; /* Youkan-iro */
+	border-color: #2b2b2b;	/* Rou-iro */
+	border-style: solid;
+	border-width: 1px;
+	-webkit-border-radius: 12px;
+	-moz-border-radius: 12px;
+	-opera-border-radius: 12px;
+}
 
-/* Menubar class in North-Ward */
+span.baguette a:link, span.baguette a:visited {
+	color: #afafb0; /* Gin-nezu */
+}
+
+span.baguette a:hover, span.baguette a:hover:visited {
+	text-decoration: none;
+	color: #f3f3f3; /* Nyuuhakushoku */
+}
+
+input.wide { /* Wide input field */
+	margin: 2px 0 2px 0;
+	padding: 4px;
+	border-style: solid;
+	border-color: #7b7c7d; /* Namari-iro */
+	border-width: 1px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+
+span.flatbutton, input.flatbutton {
+	margin: 2px;
+	padding: 2px 4px;
+	color: #727171; /* Nibi-iro */
+	font-weight: bold;
+	border-color: #d4dcd6;	/* Sobakiri-iro */
+	border-style: solid;
+	border-width: 1px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+	background-image:
+		-moz-linear-gradient( 
+			top, 
+			rgba(224, 224, 224, 0.1), 
+			rgba(224, 224, 224, 0.3) 10%, 
+			rgba(224, 224, 224, 0.7)
+		);
+
+	background-image:
+		-webkit-gradient(
+			linear, left top, left bottom,
+			color-stop( 0, rgba(224, 224, 224, 0.1)),
+			color-stop( 50%, rgba(224, 224, 224, 0.3)),
+			color-stop( 90%, rgba(224, 224, 224, 0.7))
+		);
+}
+
+span.flatbutton:hover {
+	border-color: #727171; /* Nibi-iro */
+}
+
+input.flatbutton:hover {
+	border-color: #727171; /* Nibi-iro */
+	color: #180614; /* Karasuba-iro */
+}
+
+/* Anchor pseudo classes in flatbutton class */
+span.flatbutton a:hover, span.flatbutton a:visited:hover {
+	color: #180614; /* Karasuba-iro */
+	text-decoration: none; 
+}
+
+
 /* Index items in West-Ward */
-div.index {
+ul.index {
 	margin: 0 4px 0 0;
 	padding: 8px 0px;
 	color: #887f7a;	/* Susu-iro */
-	/* background: #f8fbf8; *//* Hakuji */
-	border-style: dotted;
-	border-width: 0 0 0 0;
-	border-color: #d4dcd6;	/* Sobakiri-iro */
 	font-size: 10px;
+	list-style-type: none;
 }
 
-div.index span.item {
+ul.index li.item {
 	width: 130px;
 	margin: 2px 0;
 	padding: 2px 2px 2px 8px;
 	display: block;
 }
 
-div.index span.item:hover,
-div.index span.subitem:hover {
-	background: #efefef;
+ul.index li.item:hover,
+ul.index li.subitem:hover {
+	font-weight: bold;
+	background: #e5e4e6; /* Shiraumenezu */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
 }
 
-div.index span.subitem {
+ul.index li.subitem {
 	width: 122px;
 	margin: 2px 0;
 	padding: 2px 2px 2px 16px;
@@ -245,23 +310,46 @@ div.index span.subitem {
 }
 
 /* Anchor pseudo classes in index class */
-div.index a:link {
+ul.index a:link {
 	color: #595857;	/* Sumi */
 	text-decoration: none; 
 }
 
-div.index a:hover, a:hover:visited {
+ul.index a:hover, ul.index a::visited:hover {
 	color: #2b2b2b; /* Kuro */
 	background: #e5e4e6; /* Shiraumenezu */
 	text-decoration: none; 
 }
 
-div.index a:visited { 
+ul.index a:visited { 
 	color: #595857; /* Sumi */
 	text-decoration: none; 
 }
 
-p.description { margin: 2px 1px 1px 1px; }
+p.description { 
+	margin: 2px 1px 1px 1px;
+	padding: 1px 1px 2px 4px;
+	font-size: 9px;
+}
+p.description dl { 
+	margin: 1px;
+	padding: 1px;
+}
+
+p.description dl dt { 
+	font-weight: bold;
+	margin-top: 2px;
+}
+
+p.description dl dd {}
+
+ol { 
+	margin: 2px 2px 4px 1px;
+	padding: 2px 2px 2px 16px;
+}
+
+ol li { margin: 1px 0; }
+
 
 
 /* Result class */
@@ -275,6 +363,10 @@ div.result p.exception {
 	padding: 4px;
 	background: #e2041b; /* Shoujouhi */
 	color: #fffffc; /* Gofun-iro */
+	font-weight: bold;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
 }
 
 div.result .upload-summary {
@@ -284,63 +376,37 @@ div.result .upload-summary {
 	border-style: solid;
 	border-width: 1px;
 	border-color: #7b7c7d; /* Namari-iro */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
 }
 
-input.flat { /* Flat textbox */
-	margin: 0;
-	padding: 0 0 0 1px;
-	border-style: solid;
-	border-color: #7b7c7d; /* Namari-iro */
-	border-width: 1px;
-	color: #383c3c; /* Youkan-iro */
-}
-
-span.flatbutton {
-	border-color: #d4dcd6;	/* Sobakiri-iro */
-	border-style: solid;
-	border-width: 1px;
-	margin: 2px;
-	padding: 2px;
-}
-
-span.flatbutton:hover {
-	background: #e5e4e6; /* Shiraumenezu */
-}
-
-/* Anchor pseudo classes in flatbutton class */
-span.flatbutton a:link {
-	color: #595857;	/* Sumi */
-	text-decoration: none; 
-}
-
-span.flatbutton a:hover, a:hover:visited {
-	color: #595857; /* Sumi */
-	background: #e5e4e6; /* Shiraumenezu */
-	text-decoration: none; 
-}
-
-span.flatbutton a:visited { 
-	color: #595857; /* Sumi */
-	text-decoration: none; 
-}
 
 /* Reason classes */
-span.undefined		{ border: solid 2px #111111; background: #222222; }
-span.userunknown	{ border: solid 2px #111111; background: #e2041b; }
-span.hostunknown	{ border: solid 2px #111111; background: #e83929; }
-span.hasmoved		{ border: solid 2px #111111; background: #ee7800; }
-span.filtered		{ border: solid 2px #111111; background: #ea5506; }
-span.mailboxfull	{ border: solid 2px #111111; background: #b8d200; }
-span.exceedlimit	{ border: solid 2px #111111; background: #c3d825; }
-span.systemfull		{ border: solid 2px #111111; background: #00a497; }
-span.notaccept		{ border: solid 2px #111111; background: #0094c8; }
-span.mesgtoobig		{ border: solid 2px #111111; background: #007b43; }
-span.suspend		{ border: solid 2px #111111; background: #752100; }
-span.mailererror	{ border: solid 2px #111111; background: #44617b; }
-span.securityerr	{ border: solid 2px #111111; background: #1e50a2; }
-span.whitelisted	{ border: solid 2px #888888; background: #eeeeee; }
-span.unstable		{ border: solid 2px #111111; background: #674196; }
-span.onhold		{ border: solid 2px #111111; background: #595857; }
+span.reason {
+	border-style: solid;
+	border-width: 2px;
+	border-color: #16160e; /* Ankokushoku */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+span.undefined		{ background: #222222; }
+span.userunknown	{ background: #e2041b; }
+span.hostunknown	{ background: #e83929; }
+span.hasmoved		{ background: #ee7800; }
+span.filtered		{ background: #ea5506; }
+span.mailboxfull	{ background: #b8d200; }
+span.exceedlimit	{ background: #c3d825; }
+span.systemfull		{ background: #00a497; }
+span.notaccept		{ background: #0094c8; }
+span.mesgtoobig		{ background: #007b43; }
+span.suspend		{ background: #752100; }
+span.mailererror	{ background: #44617b; }
+span.securityerr	{ background: #1e50a2; }
+span.whitelisted	{ border-color: #888888; background: #eeeeee; }
+span.unstable		{ background: #674196; }
+span.onhold		{ background: #595857; }
 
 /* Other text */
 span.errortext		{ color: #cc0000; }
