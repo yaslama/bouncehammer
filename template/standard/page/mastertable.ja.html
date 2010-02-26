@@ -46,39 +46,51 @@
 			
 			<h2>マスターテーブル([% tablename %])</h2>
 			<div class = 'result'>
-				<div class = 'mastertable' style = 'font-weight: bold;'>
-					<div class = 'theID'>
-						<form action = '[% "${scriptname}/tables/${tablename}/sort/id" %]' method = 'POST' id = 'sortbyid'>
-							<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
-							<a href = "javascript:void(0);" onClick = "sortbyid.submit(); return(false);"
-								title = 'IDで並べ替え'>[%- IF sortby == 'Id' -%]*[%- END -%]ID &#9652;</a>
-						</form>
-					</div>
-					<div class = 'theMethod'>&nbsp; </div>
-					<div class = 'theName'>
-						<form action = '[% "${scriptname}/tables/${tablename}/sort/${fieldname}" %]' method = 'POST' id = 'sortbyname'>
-							<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
-							<a href = "javascript:void(0);" onClick = "sortbyname.submit(); return(false);"
-								title = '[% fieldname %]で並べ替え'>
-								[%- IF sortby == fieldname -%]*[%- END -%][% fieldname %] &#9652;</a>
-						</form>
-					</div>
-					<div class = 'theDescription'>
-						<form action = '[% "${scriptname}/tables/${tablename}/sort/description" %]' method = 'POST' id = 'sortbydesc'>
-							<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
-							<a href = "javascript:void(0);" onClick = "sortbydesc.submit(); return(false);" 
-								title = '説明で並べ替え'>
-								[%- IF sortby == 'Description' -%]*[%- END -%]説明 &#9652;</a>
-						</form>
-					</div>
-				</div>
+				<table class = 'tableheadings'>
+					<thead class = 'mastertable'>
+						<tr>
+							<th class = 'theID'>
+								<form action = '[% "${scriptname}/tables/${tablename}/sort/id" %]' method = 'POST' id = 'sortbyid'>
+									<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
+									<span class = 'baguette'>
+									<a href = "javascript:void(0);" onClick = "sortbyid.submit(); return(false);"
+										title = 'IDで並べ替える'>[%- IF sortby == 'Id' -%]*[%- END -%]ID &#9652;</a>
+									</span>
+								</form>
+							</th>
+							<th class = 'theName'>
+								<form action = '[% "${scriptname}/tables/${tablename}/sort/${fieldname}" %]' method = 'POST' id = 'sortbyname'>
+									<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
+									<span class = 'baguette'>
+									<a href = "javascript:void(0);" onClick = "sortbyname.submit(); return(false);"
+										title = '[% fieldname %]で並べ替える'>
+										[%- IF sortby == fieldname -%]*[%- END -%][% fieldname %] &#9652;</a>
+									</span>
+								</form>
+							</th>
+							<th class = 'theDescription'>
+								<form action = '[% "${scriptname}/tables/${tablename}/sort/description" %]' method = 'POST' id = 'sortbydesc'>
+									<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
+									<span class = 'baguette'>
+									<a href = "javascript:void(0);" onClick = "sortbydesc.submit(); return(false);" 
+										title = 'Descriptionで並べ替える'>
+										[%- IF sortby == 'Description' -%]*[%- END -%]Description &#9652;</a>
+									</span>
+								</form>
+							</th>
+							<th class = 'theMethod'>&nbsp; </th>
+						</tr>
+					</thead>
+				</table>
 				[% INCLUDE "div-mastertable-contents.${mylanguage}.html" %]
-				<div id = 'here_is_old_record'>
+
+				<div id = 'here_is_old_record' class = 'mastertable'>
 					[% INCLUDE "div-mastertable-removed.${mylanguage}.html" %]
 				</div>
 
-				<div id = 'here_is_new_record'></div>
-				[%- IF tablename == 'Senderdomains' AND isreadonly == 0 -%]
+				<div id = 'here_is_new_record' class = 'stored'></div>
+
+				[%- IF tablename == 'Senderdomains' AND isreadonly != 1 -%]
 					[% INCLUDE "div-create-a-new-mastertable-record.${mylanguage}.html" %]
 					[% INCLUDE "div-delete-a-mastertable-record.${mylanguage}.html" %]
 				[%- END -%]

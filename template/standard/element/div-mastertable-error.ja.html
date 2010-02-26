@@ -1,10 +1,12 @@
-[% FOREACH R IN tablecontents %]
-	<div class = 'errorstring'>
-		<div class = 'mastertable'>
-			<div class = 'theID'><strong>[エラー] [% R.id %]</strong></div>
-			<div class = 'theMethod'>&nbsp;</div>
-			<div class = 'theName'>&nbsp; [% R.name %]</div>
-			<div class = 'theDescription'>&nbsp; [% R.description %]</div>
-		</div>
-	</div>
-[% END %]
+<table class = 'stored'>
+	<tbody class = 'mastertable'>
+	[% FOREACH R IN tablecontents %]
+		<tr class = 'errorstring'>
+			<td class = 'theID'><strong>エラー [% R.id %]</strong></td>
+			<td class = 'theName'>[% R.name %]</td>
+			<td class = 'theDescription'>[% R.description %]</td>
+			<td class = 'theMethod'></td>
+		</tr>
+	[% END %]
+	</tbody>
+</table>
