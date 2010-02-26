@@ -3,10 +3,10 @@
 	<form action = '[% scriptname %]/search/recipient' method = 'POST'>
 	<fieldset>
 		<legend>宛先アドレスで検索(3)</legend>
-		<input type = 'search' name = 'recipient' accesskey = '3' style = 'width: 430px;'
+		<input type = 'text' name = 'recipient' accesskey = '3' style = 'width: 430px;' class = 'wide'
 			placeholder = '宛先アドレス' autosave = '[% systemname %].recipient' results = '16' />
-		<input type = 'submit' value = '検索(4)' id = 'dosearch' accesskey = '4' />
-		<input type = 'reset' value = '消去(0)' accesskey = '0' /><br />
+		<input type = 'submit' value = '検索(4)' id = 'dosearch' accesskey = '4' class = 'flatbutton' />
+		<input type = 'reset' value = '消去(0)' accesskey = '0' class = 'flatbutton' /><br />
 
 		<div style = 'margin: 8px 8px 4px 8px;'>
 			<a href = "javascript:void(0)" onClick = "toggleIt('search-condition');"
@@ -19,7 +19,7 @@
 				<tr>
 					<td class = 'key'>発信者アドレス</td>
 					<td class = 'value'>
-						<input type = 'search' name = 'addresser' style = 'width: 288px;' 
+						<input type = 'text' name = 'addresser' style = 'width: 288px;' class = 'wide'
 							placeholder = '発信者アドレス' autosave = '[% systemname %].addresser' 
 							results = '16' onChange = "checksa.innerHTML='&#9745; 使用';"/>
 					</td>
@@ -28,7 +28,7 @@
 				<tr>
 					<td class = 'key'>発信者ドメイン</td>
 					<td class = 'value'>
-						<input type = 'search' name = 'senderdomain' style = 'width: 288px;' 
+						<input type = 'text' name = 'senderdomain' style = 'width: 288px;' class = 'wide'
 							placeholder = '発信者ドメイン' autosave = '[% systemname %].senderdomain' 
 							results = '16' onChange = "checksd.innerHTML='&#9745; 使用';"/>
 					</td>
@@ -38,7 +38,7 @@
 				<tr>
 					<td class = 'key'>宛先ドメイン</td>
 					<td class = 'value'>
-						<input type = 'search' name = 'destination' style = 'width: 288px;' 
+						<input type = 'text' name = 'destination' style = 'width: 288px;' class = 'wide'
 							placeholder = '宛先ドメイン' autosave = '[% systemname %].destination' 
 							results = '16' onChange = "checkdd.innerHTML='&#9745; 使用';"/>
 					</td>
@@ -64,7 +64,7 @@
 				<tr>
 					<td class = 'key'>トークン(MD5)</td>
 					<td class = 'value'>
-						<input type = 'search' name = 'token' results = '16' style = 'width: 288px;'
+						<input type = 'text' name = 'token' results = '16' style = 'width: 288px;' class = 'wide'
 							placeholder = 'トークン(16進数)32文字' autosave = '[% systemname %].token' 
 							onChange = "checkmd.innerHTML = '&#9745; 使用';"/>
 					</td>

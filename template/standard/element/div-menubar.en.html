@@ -35,12 +35,12 @@
 	<form action = '[% ThisURI %]' method = 'POST' id = 'SelectLanguage' style = 'display: inline;'>
 		[% INCLUDE "select-language.html" %]
 		<span class = 'flatbutton'>
-			<a href = "javascript:void(0);" onClick = "SelectLanguage.submit(); return(false);">SW</a>
+			<a href = "javascript:void(0);" onClick = "SelectLanguage.submit(); return(false);">Switch</a>
 		</span>
 	</form>
 
 	<span class = 'flatbutton'>
-		<a href = "javascript:void(0);" onClick = "toggleIt('PageURI');">URI</a>
+		<a href = "javascript:void(0);" onClick = "toggleIt('PageURI');">Display URL</a>
 	</span>
 	<div id = 'PageURI' style = 'display: none;'>
 		<input type = 'text' value = '[% ThisURI %]' class = 'flat' onClick = "ThisURI.select();" />

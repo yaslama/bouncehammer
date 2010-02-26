@@ -3,10 +3,10 @@
 	<form action = '[% scriptname %]/search/recipient' method = 'POST'>
 	<fieldset>
 		<legend>Search by Recipient Address(3)</legend>
-		<input type = 'search' name = 'recipient' accesskey = '3' style = 'width: 430px;'
+		<input type = 'text' name = 'recipient' accesskey = '3' style = 'width: 430px;' class = 'wide'
 			placeholder = 'Recipient Address' autosave = '[% systemname %].recipient' results = '16' />
-		<input type = 'submit' value = 'Search(4)' id = 'dosearch' accesskey = '4' />
-		<input type = 'reset' value = 'Reset(0)' accesskey = '0' /><br />
+		<input type = 'submit' value = 'Search(4)' id = 'dosearch' accesskey = '4' class = 'flatbutton' />
+		<input type = 'reset' value = 'Reset(0)' accesskey = '0' class = 'flatbutton' /><br />
 
 		<div style = 'margin: 8px 8px 4px 8px;'>
 			<a href = "javascript:void(0)" onClick = "toggleIt('search-condition');"
@@ -19,7 +19,7 @@
 				<tr>
 					<td class = 'key'>Sender address</td>
 					<td class = 'value'>
-						<input type = 'search' name = 'addresser' style = 'width: 288px;' 
+						<input type = 'text' name = 'addresser' style = 'width: 288px;' class = 'wide'
 							placeholder = 'Sender address' autosave = '[% systemname %].addresser' 
 							results = '16' onChange = "checksa.innerHTML='&#9745; Use';"/>
 					</td>
@@ -28,7 +28,7 @@
 				<tr>
 					<td class = 'key'>Sender domain</td>
 					<td class = 'value'>
-						<input type = 'search' name = 'senderdomain' style = 'width: 288px;' 
+						<input type = 'text' name = 'senderdomain' style = 'width: 288px;' class = 'wide'
 							placeholder = 'Sender Domain' autosave = '[% systemname %].senderdomain' 
 							results = '16' onChange = "checksd.innerHTML='&#9745; Use';"/>
 					</td>
@@ -38,7 +38,7 @@
 				<tr>
 					<td class = 'key'>Destination domain</td>
 					<td class = 'value'>
-						<input type = 'search' name = 'destination' style = 'width: 288px;' 
+						<input type = 'text' name = 'destination' style = 'width: 288px;' class = 'wide'
 							placeholder = 'Destination Domain' autosave = '[% systemname %].destination' 
 							results = '16' onChange = "checkdd.innerHTML='&#9745; Use';"/>
 					</td>
@@ -64,7 +64,7 @@
 				<tr>
 					<td class = 'key'>Message Token(MD5)</td>
 					<td class = 'value'>
-						<input type = 'search' name = 'token' results = '16' style = 'width: 288px;'
+						<input type = 'text' name = 'token' results = '16' style = 'width: 288px;' class = 'wide'
 							placeholder = 'Message Token(MD5) Hex' autosave = '[% systemname %].token' 
 							onChange = "checkmd.innerHTML = '&#9745; Use';"/>
 					</td>

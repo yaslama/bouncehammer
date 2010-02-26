@@ -14,12 +14,14 @@
 	<div id = 'record-of-[% B.id %]' class = 'record'>
 		<div class = 'recordsummary' id = 'summary-of-[% B.id %]'>
 			<div class = 'number-in-summary'>
-				<span class = '[% B.reason %]'>&nbsp; &nbsp; &nbsp;</span>&nbsp;
+				<span class = 'reason [% B.reason %]'>&nbsp; &nbsp; &nbsp;</span>&nbsp;
 				# [% B.id %]
 			</div>
 			<div class = 'status-in-summary'>
+				<span class = 'flatbutton'>
 				<a href = "javascript:void(0)" 
 					onClick = "toggleIt('details-of-[% B.id %]');">&#9997; 詳細</a>
+				</span>
 			</div>
 			<div class = 'fields-in-summary'>
 				発信: <strong>[% B.addresser %]</strong> ([% B.frequency %]回)<br />
@@ -86,7 +88,9 @@
 					<tr>
 						<td class = 'key'>トークン(MD5)</td>
 						<td class = 'value'>
-							<input type = 'text' class = 'flat' style = 'width: 320px;' value = '[% B.token %]' />
+							<span class = 'token'>
+								<input type = 'text' value = '[% B.token %]' />
+							</span>
 						</td>
 						<td class = 'extra'>
 							<input type = 'hidden' name = 'token' value = '[% B.token %]' />
@@ -115,7 +119,7 @@
 					<tr>
 						<td class = 'key'>
 							<input type = 'submit' id = 'do-update-[% B.id %]' style = 'display: [% DisplayProp %];' 
-								value = '更新' disabled onClick = "this.value = '更新中...';" />
+								class = 'flatbutton' value = '更新' disabled onClick = "this.value = '更新中...';" />
 						</td >
 						<td class = 'value'> </td>
 						<td class = 'extra'> </td>

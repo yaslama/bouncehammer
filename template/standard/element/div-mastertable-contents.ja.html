@@ -14,6 +14,7 @@
 				</div>
 				<div class = 'theMethod'>
 					&nbsp;<input type = 'submit' id = 'do_update_[% R.id %]' value = '更新' 
+						class = 'flatbutton' style = 'font-size: 9px;' 
 						onClick = "this.value = '更新中...';" disabled />
 				</div>
 				<div class = 'theName' id = 'name_of_[% R.id %]'>
@@ -31,7 +32,7 @@
 			<div class = 'shortName' id = 'name_of_[% R.id %]'>&nbsp; [% R.name %] &nbsp;</div>
 			<div class = 'longDescription'>
 				[%- IF tablename == 'Reasons' -%]
-					&nbsp; <span class = '[% R.name %]'>&nbsp;&nbsp; &nbsp;</span>
+					&nbsp; <span class = 'reason [% R.name %]'>&nbsp;&nbsp; &nbsp;</span>
 				[%- END -%]
 				&nbsp; [% R.description %] &nbsp;
 			</div>
