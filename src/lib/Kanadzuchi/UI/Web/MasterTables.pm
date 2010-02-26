@@ -1,4 +1,4 @@
-# $Id: MasterTables.pm,v 1.5 2010/02/21 20:46:44 ak Exp $
+# $Id: MasterTables.pm,v 1.6 2010/02/26 12:34:12 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::Web::
                                                                                   
@@ -95,7 +95,7 @@ sub tablectl_ontheweb
 			}
 			else
 			{
-				if( Kanadzuchi::RFC2822->is_domainpart($table->name()) )
+				if( Kanadzuchi::RFC2822->is_domainpart($table->name()) && $table =~ m{[.]} )
 				{
 					my $_curid = $table->getidbyname( $self->{'database'} );
 
@@ -134,7 +134,9 @@ sub tablectl_ontheweb
 				{
 					# Invalid name
 					$tmpl = $errt;
-					$aref = [ { 'name' => $table->name(), 'description' => q(Invalid name), } ];
+					$aref = [ { 
+						'name' => $table->name(), 
+						'description' => q(Invalid name or not FQDN: [).$table->name().q(]), } ];
 				}
 			}
 
