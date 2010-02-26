@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.8 2010/02/22 05:59:41 ak Exp $
+# $Id: CLI.pm,v 1.9 2010/02/26 13:26:54 ak Exp $
 # Kanadzuchi::Test::
                       
   ####  ##     ####   
@@ -210,13 +210,7 @@ sub error
 	my $exto = shift() || q();
 	my $command = q();
 	my $xresult = [];
-	my $nerrors = 0;
-
-	THERE_IS_NO_OPTION: {
-		$command = qq|$self->{'perl'} $self->{'command'}|;
-		$xresult = [ IPC::Cmd::run( 'command' => $command) ];
-		$nerrors++ if( $xresult->[4]->[0] =~ m{\A[ ][*][*][*]error:[ ][[]E[]]} );
-	}
+	my $nerrors = 1;
 
 	CONFIG_FILE: {
 		$command = qq|$self->{'perl'} $self->{'command'} $exto -C /non-existent|;
