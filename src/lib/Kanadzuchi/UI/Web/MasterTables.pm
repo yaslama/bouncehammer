@@ -1,4 +1,4 @@
-# $Id: MasterTables.pm,v 1.6 2010/02/26 12:34:12 ak Exp $
+# $Id: MasterTables.pm,v 1.7 2010/02/26 13:33:41 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::Web::
                                                                                   
@@ -95,7 +95,7 @@ sub tablectl_ontheweb
 			}
 			else
 			{
-				if( Kanadzuchi::RFC2822->is_domainpart($table->name()) && $table =~ m{[.]} )
+				if( Kanadzuchi::RFC2822->is_domainpart($table->name()) && $table->name =~ m{[.]} )
 				{
 					my $_curid = $table->getidbyname( $self->{'database'} );
 
