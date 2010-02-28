@@ -1,4 +1,4 @@
-# $Id: Modules.PL,v 1.11 2010/02/22 18:28:26 ak Exp $
+# $Id: Modules.PL,v 1.12 2010/02/28 03:01:56 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 use strict;
 use warnings;
@@ -23,6 +23,7 @@ my $Dependencies = {
 		'Term::ProgressBar'	=> [ 2.09, 0, 'Perl' ],
 		'Text::ASCIITable'	=> [ 0.18, 0, 'Perl' ],
 		'Time::Piece'		=> [ 1.12, 5.009005, 'Unknown' ],
+		'YAML'			=> [ 0.37, 0, 'Perl' ],
 	},
 	'UI::CLI' => {
 		'Carp'			=> [ 1.01, 5.000000, 'Perl' ],
@@ -38,6 +39,7 @@ my $Dependencies = {
 		'CGI::Application'	=> [ 4.21, 0, 'Perl' ],
 		'Compress::Zlib'	=> [ 2.023, 5.009003, 'Perl' ],
 		'Crypt::CBC'		=> [ 2.30, 0, 'Unknown' ],
+		'Crypt::DES'		=> [ 1.00, 0, 'Unknown' ],
 		'File::Copy'		=> [ 2.06, 5.002, 'Perl' ],
 		'IO::Compress::Bzip2'	=> [ 2.023, 5.010001, 'Perl' ],
 		'IO::Compress::Gzip'	=> [ 2.023, 5.009004, 'Perl' ],
