@@ -10,7 +10,7 @@
 
 		<div style = 'margin: 8px 8px 4px 8px;'>
 			<a href = "javascript:void(0)" onClick = "toggleIt('search-condition');"
-				accesskey = '9'>&#9997; Search Condition(9)</a>
+				accesskey = '9'>Search Condition(9)</a>
 		</div>
 
 		<div id = 'search-condition' style = 'display: [% showsearchcondition %];'> 
@@ -169,7 +169,7 @@
 			</table>
 
 		</div>
-		[%- IF hascondition -%]
+		[%- IF hascondition AND 0 -%]
 			[% INCLUDE "form-search-query.${mylanguage}.html" %]
 		[%- END -%]
 	</fieldset>

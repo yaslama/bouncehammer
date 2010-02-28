@@ -1,16 +1,7 @@
 [%- IF token -%]
-	<table style = 'border: #d4dcd6 solid 1px; margin: 2px;'>
-		<tbody>
-			<tr>
-				<td class = 'key'>ペア</td>
-				<td class = 'value'>[% addresser %]:[% recipient %]</td>
-				<td class = 'extra'> </td>
-			</tr>
-			<tr>
-				<td class = 'key'>トークン(MD5)</td>
-				<td class = 'value'>[% token %]</td>
-				<td class = 'extra'> </td>
-			</tr>
-		</tbody>
-	</table>
+	<div class = 'messagetoken'>
+		<div class = 'pair'>[% addresser %]:[% recipient %]</div>
+		<div class = 'token'>[% token %]</div>
+	</div>
 [%- END -%]
+
