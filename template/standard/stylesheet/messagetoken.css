@@ -1,0 +1,19 @@
+/* $Id: messagetoken.css,v 1.1 2010/02/28 09:07:32 ak Exp $ */
+/* Copyright 2009,2010 Cubicroot Co. Ltd. */
+/* Message token classes */
+div.messagetoken {
+	margin: 4px 2px;
+	padding: 4px 8px;
+	background-color: #f3f3f2; /* Shironeri */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+div.pair {
+	font-size: 11px;
+}
+
+div.token {
+	font-size: 22px;
+	font-weight: bold;
+}
