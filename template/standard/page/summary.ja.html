@@ -26,8 +26,8 @@
 
 		<div id = 'Central-Ward'>
 
+			<h2>[% tablesumm.bouncelogs.screenname %] テーブル</h2>
 			<div class = 'summary'>
-				<h2>[% tablesumm.bouncelogs.screenname %] テーブル</h2>
 				<table>
 					<tbody>
 						<tr>
@@ -93,9 +93,11 @@
 						</tr>
 					</tbody>
 				</table>
+			</div>
 
-				[% FOREACH T IN [ 'senderdomains','destinations' ] %]
-					<h2>[% tablesumm.${T}.screenname %] テーブル</h2>
+			[% FOREACH T IN [ 'senderdomains','destinations' ] %]
+				<h2>[% tablesumm.${T}.screenname %] テーブル</h2>
+				<div class = 'summary'>
 					<table>
 						<tbody>
 							<tr>
@@ -161,8 +163,8 @@
 							</tr>
 						</tbody>
 					</table>
-				[% END %]
-			</div>
+				</div>
+			[% END %]
 		</div>
 		<div id = 'South-Ward'>
 		</div>
