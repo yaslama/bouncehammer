@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.4 2010/02/28 22:40:20 ak Exp $
+ $Id: RELEASE_NOTES,v 1.5 2010/03/01 00:11:04 ak Exp $
 -----------------------------------------------------------------------
  This listing shows the version of  BounceHammer/Error Mail Controller
  system, the version of BounceHammer system's config file, the date of
@@ -8,7 +8,7 @@
 -----------------------------------------------------------------------
 
 -----------------------------------------------------------------------
-2.0.0/2.0.0	2010/02/28
+2.0.0/2.0.0	2010/03/01
 
 	BounceHammer 2.0.0 Release.
 
