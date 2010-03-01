@@ -1,4 +1,6 @@
-# $Id: Test.pm,v 1.13 2010/02/21 20:46:44 ak Exp $
+# $Id: Test.pm,v 1.14 2010/03/01 23:42:12 ak Exp $
+# -Id: Test.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
+# -Id: Test.pm,v 1.10 2009/08/17 12:39:31 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::Web::
                                

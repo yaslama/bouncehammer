@@ -1,4 +1,7 @@
-# $Id: Mbox.pm,v 1.3 2010/02/21 20:24:12 ak Exp $
+# $Id: Mbox.pm,v 1.4 2010/03/01 23:41:41 ak Exp $
+# -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
+# -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
+# -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                              

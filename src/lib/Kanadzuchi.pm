@@ -1,4 +1,7 @@
-# $Id: Kanadzuchi.pm,v 1.9 2010/02/25 09:01:11 ak Exp $
+# $Id: Kanadzuchi.pm,v 1.10 2010/03/01 23:41:39 ak Exp $
+# -Id: TheHammer.pm,v 1.4 2009/09/01 23:19:41 ak Exp -
+# -Id: Herculaneum.pm,v 1.13 2009/08/27 05:09:23 ak Exp -
+# -Id: Version.pm,v 1.35 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 
  ##  ##                           ##                      ##      ##    

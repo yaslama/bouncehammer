@@ -1,4 +1,5 @@
-# $Id: Smartphone.pm,v 1.2 2010/02/21 20:36:59 ak Exp $
+# $Id: Smartphone.pm,v 1.3 2010/03/01 23:41:55 ak Exp $
+# -Id: SmartPhone.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
                                                                         

@@ -1,4 +1,7 @@
-# $Id: YAML.pm,v 1.6 2010/02/21 20:37:00 ak Exp $
+# $Id: YAML.pm,v 1.7 2010/03/01 23:41:57 ak Exp $
+# -Id: Serialized.pm,v 1.8 2009/12/31 16:30:13 ak Exp -
+# -Id: Serialized.pm,v 1.2 2009/10/06 09:11:18 ak Exp -
+# -Id: Serialized.pm,v 1.12 2009/07/16 09:05:42 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Stored
                              

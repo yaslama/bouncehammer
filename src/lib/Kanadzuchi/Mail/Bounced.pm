@@ -1,4 +1,7 @@
-# $Id: Bounced.pm,v 1.4 2010/02/25 09:01:28 ak Exp $
+# $Id: Bounced.pm,v 1.5 2010/03/01 23:41:51 ak Exp $
+# -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
+# -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
+# -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::
                                                  

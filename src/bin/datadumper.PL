@@ -1,5 +1,8 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper,v 1.16 2010/02/21 20:09:01 ak Exp $
+# $Id: datadumper.PL,v 1.3 2010/03/01 23:41:33 ak Exp $
+# -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
+# -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
+# -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Command::
                                                                         

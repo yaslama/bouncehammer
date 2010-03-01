@@ -1,4 +1,6 @@
-# $Id: TestRun.pm,v 1.4 2010/02/21 20:25:02 ak Exp $
+# $Id: TestRun.pm,v 1.5 2010/03/01 23:41:48 ak Exp $
+# -Id: TestRun.pm,v 1.4 2009/09/01 23:19:46 ak Exp -
+# -Id: TestRun.pm,v 1.2 2009/08/27 05:09:32 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Config::
                                                     

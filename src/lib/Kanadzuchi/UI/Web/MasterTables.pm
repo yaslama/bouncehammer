@@ -1,4 +1,6 @@
-# $Id: MasterTables.pm,v 1.7 2010/02/26 13:33:41 ak Exp $
+# $Id: MasterTables.pm,v 1.8 2010/03/01 23:42:12 ak Exp $
+# -Id: MasterTables.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
+# -Id: MasterTables.pm,v 1.7 2009/08/15 15:06:56 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::Web::
                                                                                   

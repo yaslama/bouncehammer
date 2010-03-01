@@ -1,4 +1,6 @@
-# $Id: Web.pm,v 1.9 2010/02/25 18:59:46 ak Exp $
+# $Id: Web.pm,v 1.10 2010/03/01 23:42:10 ak Exp $
+# -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
+# -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                         

@@ -1,4 +1,6 @@
-# $Id: Table.pm,v 1.10 2010/02/21 20:41:58 ak Exp $
+# $Id: Table.pm,v 1.11 2010/03/01 23:42:04 ak Exp $
+# -Id: Table.pm,v 1.1 2009/08/29 09:08:01 ak Exp -
+# -Id: Table.pm,v 1.6 2009/05/29 08:22:21 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::RDB::
                                    

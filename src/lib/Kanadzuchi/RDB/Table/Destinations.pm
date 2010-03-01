@@ -1,4 +1,6 @@
-# $Id: Destinations.pm,v 1.4 2010/02/21 20:42:02 ak Exp $
+# $Id: Destinations.pm,v 1.5 2010/03/01 23:42:08 ak Exp $
+# -Id: Destinations.pm,v 1.1 2009/08/29 09:07:37 ak Exp -
+# -Id: Destinations.pm,v 1.2 2009/04/29 10:13:00 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::RDB::Table::
                                                                                      

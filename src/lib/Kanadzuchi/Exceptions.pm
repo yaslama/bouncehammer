@@ -1,4 +1,6 @@
-# $Id: Exceptions.pm,v 1.2 2010/02/21 20:24:12 ak Exp $
+# $Id: Exceptions.pm,v 1.3 2010/03/01 23:41:41 ak Exp $
+# -Id: Exceptions.pm,v 1.2 2009/10/04 13:41:27 ak Exp -
+# -Id: Exceptions.pm,v 1.3 2009/06/05 22:54:12 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
 

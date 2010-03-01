@@ -1,4 +1,6 @@
-# $Id: BounceLogs.pm,v 1.7 2010/02/21 20:42:00 ak Exp $
+# $Id: BounceLogs.pm,v 1.8 2010/03/01 23:42:06 ak Exp $
+# -Id: BounceLogs.pm,v 1.1 2009/08/29 08:58:48 ak Exp -
+# -Id: BounceLogs.pm,v 1.6 2009/08/27 05:09:55 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::RDB::Schema::
                                                                      

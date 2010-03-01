@@ -1,4 +1,6 @@
-# $Id: RFC2822.pm,v 1.7 2010/02/21 20:24:12 ak Exp $
+# $Id: RFC2822.pm,v 1.8 2010/03/01 23:41:41 ak Exp $
+# -Id: RFC2822.pm,v 1.1 2009/08/29 08:52:03 ak Exp -
+# -Id: RFC2822.pm,v 1.6 2009/05/29 08:22:21 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                   

@@ -1,5 +1,7 @@
 #__PERLEXECUTABLE__
-# $Id: api.cgi,v 1.5 2010/02/21 20:11:18 ak Exp $
+# $Id: api.PL,v 1.2 2010/03/01 23:41:35 ak Exp $
+# -Id: api.PL,v 1.5 2010/02/21 20:11:18 ak Exp -
+# -Id: api.cgi,v 1.3 2009/10/06 00:36:28 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 package Kanadzuchi::API::CGI;
 

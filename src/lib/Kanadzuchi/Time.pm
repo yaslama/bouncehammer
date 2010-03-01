@@ -1,4 +1,6 @@
-# $Id: Time.pm,v 1.3 2010/02/21 20:24:12 ak Exp $
+# $Id: Time.pm,v 1.4 2010/03/01 23:41:41 ak Exp $
+# -Id: Time.pm,v 1.1 2009/08/29 09:13:56 ak Exp -
+# -Id: Time.pm,v 1.5 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                             

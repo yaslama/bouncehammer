@@ -1,4 +1,6 @@
-# $Id: Report.pm,v 1.7 2010/02/21 20:25:04 ak Exp $
+# $Id: Report.pm,v 1.8 2010/03/01 23:41:50 ak Exp $
+# -Id: Report.pm,v 1.1 2009/08/29 08:25:10 ak Exp -
+# -Id: Report.pm,v 1.5 2009/08/27 05:09:49 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Log::
                                            

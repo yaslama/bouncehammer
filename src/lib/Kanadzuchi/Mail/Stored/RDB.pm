@@ -1,4 +1,7 @@
-# $Id: RDB.pm,v 1.5 2010/02/21 20:37:00 ak Exp $
+# $Id: RDB.pm,v 1.6 2010/03/01 23:41:57 ak Exp $
+# -Id: Stored.pm,v 1.5 2009/12/31 16:30:13 ak Exp -
+# -Id: Stored.pm,v 1.1 2009/08/29 07:33:13 ak Exp -
+# -Id: Stored.pm,v 1.14 2009/08/12 01:59:20 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Stored::
                        

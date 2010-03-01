@@ -1,5 +1,8 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl,v 1.16 2010/02/21 20:09:01 ak Exp $
+# $Id: databasectl.PL,v 1.3 2010/03/01 23:41:33 ak Exp $
+# -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
+# -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
+# -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Command::
                                                                             
@@ -9,7 +12,6 @@
  ##  ##   #####  ##   ##### ##  ##  #####  ####  ###### ##      ##    ##    
  ##  ##  ##  ##  ##  ##  ## ##  ## ##  ##     ## ##     ##      ##    ##    
   #####   #####   ### ##### #####   ##### #####   ####   ####    ### ####   
-
 package Kanadzuchi::Command::Databasectl;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 

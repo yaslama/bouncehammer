@@ -1,4 +1,5 @@
-# $Id: API.pm,v 1.2 2010/02/21 20:24:11 ak Exp $
+# $Id: API.pm,v 1.3 2010/03/01 23:41:41 ak Exp $
+# -Id: API.pm,v 1.2 2009/10/06 00:36:46 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                      

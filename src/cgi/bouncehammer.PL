@@ -1,5 +1,8 @@
 #__PERLEXECUTABLE__
-# $Id: bouncehammer.cgi,v 1.5 2010/02/21 20:11:18 ak Exp $
+# $Id: bouncehammer.PL,v 1.2 2010/03/01 23:41:35 ak Exp $
+# -Id: bouncehammer.PL,v 1.5 2010/02/21 20:11:18 ak Exp -
+# -Id: bouncehammer.cgi,v 1.2 2009/10/05 08:56:49 ak Exp -
+# -Id: bouncehammer.PL,v 1.1 2009/08/27 05:10:08 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 package Kanadzuchi::UI::Web::CGI;
 

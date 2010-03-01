@@ -1,4 +1,6 @@
-# $Id: Search.pm,v 1.16 2010/02/21 20:46:44 ak Exp $
+# $Id: Search.pm,v 1.17 2010/03/01 23:42:12 ak Exp $
+# -Id: Search.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
+# -Id: Search.pm,v 1.11 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::Web::
                                            

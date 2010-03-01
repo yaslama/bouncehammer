@@ -1,4 +1,6 @@
-# $Id: KLab.pm,v 1.1 2009/12/26 10:35:54 ak Exp $
+# $Id: KLab.pm,v 1.2 2010/03/01 23:42:02 ak Exp $
+# -Id: KLab.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
+# -Id: KLab.pm,v 1.1 2009/07/31 09:04:39 ak Exp -
 # Kanadzuchi::Mbox::
                              
  ##  ## ##           ##      

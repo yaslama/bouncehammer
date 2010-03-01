@@ -1,4 +1,9 @@
-# $Id: WebMail.pm,v 1.4 2010/02/24 00:12:44 ak Exp $
+# $Id: WebMail.pm,v 1.5 2010/03/01 23:41:53 ak Exp $
+# -Id: AOL.pm,v 1.1 2009/08/29 07:33:21 ak Exp -
+# -Id: Google.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
+# -Id: Hotmail.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
+# -Id: WebBased.pm,v 1.2 2009/09/03 18:45:31 ak Exp -
+# -Id: Yahoo.pm,v 1.2 2009/12/01 10:33:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::
                                                    

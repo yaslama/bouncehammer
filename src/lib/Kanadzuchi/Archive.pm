@@ -1,4 +1,6 @@
-# $Id: Archive.pm,v 1.4 2010/02/21 20:24:11 ak Exp $
+# $Id: Archive.pm,v 1.5 2010/03/01 23:41:41 ak Exp $
+# -Id: Compress.pm,v 1.1 2009/08/29 08:04:54 ak Exp -
+# -Id: Compress.pm,v 1.2 2009/05/29 08:22:21 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                 

@@ -1,4 +1,5 @@
-# $Id: HTTP.pm,v 1.7 2010/02/21 20:24:29 ak Exp $
+# $Id: HTTP.pm,v 1.8 2010/03/01 23:41:43 ak Exp $
+# -Id: HTTP.pm,v 1.3 2009/10/06 00:36:49 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::
                               

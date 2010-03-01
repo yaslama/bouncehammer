@@ -1,4 +1,6 @@
-# $Id: Index.pm,v 1.3 2010/02/21 20:46:44 ak Exp $
+# $Id: Index.pm,v 1.4 2010/03/01 23:42:12 ak Exp $
+# -Id: Index.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
+# -Id: Index.pm,v 1.3 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::Web::
                                      

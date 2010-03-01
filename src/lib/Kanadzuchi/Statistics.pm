@@ -1,4 +1,6 @@
-# $Id: Statistics.pm,v 1.4 2010/02/21 20:24:12 ak Exp $
+# $Id: Statistics.pm,v 1.5 2010/03/01 23:41:41 ak Exp $
+# -Id: Statistics.pm,v 1.1 2009/08/29 09:00:23 ak Exp -
+# -Id: Statistics.pm,v 1.1 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                                
