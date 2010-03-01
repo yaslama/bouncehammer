@@ -1,4 +1,4 @@
-# $Id: 500_bin-mailboxparser.t,v 1.10 2010/02/24 06:03:42 ak Exp $
+# $Id: 500_bin-mailboxparser.t,v 1.11 2010/03/01 21:32:07 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -24,7 +24,7 @@ SKIP: {
 	# |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 	#
 	my $E = new Kanadzuchi::Test::CLI(
-			'command' => q(./src/bin/mailboxparser),
+			'command' => -x q(./dist/bin/mailboxparser) ? q(./dist/bin/mailboxparser) : q(./src/bin/mailboxparser.PL),
 			'config' => q(./src/etc/prove.cf),
 			'input' => q(./examples/17-messages.eml),
 			'output' => q(./.test/hammer.1970-01-01.ffffffff.000000.tmp),

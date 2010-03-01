@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.9 2010/02/26 13:26:54 ak Exp $
+# $Id: CLI.pm,v 1.10 2010/03/01 21:32:09 ak Exp $
 # Kanadzuchi::Test::
                       
   ####  ##     ####   
@@ -233,7 +233,8 @@ sub mailboxparser
 	return(1) if( -s $self->{'output'} );
 	return(0) unless( -s $self->{'input'} );
 
-	$comm .= $self->{'perl'}.q( ./src/bin/mailboxparser );
+	$comm .= $self->{'perl'}.q( );
+	$comm .= -x q(./dist/bin/mailboxparser) ? q(./dist/bin/mailboxparser) : q(./src/bin/mailboxparser.PL);
 	$comm .= q( -C ).$self->{'config'}.q{ }.$self->{'input'};
 	$comm .= q( > ).$self->{'output'};
 	$stat += scalar(IPC::Cmd::run( 'command' => $comm )) || 0;
@@ -277,7 +278,9 @@ sub senderdomain
 		next() if( grep( { $j->{'senderdomain'} eq $_ } @$heap ) );
 
 		$comm  = q();
-		$comm .= $self->{'perl'}.q| ./src/bin/tablectl -C |.$self->{'config'};
+		$comm .= $self->{'perl'}.q| |;
+		$comm .= -x q(./dist/bin/tablectl) ? q(./dist/bin/tablectl) : q(./src/bin/tablectl.PL);
+		$comm .= q| -C |.$self->{'config'};
 		$comm .= q| -ts --insert --name |.$j->{'senderdomain'};
 		$stat += scalar(IPC::Cmd::run( 'command' => $comm )) || 0;
 
@@ -293,7 +296,9 @@ sub bouncelog
 	my $comm = q();
 	my $stat = 0;
 
-	$comm .= $self->{'perl'}.q{ ./src/bin/databasectl -C }.$self->{'config'};
+	$comm .= $self->{'perl'}.q{ };
+	$comm .= -x q(./dist/bin/databasectl) ? q(./dist/bin/databasectl) : q(./src/bin/databasectl.PL);
+	$comm .= q{ -C }.$self->{'config'};
 	$comm .= q{ --update }.$self->{'output'};
 	$stat += scalar(IPC::Cmd::run( 'command' => $comm )) || 0;
 

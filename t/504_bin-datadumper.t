@@ -1,4 +1,4 @@
-# $Id: 504_bin-datadumper.t,v 1.7 2010/02/22 05:59:17 ak Exp $
+# $Id: 504_bin-datadumper.t,v 1.8 2010/03/01 21:32:07 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -24,7 +24,7 @@ SKIP: {
 	#
 	my $K = new Kanadzuchi();
 	my $E = new Kanadzuchi::Test::CLI(
-			'command' => q(./src/bin/datadumper),
+			'command' => -x q(./dist/bin/datadumper) ? q(./dist/bin/datadumper) : q(./src/bin/datadumper.PL),
 			'config' => q(./src/etc/prove.cf),
 			'input' => q(./examples/17-messages.eml),
 			'output' => q(./.test/hammer.1970-01-01.ffffffff.000000.tmp),

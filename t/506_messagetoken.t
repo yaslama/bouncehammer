@@ -1,4 +1,4 @@
-# $Id: 506_messagetoken.t,v 1.2 2010/02/22 03:56:07 ak Exp $
+# $Id: 506_messagetoken.t,v 1.3 2010/03/01 21:32:07 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -22,7 +22,7 @@ SKIP: {
 	#
 	my $K = new Kanadzuchi();
 	my $E = new Kanadzuchi::Test::CLI(
-			'command' => q(./src/bin/messagetoken),
+			'command' => -x q(./dist/bin/messagetoken) ? q(./dist/bin/messagetoken) : q(./src/bin/messagetoken.PL),
 			'config' => q(./src/etc/prove.cf),
 			'input' => q(./examples/17-messages.eml),
 			'output' => q(./.test/hammer.1970-01-01.ffffffff.000000.tmp),
