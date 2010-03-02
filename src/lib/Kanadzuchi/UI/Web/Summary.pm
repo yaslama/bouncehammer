@@ -1,4 +1,4 @@
-# $Id: Summary.pm,v 1.6 2010/03/01 23:42:12 ak Exp $
+# $Id: Summary.pm,v 1.7 2010/03/02 04:29:27 ak Exp $
 # -Id: Summary.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Summary.pm,v 1.1 2009/08/18 02:37:53 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -44,7 +44,7 @@ sub summary_ontheweb
 		'colnameorderby' => q(id),
 	};
 
-	my $tableconf = $self->{'settings'}->{'database'}->{'table'};
+	my $tableconf = $self->{'webconfig'}->{'database'}->{'table'};
 	my $tablesumm = {};
 
 	# Count the number of records in BounceLogs table
