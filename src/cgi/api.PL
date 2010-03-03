@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: api.PL,v 1.2 2010/03/01 23:41:35 ak Exp $
+# $Id: api.PL,v 1.3 2010/03/03 05:53:52 ak Exp $
 # -Id: api.PL,v 1.5 2010/02/21 20:11:18 ak Exp -
 # -Id: api.cgi,v 1.3 2009/10/06 00:36:28 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -22,7 +22,7 @@ use CGI::Application::Dispatch;
 #
 my $Settings = {
 	coreconfig	=> '__KANADZUCHIETC__/bouncehammer.cf',
-	webbconcig	=> '__KANADZUCHIETC__/webui.cf',
+	webconfig	=> '__KANADZUCHIETC__/webui.cf',
 	mailboxparser	=> '__KANADZUCHIBIN__/mailboxparser',
 	databasectl	=> '__KANADZUCHIBIN__/databasectl',
 	template	=> '__KANADZUCHIDATA__/template',
