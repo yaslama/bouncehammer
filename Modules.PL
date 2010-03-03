@@ -1,4 +1,4 @@
-# $Id: Modules.PL,v 1.13 2010/03/01 23:41:31 ak Exp $
+# $Id: Modules.PL,v 1.14 2010/03/03 06:03:46 ak Exp $
 # -Id: PERL-MODULES.PL,v 1.1 2009/08/29 07:32:08 ak Exp -
 # -Id: PERL-MODULES,v 1.6 2009/08/12 01:57:35 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -25,7 +25,6 @@ my $Dependencies = {
 		'Term::ProgressBar'	=> [ 2.09, 0, 'Perl' ],
 		'Text::ASCIITable'	=> [ 0.18, 0, 'Perl' ],
 		'Time::Piece'		=> [ 1.12, 5.009005, 'Unknown' ],
-		'YAML'			=> [ 0.37, 0, 'Perl' ],
 	},
 	'UI::CLI' => {
 		'Carp'			=> [ 1.01, 5.000000, 'Perl' ],
