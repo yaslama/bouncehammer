@@ -1,45 +1,45 @@
--- $Id: SQLite.sql,v 1.8 2010/02/22 20:10:18 ak Exp $
+-- $Id: SQLite.sql,v 1.9 2010/03/04 08:36:20 ak Exp $
 -- BounceHammer for SQLite
 CREATE TABLE t_hostgroups (
 	id		INTEGER NOT NULL PRIMARY KEY,
 	name		CHARACTER VARYING(15) NOT NULL UNIQUE,
 	description	CHARACTER VARYING(255),
-	disable		INTEGER DEFAULT 0
+	disabled	INTEGER DEFAULT 0
 );
 
 CREATE TABLE t_providers (
 	id		INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	name		CHARACTER VARYING(63) NOT NULL UNIQUE,
 	description	CHARACTER VARYING(255),
-	disable		INTEGER DEFAULT 0
+	disabled	INTEGER DEFAULT 0
 );
 
 CREATE TABLE t_addressers (
 	id		INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	email		CHARACTER VARYING(255) NOT NULL UNIQUE,
 	description	CHARACTER VARYING(255),
-	disable		INTEGER DEFAULT 0
+	disabled	INTEGER DEFAULT 0
 );
 
 CREATE TABLE t_senderdomains (
 	id		INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	domainname	CHARACTER VARYING(255) NOT NULL UNIQUE,
 	description	CHARACTER VARYING(255),
-	disable		INTEGER DEFAULT 0
+	disabled	INTEGER DEFAULT 0
 );
 
 CREATE TABLE t_destinations (
 	id		INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	domainname	CHARACTER VARYING(255) NOT NULL UNIQUE,
 	description	CHARACTER VARYING(255),
-	disable		INTEGER DEFAULT 0
+	disabled	INTEGER DEFAULT 0
 );
 
 CREATE TABLE t_reasons (
 	id		INTEGER NOT NULL PRIMARY KEY,
 	why		CHARACTER VARYING(15) NOT NULL UNIQUE,
 	description	CHARACTER VARYING(255),
-	disable		INTEGER DEFAULT 0
+	disabled	INTEGER DEFAULT 0
 );
 
 CREATE TABLE t_bouncelogs (
@@ -56,7 +56,7 @@ CREATE TABLE t_bouncelogs (
 	provider	INTEGER DEFAULT 4 REFERENCES t_providers(id),
 	reason		INTEGER DEFAULT 1 REFERENCES t_reasons(id),
 	description	TEXT,
-	disable		INTEGER DEFAULT 0
+	disabled	INTEGER DEFAULT 0
 );
 CREATE INDEX i_bouncelogs_token ON t_bouncelogs(token);
 CREATE INDEX i_bouncelogs_reason ON t_bouncelogs(reason);

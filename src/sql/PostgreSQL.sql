@@ -1,11 +1,11 @@
--- $Id: PostgreSQL.sql,v 1.8 2010/02/24 01:31:12 ak Exp $
+-- $Id: PostgreSQL.sql,v 1.9 2010/03/04 08:36:20 ak Exp $
 -- BounceHammer for PostgreSQL
 
 CREATE TABLE t_hostgroups (
 	id		INTEGER NOT NULL,
 	name		CHARACTER VARYING(15) NOT NULL UNIQUE,
 	description	CHARACTER VARYING(255),
-	disable		INT2 DEFAULT 0
+	disabled	INT2 DEFAULT 0
 );
 ALTER TABLE ONLY t_hostgroups ADD CONSTRAINT pk_hostgroups PRIMARY KEY (id);
 
@@ -13,7 +13,7 @@ CREATE TABLE t_providers (
 	id		INTEGER NOT NULL,
 	name		CHARACTER VARYING(63) NOT NULL UNIQUE,
 	description	CHARACTER VARYING(255),
-	disable		INT2 DEFAULT 0
+	disabled	INT2 DEFAULT 0
 );
 CREATE SEQUENCE t_providers_id_seq INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
 ALTER SEQUENCE t_providers_id_seq OWNED BY t_providers.id;
@@ -24,7 +24,7 @@ CREATE TABLE t_addressers (
 	id		INTEGER NOT NULL,
 	email		CHARACTER VARYING(255) NOT NULL UNIQUE,
 	description	CHARACTER VARYING(255),
-	disable		INT2 DEFAULT 0
+	disabled	INT2 DEFAULT 0
 );
 CREATE SEQUENCE t_addressers_id_seq INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
 ALTER SEQUENCE t_addressers_id_seq OWNED BY t_addressers.id;
@@ -35,7 +35,7 @@ CREATE TABLE t_senderdomains (
 	id		INTEGER NOT NULL,
 	domainname	CHARACTER VARYING(255) NOT NULL UNIQUE,
 	description	CHARACTER VARYING(255),
-	disable		INT2 DEFAULT 0
+	disabled	INT2 DEFAULT 0
 );
 CREATE SEQUENCE t_senderdomains_id_seq INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
 ALTER SEQUENCE t_senderdomains_id_seq OWNED BY t_senderdomains.id;
@@ -47,7 +47,7 @@ CREATE TABLE t_destinations (
 	id		INTEGER NOT NULL,
 	domainname	CHARACTER VARYING(255) NOT NULL UNIQUE,
 	description	CHARACTER VARYING(255),
-	disable		INT2 DEFAULT 0
+	disabled	INT2 DEFAULT 0
 );
 CREATE SEQUENCE t_destinations_id_seq INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
 ALTER SEQUENCE t_destinations_id_seq OWNED BY t_destinations.id;
@@ -59,7 +59,7 @@ CREATE TABLE t_reasons (
 	id		INTEGER NOT NULL,
 	why		CHARACTER VARYING(15) NOT NULL UNIQUE,
 	description	CHARACTER VARYING(255),
-	disable		INT2 DEFAULT 0
+	disabled	INT2 DEFAULT 0
 );
 ALTER TABLE ONLY t_reasons ADD CONSTRAINT pk_reasons PRIMARY KEY (id);
 
@@ -78,7 +78,7 @@ CREATE TABLE t_bouncelogs (
 	provider	INTEGER DEFAULT 4 REFERENCES t_providers(id),
 	reason		INTEGER DEFAULT 1 REFERENCES t_reasons(id),
 	description	TEXT,
-	disable		INT2 DEFAULT 0
+	disabled	INT2 DEFAULT 0
 );
 CREATE SEQUENCE t_bouncelogs_id_seq INCREMENT BY 1 NO MAXVALUE NO MINVALUE CACHE 1;
 ALTER SEQUENCE t_bouncelogs_id_seq OWNED BY t_bouncelogs.id;
@@ -103,7 +103,7 @@ CREATE VIEW v1_bouncelogs AS
 		t_senderdomains s
 	WHERE (
 		( b.senderdomain = s.id ) AND 
-		( b.disable = 0 )
+		( b.disabled = 0 )
 	);
 
 CREATE VIEW v2_bouncelogs AS
@@ -127,7 +127,7 @@ CREATE VIEW v2_bouncelogs AS
 	WHERE (
 		( b.addresser = a.id ) AND 
 		( b.senderdomain = s.id ) AND 
-		( b.disable = 0 )
+		( b.disabled = 0 )
 	);
 
 CREATE VIEW v3_bouncelogs AS
@@ -152,7 +152,7 @@ CREATE VIEW v3_bouncelogs AS
 		( b.addresser = a.id ) AND 
 		( b.senderdomain = s.id ) AND 
 		( b.destination = d.id ) AND
-		( b.disable = 0 )
+		( b.disabled = 0 )
 	);
 
 CREATE VIEW v4_bouncelogs AS
@@ -180,7 +180,7 @@ CREATE VIEW v4_bouncelogs AS
 		( b.hostgroup = g.id ) AND
 		( b.provider = p.id ) AND
 		( b.reason = w.id ) AND
-		( b.disable = 0 )
+		( b.disabled = 0 )
 	);
 
 CREATE VIEW v5_bouncelogs AS
@@ -211,7 +211,7 @@ CREATE VIEW v5_bouncelogs AS
 		( b.hostgroup = g.id ) AND
 		( b.provider = p.id ) AND
 		( b.reason = w.id ) AND
-		( b.disable = 0 )
+		( b.disabled = 0 )
 	);
 
 CREATE VIEW v6_bouncelogs AS
@@ -239,7 +239,7 @@ CREATE VIEW v6_bouncelogs AS
 		( b.hostgroup = g.id ) AND
 		( b.provider = p.id ) AND
 		( b.reason = w.id ) AND
-		( b.disable = 0 )
+		( b.disabled = 0 )
 	);
 
 CREATE VIEW v7_bouncelogs AS
@@ -270,7 +270,7 @@ CREATE VIEW v7_bouncelogs AS
 		( b.hostgroup = g.id ) AND
 		( b.provider = p.id ) AND
 		( b.reason = w.id ) AND
-		( b.disable = 0 )
+		( b.disabled = 0 )
 	);
 
 CREATE INDEX i_bouncelogs_token ON t_bouncelogs USING btree (token);
