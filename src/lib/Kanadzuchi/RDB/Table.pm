@@ -27,7 +27,7 @@ use warnings;
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 __PACKAGE__->mk_ro_accessors( 'table', 'field' );
-__PACKAGE__->mk_accessors( 'id', 'name', 'description', 'disable' );
+__PACKAGE__->mk_accessors( 'id', 'name', 'description', 'disabled' );
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -62,7 +62,7 @@ sub new
 
 	EMPTY_OR_ZEOR: {
 		$argvs->{'id'} = 0 unless( defined($argvs->{'id'}) );
-		$argvs->{'disable'} = 0 unless( defined($argvs->{'disable'}) );
+		$argvs->{'disabled'} = 0 unless( defined($argvs->{'disabled'}) );
 		$argvs->{'name'} = q() unless( defined($argvs->{'name'}) );
 		$argvs->{'description'} = q() unless( defined($argvs->{'description'}) );
 	}
@@ -107,7 +107,7 @@ sub _is_validcolumn
 	my $colm = shift() || return(0);
 
 	return(1) if( $colm eq $self->{'field'} || $colm eq 'id' );
-	return(1) if( $colm eq 'description' || $colm eq 'disable' );
+	return(1) if( $colm eq 'description' || $colm eq 'disabled' );
 	return(0);
 }
 
@@ -178,7 +178,7 @@ sub getentbyid
 			'id' => $self->{'id'},
 			'name' => $that->get_column( $self->{'field'} ),
 			'description' => $that->get_column('description'),
-			'disable' => $that->get_column('disable'),
+			'disabled' => $that->get_column('disabled'),
 		};
 	};
 	return({}) if($@);
@@ -236,7 +236,7 @@ sub select
 	{
 		push( @$aref, {	'id' => $_r->id(),
 				'name' => $_r->$name,
-				'disable' => $_r->disable(),
+				'disabled' => $_r->disabled(),
 				'description' => $_r->description(), } );
 	}
 	return($aref);
@@ -256,7 +256,7 @@ sub insert
 	my $dobj = shift() || return(0);
 	my $that = undef();
 	my $nuid = 0;
-	my $bool = $self->{'disable'} ? 1 : 0;
+	my $bool = $self->{'disabled'} ? 1 : 0;
 
 	return(0) if( $self->{'name'} =~ m{[\x00-\x1f\x7f]} );
 	return(0) unless( $self->validation() );
@@ -266,7 +266,7 @@ sub insert
 		my $_data = {
 			$self->{'field'} => $self->{'name'},
 			'description' => $self->{'description'},
-			'disable' => $bool, };
+			'disabled' => $bool, };
 
 		$that = $_sock->create( $_data );
 		$nuid = $that->id();
@@ -289,7 +289,7 @@ sub update
 	my $self = shift();
 	my $dobj = shift() || return(0);
 	my $that = undef();
-	my $bool = $self->{'disable'} ? 1 : 0;
+	my $bool = $self->{'disabled'} ? 1 : 0;
 
 	return(0) unless( $self->_is_validid() );
 	eval {
@@ -298,7 +298,7 @@ sub update
 		my $_data = {
 			$self->{'field'} => $self->{'name'}, 
 			'description' => $self->{'description'},
-			'disable' => $bool, };
+			'disabled' => $bool, };
 
 		$that = $_sock->search( $_cond )->update( $_data );
 	};
