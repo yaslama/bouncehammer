@@ -1,4 +1,4 @@
-# $Id: BounceLogs.pm,v 1.8 2010/03/01 23:42:06 ak Exp $
+# $Id: BounceLogs.pm,v 1.9 2010/03/04 08:33:28 ak Exp $
 # -Id: BounceLogs.pm,v 1.1 2009/08/29 08:58:48 ak Exp -
 # -Id: BounceLogs.pm,v 1.6 2009/08/27 05:09:55 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -29,7 +29,7 @@ use base 'DBIx::Class';
 #
 my $Columns = [ 'id', 'addresser', 'recipient', 'senderdomain', 'destination',
 		'token', 'frequency', 'bounced', 'updated', 'hostgroup', 
-		'provider', 'reason', 'description', 'disable' ]; 
+		'provider', 'reason', 'description', 'disabled' ]; 
 
 # O/R Mapper of t_bouncelogs table and relations
 __PACKAGE__->load_components('Core');
