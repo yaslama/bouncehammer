@@ -1,4 +1,4 @@
-# $Id: 102_rdb-table-mastertables.t,v 1.6 2010/02/25 09:33:28 ak Exp $
+# $Id: 102_rdb-table-mastertables.t,v 1.7 2010/03/04 08:37:01 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -253,7 +253,7 @@ EACH_TABLE: {
 						is( $entity->{'id'}, $thisid, q{entity->id = }.$entity->{'id'} );
 						is( $entity->{'name'}, $tabset->{$tclass}->{'has'}, q{entity->name = }.$entity->{'name'} );
 						ok( exists($entity->{'description'}), q{entity->description = }.$entity->{'description'} ) if( defined($entity->{'description'}) );
-						ok( exists($entity->{'disable'}), q{entity->disable = }.$entity->{'disable'} ) if( defined($entity->{'disable'}) );
+						ok( exists($entity->{'disabled'}), q{entity->disabled = }.$entity->{'disabled'} ) if( defined($entity->{'disabled'}) );
 
 					}
 
@@ -298,7 +298,7 @@ EACH_TABLE: {
 
 					ORDER_BY_COLUMN: {
 
-						foreach my $o ( 'id', $tabset->{$tclass}->{'column'}, 'description', 'disable' )
+						foreach my $o ( 'id', $tabset->{$tclass}->{'column'}, 'description', 'disabled' )
 						{
 							$previd = 0;
 							$sorted = $object->select( $D, $o );
@@ -348,12 +348,12 @@ EACH_TABLE: {
 				INSERT: {
 					$object->name( $tabset->{$tclass}->{'new'} );
 					$object->description( $object->name() );
-					$object->disable(0);
+					$object->disabled(0);
 					$object->id( $object->insert($D) );
 
 					ok( $object->id(), q{->insert() new record: ID = }.$object->id().q{, name = }.$object->name() );
 					is( $object->name(), $object->description(), q{->object->name() == ->object->description() } );
-					is( $object->disable(), 0, q{->disable() = 0} );
+					is( $object->disabled(), 0, q{->disabled() = 0} );
 					is( $object->getnamebyid($D), $object->name(), q{SELECT(getnamebyid()) again = }.$object->name() );
 
 					foreach my $e ( @{$Kanadzuchi::Test::EscapeCharacters}, @{$Kanadzuchi::Test::ControlCharacters} )
@@ -370,15 +370,15 @@ EACH_TABLE: {
 				UPDATE: {
 					$object->name( uc($tabset->{$tclass}->{'new'}) );
 					$object->description( q() );
-					$object->disable(1);
+					$object->disabled(1);
 					$status = $object->update($D);
 					$entity = $object->getentbyid($D);
 
-					ok( $status, qq{->update($status): name = }.$object->name().q{, disable() = 1} );
+					ok( $status, qq{->update($status): name = }.$object->name().q{, disabled() = 1} );
 					is( $entity->{'id'}, $object->id(), q{->getentbyid() again(id) = }.$entity->{'id'} );
 					is( $entity->{'name'}, $object->name(), q{->getentbyid() again(name)} );
-					is( $entity->{'description'}, q(), q{->getentbyid() again(disable)} );
-					is( $entity->{'disable'}, 1, q{->getentbyid() again(disable)} );
+					is( $entity->{'description'}, q(), q{->getentbyid() again(disabled)} );
+					is( $entity->{'disabled'}, 1, q{->getentbyid() again(disabled)} );
 
 					foreach my $e ( @{$Kanadzuchi::Test::ExceptionalValues} )
 					{

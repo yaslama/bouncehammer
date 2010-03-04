@@ -1,4 +1,4 @@
-# $Id: 062_mail-stored-rdb.t,v 1.5 2010/02/25 09:33:28 ak Exp $
+# $Id: 062_mail-stored-rdb.t,v 1.6 2010/03/04 08:37:01 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -37,7 +37,7 @@ my $T = new Kanadzuchi::Test(
 		'hostgroup' => 'rfc2606',
 		'provider' => 'rfc2606',
 		'reason' => 'hostunknown',
-		'disable' => 0, ),
+		'disabled' => 0, ),
 );
 
 #  ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ 
@@ -176,7 +176,7 @@ SEARCH_AND_NEW:
 
 					ok( $o->id(), q{ID = }.$o->id() );
 					ok( $o->frequency(), q{->frequency = }.$o->frequency() );
-					is( $o->disable(), 0, q{->diable = 0 } );
+					is( $o->disabled(), 0, q{->disabled = 0 } );
 
 					ok( Kanadzuchi::RFC2822->is_emailaddress($o->addresser->address()), q{->addresser->address()} );
 					ok( Kanadzuchi::RFC2822->is_emailaddress($o->recipient->address()), q{->recipient->address()} );
@@ -213,7 +213,7 @@ SEARCH_AND_NEW:
 
 					ok( $o->{'id'}, q{ID = }.$o->{'id'} );
 					ok( $o->{'frequency'}, q{->frequency = }.$o->{'frequency'} );
-					is( $o->{'disable'}, 0, q{->diable = 0 } );
+					is( $o->{'disabled'}, 0, q{->disable = 0 } );
 
 					ok( Kanadzuchi::RFC2822->is_emailaddress($o->{'addresser'}), q{->addresser} );
 					ok( Kanadzuchi::RFC2822->is_emailaddress($o->{'recipient'}), q{->recipient()} );

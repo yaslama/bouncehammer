@@ -1,4 +1,4 @@
-# $Id: 502_bin-tablectl.t,v 1.5 2010/03/01 21:32:07 ak Exp $
+# $Id: 502_bin-tablectl.t,v 1.6 2010/03/04 08:37:01 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -39,7 +39,7 @@ SKIP: {
 		{
 			'name' => 'Format is (YAML|JSON)',
 			'option' => $O.q( -Fy ),
-			'length' => 1641,
+			'length' => 1659,
 		},
 		{
 			'name' => 'Format is CSV',
@@ -49,7 +49,7 @@ SKIP: {
 		{
 			'name' => 'Format is ASCIITable',
 			'option' => $O.q( -Fa ),
-			'length' => 1488,
+			'length' => 1512,
 		},
 	];
 
