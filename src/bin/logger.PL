@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.3 2010/03/01 23:41:33 ak Exp $
+# $Id: logger.PL,v 1.4 2010/03/04 08:29:50 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -590,20 +590,23 @@ sub help
 	printf( STDERR "%s/%s %s\n", $Zci->myname(), $Cmd->calledfrom(), $Zci->version() );
 	printf( STDERR "Usage: %s [OPTIONS] \n", $Cmd->calledfrom() );
 	printf( STDERR "\n" );
-	printf( STDERR " * OPTIONS\n" );
-	printf( STDERR "    -C, --conf <config> : Location of the configuration file used instead of \n");
-	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf .\n");
+	printf( STDERR " * WORKING OPTIONS\n" );
 	printf( STDERR "    -c, --concatenate   : Concatenate temporary log files which are created by\n");
 	printf( STDERR "                          bin/mailboxparser -l and write to regular logs.\n");
+	printf( STDERR "    -l, --list          : Find and list existing temporary log files in the directory.\n");
+	printf( STDERR "\n" );
+	printf( STDERR " * LOGFILE OPTIONS\n" );
 	printf( STDERR "    -d, --dir <dir>     : Location of the directory which holds temporary log files\n");
 	printf( STDERR "    -f, --file <tmplog> : Location of a temporary log file to concatenating.\n");
-	printf( STDERR "    -l, --list          : Find and list existing temporary log files in the directory.\n");
+	printf( STDERR "    --strict            : Strictly check regular logs .\n");
 	printf( STDERR "    --truncate          : Truncate temporary log files after concatenating.\n");
 	printf( STDERR "    --remove            : Remove temporary log files after concatenating.\n");
-	printf( STDERR "    --strict            : Strictly check regular logs .\n");
+	printf( STDERR "\n" );
+	printf( STDERR " * OTHER OPTIONS\n" );
+	printf( STDERR "    -C, --conf <config> : Location of the configuration file used instead of \n");
+	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf .\n");
 	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
 	printf( STDERR "    -v, --verbose       : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
-	printf( STDERR "\n" );
 	printf( STDERR "    --help              : Print help message(This screen)\n");
 	printf( STDERR "    --version           : Print version number.\n");
 	printf( STDERR "\n" );

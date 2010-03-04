@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.3 2010/03/01 23:41:33 ak Exp $
+# $Id: mailboxparser.PL,v 1.4 2010/03/04 08:29:50 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -571,7 +571,6 @@ sub help
 	printf( STDERR "    --skip-norelaying   :  - Skip if the reason is 'Relaying Denied'.\n");
 	printf( STDERR "    --skip-mailererror  :  - Skip if the reason is 'Mailer Error'.\n");
 	printf( STDERR "    --skip-hostunknown  :  - Skip if the reason is 'Host Unknown'.\n");
-	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * LOGGING OPTIONS\n" );
 	printf( STDERR "    -l, --log           : Write parsed data to a log file.\n");
@@ -583,10 +582,11 @@ sub help
 	printf( STDERR " * OTHER OPTIONS\n" );
 	printf( STDERR "    -C, --conf <config> : Location of the configuration file used instead of \n");
 	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf .\n");
+	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
 	printf( STDERR "    -F, --format <char> : Output(STDOUT only) format, the following are available.\n");
 	printf( STDERR "                          [y]aml, [c]sv, [a]sciitable, [s]endmail, [p]ostfix\n");
-	printf( STDERR "    --help              : Print help message(This screen)\n");
 	printf( STDERR "    -v, --verbose       : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
+	printf( STDERR "    --help              : Print help message(This screen)\n");
 	printf( STDERR "    --version           : Print version number.\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * Examples\n" );

@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.3 2010/03/01 23:41:33 ak Exp $
+# $Id: datadumper.PL,v 1.4 2010/03/04 08:29:50 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -48,7 +48,7 @@ my $CLIOPTION = {
 	'comment'	=> ( 1 << 5 ),
 };
 
-# WhereCond strings for --select option
+# WhereCond strings
 my $WhereCondition = {
 	'addresser' => q(), 'recipient' => q(), 'senderdomain' => q(),
 	'destination' => q(), 'reason' => q(), 'hostgroup' => q(),
@@ -362,7 +362,7 @@ sub parse_options
 			'port=i'	=> \$_opt_port,
 			'type=s'	=> \$_opt_type,
 
-			# Where condition options, require --select option
+			# Where condition options
 			'a=s'		=> \$_opt_addresser,
 			'addresser=s'	=> \$_opt_addresser,
 			'r=s'		=> \$_opt_recipient,
@@ -426,7 +426,7 @@ sub parse_options
 	$WhereCondition->{'recipient'} = $_opt_recipient || q();
 	$WhereCondition->{'destination'} = $_opt_destination || q();
 	$WhereCondition->{'senderdomain'} = $_opt_senderdomain || q();
-	$WhereCondition->{'disable'} = 0 unless( $_opt_alldata );
+	$WhereCondition->{'disabled'} = 0 unless( $_opt_alldata );
 
 	# Order by (desc)
 	if( $_opt_orderby || $_opt_orderbydesc )
@@ -474,7 +474,7 @@ sub help
 	printf( STDERR "%s/%s %s\n", $Zci->myname(), $Cmd->calledfrom(), $Zci->version() );
 	printf( STDERR "Usage: %s [OPTIONS] \n", $Cmd->calledfrom() );
 	printf( STDERR "\n" );
-	printf( STDERR " * QUERY OPTIONS(Require --select option)\n" );
+	printf( STDERR " * QUERY OPTIONS\n" );
 	printf( STDERR "    -A, --alldata              : Show all data: include a record that is disabled(=1)\n");
 	printf( STDERR "    -a, --addresser <str>      : Sender address(Addresser).\n");
 	printf( STDERR "    -r, --recipient <str>      : Recipient address.\n");
@@ -500,9 +500,9 @@ sub help
 	printf( STDERR " * OTHER OPTIONS\n" );
 	printf( STDERR "    -C, --conf <config> : Location of the configuration file used instead of \n");
 	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf\n");
+	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
 	printf( STDERR "    -F, --format <char> : Output format, the following are available.\n");
 	printf( STDERR "                          [y]aml, [c]sv, [s]endmail, [p]ostfix\n");
-	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
 	printf( STDERR "    -v, --verbose       : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
 	printf( STDERR "    --help              : Print help message(This screen)\n");
 	printf( STDERR "    --version           : Print version number.\n");

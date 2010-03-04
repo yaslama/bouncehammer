@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: tablectl.PL,v 1.3 2010/03/01 23:41:33 ak Exp $
+# $Id: tablectl.PL,v 1.4 2010/03/04 08:29:50 ak Exp $
 # -Id: tablectl.PL,v 1.12 2010/02/21 20:09:01 ak Exp -
 # -Id: tablectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: tablectl.PL,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -141,7 +141,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		$Tab->id($Given->{'id'});
 		$Tab->name($Given->{'name'});
 		$Tab->description($Given->{'description'});
-		$Tab->disable($Given->{'disable'} || 0);
+		$Tab->disabled($Given->{'disabled'} || 0);
 
 		undef($Given);
 
@@ -190,7 +190,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			require Text::ASCIITable;
 			$_objasctab = new Text::ASCIITable( { 'headingText' => $Tab->table() } );
 			$_objasctab->setOptions( 'outputWidth', 80 );
-			$_objasctab->setCols( '#ID', $$_fieldname, 'description', 'disable' );
+			$_objasctab->setCols( '#ID', $$_fieldname, 'description', 'disabled' );
 		}
 
 		# Make 'ResultSet' object of the table
@@ -216,25 +216,25 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		{
 			if( defined($_objasctab) )
 			{
-				$_objasctab->addRow( $__rr->id, $__rr->$$_fieldname, $__rr->description, $__rr->disable );
+				$_objasctab->addRow( $__rr->id, $__rr->$$_fieldname, $__rr->description, $__rr->disabled );
 			}
 			else
 			{
 				if( $Fmt eq 'yaml' )
 				{
-					printf( STDOUT qq|- { "id": %d, "%s": "%s", "description": "%s", "disable": %d }\n|,
+					printf( STDOUT qq|- { "id": %d, "%s": "%s", "description": "%s", "disabled": %d }\n|,
 						$__rr->id, $$_fieldname, $__rr->$$_fieldname, 
-						( $__rr->description || q() ), $__rr->disable );
+						( $__rr->description || q() ), $__rr->disabled );
 				}
 				elsif( $Fmt eq 'csv' )
 				{
 					printf( STDOUT qq|%d,%s,"%s",%d\n|,
-						$__rr->id, $__rr->$$_fieldname, ( $__rr->description || q() ), $__rr->disable );
+						$__rr->id, $__rr->$$_fieldname, ( $__rr->description || q() ), $__rr->disabled );
 				}
 				else
 				{
-					printf( STDOUT "ID = %d, Value = %s, Description = %s, Disable = %d\n",
-						$__rr->id, $__rr->$$_fieldname, ( $__rr->description || q() ), $__rr->disable );
+					printf( STDOUT "ID = %d, Value = %s, Description = %s, Disabled = %d\n",
+						$__rr->id, $__rr->$$_fieldname, ( $__rr->description || q() ), $__rr->disabled );
 				}
 			}
 		}
@@ -271,10 +271,10 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 				Kanadzuchi::Exception::Command->throw( 
 					'-text' => q{No or invalid ID} ) unless($Tab->id());
 
-				if( ! defined($Tab->name) && ! defined($Tab->description) && ! defined($Tab->disable) )
+				if( ! defined($Tab->name) && ! defined($Tab->description) && ! defined($Tab->disabled) )
 				{
 					Kanadzuchi::Exception::Command->throw( '-text' =>
-						q{There are neither --name, --discription nor --disable} );
+						q{There are neither --name, --discription nor --disabled} );
 				}
 				elsif( defined($Tab->name) && length($Tab->name) == 0 )
 				{
@@ -309,9 +309,9 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 					$Tab->description($_tableentry->{'description'});
 				}
 
-				if( ! defined($Tab->disable) || $Tab->disable eq q() )
+				if( ! defined($Tab->disabled) || $Tab->disabled eq q() )
 				{
-					$Tab->disable($_tableentry->{'disable'});
+					$Tab->disabled($_tableentry->{'disabled'});
 				}
 
 				$_ismodified = $Tab->update($Rdb);
@@ -367,10 +367,10 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			#
 			$Cmd->d(2,sprintf("Execute 'INSERT'\n"));
 			try {
-				if( ! defined($Tab->name) && ! defined($Tab->description) && ! defined($Tab->disable) )
+				if( ! defined($Tab->name) && ! defined($Tab->description) && ! defined($Tab->disabled) )
 				{
 					Kanadzuchi::Exception::Command->throw( '-text' =>
-						q{There are neither --name, --discription nor --disable} );
+						q{There are neither --name, --discription nor --disabled} );
 				}
 
 				Kanadzuchi::Exception::Database->throw(
@@ -427,7 +427,7 @@ sub parse_options
 		$_opt_format,
 		$_opt_database,
 		$_opt_description,
-		$_opt_disable,
+		$_opt_disabled,
 		$_opt_host,
 		$_opt_insert,
 		$_opt_id,
@@ -463,7 +463,7 @@ sub parse_options
 			'id=i'		=> \$_opt_id,
 			'name=s'	=> \$_opt_name,
 			'description=s'	=> \$_opt_description,
-			'disable=i'	=> \$_opt_disable,
+			'disabled=i'	=> \$_opt_disabled,
 			'test'		=> \$_opt_test,
 			'T'		=> \$_opt_test,
 			'help'		=> sub { help(); exit(0); },
@@ -528,7 +528,7 @@ sub parse_options
 	if( $_opt_id ){ $Given->{'id'} = int($_opt_id); }
 	if( $_opt_name ){ $Given->{'name'} = $_opt_name; }
 	if( $_opt_description ){ $Given->{'description'} = $_opt_description; }
-	if( defined($_opt_disable) ){ $Given->{'disable'} = $_opt_disable ; }
+	if( defined($_opt_disabled) ){ $Given->{'disabled'} = $_opt_disabled ; }
 
 	# Database spec option, Override values in the config file
 	if( $_opt_host ){ $Rdb->hostname($_opt_host); }
@@ -563,33 +563,32 @@ sub help
 	printf( STDERR "%s/%s %s\n", $Zci->myname(), $Cmd->calledfrom(), $Zci->version() );
 	printf( STDERR "Usage: %s [OPTIONS] -T<x>\n", $Cmd->calledfrom() );
 	printf( STDERR "\n" );
-	printf( STDERR " * DATABASE CONTROL OPTIONS\n" );
+	printf( STDERR " * TABLE CONTROL OPTIONS\n" );
 	printf( STDERR "    -t, --table <t> : Table name, ALWAYS REQUIRED.\n");
 	printf( STDERR "                      a = [A]ddressers, s = [S]enderDomains, d = [D]estinations\n");
-	printf( STDERR "                      c = [H]ostgroups, p = [P]roviders, w = Reasons([w]hy)\n");
-	printf( STDERR "                      *WARNING* -Tr(--table r) uses more memory!\n");
+	printf( STDERR "                      h = [H]ostgroups, p = [P]roviders, w = Reasons([w]hy)\n");
 	printf( STDERR "    --list          : Print the table contents as a list.\n");
 	printf( STDERR "    --update        : UPDATE specified records\n");
 	printf( STDERR "    --insert        : INSERT a new record\n");
 	printf( STDERR "    --remove        : DELETE a specified record\n");
+	printf( STDERR "\n" );
+	printf( STDERR " * TABLE COLUMN OPTIONS\n" );
+	printf( STDERR "    --id <n>              : ID(>0), this option is required by --update, --remove option.\n");
+	printf( STDERR "    --name <str>          : Name, this option is required by --insert option.\n");
+	printf( STDERR "    --description <descr> : A value of description field of the record to UPDATE or INSERT.\n");
+	printf( STDERR "    --disabled <0|1>      : A value of disabled field, 0 = Turn on, 1 = Turn off\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * DATABASE SPEC OPTIONS(Overrides the value in the config file)\n" );
 	printf( STDERR "    --type <d>          : DB Type, p:Postgres, m:MySQL, s=SQLite .\n");
 	printf( STDERR "    --host <hostname>   : DB Host name or IP address\n");
 	printf( STDERR "    --port <portnum>    : DB Host port number\n");
 	printf( STDERR "\n" );
-	printf( STDERR " * DATABASE COLUMN OPTIONS\n" );
-	printf( STDERR "    --id <n>              : ID(>0), this option is required by --update, --remove option.\n");
-	printf( STDERR "    --name <str>          : Name, this option is required by --insert option.\n");
-	printf( STDERR "    --description <descr> : A value of description field of the record to UPDATE or INSERT.\n");
-	printf( STDERR "    --disable <0|1>       : A value of disable field, 0 = Turn on, 1 = Turn off\n");
-	printf( STDERR "\n" );
 	printf( STDERR " * OTHER OPTIONS\n" );
 	printf( STDERR "    -C, --conf <config> : Location of the configuration file used instead of \n");
 	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf\n");
+	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
 	printf( STDERR "    -F, --format <f>    : Format of the results of --list option,\n");
 	printf( STDERR "                          y = YAML, c = CSV a = ASCII Table.\n");
-	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
 	printf( STDERR "    -v, --verbose       : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
 	printf( STDERR "    --help              : Print help message(This screen)\n");
 	printf( STDERR "    --version           : Print version number.\n");

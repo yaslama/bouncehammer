@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: messagetoken.PL,v 1.2 2010/03/01 21:48:48 ak Exp $
+# $Id: messagetoken.PL,v 1.3 2010/03/04 08:29:50 ak Exp $
 # -Id: messagetoken.PL,v 1.3 2010/02/21 20:09:01 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi:Command::
@@ -216,11 +216,13 @@ sub help
 	printf( STDERR "%s/%s %s\n", $Zci->myname(), $Cmd->calledfrom(), $Zci->version() );
 	printf( STDERR "Usage: %s [OPTIONS] file1 [file2 dir1 dir2 ...]\n", $Cmd->calledfrom() );
 	printf( STDERR "\n" );
-	printf( STDERR " * OPTIONS\n" );
-	printf( STDERR "    -C, --conf <config>   : Location of the configuration file used instead of \n");
-	printf( STDERR "                            __KANADZUCHIETC__/bouncehammer.cf .\n");
+	printf( STDERR " * ADDRESS OPTIONS\n" );
 	printf( STDERR "    -a, --addresser <str> : Sender address(Addresser)\n");
 	printf( STDERR "    -r, --recipient <str> : Recipient address(Addresser)\n");
+	printf( STDERR "\n" );
+	printf( STDERR " * OTHER OPTIONS\n" );
+	printf( STDERR "    -C, --conf <config>   : Location of the configuration file used instead of \n");
+	printf( STDERR "                            __KANADZUCHIETC__/bouncehammer.cf .\n");
 	printf( STDERR "    -T, --test            : Test mode, same as ``-C /path/to/test-run.cf''\n");
 	printf( STDERR "    -v, --verbose         : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
 	printf( STDERR "    --help                : Print help message(This screen)\n");

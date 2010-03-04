@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.3 2010/03/01 23:41:33 ak Exp $
+# $Id: databasectl.PL,v 1.4 2010/03/04 08:29:50 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -47,7 +47,7 @@ my $CLIOPTION = {
 	'UPDATE'	=> ( 1 << 3 ),
 	'REMOVE'	=> ( 1 << 4 ),
 	'force'		=> ( 1 << 5 ),
-	'disable'	=> ( 1 << 6 ),
+	'disabled'	=> ( 1 << 6 ),
 	'cleanup'	=> ( 1 << 7 ),
 	'batch'		=> ( 1 << 8 ),
 };
@@ -150,7 +150,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 
 
 	# Read log file for UPDATE or DELETE
-	if( $Cmd->operation & ( $Cmd->option->{'UPDATE'} + $Cmd->option->{'REMOVE'} + $Cmd->option->{'disable'} ) )
+	if( $Cmd->operation & ( $Cmd->option->{'UPDATE'} + $Cmd->option->{'REMOVE'} + $Cmd->option->{'disabled'} ) )
 	{
 		#  _   _ ____  ____    _  _____ _____     ____  _____ _     _____ _____ _____ 
 		# | | | |  _ \|  _ \  / \|_   _| ____|   |  _ \| ____| |   | ____|_   _| ____|
@@ -214,7 +214,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 
 
 		my $_pgconfig = { 'currentpagenum' => 1, 'resultperpage' => 1, 'columnorderby' => 'id' };
-		my $_wherecnd = { 'disable' => 0 };
+		my $_wherecnd = { 'disabled' => 0 };
 		Kanadzuchi::Mail::Stored::RDB->searchandnew( $Rdb, $_wherecnd, \$_pgconfig, 0 );
 
 		my $_prbar = undef();	# Term::ProgressBar object
@@ -236,7 +236,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			eval{ require Term::ProgressBar; };
 
 			$_pname = q(REMOVE) if( $Cmd->operation & $Cmd->option->{'REMOVE'} );
-			$_pname = q(To disable) if( $Cmd->operation & $Cmd->option->{'disable'} );
+			$_pname = q(To disable) if( $Cmd->operation & $Cmd->option->{'disabled'} );
 
 			$_prbar = new Term::ProgressBar( { 'fh' => \*STDERR, 'ETA' => q{linear},
 					'name' => $_pname, 'count' => scalar(@{$Rdb->records}), });
@@ -375,7 +375,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 
 			# Not implemented yet.
 		}
-		elsif( $Cmd->operation & $Cmd->option->{'disable'} )
+		elsif( $Cmd->operation & $Cmd->option->{'disabled'} )
 		{
 			#  ____ ___ ____    _    ____  _     _____ 
 			# |  _ \_ _/ ___|  / \  | __ )| |   | ____|
@@ -421,7 +421,7 @@ sub parse_options
 		$_opt_host,
 		$_opt_port,
 		$_opt_type,
-		$_opt_disable,
+		$_opt_disabled,
 		$_opt_cleanup,
 		$_opt_update,
 		$_opt_force,
@@ -441,7 +441,7 @@ sub parse_options
 			'conf=s'	=> \$_opt_conf,
 			'C=s'		=> \$_opt_conf,
 			'cleanup'	=> \$_opt_cleanup,
-			'disable'	=> \$_opt_disable,
+			'disabled'	=> \$_opt_disabled,
 			'remove'	=> \$_opt_remove,
 			'test'		=> \$_opt_test,
 			'T'		=> \$_opt_test,
@@ -504,10 +504,10 @@ sub parse_options
 		$_operation |= $Cmd->option->{'usedb'}; 
 		$_operation |= $Cmd->option->{'REMOVE'};
 	}
-	elsif( $_opt_disable )
+	elsif( $_opt_disabled )
 	{
 		$_operation |= $Cmd->option->{'usedb'}; 
-		$_operation |= $Cmd->option->{'disable'};
+		$_operation |= $Cmd->option->{'disabled'};
 	}
 
 	# Clean up
@@ -567,7 +567,7 @@ sub help
 	printf( STDERR " * DATABASE CONTROL OPTIONS(Overrides the value in the config file)\n" );
 	# printf( STDERR "    --cleanup           : DELETE disabled records(not implemented)\n");
 	# printf( STDERR "    --remove            : DELETE FROM the log file(not implemented)\n");
-	# printf( STDERR "    --disable           : Turn disable colum ON(not implemented)\n");
+	# printf( STDERR "    --disabled          : Turn disabled colum ON(not implemented)\n");
 	printf( STDERR "    -U, --update        : UPDATE or INSERT records in the database from the log file\n");
 	printf( STDERR "                          which is decided by -b, -y, -t or -f option.\n" );
 	printf( STDERR "    --force             : Also whitelisted records are updated, this option\n");
