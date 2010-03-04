@@ -1,4 +1,4 @@
-# $Id: RDB.pm,v 1.8 2010/03/01 23:41:41 ak Exp $
+# $Id: RDB.pm,v 1.9 2010/03/04 08:31:40 ak Exp $
 # -Id: Database.pm,v 1.2 2009/08/29 19:01:14 ak Exp -
 # -Id: Database.pm,v 1.7 2009/08/13 07:13:28 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -178,7 +178,7 @@ sub makecache
 	# Return keys if the record exists in the cache
 	return(keys(%{$self->{'cache'}->{$ttab}})) if(exists($self->{'cache'}->{$ttab}));
 
-	my $_rs = $self->{'handle'}->resultset($ttab)->search( { 'disable' => 0 } );
+	my $_rs = $self->{'handle'}->resultset($ttab)->search( { 'disabled' => 0 } );
 	my $_nr = 0;
 
 	while( my $_cr = $_rs->next() )
