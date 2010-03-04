@@ -45,7 +45,6 @@ my $Dependencies = {
 		'IO::Compress::Bzip2'	=> [ 2.023, 5.010001, 'Perl' ],
 		'IO::Compress::Gzip'	=> [ 2.023, 5.009004, 'Perl' ],
 		'IO::Compress::Zip'	=> [ 2.023, 5.009004, 'Perl' ],
-		'Switch'		=> [ 2.13, 5.007003, 'Unknown' ],
 	},
 	'Test' => {
 		'IPC::Cmd'	=> [ 0.25, 5.009005, 'Unknown' ],
