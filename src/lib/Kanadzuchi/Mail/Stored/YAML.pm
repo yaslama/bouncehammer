@@ -1,4 +1,4 @@
-# $Id: YAML.pm,v 1.7 2010/03/01 23:41:57 ak Exp $
+# $Id: YAML.pm,v 1.8 2010/03/04 08:32:20 ak Exp $
 # -Id: Serialized.pm,v 1.8 2009/12/31 16:30:13 ak Exp -
 # -Id: Serialized.pm,v 1.2 2009/10/06 09:11:18 ak Exp -
 # -Id: Serialized.pm,v 1.12 2009/07/16 09:05:42 ak Exp -
@@ -241,7 +241,7 @@ sub update
 		$_hgrp = __PACKAGE__->gname2id( $self->{'hostgroup'} );
 		$_rwhy = __PACKAGE__->rname2id( $self->{'reason'} );
 
-		$_cond = { 'id' => $blid, 'disable' => 0 };
+		$_cond = { 'id' => $blid, 'disabled' => 0 };
 		$_data = {
 			'frequency' => \'frequency + 1',
 			'hostgroup' => $_hgrp,
@@ -275,7 +275,7 @@ sub findbytoken
 	return(0) unless(defined($self->{'token'}));
 	return(1) if( exists($msgd->{ $self->{'token'} }) );
 
-	eval{ $that = $rset->search( { 'token' => $self->{'token'}, 'disable' => 0 } ); };
+	eval{ $that = $rset->search( { 'token' => $self->{'token'}, 'disabled' => 0 } ); };
 	return(0) if( $@ || $that == 0 );
 
 	# Make cache

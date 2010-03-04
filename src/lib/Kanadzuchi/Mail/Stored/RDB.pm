@@ -1,4 +1,4 @@
-# $Id: RDB.pm,v 1.6 2010/03/01 23:41:57 ak Exp $
+# $Id: RDB.pm,v 1.7 2010/03/04 08:32:20 ak Exp $
 # -Id: Stored.pm,v 1.5 2009/12/31 16:30:13 ak Exp -
 # -Id: Stored.pm,v 1.1 2009/08/29 07:33:13 ak Exp -
 # -Id: Stored.pm,v 1.14 2009/08/12 01:59:20 ak Exp -
@@ -31,7 +31,7 @@ use Time::Piece;
 __PACKAGE__->mk_accessors(
 	'id',			# (Integer) Record ID
 	'updated',		# (Time::Piece) Updated date
-	'disable',		# (Boolean) Disable flag
+	'disabled',		# (Boolean) Disable flag
 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
@@ -95,7 +95,7 @@ sub searchandnew
 		#  \___/|_| \_\____/|_____|_| \_\ |____/ |_|  
 		#                                             
 		# Add 'me.' to column name if it is 'id'
-		foreach my $_c ( 'id', 'disable', 'description' )
+		foreach my $_c ( 'id', 'disabled', 'description' )
 		{
 			do{ $_colnameorderby = q{me.}.$_c; last(); } if( $_colnameorderby eq $_c );
 		}
@@ -119,11 +119,11 @@ sub searchandnew
 		#   \ V  V / |  _  | |___|  _ <| |___  | |__| |_| | |\  | |_| | 
 		#    \_/\_/  |_| |_|_____|_| \_\_____|  \____\___/|_| \_|____(_)
 		#
-		# Where Cond.: id(me.id), disable = 0
+		# Where Cond.: id(me.id), disabled = 0
 		if( $wcond->{'id'} ){ $_wherecondition->{'me.id'} = $wcond->{'id'}; }
-		if( defined($wcond->{'disable'}) && length($wcond->{'disable'}) )
+		if( defined($wcond->{'disabled'}) && length($wcond->{'disabled'}) )
 		{
-			$_wherecondition->{'me.disable'} = $wcond->{'disable'};
+			$_wherecondition->{'me.disabled'} = $wcond->{'disabled'};
 		}
 
 		# Where Cond.: Addresser
@@ -270,7 +270,7 @@ sub searchandnew
 			'reason'	=> __PACKAGE__->id2rname( $_r->reason() ),
 			'bounced'	=> new Time::Piece( $_r->bounced() ),
 			'updated'	=> new Time::Piece( $_r->updated() ),
-			'disable'	=> $_r->disable(),
+			'disabled'	=> $_r->disabled(),
 		};
 
 		if( $oflag == 1 )
@@ -381,7 +381,7 @@ sub serialize
 				'reason'	=> $_object->reason() || q(),
 				'bounced'	=> $_object->bounced->epoch() || q(),
 				'updated'	=> $_object->updated->epoch() || q(),
-				'disable'	=> $_object->disable() || 0,
+				'disabled'	=> $_object->disabled() || 0,
 			} );
 		}
 	}
@@ -414,13 +414,13 @@ sub modify
 
 	eval{
 		my $_sock = $$dobj->handle->resultset('BounceLogs');
-		my $_cond = { 'id' => $self->{'id'}, 'disable' => 0 };
+		my $_cond = { 'id' => $self->{'id'}, 'disabled' => 0 };
 		my $_data = { 'updated' => time() };
 
 		if( $todi )
 		{
 			# Disable it
-			$_data->{'disable'} = 1;
+			$_data->{'disabled'} = 1;
 		}
 		else
 		{
@@ -434,11 +434,11 @@ sub modify
 	return($that);
 }
 
-sub disable
+sub disableit
 {
-	# +-+-+-+-+-+-+-+
-	# |d|i|s|a|b|l|e|
-	# +-+-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+-+-+
+	# |d|i|s|a|b|l|e|i|t|
+	# +-+-+-+-+-+-+-+-+-=
 	#
 	# @Description	 Disable the rocord
 	# @Param <ref>	 (Ref->K::RDB) Kanadzuchi::RDB object
