@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.17 2010/03/01 23:42:12 ak Exp $
+# $Id: Search.pm,v 1.18 2010/03/04 08:35:42 ak Exp $
 # -Id: Search.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Search.pm,v 1.11 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -53,7 +53,7 @@ sub search_ontheweb
 	my $downloadformat = q();	# File fotmat for downloading
 
 	# Do not include a record that is disabled(=1)
-	$paramsinthequery->{'disable'} = 0;
+	$paramsinthequery->{'disabled'} = 0;
 
 	if( $self->param('pi_condition') || $self->param('pi_recipient') )
 	{

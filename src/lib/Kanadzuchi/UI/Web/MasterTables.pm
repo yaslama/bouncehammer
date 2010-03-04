@@ -1,4 +1,4 @@
-# $Id: MasterTables.pm,v 1.8 2010/03/01 23:42:12 ak Exp $
+# $Id: MasterTables.pm,v 1.9 2010/03/04 08:35:42 ak Exp $
 # -Id: MasterTables.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: MasterTables.pm,v 1.7 2009/08/15 15:06:56 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -85,7 +85,7 @@ sub tablectl_ontheweb
 
 			$table->name( lc($query->param('newname')) );
 			$table->description( $query->param('newdesc') );
-			$table->disable(0);
+			$table->disabled(0);
 
 			if( $tabcf->{ $self->{'tablename'} }->{'readonly'} )
 			{
@@ -111,7 +111,7 @@ sub tablectl_ontheweb
 								'id' => $_newid,
 								'name' => $table->name(),
 								'description' => $table->description(),
-								'disable' => $table->disable() } ];
+								'disabled' => $table->disabled() } ];
 						}
 						else
 						{
@@ -155,7 +155,7 @@ sub tablectl_ontheweb
 			if( defined($href->{'id'}) )
 			{
 				$table->name( $href->{'name'} );
-				$table->disable( $href->{'disable'} );
+				$table->disabled( $href->{'disabled'} );
 				$table->description( $query->param('desc') );
 
 				if( $table->update($self->{'database'}) )
@@ -164,7 +164,7 @@ sub tablectl_ontheweb
 						'id' => $table->id(),
 						'name' => $table->name(),
 						'description' => $table->description(),
-						'disable' => $table->disable() } ];
+						'disabled' => $table->disabled() } ];
 				}
 				else
 				{
