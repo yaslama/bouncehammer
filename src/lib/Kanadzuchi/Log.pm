@@ -1,4 +1,4 @@
-# $Id: Log.pm,v 1.12 2010/03/04 23:18:27 ak Exp $
+# $Id: Log.pm,v 1.13 2010/03/04 23:54:29 ak Exp $
 # -Id: Log.pm,v 1.2 2009/10/06 06:21:47 ak Exp -
 # -Id: Log.pm,v 1.11 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -125,7 +125,7 @@ sub dumper
 		'yaml'		=> q(),
 	};
 
-	$outputformat->{'yaml'} .= qq|- { "bounced": "%d", "addresser": "%s", "recipient": "%s", |;
+	$outputformat->{'yaml'} .= qq|- { "bounced": %d, "addresser": "%s", "recipient": "%s", |;
 	$outputformat->{'yaml'} .= qq|"senderdomain": "%s", "destination": "%s", "reason": "%s", |;
 	$outputformat->{'yaml'} .= qq|"hostgroup": "%s", "provider": "%s", "frequency": %d, |;
 	$outputformat->{'yaml'} .= qq|"description": %s, "token": "%s" }\n|;
