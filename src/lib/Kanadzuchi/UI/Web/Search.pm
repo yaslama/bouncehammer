@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.18 2010/03/04 08:35:42 ak Exp $
+# $Id: Search.pm,v 1.19 2010/03/04 21:19:28 ak Exp $
 # -Id: Search.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Search.pm,v 1.11 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -220,7 +220,6 @@ sub search_ontheweb
 		# |_____/ / |  _|  | || |___| |___ 
 		#      /_/  |_|   |___|_____|_____|
 		#                                  
-		use Switch;
 		require Kanadzuchi::Log;
 		require File::Spec;
 		require Path::Class;
@@ -245,21 +244,21 @@ sub search_ontheweb
 				|| $_uiconf->{'archive'}->{'compress'}->{'type'}
 				|| Kanadzuchi::Archive->ARCHIVEFORMAT();
 
-		switch( $_format ) {
-			case 'gzip' {
-				require Kanadzuchi::Archive::Gzip;
-				$_aclass = q|Kanadzuchi::Archive::Gzip|;
-			}
-			case 'bzip2' {
-				require Kanadzuchi::Archive::Bzip2;
-				$_aclass = q|Kanadzuchi::Archive::Bzip2|;
-			}
-			case 'zip' {
-				require Kanadzuchi::Archive::Zip;
-				$_aclass = q|Kanadzuchi::Archive::Zip|;
-			}
+		if( $_format eq 'gzip' )
+		{
+			require Kanadzuchi::Archive::Gzip;
+			$_aclass = q|Kanadzuchi::Archive::Gzip|;
 		}
-
+		elsif( $_format eq 'bzip2' )
+		{
+			require Kanadzuchi::Archive::Bzip2;
+			$_aclass = q|Kanadzuchi::Archive::Bzip2|;
+		}
+		elsif( $_format eq 'zip' )
+		{
+			require Kanadzuchi::Archive::Zip;
+			$_aclass = q|Kanadzuchi::Archive::Zip|;
+		}
 
 		#  ___ _   _ ____  _   _ _____ 
 		# |_ _| \ | |  _ \| | | |_   _|
@@ -276,12 +275,7 @@ sub search_ontheweb
 					: File::Spec::tmpdir();
 
 		# Prepare empty file(Prefix)
-		switch( $downloadformat )
-		{
-			case 'asciitable' { $_prefix = 'txt'; }
-			case [ 'sendmail','postfix' ] { $_prefix = 'access_db'; }
-			else { $_prefix = $downloadformat; }
-		}
+		$_prefix = $downloadformat eq 'asciitable' ? 'txt' : $downloadformat;
 
 		# Decide source file name
 		$_digest = Digest::MD5->new();
