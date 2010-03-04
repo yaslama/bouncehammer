@@ -1,4 +1,4 @@
-# $Id: 500_bin-mailboxparser.t,v 1.12 2010/03/04 21:20:32 ak Exp $
+# $Id: 500_bin-mailboxparser.t,v 1.13 2010/03/04 23:19:15 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 59 );
+use Test::More ( tests => 57 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',59) if($@);
+	skip('Because no IPC::Cmd for testing',57) if($@);
 
 	use Kanadzuchi::Test::CLI;
 	use Kanadzuchi;
@@ -77,11 +77,6 @@ SKIP: {
 			'name' => 'Skip host-unknown',
 			'option' => $O.q( --skip-hostunknown),
 			'count' => 36,
-		},
-		{
-			'name' => 'Format is CSV, -Fc',
-			'option' => $O.q( -Fc ),
-			'count' => 0,
 		},
 		{
 			'name' => 'Format is ASCIITable, -Fa',

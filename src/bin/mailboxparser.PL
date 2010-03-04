@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.5 2010/03/04 21:17:40 ak Exp $
+# $Id: mailboxparser.PL,v 1.6 2010/03/04 23:18:20 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -512,7 +512,6 @@ sub parse_options
 	{
 		my $_1stcharacter = substr( $_opt_format, 0, 1 );
 		$Fmt =  $_1stcharacter eq q(y) ? q(yaml) :
-			$_1stcharacter eq q(c) ? q(csv) :
 			$_1stcharacter eq q(a) ? q(asciitable) : q(yaml);
 	}
 	else
@@ -582,7 +581,7 @@ sub help
 	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf .\n");
 	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
 	printf( STDERR "    -F, --format <char> : Output(STDOUT only) format, the following are available.\n");
-	printf( STDERR "                          [y]aml, [c]sv, [a]sciitable\n");
+	printf( STDERR "                          [y]aml, [a]sciitable\n");
 	printf( STDERR "    -v, --verbose       : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
 	printf( STDERR "    --help              : Print help message(This screen)\n");
 	printf( STDERR "    --version           : Print version number.\n");

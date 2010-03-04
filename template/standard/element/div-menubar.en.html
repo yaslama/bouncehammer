@@ -20,11 +20,9 @@
 <div id = 'MenuBar'>
 	[%- IF DownloadLink -%]
 		[%- SET DLLYAML = "${DownloadLink}/yaml/${encryptedforuri}/${colname},${descend}" -%]
-		[%- SET DLLCSVF = "${DownloadLink}/csv/${encryptedforuri}/${colname},${descend}" -%]
 		<select onChange = "window.open(this.options[this.selectedIndex].value)" style = 'font-size:10px;'>
 			<option value = '#' >Download the results</option>
 			<option value = '[% DLLYAML %]'>YAML</option>
-			<option value = '[% DLLCSVF %]'>CSV</option>
 		</select>
 	[%- END -%]
 

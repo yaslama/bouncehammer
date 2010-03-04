@@ -1,4 +1,4 @@
-# $Id: Table.pm,v 1.11 2010/03/01 23:42:04 ak Exp $
+# $Id: Table.pm,v 1.12 2010/03/04 08:33:25 ak Exp $
 # -Id: Table.pm,v 1.1 2009/08/29 09:08:01 ak Exp -
 # -Id: Table.pm,v 1.6 2009/05/29 08:22:21 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.

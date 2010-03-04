@@ -1,4 +1,4 @@
-# $Id: Log.pm,v 1.11 2010/03/04 21:18:39 ak Exp $
+# $Id: Log.pm,v 1.12 2010/03/04 23:18:27 ak Exp $
 # -Id: Log.pm,v 1.2 2009/10/06 06:21:47 ak Exp -
 # -Id: Log.pm,v 1.11 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -123,7 +123,6 @@ sub dumper
 
 	my $outputformat = {
 		'yaml'		=> q(),
-		'csv'		=> qq|%s,%s,%s,%s,%s,%d,%s,%s,%s,%d,%s\n|,
 	};
 
 	$outputformat->{'yaml'} .= qq|- { "bounced": "%d", "addresser": "%s", "recipient": "%s", |;
@@ -133,11 +132,7 @@ sub dumper
 
 	my $outputheader = {
 		'yaml'		=> q|# Generated: |.$time->ymd('/').q| |.$time->hms(':').qq| \n|,
-		'csv'		=> q(),
 	};
-
-	$outputheader->{'csv'} .= q|Bounced Date,Addresser,Recipient,Sender Domain,Destination Domain,|;
-	$outputheader->{'csv'} .= q|Status,Reason,HostGroup,Provider,Frequency,Token|.qq|\n|,
 
 	return(0) if( $self->{'count'} == 0 );
 
@@ -145,12 +140,12 @@ sub dumper
 	if( $self->{'header'} )
 	{
 		$head .= $outputheader->{ $self->{'format'} };
-		$head .= q|# |.qq|$self->{'comment'}\n| if( length($self->{'comment'}) && $self->{'format'} ne q{csv} );
+		$head .= q|# |.qq|$self->{'comment'}\n| if( length($self->{'comment'}) );
 	}
 
 	if( $self->{'footer'} )
 	{
-		$foot .= q|# |.qq|$self->{'comment'}\n| if( length($self->{'comment'}) && $self->{'format'} ne q{csv} );
+		$foot .= q|# |.qq|$self->{'comment'}\n| if( length($self->{'comment'}) );
 	}
 
 	if( $self->{'format'} eq q(asciitable) )
@@ -192,25 +187,11 @@ sub dumper
 		}
 		else
 		{
-			if( $self->{'format'} eq 'yaml' )
-			{
-				$data .= sprintf( $outputformat->{$self->{'format'}},
-						$_h->{'Lbounced'}, $_h->{'Laddresser'}, $_h->{'Lrecipient'},
-						$_h->{'Lsenderdomain'}, $_h->{'Ldestination'},
-						$_h->{'Lreason'}, $_h->{'Lhostgroup'}, $_h->{'Lprovider'}, 
-						$_h->{'Lfrequency'}, $_h->{'Ldescription'}, $_h->{'Ltoken'} );
-			}
-			elsif( $self->{'format'} eq 'csv' )
-			{
-				# Human readable date string in CSV format
-				$_h->{'Lbounced'} = $_h->{'Ldatestring'};
-
-				$data .= sprintf( $outputformat->{$self->{'format'}},
-						$_h->{'Lbounced'}, $_h->{'Laddresser'}, $_h->{'Lrecipient'},
-						$_h->{'Lsenderdomain'}, $_h->{'Ldestination'},
-						$_h->{'Ldeliverystatus'}, $_h->{'Lreason'}, $_h->{'Lhostgroup'},
-						$_h->{'Lprovider'}, $_h->{'Lfrequency'}, $_h->{'Ltoken'} );
-			}
+			$data .= sprintf( $outputformat->{$self->{'format'}},
+					$_h->{'Lbounced'}, $_h->{'Laddresser'}, $_h->{'Lrecipient'},
+					$_h->{'Lsenderdomain'}, $_h->{'Ldestination'},
+					$_h->{'Lreason'}, $_h->{'Lhostgroup'}, $_h->{'Lprovider'}, 
+					$_h->{'Lfrequency'}, $_h->{'Ldescription'}, $_h->{'Ltoken'} );
 		}
 	} # End of foreach() PREPARE_LOG:
 

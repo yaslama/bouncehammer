@@ -1,4 +1,4 @@
-# $Id: 502_bin-tablectl.t,v 1.6 2010/03/04 08:37:01 ak Exp $
+# $Id: 502_bin-tablectl.t,v 1.7 2010/03/04 23:19:15 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 107 );
+use Test::More ( tests => 106 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',107) if($@);
+	skip('Because no IPC::Cmd for testing',106) if($@);
 
 	use Kanadzuchi::Test::CLI;
 	use Kanadzuchi;
@@ -40,11 +40,6 @@ SKIP: {
 			'name' => 'Format is (YAML|JSON)',
 			'option' => $O.q( -Fy ),
 			'length' => 1659,
-		},
-		{
-			'name' => 'Format is CSV',
-			'option' => $O.q( -Fc ),
-			'length' => 615,
 		},
 		{
 			'name' => 'Format is ASCIITable',

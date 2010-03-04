@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: tablectl.PL,v 1.4 2010/03/04 08:29:50 ak Exp $
+# $Id: tablectl.PL,v 1.5 2010/03/04 23:18:20 ak Exp $
 # -Id: tablectl.PL,v 1.12 2010/02/21 20:09:01 ak Exp -
 # -Id: tablectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: tablectl.PL,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -225,11 +225,6 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 					printf( STDOUT qq|- { "id": %d, "%s": "%s", "description": "%s", "disabled": %d }\n|,
 						$__rr->id, $$_fieldname, $__rr->$$_fieldname, 
 						( $__rr->description || q() ), $__rr->disabled );
-				}
-				elsif( $Fmt eq 'csv' )
-				{
-					printf( STDOUT qq|%d,%s,"%s",%d\n|,
-						$__rr->id, $__rr->$$_fieldname, ( $__rr->description || q() ), $__rr->disabled );
 				}
 				else
 				{
@@ -538,7 +533,6 @@ sub parse_options
 	if( $_opt_format )
 	{
 		if(    substr($_opt_format,0,1) eq 'y' ){ $Fmt = q(yaml); }
-		elsif( substr($_opt_format,0,1) eq 'c' ){ $Fmt = q(csv); }
 		elsif( substr($_opt_format,0,1) eq 'a' ){ $Fmt = q(asciitable); }
 		else{ $Fmt = q(yaml); }
 	}
@@ -588,7 +582,7 @@ sub help
 	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf\n");
 	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
 	printf( STDERR "    -F, --format <f>    : Format of the results of --list option,\n");
-	printf( STDERR "                          y = YAML, c = CSV a = ASCII Table.\n");
+	printf( STDERR "                          y = YAML, a = ASCIITable.\n");
 	printf( STDERR "    -v, --verbose       : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
 	printf( STDERR "    --help              : Print help message(This screen)\n");
 	printf( STDERR "    --version           : Print version number.\n");

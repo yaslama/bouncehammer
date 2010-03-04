@@ -1,4 +1,4 @@
-# $Id: Report.pm,v 1.8 2010/03/01 23:41:50 ak Exp $
+# $Id: Report.pm,v 1.9 2010/03/04 23:18:36 ak Exp $
 # -Id: Report.pm,v 1.1 2009/08/29 08:25:10 ak Exp -
 # -Id: Report.pm,v 1.5 2009/08/27 05:09:49 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -458,137 +458,73 @@ sub matrix
 	# Print matrix
 	BUILD_MATRIX:
 	{
-		if( $self->{'layout'} eq 'csv' )
+		# ASCII Table
+		require Text::ASCIITable;
+		my $_atab = undef();	# ASCII Table object
+
+		$_atab = new Text::ASCIITable( { 'headingText' => q{Totals by }.$self->{'totalsby'} });
+		$_atab->setOptions( 'outputWidth', 80 );
+		$_atab->setCols( $self->{'totalsby'}, 'Cellphone', 'Computer', 'Unknown Host', 'Sub Total' );
+
+		foreach my $_dort ( sort(keys(%$data)) )
 		{
-			$matrix .= sprintf( "%s,%s,%s,%s,%s\n", $self->{'totalsby'},
-					'Cellphone', 'Computer', 'Unknown Host', 'Sub Total' );
+			$eachname = $_dort;
+			$eachname = $_dort.q{ (}.$namelist->[int($_dort)-1].q{)} if( $datatype eq 'month' );
+			$eachname = $namelist->[int($_dort)-1] if( $datatype eq 'dayofweek' );
 
-
-			foreach my $_dort ( sort(keys(%$data)) )
-			{
-				$eachname = $_dort;
-				$eachname = $_dort.q{(}.$namelist->[int($_dort)-1].q{)} if( $datatype eq 'month' );
-				$eachname = $namelist->[int($_dort)-1] if( $datatype eq 'dayofweek' );
-				$matrix .= sprintf( "%s,%d,%d,%d,%d\n", $eachname,
-						$data->{$_dort}->{'mobile'},
-						$data->{$_dort}->{'computer'},
-						$data->{$_dort}->{'unknownhost'},
-						$data->{$_dort}->{'subtotal'} );
-			}
-
-			# Statistics in CSV
-			last(BUILD_MATRIX) unless( $self->{'stats'} );
-			$statistics .= sprintf("Mean,%.04f,%.04f,%.04f,%.04f\n",
-						$stat->mean( $vector->{'mobile'} ),
-						$stat->mean( $vector->{'computer'} ),
-						$stat->mean( $vector->{'unknownhost'} ),
-						$stat->mean( $vector->{'subtotal'} ) );
-			$statistics .= sprintf("Variance,%.04f,%.04f,%.04f,%.04f\n",
-						$stat->variance( $vector->{'mobile'} ),
-						$stat->variance( $vector->{'computer'} ),
-						$stat->variance( $vector->{'unknownhost'} ),
-						$stat->variance( $vector->{'subtotal'} ) );
-			$statistics .= sprintf("Std Deviation,%.04f,%.04f,%.04f,%.04f\n",
-						$stat->stddev( $vector->{'mobile'} ),
-						$stat->stddev( $vector->{'computer'} ),
-						$stat->stddev( $vector->{'unknownhost'} ),
-						$stat->stddev( $vector->{'subtotal'} ) );
-			$statistics .= sprintf("Median,%.04f,%.04f,%.04f,%.04f\n",
-						$stat->median( $vector->{'mobile'} ),
-						$stat->median( $vector->{'computer'} ),
-						$stat->median( $vector->{'unknownhost'} ),
-						$stat->median( $vector->{'subtotal'} ) );
-			$statistics .= sprintf("Min,%.04f,%.04f,%.04f,%.04f\n",
-						$stat->min( $vector->{'mobile'} ),
-						$stat->min( $vector->{'computer'} ),
-						$stat->min( $vector->{'unknownhost'} ),
-						$stat->min( $vector->{'subtotal'} ) );
-			$statistics .= sprintf("Max,%.04f,%.04f,%.04f,%.04f\n",
-						$stat->max( $vector->{'mobile'} ),
-						$stat->max( $vector->{'computer'} ),
-						$stat->max( $vector->{'unknownhost'} ),
-						$stat->max( $vector->{'subtotal'} ) );
-			$statistics .= sprintf("1st Quartile,%.04f,%.04f,%.04f,%.04f\n",
-						$stat->quartile( 1, $vector->{'mobile'} ),
-						$stat->quartile( 1, $vector->{'computer'} ),
-						$stat->quartile( 1, $vector->{'unknownhost'} ),
-						$stat->quartile( 1, $vector->{'subtotal'} ) );
-			$statistics .= sprintf("3rd Quartile,%.04f,%.04f,%.04f,%.04f\n",
-						$stat->quartile( 3, $vector->{'mobile'} ),
-						$stat->quartile( 3, $vector->{'computer'} ),
-						$stat->quartile( 3, $vector->{'unknownhost'} ),
-						$stat->quartile( 3, $vector->{'subtotal'} ) );
+			$_atab->addRow( $eachname,
+					$data->{$_dort}->{'mobile'},
+					$data->{$_dort}->{'computer'},
+					$data->{$_dort}->{'unknownhost'},
+					$data->{$_dort}->{'subtotal'} );
 		}
-		else
-		{
-			# ASCII Table
-			require Text::ASCIITable;
-			my $_atab = undef();	# ASCII Table object
 
-			$_atab = new Text::ASCIITable( { 'headingText' => q{Totals by }.$self->{'totalsby'} });
-			$_atab->setOptions( 'outputWidth', 80 );
-			$_atab->setCols( $self->{'totalsby'}, 'Cellphone', 'Computer', 'Unknown Host', 'Sub Total' );
+		$matrix = $_atab->draw();
 
-			foreach my $_dort ( sort(keys(%$data)) )
-			{
-				$eachname = $_dort;
-				$eachname = $_dort.q{ (}.$namelist->[int($_dort)-1].q{)} if( $datatype eq 'month' );
-				$eachname = $namelist->[int($_dort)-1] if( $datatype eq 'dayofweek' );
-
-				$_atab->addRow( $eachname,
-						$data->{$_dort}->{'mobile'},
-						$data->{$_dort}->{'computer'},
-						$data->{$_dort}->{'unknownhost'},
-						$data->{$_dort}->{'subtotal'} );
-			}
-
-			$matrix = $_atab->draw();
-
-			# Statistics in ASCII Table
-			last(BUILD_MATRIX) unless( $self->{'stats'} );
-			$_atab->addRowLine();
-			$_atab->addRow( 'Mean', 
-					sprintf("%.04f", $stat->mean( $vector->{'mobile'} ) ),
-					sprintf("%.04f", $stat->mean( $vector->{'computer'} ) ),
-					sprintf("%.04f", $stat->mean( $vector->{'unknownhost'} ) ),
-					sprintf("%.04f", $stat->mean( $vector->{'subtotal'} ) ) );
-			$_atab->addRow( 'Variance', 
-					sprintf("%.04f", $stat->variance( $vector->{'mobile'} ) ),
-					sprintf("%.04f", $stat->variance( $vector->{'computer'} ) ),
-					sprintf("%.04f", $stat->variance( $vector->{'unknownhost'} ) ),
-					sprintf("%.04f", $stat->variance( $vector->{'subtotal'} ) ) );
-			$_atab->addRow( 'Std Deviation', 
-					sprintf("%.04f", $stat->stddev( $vector->{'mobile'} ) ),
-					sprintf("%.04f", $stat->stddev( $vector->{'computer'} ) ),
-					sprintf("%.04f", $stat->stddev( $vector->{'unknownhost'} ) ),
-					sprintf("%.04f", $stat->stddev( $vector->{'subtotal'} ) ) );
-			$_atab->addRow( 'Median', 
-					sprintf("%.04f", $stat->median( $vector->{'mobile'} ) ),
-					sprintf("%.04f", $stat->median( $vector->{'computer'} ) ),
-					sprintf("%.04f", $stat->median( $vector->{'unknownhost'} ) ),
-					sprintf("%.04f", $stat->median( $vector->{'subtotal'} ) ) );
-			$_atab->addRow( 'Min', 
-					sprintf("%.04f", $stat->min( $vector->{'mobile'} ) ),
-					sprintf("%.04f", $stat->min( $vector->{'computer'} ) ),
-					sprintf("%.04f", $stat->min( $vector->{'unknownhost'} ) ),
-					sprintf("%.04f", $stat->min( $vector->{'subtotal'} ) ) );
-			$_atab->addRow( 'Max', 
-					sprintf("%.04f", $stat->max( $vector->{'mobile'} ) ),
-					sprintf("%.04f", $stat->max( $vector->{'computer'} ) ),
-					sprintf("%.04f", $stat->max( $vector->{'unknownhost'} ) ),
-					sprintf("%.04f", $stat->max( $vector->{'subtotal'} ) ) );
-			$_atab->addRow( '1st Quartile', 
-					sprintf("%.04f", $stat->quartile( 1, $vector->{'mobile'} ) ),
-					sprintf("%.04f", $stat->quartile( 1, $vector->{'computer'} ) ),
-					sprintf("%.04f", $stat->quartile( 1, $vector->{'unknownhost'} ) ),
-					sprintf("%.04f", $stat->quartile( 1, $vector->{'subtotal'} ) ) );
-			$_atab->addRow( '3rd Quartile', 
-					sprintf("%.04f", $stat->quartile( 3, $vector->{'mobile'} ) ),
-					sprintf("%.04f", $stat->quartile( 3, $vector->{'computer'} ) ),
-					sprintf("%.04f", $stat->quartile( 3, $vector->{'unknownhost'} ) ),
-					sprintf("%.04f", $stat->quartile( 3, $vector->{'subtotal'} ) ) );
-			$matrix = $_atab->draw();
-		}
+		# Statistics in ASCII Table
+		last(BUILD_MATRIX) unless( $self->{'stats'} );
+		$_atab->addRowLine();
+		$_atab->addRow( 'Mean', 
+				sprintf("%.04f", $stat->mean( $vector->{'mobile'} ) ),
+				sprintf("%.04f", $stat->mean( $vector->{'computer'} ) ),
+				sprintf("%.04f", $stat->mean( $vector->{'unknownhost'} ) ),
+				sprintf("%.04f", $stat->mean( $vector->{'subtotal'} ) ) );
+		$_atab->addRow( 'Variance', 
+				sprintf("%.04f", $stat->variance( $vector->{'mobile'} ) ),
+				sprintf("%.04f", $stat->variance( $vector->{'computer'} ) ),
+				sprintf("%.04f", $stat->variance( $vector->{'unknownhost'} ) ),
+				sprintf("%.04f", $stat->variance( $vector->{'subtotal'} ) ) );
+		$_atab->addRow( 'Std Deviation', 
+				sprintf("%.04f", $stat->stddev( $vector->{'mobile'} ) ),
+				sprintf("%.04f", $stat->stddev( $vector->{'computer'} ) ),
+				sprintf("%.04f", $stat->stddev( $vector->{'unknownhost'} ) ),
+				sprintf("%.04f", $stat->stddev( $vector->{'subtotal'} ) ) );
+		$_atab->addRow( 'Median', 
+				sprintf("%.04f", $stat->median( $vector->{'mobile'} ) ),
+				sprintf("%.04f", $stat->median( $vector->{'computer'} ) ),
+				sprintf("%.04f", $stat->median( $vector->{'unknownhost'} ) ),
+				sprintf("%.04f", $stat->median( $vector->{'subtotal'} ) ) );
+		$_atab->addRow( 'Min', 
+				sprintf("%.04f", $stat->min( $vector->{'mobile'} ) ),
+				sprintf("%.04f", $stat->min( $vector->{'computer'} ) ),
+				sprintf("%.04f", $stat->min( $vector->{'unknownhost'} ) ),
+				sprintf("%.04f", $stat->min( $vector->{'subtotal'} ) ) );
+		$_atab->addRow( 'Max', 
+				sprintf("%.04f", $stat->max( $vector->{'mobile'} ) ),
+				sprintf("%.04f", $stat->max( $vector->{'computer'} ) ),
+				sprintf("%.04f", $stat->max( $vector->{'unknownhost'} ) ),
+				sprintf("%.04f", $stat->max( $vector->{'subtotal'} ) ) );
+		$_atab->addRow( '1st Quartile', 
+				sprintf("%.04f", $stat->quartile( 1, $vector->{'mobile'} ) ),
+				sprintf("%.04f", $stat->quartile( 1, $vector->{'computer'} ) ),
+				sprintf("%.04f", $stat->quartile( 1, $vector->{'unknownhost'} ) ),
+				sprintf("%.04f", $stat->quartile( 1, $vector->{'subtotal'} ) ) );
+		$_atab->addRow( '3rd Quartile', 
+				sprintf("%.04f", $stat->quartile( 3, $vector->{'mobile'} ) ),
+				sprintf("%.04f", $stat->quartile( 3, $vector->{'computer'} ) ),
+				sprintf("%.04f", $stat->quartile( 3, $vector->{'unknownhost'} ) ),
+				sprintf("%.04f", $stat->quartile( 3, $vector->{'subtotal'} ) ) );
+		$matrix = $_atab->draw();
 	}
 
 	if( $reqv == 1 )
