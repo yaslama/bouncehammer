@@ -21,14 +21,10 @@
 	[%- IF DownloadLink -%]
 		[%- SET DLLYAML = "${DownloadLink}/yaml/${encryptedforuri}/${colname},${descend}" -%]
 		[%- SET DLLCSVF = "${DownloadLink}/csv/${encryptedforuri}/${colname},${descend}" -%]
-		[%- SET DLLADSM = "${DownloadLink}/sendmail/${encryptedforuri}/${colname},${descend}" -%]
-		[%- SET DLLADPF = "${DownloadLink}/postfix/${encryptedforuri}/${colname},${descend}" -%]
 		<select onChange = "window.open(this.options[this.selectedIndex].value)" style = 'font-size:10px;'>
 			<option value = '#' >Download the results</option>
 			<option value = '[% DLLYAML %]'>YAML</option>
 			<option value = '[% DLLCSVF %]'>CSV</option>
-			<option value = '[% DLLADSM %]'>access.db(Sendmail)</option>
-			<option value = '[% DLLADPF %]'>access.db(Postfix)</option>
 		</select>
 	[%- END -%]
 
