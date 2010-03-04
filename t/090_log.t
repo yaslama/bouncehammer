@@ -1,4 +1,4 @@
-# $Id: 090_log.t,v 1.2 2010/02/17 10:09:21 ak Exp $
+# $Id: 090_log.t,v 1.3 2010/03/04 21:20:32 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -13,7 +13,7 @@ use Kanadzuchi::Mbox;
 use Kanadzuchi::Log;
 use Kanadzuchi::Log::Report;
 use Path::Class;
-use Test::More ( tests => 45 );
+use Test::More ( tests => 37 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -31,7 +31,7 @@ my $R = new Kanadzuchi::Test(
 );
 
 my $NM = 37;
-my $OF = [ 'yaml', 'csv', 'asciitable', 'sendmail', 'postfix' ];
+my $OF = [ 'yaml', 'csv', 'asciitable' ];
 my $MR = undef();
 my $TD = new Path::Class::Dir($L->tempdir().q{/hammer-log.temp.}.$$);
 my $KP = new Kanadzuchi::Mbox( 'file' => $L->example->stringify().'/17-messages.eml' );

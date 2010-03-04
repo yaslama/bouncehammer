@@ -1,4 +1,4 @@
-# $Id: 500_bin-mailboxparser.t,v 1.11 2010/03/01 21:32:07 ak Exp $
+# $Id: 500_bin-mailboxparser.t,v 1.12 2010/03/04 21:20:32 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 63 );
+use Test::More ( tests => 59 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',64) if($@);
+	skip('Because no IPC::Cmd for testing',59) if($@);
 
 	use Kanadzuchi::Test::CLI;
 	use Kanadzuchi;
@@ -88,17 +88,6 @@ SKIP: {
 			'option' => $O.q( -Fa ),
 			'count' => 0,
 		},
-		{
-			'name' => 'Format is Sendmail(access_db), -Fs',
-			'option' => $O.q( -Fs ),
-			'count' => 0,
-		},
-		{
-			'name' => 'Format is Postfix(access_db), -Fp',
-			'option' => $O.q( -Fp ),
-			'count' => 0,
-		},
-
 	];
 
 	#  ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ 
