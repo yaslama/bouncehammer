@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.4 2010/03/04 08:29:50 ak Exp $
+# $Id: logger.PL,v 1.5 2010/03/06 04:35:35 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -200,13 +200,6 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 
 	my $_templogfiles = [];		# Array reference, holds Path::Class::File object of Temp log
 	my $_bmesgsbydate = {};		# Hash reference, key is '2009-01-03', value is pointer to array
-	my $_objloadedlog = undef();	# Kanadzuchi::Log object for summary
-
-	if( $Cmd->debuglevel > 1 )
-	{
-		require Kanadzuchi::Log::Report;
-		$_objloadedlog = new Kanadzuchi::Log::Report( 'count' => 0, 'entities' => [] );
-	}
 
 	# Prepare progress bar
 	my $_tprogressbar = undef();	# Term::ProgressBar object for temporary logs
@@ -267,11 +260,6 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 				$_bmesgsbydate->{$__datestring} = [];		# Insert array reference
 			}
 			push( @{$_bmesgsbydate->{$__datestring}}, $__o );
-
-			# Set values for log(summary) object
-			next() unless( defined($_objloadedlog) );
-			push( @{$_objloadedlog->entities}, $__o );
-			$_objloadedlog->count( $_objloadedlog->count() + 1 );
 
 		} # End of the loop(while())
 
@@ -428,9 +416,6 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 
 	$Cmd->d(2,sprintf("Regular logs are saved into = %s\n", $_objherlog->directory()));
 
-
-	# Print summary
-	$_objloadedlog->summary() if(defined($_objloadedlog));
 
 	# Clean up, Remove or Truncate temporary log files
 	if( $Cmd->operation & ( $Cmd->option->{'remove'} + $Cmd->option->{'truncate'} )  )
