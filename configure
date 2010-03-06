@@ -3136,7 +3136,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/bin/Makefile src/cgi/Makefile src/etc/Makefile src/lib/Kanadzuchi/API/Makefile src/lib/Kanadzuchi/Archive/Makefile src/lib/Kanadzuchi/Config/Makefile src/lib/Kanadzuchi/Log/Makefile src/lib/Kanadzuchi/Mail/Bounced/Makefile src/lib/Kanadzuchi/Mail/Group/JP/Makefile src/lib/Kanadzuchi/Mail/Group/Makefile src/lib/Kanadzuchi/Mail/Makefile src/lib/Kanadzuchi/Mail/Stored/Makefile src/lib/Kanadzuchi/Mail/Why/Makefile src/lib/Kanadzuchi/Makefile src/lib/Kanadzuchi/Mbox/Makefile src/lib/Kanadzuchi/RDB/Makefile src/lib/Kanadzuchi/RDB/Schema/Makefile src/lib/Kanadzuchi/RDB/Table/Makefile src/lib/Kanadzuchi/UI/Makefile src/lib/Kanadzuchi/UI/Web/Makefile src/lib/Makefile src/sql/Makefile template/Makefile template/standard/Makefile template/standard/element/Makefile template/standard/help/Makefile template/standard/javascript/Makefile template/standard/page/Makefile template/standard/stylesheet/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile src/bin/Makefile src/cgi/Makefile src/etc/Makefile src/lib/Kanadzuchi/API/Makefile src/lib/Kanadzuchi/Archive/Makefile src/lib/Kanadzuchi/Config/Makefile src/lib/Kanadzuchi/Mail/Bounced/Makefile src/lib/Kanadzuchi/Mail/Group/JP/Makefile src/lib/Kanadzuchi/Mail/Group/Makefile src/lib/Kanadzuchi/Mail/Makefile src/lib/Kanadzuchi/Mail/Stored/Makefile src/lib/Kanadzuchi/Mail/Why/Makefile src/lib/Kanadzuchi/Makefile src/lib/Kanadzuchi/Mbox/Makefile src/lib/Kanadzuchi/RDB/Makefile src/lib/Kanadzuchi/RDB/Schema/Makefile src/lib/Kanadzuchi/RDB/Table/Makefile src/lib/Kanadzuchi/UI/Makefile src/lib/Kanadzuchi/UI/Web/Makefile src/lib/Makefile src/sql/Makefile template/Makefile template/standard/Makefile template/standard/element/Makefile template/standard/help/Makefile template/standard/javascript/Makefile template/standard/page/Makefile template/standard/stylesheet/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -3716,7 +3716,6 @@ do
     "src/lib/Kanadzuchi/API/Makefile") CONFIG_FILES="$CONFIG_FILES src/lib/Kanadzuchi/API/Makefile" ;;
     "src/lib/Kanadzuchi/Archive/Makefile") CONFIG_FILES="$CONFIG_FILES src/lib/Kanadzuchi/Archive/Makefile" ;;
     "src/lib/Kanadzuchi/Config/Makefile") CONFIG_FILES="$CONFIG_FILES src/lib/Kanadzuchi/Config/Makefile" ;;
-    "src/lib/Kanadzuchi/Log/Makefile") CONFIG_FILES="$CONFIG_FILES src/lib/Kanadzuchi/Log/Makefile" ;;
     "src/lib/Kanadzuchi/Mail/Bounced/Makefile") CONFIG_FILES="$CONFIG_FILES src/lib/Kanadzuchi/Mail/Bounced/Makefile" ;;
     "src/lib/Kanadzuchi/Mail/Group/JP/Makefile") CONFIG_FILES="$CONFIG_FILES src/lib/Kanadzuchi/Mail/Group/JP/Makefile" ;;
     "src/lib/Kanadzuchi/Mail/Group/Makefile") CONFIG_FILES="$CONFIG_FILES src/lib/Kanadzuchi/Mail/Group/Makefile" ;;
