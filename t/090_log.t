@@ -1,4 +1,4 @@
-# $Id: 090_log.t,v 1.4 2010/03/04 23:19:15 ak Exp $
+# $Id: 090_log.t,v 1.5 2010/03/07 04:05:08 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,9 +11,8 @@ use Kanadzuchi::Test;
 use Kanadzuchi::Mail::Bounced;
 use Kanadzuchi::Mbox;
 use Kanadzuchi::Log;
-use Kanadzuchi::Log::Report;
 use Path::Class;
-use Test::More ( tests => 33 );
+use Test::More ( tests => 17 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -23,11 +22,6 @@ use Test::More ( tests => 33 );
 my $L = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::Log|,
 	'methods' => [ 'new', 'logger', 'dumper' ],
-);
-
-my $R = new Kanadzuchi::Test(
-	'class' => q|Kanadzuchi::Log::Report|,
-	'methods' => [ @{$L->methods}, 'addupbyhost', 'addupbycalendar', 'summary', 'matrix', ],
 );
 
 my $NM = 37;
@@ -51,25 +45,10 @@ PREPROCESS: {
 		'device' => q{STDOUT}, )
 	);
 
-	$R->instance( new Kanadzuchi::Log::Report(
-		'directory' => new Path::Class::Dir($L->tempdir()),
-		'logfile' => new Path::Class::File($L->tempdir().q{/test-data.tmp}),
-		'entities' => [],
-		'count' => 0,
-		'format' => q{yaml},
-		'device' => q{STDOUT}, )
-	);
-
 	isa_ok( $L->instance(), $L->class() );
 	isa_ok( $L->instance->directory(), q|Path::Class::Dir| );
 	isa_ok( $L->instance->logfile(), q|Path::Class::File| );
-
-	isa_ok( $R->instance(), $R->class() );
-	isa_ok( $R->instance->directory(), q|Path::Class::Dir| );
-	isa_ok( $R->instance->logfile(), q|Path::Class::File| );
-
 	can_ok( $L->class(), @{$L->methods} );
-	can_ok( $R->class(), @{$R->methods} );
 
 	isa_ok( $TD, q|Path::Class::Dir| );
 	isa_ok( $KP, q|Kanadzuchi::Mbox| );
@@ -87,8 +66,6 @@ PREPROCESS: {
 
 	$L->instance->entities( $MR );
 	$L->instance->count( $#{$MR} + 1 );
-	$R->instance->entities( $MR );
-	$R->instance->count( $#{$MR} + 1 );
 }
 
 LOG_INSTANCE: {
@@ -110,41 +87,6 @@ LOG_INSTANCE: {
 
 		$dumpeddata = $L->instance->dumper();
 		ok( length($dumpeddata), $L->class.'->dumper() with '.$f );
-	}
-}
-
-REPORT_INSTANCE: {
-
-	my $dumpeddata = q();
-
-	isa_ok( $R->instance->entities(), q|ARRAY|, $R->class.q{->entities()} );
-	isa_ok( $R->instance->addupbyhost(), q|HASH|, $R->class.'->addupbyhost()' );
-	isa_ok( $R->instance->addupbycalendar(), q|HASH|, $R->class.'->addupbycalendar()' );
-
-	is( $R->instance->count(), $NM, $R->class.q{->count()} );
-	is( $R->instance->format(), q{yaml}, $R->class.q{->format()} );
-	is( $R->instance->device(), q{STDOUT}, $R->class.q{->device()} );
-
-	OUTPUT_FORMAT: foreach my $f ( @$OF )
-	{
-		$R->instance->format( $f );
-
-		$dumpeddata = $R->instance->logger();
-		ok( length($dumpeddata), $R->class.'->logger() with '.$f );
-
-		$dumpeddata = $R->instance->dumper();
-		ok( length($dumpeddata), $R->class.'->dumper() with '.$f );
-	}
-
-	OUTPUT_LAYOUT: foreach my $l ( 'asciitable' )
-	{
-		$R->instance->layout( $l );
-
-		$dumpeddata = $R->instance->summary();
-		ok( length($dumpeddata), $R->class.'->summary() with '.$l );
-
-		$dumpeddata = $R->instance->matrix();
-		ok( length($dumpeddata), $R->class.'->matrix() with '.$l );
 	}
 }
 
