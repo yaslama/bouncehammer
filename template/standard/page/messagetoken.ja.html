@@ -39,24 +39,24 @@
 					});
 				-%]
 				<fieldset>
-					<legend>発信者アドレスと宛先アドレスを入力</legend>
+					<legend>発信者(From)アドレスと受信者(To)アドレスを入力</legend>
 					<table>
 					<tbody>
 						<tr>
 							<td class = 'key'>発信者アドレス</td>
 							<td class = 'value'>
 								<input type = 'text' name = 'addresser' style = 'width: 384px;' id = 'sa' class = 'wide'
-									placeholder = '発信者アドレス' autosave = '[% systemname %].addresser' 
+									placeholder = '発信者(From)アドレス' autosave = '[% systemname %].addresser' 
 									results = '16' onChange = "checksa.innerHTML='&#9745; OK';"/>
 							</td>
 							<td class = 'extra' id = 'checksa'></td>
 						</tr>
 
 						<tr>
-							<td class = 'key'>宛先アドレス</td>
+							<td class = 'key'>受信者アドレス</td>
 							<td class = 'value'>
 								<input type = 'text' name = 'recipient' style = 'width: 384px;' id = 'ra' class = 'wide'
-									placeholder = '宛先アドレス' autosave = '[% systemname %].recipient'
+									placeholder = '宛先(To)アドレス' autosave = '[% systemname %].recipient'
 									results = '16' onChange = "checkra.innerHTML='&#9745; OK';" />
 							</td>
 							<td class = 'extra' id = 'checkra'></td>

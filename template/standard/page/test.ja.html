@@ -70,7 +70,9 @@
 								</td>
 								<td class = 'value' >
 									下記のテキスト領域にメール内容を貼付けて下さい
-									<a href = "javascript:void(0);" onClick = "toggleIt('emailtextarea');">&darr;</a><br />
+									<span class = 'flatbutton'>
+										<a href = "javascript:void(0);" onClick = "toggleIt('emailtextarea');">表示</a>
+									</span><br />
 									<textarea name = 'emailtext' id = 'emailtextarea' onKeyUp = "doparse.disabled = false;"
 										onChange = "checket.innerHTML = '&#9745; 使用';"
 										style = 'width: 420px; height: 384px; display: none; border: 1px dotted #b2b2b2;
