@@ -5,10 +5,10 @@ INSERT INTO t_destinations ( domainname, description ) VALUES( 'example.org', 'E
 INSERT INTO t_bouncelogs 
 	( addresser, recipient, senderdomain, destination, token, bounced, updated, hostgroup, provider, reason, description )
 	VALUES
-	( 1, 'user01@example.org', 1, 1, '0c1f60a7c2b7e2d12d3f2bc29e310274', 1234567890, 1234567899, 2, 1, 2,
+	( 1, 'user01@example.org', 1, 1, '8dbb1b9ce9cc47eb6bb1316096c858cd', 1234567890, 1234567899, 2, 1, 2,
 		'{ "deliverystatus": 500, "timezoneoffset": "+0900", "diagnosticcode": "Example1" }' );
 INSERT INTO t_bouncelogs 
 	( addresser, recipient, senderdomain, destination, token, bounced, updated, hostgroup, provider, reason, description )
 	VALUES
-	( 2, 'user02@example.org', 1, 1, '6b364965626bf70b9c91aadd3cd591c3', 1011121314, 1012141618, 2, 2, 3, 
+	( 2, 'user02@example.org', 1, 1, 'ac69fa7503ac32dc0291a91fd90e7ea3', 1011121314, 1012141618, 2, 2, 3, 
 		'{ "deliverystatus": 522, "timezoneoffset": "-0400", "diagnosticcode": "Example2" }' );
