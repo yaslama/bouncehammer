@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.9 2010/02/21 20:46:42 ak Exp $
+# $Id: CLI.pm,v 1.10 2010/03/19 07:39:58 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                       
@@ -45,6 +45,7 @@ __PACKAGE__->mk_ro_accessors(
 __PACKAGE__->mk_accessors(
 	'operation',	# (Integer) Operation code
 	'debuglevel',	# (Integer) Debug level
+	'silent',	# (Integer) Silent mode
 	'tmpdir',	# (Path::Class::Dir) tmp directory
 	'pf',		# (Path::Class::File) pid file
 	'cf',		# (Path::Class::File) config file
@@ -85,6 +86,21 @@ sub new
 	}
 
 	return( $class->SUPER::new($argvs) );
+}
+
+sub is_machine
+{
+	# +-+-+-+-+-+-+-+-+-+-+
+	# |i|s|_|m|a|c|h|i|n|e|
+	# +-+-+-+-+-+-+-+-+-+-+
+	#
+	# @Description	The user is a machine or not
+	# @Param	<None>
+	# @Return	(Integer) 1 = Executed by machine
+	#		(Integer) 0 = Executed by not machine
+	my $class = shift();
+	return(0) if( $ENV{'SHELL'} && $ENV{'USER'} & $ENV{'LOGNAME'} & $ENV{'HOME'} );
+	return(1);
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -207,6 +223,7 @@ sub d
 	my $self = shift();
 	my $dlev = shift();
 	my $mesg = shift() || return(0);
+	return(1) if( $self->{'silent'} );
 	printf( STDERR qq{ *debug%d: %s}, $dlev, $mesg ) if( $self->{'debuglevel'} >= $dlev );
 	return(1);
 }
@@ -223,7 +240,7 @@ sub e
 	# @See		abort(), DESTROY()
 	my $self = shift();
 	my $mesg = shift() || return(0);
-	Carp::carp( qq{ ***error: $mesg} );
+	Carp::carp( qq{ ***error: $mesg} ) unless( $self->{'silent'} );
 	$self->abort();
 }
 
@@ -241,7 +258,7 @@ sub catch_signal
 	my $mesg = q|***Catch the signal(|.$sign.q|)|;
 
 	if( $sign eq q(ALRM) ){ $mesg = q(Timed out, No data from STDIN); }
-	Carp::carp($mesg) if( $self->{'debuglevel'} > 0 );
+	Carp::carp($mesg) if( $self->{'debuglevel'} > 0 && ! $self->{'silent'} );
 	$self->abort();
 }
 
@@ -270,15 +287,24 @@ sub abort
 	# @Return	<None>
 	# @See		e(), DESTROY()
 	my $self = shift();
-	printf( STDERR qq{ ***abort\n} ) if( $self->{'debuglevel'} > 0 );
+	printf( STDERR qq{ ***abort\n} ) if( $self->{'debuglevel'} > 0 && ! $self->{'silent'} );
 	$self->DESTROY();
 
-	# exit(75) When it called from an MTA
-	#  * sendmail = sendmail-8.14.3/{cf/README,doc/op/op.me}
-	#  * postfix = http://www.postfix.org/local.8.html
-	#  * qmail = http://www.lifewithqmail.org/lwq.html#environment-variables
-	exit(75) if( ! $ENV{'SHELL'} && ! $ENV{'USER'} & ! $ENV{'LOGNAME'} & ! $ENV{'HOME'} );
-	exit(1);
+	if( __PACKAGE__->is_machine() )
+	{
+		# Ignore error if the user is a machine
+		exit(0) if( $self->{'silent'} );
+
+		# exit(75) When it called from an MTA
+		#  * sendmail = sendmail-8.14.3/{cf/README,doc/op/op.me}
+		#  * postfix = http://www.postfix.org/local.8.html
+		#  * qmail = http://www.lifewithqmail.org/lwq.html#environment-variables
+		exit(75);
+	}
+	else
+	{
+		exit(1);
+	}
 }
 
 sub DESTROY
@@ -317,8 +343,11 @@ sub exception
 	my $head = q{E};
 
 	eval{ $head ||= $eobj->head(); };
-	printf( STDERR qq{ ***error: [%s] %s [%s:%d]\n}, 
-		$head, $eobj->{'-text'}, $eobj->{'-file'}, $eobj->{'-line'} );
+	unless( $self->{'silent'} )
+	{
+		printf( STDERR qq{ ***error: [%s] %s [%s:%d]\n}, 
+			$head, $eobj->{'-text'}, $eobj->{'-file'}, $eobj->{'-line'} );
+	}
 }
 
 1;
