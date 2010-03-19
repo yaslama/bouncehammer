@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: tablectl.PL,v 1.5 2010/03/04 23:18:20 ak Exp $
+# $Id: tablectl.PL,v 1.6 2010/03/19 07:38:54 ak Exp $
 # -Id: tablectl.PL,v 1.12 2010/02/21 20:09:01 ak Exp -
 # -Id: tablectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: tablectl.PL,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -436,6 +436,7 @@ sub parse_options
 		$_opt_usedb,
 		$_opt_test,
 		$_opt_verbose,
+		$_opt_silent,
 	);
 
 	# Relations of the option name and the option value
@@ -462,14 +463,16 @@ sub parse_options
 			'test'		=> \$_opt_test,
 			'T'		=> \$_opt_test,
 			'help'		=> sub { help(); exit(0); },
+			'silent'	=> \$_opt_silent,
 			'verbose'	=> \$_opt_verbose,
 			'v+'		=> \$_opt_verbose,
 			'version'	=> sub { printf(STDERR "%s\n", $Zci->version()); exit(0); },
 		);
 
 
-	# (verbose|debug) mode
+	# (verbose|debug|silent) mode
 	$Cmd->debuglevel( ( $_opt_verbose ? $_opt_verbose : 0 ) - 1 );
+	$Cmd->silent( $_opt_silent ? 1 : 0 );
 
 	# Specify Config File(YAML)
 	if( defined($_opt_conf) )
@@ -558,13 +561,13 @@ sub help
 	printf( STDERR "Usage: %s [OPTIONS] -T<x>\n", $Cmd->calledfrom() );
 	printf( STDERR "\n" );
 	printf( STDERR " * TABLE CONTROL OPTIONS\n" );
-	printf( STDERR "    -t, --table <t> : Table name, ALWAYS REQUIRED.\n");
-	printf( STDERR "                      a = [A]ddressers, s = [S]enderDomains, d = [D]estinations\n");
-	printf( STDERR "                      h = [H]ostgroups, p = [P]roviders, w = Reasons([w]hy)\n");
-	printf( STDERR "    --list          : Print the table contents as a list.\n");
-	printf( STDERR "    --update        : UPDATE specified records\n");
-	printf( STDERR "    --insert        : INSERT a new record\n");
-	printf( STDERR "    --remove        : DELETE a specified record\n");
+	printf( STDERR "    -t, --table <t>       : Table name, ALWAYS REQUIRED.\n");
+	printf( STDERR "                            a = [A]ddressers, s = [S]enderDomains, d = [D]estinations\n");
+	printf( STDERR "                            h = [H]ostgroups, p = [P]roviders, w = Reasons([w]hy)\n");
+	printf( STDERR "    --list                : Print the table contents as a list.\n");
+	printf( STDERR "    --update              : UPDATE specified records\n");
+	printf( STDERR "    --insert              : INSERT a new record\n");
+	printf( STDERR "    --remove              : DELETE a specified record\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * TABLE COLUMN OPTIONS\n" );
 	printf( STDERR "    --id <n>              : ID(>0), this option is required by --update, --remove option.\n");
@@ -573,19 +576,20 @@ sub help
 	printf( STDERR "    --disabled <0|1>      : A value of disabled field, 0 = Turn on, 1 = Turn off\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * DATABASE SPEC OPTIONS(Overrides the value in the config file)\n" );
-	printf( STDERR "    --type <d>          : DB Type, p:Postgres, m:MySQL, s=SQLite .\n");
-	printf( STDERR "    --host <hostname>   : DB Host name or IP address\n");
-	printf( STDERR "    --port <portnum>    : DB Host port number\n");
+	printf( STDERR "    --type <d>            : DB Type, p:Postgres, m:MySQL, s=SQLite .\n");
+	printf( STDERR "    --host <hostname>     : DB Host name or IP address\n");
+	printf( STDERR "    --port <portnum>      : DB Host port number\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * OTHER OPTIONS\n" );
-	printf( STDERR "    -C, --conf <config> : Location of the configuration file used instead of \n");
-	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf\n");
-	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
-	printf( STDERR "    -F, --format <f>    : Format of the results of --list option,\n");
-	printf( STDERR "                          y = YAML, a = ASCIITable.\n");
-	printf( STDERR "    -v, --verbose       : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
-	printf( STDERR "    --help              : Print help message(This screen)\n");
-	printf( STDERR "    --version           : Print version number.\n");
+	printf( STDERR "    -C, --conf <config>   : Location of the configuration file used instead of \n");
+	printf( STDERR "                            __KANADZUCHIETC__/bouncehammer.cf\n");
+	printf( STDERR "    -T, --test            : Test mode, same as ``-C /path/to/test-run.cf''\n");
+	printf( STDERR "    -F, --format <f>      : Format of the results of --list option,\n");
+	printf( STDERR "                            y = YAML, a = ASCIITable.\n");
+	printf( STDERR "    --silent              : Silent mode, All MESSAGES WILL NOT BE DISPLAYED.\n");
+	printf( STDERR "    -v, --verbose         : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
+	printf( STDERR "    --help                : Print help message(This screen)\n");
+	printf( STDERR "    --version             : Print version number.\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * Examples\n" );
 	printf( STDERR "  %s -C./test-run.cf -Tw --list -Fa\n", $Cmd->calledfrom() );

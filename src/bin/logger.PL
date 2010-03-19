@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.5 2010/03/06 04:35:35 ak Exp $
+# $Id: logger.PL,v 1.6 2010/03/19 07:38:54 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -479,6 +479,7 @@ sub parse_options
 		$_opt_strict,
 		$_opt_test,
 		$_opt_truncate,
+		$_opt_silent,
 		$_opt_verbose,
 	);
 
@@ -501,14 +502,16 @@ sub parse_options
 			'T'		=> \$_opt_test,
 			'truncate'	=> \$_opt_truncate,
 			'help'		=> sub { help(); exit(0); },
+			'silent'	=> \$_opt_silent,
 			'verbose'	=> \$_opt_verbose,
 			'v+'		=> \$_opt_verbose,
 			'version'	=> sub { printf(STDERR "%s\n", $Zci->version()); exit(0); },
 		);
 
 
-	# (verbose|debug) mode
+	# (verbose|debug|silent) mode
 	$Cmd->debuglevel( ( $_opt_verbose ? $_opt_verbose : 0 ) - 1 );
+	$Cmd->silent( $_opt_silent ? 1 : 0 );
 
 	# Specify Config File(YAML)
 	if( defined($_opt_conf) )
@@ -591,6 +594,7 @@ sub help
 	printf( STDERR "    -C, --conf <config> : Location of the configuration file used instead of \n");
 	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf .\n");
 	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
+	printf( STDERR "    --silent            : Silent mode, All MESSAGES WILL NOT BE DISPLAYED.\n");
 	printf( STDERR "    -v, --verbose       : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
 	printf( STDERR "    --help              : Print help message(This screen)\n");
 	printf( STDERR "    --version           : Print version number.\n");
