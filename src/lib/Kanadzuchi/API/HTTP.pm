@@ -1,4 +1,4 @@
-# $Id: HTTP.pm,v 1.8 2010/03/01 23:41:43 ak Exp $
+# $Id: HTTP.pm,v 1.9 2010/03/19 04:03:45 ak Exp $
 # -Id: HTTP.pm,v 1.3 2009/10/06 00:36:49 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::
@@ -185,12 +185,13 @@ sub api_query
 
 	require Kanadzuchi::Mail::Stored::RDB;
 	my $answer = [];
+	my $isjson = 1;
 	my $string = q();
 	my $paging = { 'currentpagenum' => 1, 'resultperpage' => 1 };
 	my $wherec = { 'token' => lc($self->param('token')) };
 
 	$answer = Kanadzuchi::Mail::Stored::RDB->searchandnew( $self->{'database'}, $wherec, \$paging, 1 );
-	$string = Kanadzuchi::Mail::Stored::RDB->serialize($answer);
+	$string = Kanadzuchi::Mail::Stored::RDB->serialize( $answer, $isjson );
 
 	return($string);
 }
