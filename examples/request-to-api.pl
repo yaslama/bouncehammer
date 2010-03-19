@@ -1,5 +1,5 @@
 #!/usr/local/bin/perl
-# $Id: request-to-api.pl,v 1.1 2010/03/18 08:48:15 ak Exp $
+# $Id: request-to-api.pl,v 1.3 2010/03/19 04:01:22 ak Exp $
 use strict;
 use warnings;
 use LWP::UserAgent;
