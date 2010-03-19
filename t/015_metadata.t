@@ -1,4 +1,4 @@
-# $Id: 015_metadata.t,v 1.4 2010/02/19 14:32:59 ak Exp $
+# $Id: 015_metadata.t,v 1.5 2010/03/19 04:05:46 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Metadata;
-use Test::More ( tests => 158 );
+use Test::More ( tests => 170 );
 use JSON::Syck;
 use Path::Class::File;
 
@@ -56,24 +56,26 @@ TO_STRING: {
 
 	foreach my $j ( $Y, $jsonhr )
 	{
-		FROM_HASHREF: {
-			$string = $T->class->to_string( $j );
-			$loaded = JSON::Syck::Load($$string);
+		foreach my $f ( 0, 1 )
+		{
+			FROM_HASHREF: {
+				$string = $T->class->to_string( $j, $f );
+				$loaded = JSON::Syck::Load($$string);
 
-			ok( length($$string), q{->to_string()} );
-			isa_ok( $loaded, q|HASH|, q{Load again by JSON::Syck::Load()} );
-			is( $loaded->{'addresser'}, 'postmaster@example.jp' );
+				ok( length($$string), q{->to_string()} );
+				isa_ok( $loaded, q|HASH|, q{Load again by JSON::Syck::Load()} );
+				is( $loaded->{'addresser'}, 'postmaster@example.jp' );
+			}
+
+			FROM_ARRAYREF: {
+				$string = $T->class->to_string( [$j], $f );
+				$loaded = JSON::Syck::Load($$string);
+
+				ok( length($$string), q{->to_string([])} );
+				isa_ok( $loaded, q|ARRAY|, q{Load again by JSON::Syck::Load()} );
+				is( $loaded->[0]->{'addresser'}, 'postmaster@example.jp' );
+			}
 		}
-
-		FROM_ARRAYREF: {
-			$string = $T->class->to_string( [$j] );
-			$loaded = JSON::Syck::Load($$string);
-
-			ok( length($$string), q{->to_string([])} );
-			isa_ok( $loaded, q|ARRAY|, q{Load again by JSON::Syck::Load()} );
-			is( $loaded->[0]->{'addresser'}, 'postmaster@example.jp' );
-		}
-
 	}
 
 	IRREGULAR_CASES: {

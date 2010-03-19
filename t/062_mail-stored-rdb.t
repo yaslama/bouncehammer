@@ -1,4 +1,4 @@
-# $Id: 062_mail-stored-rdb.t,v 1.6 2010/03/04 08:37:01 ak Exp $
+# $Id: 062_mail-stored-rdb.t,v 1.7 2010/03/19 04:05:46 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -13,7 +13,7 @@ use Kanadzuchi::Mail::Stored::RDB;
 use Kanadzuchi::Metadata;
 use Time::Piece;
 use File::Copy;
-use Test::More ( tests => 1602 );
+use Test::More ( tests => 1605 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -65,13 +65,20 @@ SERIALIZE: {
 	my $object = $T->instance();
 	my $entity = {};
 	my $struct = {};
-	my $jsonstring = $T->class->serialize( [ $object ] );
-	my $jsonstruct = Kanadzuchi::Metadata->to_object( \$jsonstring );
-	my $yamlstring = $T->class->serialize( $jsonstruct );
+	my $jsonstring = undef();
+	my $jsonstruct = undef();
+	my $yamlstring = undef();
 
-	isa_ok( $jsonstruct, q|ARRAY| );
-	ok( length($jsonstring), $T->class.q{->serialize() from Object} );
-	ok( length($yamlstring), $T->class.q{->serialize() from Hash reference} );
+	foreach my $f ( 0, 1 )
+	{
+		$jsonstring = $T->class->serialize( [ $object ], $f );
+		$jsonstruct = Kanadzuchi::Metadata->to_object( \$jsonstring );
+		$yamlstring = $T->class->serialize( $jsonstruct, $f );
+
+		isa_ok( $jsonstruct, q|ARRAY| );
+		ok( length($jsonstring), $T->class.q{->serialize() from Object} );
+		ok( length($yamlstring), $T->class.q{->serialize() from Hash reference} );
+	}
 
 	foreach my $j ( $jsonstring, $yamlstring )
 	{
@@ -120,7 +127,7 @@ SEARCH_AND_NEW:
 
 	SKIP: {
 		my $D = new Kanadzuchi::RDB( 'dbtype' => q|SQLite| );
-		my $S = 1574;	# Skip
+		my $S = 1577;	# Skip
 
 		eval { require DBI; }; skip( 'Because no DBI for testing', $S ) if( $@ );
 		eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $S ) if( $@ );

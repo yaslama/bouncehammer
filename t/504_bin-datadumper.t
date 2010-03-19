@@ -1,4 +1,4 @@
-# $Id: 504_bin-datadumper.t,v 1.8 2010/03/01 21:32:07 ak Exp $
+# $Id: 504_bin-datadumper.t,v 1.9 2010/03/19 04:05:46 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 89 );
+use Test::More ( tests => 166 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
-	skip( 'Because no IPC::Cmd for testing', 89 ) if( $@ );
+	skip( 'Because no IPC::Cmd for testing', 166 ) if( $@ );
 
 	use Kanadzuchi::Test::CLI;
 	use Kanadzuchi;
@@ -78,7 +78,7 @@ SKIP: {
 	# |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 	#
 	SKIP: {
-		my $S = 89;	# Skip
+		my $S = 166;	# Skip
 		eval { require DBI; }; skip( 'Because no DBI for testing', $S ) if( $@ );
 		eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $S ) if( $@ );
 		eval { $E->environment(2); }; 
@@ -124,61 +124,64 @@ SKIP: {
 		}
 
 		DUMP: {
-			my $command = q();
-			my $xresult = q();
-			my $xstatus = 0;
-			my $yamlret = undef();
-			my $comment = 1;
-
-			foreach my $s ( @$Suite )
+			foreach my $f ( 'yaml', 'json' )
 			{
-				NORMAL_SELECT: {
-					$command = $E->perl().$E->command().$O.$s->{'option'};
-					$xresult = qx($command);
-					$yamlret = JSON::Syck::Load( $xresult );
-					ok( length($xresult), $s->{'name'}.q{ length() = }.length($xresult) );
-					is( ( $#{$yamlret} + 1 ), $s->{'count'}, $s->{'name'}.q{/ }.$s->{'option'} );
-				}
+				my $command = q();
+				my $xresult = q();
+				my $xstatus = 0;
+				my $yamlret = undef();
+				my $comment = 1;
 
-				ORDERBY: {
-					$command = $E->perl().$E->command().$O.$s->{'option'}.q{ --orderby bounced };
-					$yamlret = JSON::Syck::Load( $xresult );
-					ok( length($xresult), $s->{'name'}.q{ length() = }.length($xresult) );
-					is( ( $#{$yamlret} + 1 ), $s->{'count'}, 
-						$s->{'name'}.q{/ }.$s->{'option'}.q{ --orderby bounced} );
-				}
-
-				ORDERBY_DESC: {
-					$command = $E->perl().$E->command().$O.$s->{'option'}.q{ --orderbydesc bounced };
-					$yamlret = JSON::Syck::Load( $xresult );
-					ok( length($xresult), $s->{'name'}.q{ length() = }.length($xresult) );
-					is( ( $#{$yamlret} + 1 ), $s->{'count'}, 
-						$s->{'name'}.q{/ }.$s->{'option'}.q{ --orderbydesc bounced} );
-				}
-
-				WITH_COMMENT: {
-					$command = $E->perl().$E->command().$O.$s->{'option'}.q{ --comment -Fy};
-					$xresult = qx($command);
-					last() unless( length($xresult) );
-					ok( ( length($xresult) - $Comment->{'y'} ), $s->{'name'}.q{ with comment} );
-				}
-
-				COUNT_ONLY: {
-					$command = $E->perl().$E->command().$O.$s->{'option'}.q{ --count};
-					$yamlret = JSON::Syck::Load( $xresult );
-					is( ( $#{$yamlret} + 1 ), $s->{'count'}, 
-						$s->{'name'}.q{/ }.$s->{'option'}.q{ --count} );
-				}
-
-				OTHER_FORMAT: {
-					foreach my $f ( 'c', 's', 'p' )
-					{
-						$command = $E->perl().$E->command().$O.$s->{'option'}.q{ -F}.$f;
-						$xstatus = scalar(IPC::Cmd::run( 'command' => $command ));
-						ok( $xstatus, $s->{'name'}.q{/ }.$s->{'option'}.q{ -F}.$f );
+				foreach my $s ( @$Suite )
+				{
+					NORMAL_SELECT: {
+						$command = $E->perl().$E->command().$O.$s->{'option'}.q{ --format }.$f;
+						$xresult = qx($command);
+						$yamlret = JSON::Syck::Load( $xresult );
+						ok( length($xresult), $s->{'name'}.q{ length() = }.length($xresult) );
+						is( ( $#{$yamlret} + 1 ), $s->{'count'}, $s->{'name'}.q{/ }.$s->{'option'} );
 					}
-				}
 
+					ORDERBY: {
+						$command = $E->perl().$E->command().$O.$s->{'option'}.q{ --orderby bounced --fotmat}.$f;
+						$yamlret = JSON::Syck::Load( $xresult );
+						ok( length($xresult), $s->{'name'}.q{ length() = }.length($xresult) );
+						is( ( $#{$yamlret} + 1 ), $s->{'count'}, 
+							$s->{'name'}.q{/ }.$s->{'option'}.q{ --orderby bounced} );
+					}
+
+					ORDERBY_DESC: {
+						$command = $E->perl().$E->command().$O.$s->{'option'}.q{ --orderbydesc bounced --format }.$f;
+						$yamlret = JSON::Syck::Load( $xresult );
+						ok( length($xresult), $s->{'name'}.q{ length() = }.length($xresult) );
+						is( ( $#{$yamlret} + 1 ), $s->{'count'}, 
+							$s->{'name'}.q{/ }.$s->{'option'}.q{ --orderbydesc bounced} );
+					}
+
+					WITH_COMMENT: {
+						$command = $E->perl().$E->command().$O.$s->{'option'}.q{ --comment --format }.$f;
+						$xresult = qx($command);
+						last() unless( length($xresult) );
+						ok( ( length($xresult) - $Comment->{'y'} ), $s->{'name'}.q{ with comment} );
+					}
+
+					COUNT_ONLY: {
+						$command = $E->perl().$E->command().$O.$s->{'option'}.q{ --count --format }.$f;
+						$yamlret = JSON::Syck::Load( $xresult );
+						is( ( $#{$yamlret} + 1 ), $s->{'count'}, 
+							$s->{'name'}.q{/ }.$s->{'option'}.q{ --count} );
+					}
+
+					OTHER_INVALID_FORMAT_CHARACTER: {
+						foreach my $i ( 'c', 's', 'p' )
+						{
+							$command = $E->perl().$E->command().$O.$s->{'option'}.q{ -F}.$i;
+							$xstatus = scalar(IPC::Cmd::run( 'command' => $command ));
+							ok( $xstatus, $s->{'name'}.q{/ }.$s->{'option'}.q{ -F}.$i );
+						}
+					}
+
+				}
 			}
 		}
 	} # End of SKIP
