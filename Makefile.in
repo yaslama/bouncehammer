@@ -167,14 +167,14 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
-# $Id: Makefile.am,v 1.23 2010/03/01 23:41:31 ak Exp $
+# $Id: Makefile.am,v 1.24 2010/03/18 13:22:24 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer, is processed by automake to create Makefile.in.
 ENGINENAME = Kanadzuchi
 SYSTEMNAME = BounceHammer
-SYSVERSION = 2.0.0
+SYSVERSION = 2.0.1
 SUBDIRS = src template
 all: all-recursive
 
