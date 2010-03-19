@@ -1,4 +1,4 @@
-# $Id: Log.pm,v 1.13 2010/03/04 23:54:29 ak Exp $
+# $Id: Log.pm,v 1.14 2010/03/19 04:03:05 ak Exp $
 # -Id: Log.pm,v 1.2 2009/10/06 06:21:47 ak Exp -
 # -Id: Log.pm,v 1.11 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -121,17 +121,18 @@ sub dumper
 	my $head = q();
 	my $foot = q();
 
-	my $outputformat = {
-		'yaml'		=> q(),
-	};
+	my $outputformat = { 'yaml' => q(), 'json' => q() };
+	my $recdelimiter = { 'yaml' => q(), 'json' => q(,) };
 
-	$outputformat->{'yaml'} .= qq|- { "bounced": %d, "addresser": "%s", "recipient": "%s", |;
-	$outputformat->{'yaml'} .= qq|"senderdomain": "%s", "destination": "%s", "reason": "%s", |;
-	$outputformat->{'yaml'} .= qq|"hostgroup": "%s", "provider": "%s", "frequency": %d, |;
-	$outputformat->{'yaml'} .= qq|"description": %s, "token": "%s" }\n|;
+	$outputformat->{'json'} .= qq|{ "bounced": %d, "addresser": "%s", "recipient": "%s", |;
+	$outputformat->{'json'} .= qq|"senderdomain": "%s", "destination": "%s", "reason": "%s", |;
+	$outputformat->{'json'} .= qq|"hostgroup": "%s", "provider": "%s", "frequency": %d, |;
+	$outputformat->{'json'} .= qq|"description": %s, "token": "%s" }|;
+	$outputformat->{'yaml'} .= qq|- |.$outputformat->{'json'};
 
 	my $outputheader = {
 		'yaml'		=> q|# Generated: |.$time->ymd('/').q| |.$time->hms(':').qq| \n|,
+		'json'		=> q|# Generated: |.$time->ymd('/').q| |.$time->hms(':').qq| \n|,
 	};
 
 	return(0) if( $self->{'count'} == 0 );
@@ -148,6 +149,7 @@ sub dumper
 		$foot .= q|# |.qq|$self->{'comment'}\n| if( length($self->{'comment'}) );
 	}
 
+	# Print header
 	if( $self->{'format'} eq q(asciitable) )
 	{
 		require Text::ASCIITable;
@@ -160,6 +162,9 @@ sub dumper
 	{
 		$data .= sprintf( "%s", $head );
 	}
+
+	# Print left square bracket character for the format JSON
+	$data .= '[ ' if( $self->{'format'} eq q(json) );
 
 	PREPARE_LOG: foreach my $_e ( @{$self->{'entities'}} )
 	{
@@ -192,8 +197,12 @@ sub dumper
 					$_h->{'Lsenderdomain'}, $_h->{'Ldestination'},
 					$_h->{'Lreason'}, $_h->{'Lhostgroup'}, $_h->{'Lprovider'}, 
 					$_h->{'Lfrequency'}, $_h->{'Ldescription'}, $_h->{'Ltoken'} );
+			$data .= $recdelimiter->{ $self->{'format'} }.qq(\n);
 		}
 	} # End of foreach() PREPARE_LOG:
+
+	# Replace the ',' at the end of data with right square bracket for the format JSON
+	$data =~ s{,\n\z}{ ]\n} if( $self->{'format'} eq 'json' );
 
 	if( defined($atab) && $atab->{'num'} > 0 )
 	{
