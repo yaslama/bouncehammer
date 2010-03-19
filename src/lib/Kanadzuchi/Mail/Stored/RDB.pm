@@ -1,4 +1,4 @@
-# $Id: RDB.pm,v 1.7 2010/03/04 08:32:20 ak Exp $
+# $Id: RDB.pm,v 1.8 2010/03/19 04:04:04 ak Exp $
 # -Id: Stored.pm,v 1.5 2009/12/31 16:30:13 ak Exp -
 # -Id: Stored.pm,v 1.1 2009/08/29 07:33:13 ak Exp -
 # -Id: Stored.pm,v 1.14 2009/08/12 01:59:20 ak Exp -
@@ -304,9 +304,11 @@ sub serialize
 	#
 	# @Description	Serialize hash structure (To saving search condition)
 	# @Param <ref>	(Ref->Array) Array reference holds hashref or object
-	# @Return	(String) Serialized data(YAML)
+	# @Param <flg>	(Integer) 1 = JSON
+	# @Return	(String) Serialized data(YAML|JSON)
 	my $class  = shift();
 	my $struct = shift() || return(q{});
+	my $isjson = shift() || 0;
 	my $arrayr = [];
 	my $objref = q();
 
@@ -388,7 +390,7 @@ sub serialize
 
 	# Serialize
 	# FFR: return as a reference to the scalar
-	return( ${ Kanadzuchi::Metadata->to_string( $arrayr ) } );
+	return( ${ Kanadzuchi::Metadata->to_string( $arrayr, $isjson ) } );
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
