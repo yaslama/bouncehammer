@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.6 2010/03/04 23:18:20 ak Exp $
+# $Id: datadumper.PL,v 1.7 2010/03/19 04:02:25 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -37,6 +37,7 @@ use Error ':try';
 my $Zci = undef();		# Kanadzuchi System object
 my $Cmd = undef();		# Kanadzuchi::UI::CLI object
 my $Rdb = undef();		# Kanadzuchi::RDB object
+my $Fmt = undef();		# Output format
 
 my $CLIOPTION = {
 	'conf'		=> ( 1 << 0 ),
@@ -267,7 +268,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 						'count'	=> scalar(@{$dumpeddata}),
 						'entities' => $dumpeddata,
 						'device' => q{STDOUT},
-						'format' => q{yaml}, );
+						'format' => $Fmt, );
 
 			if( $pageconfig->{'currentpagenum'} == 1 )
 			{
@@ -442,6 +443,19 @@ sub parse_options
 	if( $_opt_count ){ $_operation |= $Cmd->option->{'count'}; }
 	if( $_opt_comment ){ $_operation |= $Cmd->option->{'comment'}; }
 
+	# Output format options
+	if( $_opt_format )
+	{
+		my $_1stcharacter = substr( $_opt_format, 0, 1 );
+		$Fmt =  $_1stcharacter eq q(y) ? q(yaml) :
+			$_1stcharacter eq q(j) ? q(json) : q(yaml);
+	}
+	else
+	{
+		# Default Log format is 'YAML' -Fy
+		$Fmt = q(yaml);
+	}
+
 	return($_operation);
 }
 
@@ -485,6 +499,8 @@ sub help
 	printf( STDERR "    -C, --conf <config> : Location of the configuration file used instead of \n");
 	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf\n");
 	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
+	printf( STDERR "    -F, --format <char> : Output format, the following are available.\n");
+	printf( STDERR "                          [y]aml = Default, [j]son, and [a]sciitable\n");
 	printf( STDERR "    -v, --verbose       : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
 	printf( STDERR "    --help              : Print help message(This screen)\n");
 	printf( STDERR "    --version           : Print version number.\n");
