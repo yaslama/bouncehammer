@@ -1,4 +1,4 @@
-# $Id: Metadata.pm,v 1.7 2010/02/21 20:24:12 ak Exp $
+# $Id: Metadata.pm,v 1.9 2010/03/19 04:03:05 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                         
@@ -43,11 +43,14 @@ sub to_string
 	#
 	# @Description	Convert from a hash ref to string
 	# @Param	(Ref->Hash|Ref->Array) Object
+	# @Param	(Integer) 1 = JSON format [ {...} ]
 	# @Return	(Ref->Scalar) Serialized data or undef()
 	my $class  = shift();
 	my $object = shift() || return(q{});
+	my $isjson = shift() || 0;
 	my $string = q();
 	my $arrayr = [];
+	my $arrayc = 0;		# The numbers of elements in $arrayr
 	my $retaar = 0;		# Return As Array Reference
 	my $objref = ref($object) || return($object);
 
@@ -64,12 +67,24 @@ sub to_string
 			push( @$arrayr, $object );
 		}
 
+		# Set the number of elements in $arrayr
+		$arrayc = scalar(@$arrayr);
+
+		# Print left square bracket character for the format JSON
+		$string .= '[ ' if( $isjson && ( $arrayc > 1 || $retaar ) );
+
 		DUMP_AS_JSON: foreach my $e ( @$arrayr )
 		{
-			$string .= q(- ) if( scalar(@$arrayr) > 1 || $retaar );
+			$string .= q(- )  if( $isjson == 0 && ( $arrayc > 1 || $retaar ) );
 			$string .= JSON::Syck::Dump($e);
-			$string .= qq(\n) if( scalar(@$arrayr) > 1 || $retaar );
+			$string =~ s{":(["\d])}{": $1}g;
+			$string =~ s{,"}{, "}g;
+			$string .= ',' if( $isjson && ( $arrayc > 1 || $retaar ) );
+			$string .= qq(\n) if( $isjson == 0 && ( $arrayc > 1 || $retaar ) );
 		}
+
+		# Replace the ',' at the end of data with right square bracket for the format JSON
+		$string =~ s{,\z}{ ]} if( $isjson && ( $arrayc > 1 || $retaar ) );
 	};
 
 	return(\q()) if($@);
