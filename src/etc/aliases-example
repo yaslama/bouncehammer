@@ -1,5 +1,8 @@
-# $Id: aliases-example,v 1.3 2010/02/20 08:32:38 ak Exp $
+# $Id: aliases-example,v 1.4 2010/03/19 08:04:46 ak Exp $
 # A part of /etc/mail/aliases for example
 #  bouncehammer@yourdomain goes to the parser script
-bouncehammer:	"|__KANADZUCHIBIN__/mailboxparser -gl"
+bouncehammer1:	"|__KANADZUCHIBIN__/mailboxparser -gl"
+
+# Real-Time Update
+bouncehammer2:	"|__KANADZUCHIBIN__/mailboxparser -2gl | __KANADZUCHIBIN__/databasectl -U --silent"
 
