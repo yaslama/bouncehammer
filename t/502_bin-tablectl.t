@@ -1,4 +1,4 @@
-# $Id: 502_bin-tablectl.t,v 1.7 2010/03/04 23:19:15 ak Exp $
+# $Id: 502_bin-tablectl.t,v 1.8 2010/03/19 07:40:39 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -54,7 +54,7 @@ SKIP: {
 	# |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 	#
 	SKIP: {
-		my $S = 107;	# Skip
+		my $S = 106;	# Skip
 		eval { require DBI; }; skip( 'Because no DBI for testing', $S ) if( $@ );
 		eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $S ) if( $@ );
 		eval { $E->environment(2); }; 

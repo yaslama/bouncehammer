@@ -1,4 +1,4 @@
-# $Id: 500_bin-mailboxparser.t,v 1.14 2010/03/19 04:05:46 ak Exp $
+# $Id: 500_bin-mailboxparser.t,v 1.15 2010/03/19 07:40:39 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 65 );
+use Test::More ( tests => 66 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',65) if($@);
+	skip('Because no IPC::Cmd for testing',66) if($@);
 
 	use Kanadzuchi::Test::CLI;
 	use Kanadzuchi;
@@ -105,7 +105,7 @@ SKIP: {
 		ok( $E->syntax(), q{->syntax()} );
 		ok( $E->version(), q{->version()} );
 		ok( $E->help(), q{->help()} );
-		# avoid: ok( $E->error(), q{->error()} );
+		ok( $E->error(), q{->error()} );
 	}
 
 	ERROR_MESSAGES: {

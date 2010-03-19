@@ -1,4 +1,4 @@
-# $Id: 062_mail-stored-rdb.t,v 1.7 2010/03/19 04:05:46 ak Exp $
+# $Id: 062_mail-stored-rdb.t,v 1.8 2010/03/19 07:40:39 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -127,7 +127,7 @@ SEARCH_AND_NEW:
 
 	SKIP: {
 		my $D = new Kanadzuchi::RDB( 'dbtype' => q|SQLite| );
-		my $S = 1577;	# Skip
+		my $S = 1574;	# Skip
 
 		eval { require DBI; }; skip( 'Because no DBI for testing', $S ) if( $@ );
 		eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $S ) if( $@ );

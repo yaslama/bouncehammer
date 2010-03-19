@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.10 2010/03/01 21:32:09 ak Exp $
+# $Id: CLI.pm,v 1.11 2010/03/19 07:41:23 ak Exp $
 # Kanadzuchi::Test::
                       
   ####  ##     ####   
@@ -220,6 +220,12 @@ sub error
 		$command = qq|$self->{'perl'} $self->{'command'} $exto -C /etc/resolv.conf|;
 		$xresult = [ IPC::Cmd::run( 'command' => $command ) ];
 		$nerrors++ if( $xresult->[4]->[0] =~ m{Is not YAML file at } );
+	}
+
+	SILENT_MODE: {
+		$command = qq|$self->{'perl'} $self->{'command'} $exto -C /etc/resolv.conf --silent|;
+		$xresult = [ IPC::Cmd::run( 'command' => $command ) ];
+		$nerrors++ unless( $xresult->[4]->[0] );
 	}
 	return($nerrors);
 }
