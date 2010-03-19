@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.7 2010/03/06 04:30:38 ak Exp $
+# $Id: mailboxparser.PL,v 1.9 2010/03/19 04:09:16 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -54,10 +54,11 @@ my $CLIOPTION = {
 	'test'		=> ( 1 << 1 ),
 	'parse'		=> ( 1 << 2 ),
 	'log'		=> ( 1 << 3 ),
-	'truncate'	=> ( 1 << 4 ),
-	'remove'	=> ( 1 << 5 ),
-	'greed'		=> ( 1 << 6 ),
-	'safe'		=> ( 1 << 7 ),
+	'two-way'	=> ( 1 << 4 ),
+	'truncate'	=> ( 1 << 5 ),
+	'remove'	=> ( 1 << 6 ),
+	'greed'		=> ( 1 << 7 ),
+	'safe'		=> ( 1 << 8 ),
 };
 
 #  __  __    _    ___ _   _ 
@@ -353,7 +354,8 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 				$objherlogger->logfile->unlock();
 			}
 		}
-		else
+
+		if( ! ( $Cmd->operation & $Cmd->option->{'log'} ) || $Cmd->operation & $Cmd->option->{'two-way'} )
 		{
 			#      __    ____   ____ ____  _____ _____ _   _ 
 			#      \ \  / ___| / ___|  _ \| ____| ____| \ | |
@@ -398,6 +400,7 @@ sub parse_options
 		$_opt_format,
 		$_opt_greed,
 		$_opt_log,
+		$_opt_2way,
 		$_opt_outputdir,
 		$_opt_remove,
 		$_opt_truncate,
@@ -413,6 +416,8 @@ sub parse_options
 	# Relations of the option name and the option value
 	Getopt::Long::Configure( 'bundling', 'no_ignore_case' ); 
 	Getopt::Long::GetOptions(
+			'2'		=> \$_opt_2way,
+			'two-way'	=> \$_opt_2way,
 			'conf=s'	=> \$_opt_conf,
 			'C=s'		=> \$_opt_conf,
 			'format=s'	=> \$_opt_format,
@@ -498,6 +503,7 @@ sub parse_options
 	{
 		my $_1stcharacter = substr( $_opt_format, 0, 1 );
 		$Fmt =  $_1stcharacter eq q(y) ? q(yaml) :
+			$_1stcharacter eq q(j) ? q(json) :
 			$_1stcharacter eq q(a) ? q(asciitable) : q(yaml);
 	}
 	else
@@ -506,10 +512,11 @@ sub parse_options
 		$Fmt = q(yaml);
 	}
 
-	if( $_opt_log )
+	if( $_opt_log || $_opt_2way )
 	{
 		# Log option
 		$_operation |= $Cmd->option->{'log'};
+		$_operation |= $Cmd->option->{'two-way'} if( $_opt_2way );
 
 		if( defined($_opt_outputdir) && -d $_opt_outputdir && -r _ && -x _ )
 		{
@@ -556,6 +563,7 @@ sub help
 	printf( STDERR "    --skip-hostunknown  :  - Skip if the reason is 'Host Unknown'.\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * LOGGING OPTIONS\n" );
+	printf( STDERR "    -2, --two-way       : Write parsed data to a log file and STDOUT.\n");
 	printf( STDERR "    -l, --log           : Write parsed data to a log file.\n");
 	printf( STDERR "    -o, --output <dir>  : Output directory location of a temporary log file which\n");
 	printf( STDERR "                          created by -l(--log) option, uses with -l option\n");
@@ -567,7 +575,7 @@ sub help
 	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf .\n");
 	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
 	printf( STDERR "    -F, --format <char> : Output(STDOUT only) format, the following are available.\n");
-	printf( STDERR "                          [y]aml, [a]sciitable\n");
+	printf( STDERR "                          [y]aml = Default, [j]son, and [a]sciitable\n");
 	printf( STDERR "    -v, --verbose       : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
 	printf( STDERR "    --help              : Print help message(This screen)\n");
 	printf( STDERR "    --version           : Print version number.\n");
