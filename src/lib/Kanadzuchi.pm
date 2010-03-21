@@ -1,4 +1,4 @@
-# $Id: Kanadzuchi.pm,v 1.12 2010/03/19 07:39:25 ak Exp $
+# $Id: Kanadzuchi.pm,v 1.13 2010/03/21 09:55:53 ak Exp $
 # -Id: TheHammer.pm,v 1.4 2009/09/01 23:19:41 ak Exp -
 # -Id: Herculaneum.pm,v 1.13 2009/08/27 05:09:23 ak Exp -
 # -Id: Version.pm,v 1.35 2009/08/27 05:09:29 ak Exp -
@@ -106,7 +106,7 @@ sub load
 	#		(Integer) 0 = Not loaded
 	my $self = shift();
 	my $conf = shift() || $SYSCONF;
-	my $exception = q();
+	my $exception;		# (String)
 
 	return(0) if( $self->{'config'}->{'system'} );	# Already loaded
 
@@ -124,7 +124,7 @@ sub load
 			# |  _| | | |  __/   | |  __/\__ \ |_ 
 			# |_|   |_|_|\___|   |_|\___||___/\__|
 			#                                     
-			my $et = q();
+			my $et;		# (String) Error text
 
 			if( ! -e $conf )
 			{
