@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.4 2010/03/07 02:09:38 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.5 2010/03/21 06:54:48 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -88,6 +88,10 @@
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 	-opera-border-radius: 6px;
+}
+
+#Legal a {
+	color: #727171; /* Nibi-iro */
 }
 
 p#Copyright, p#Product, p#License {
