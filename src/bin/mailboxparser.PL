@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.10 2010/03/19 07:38:54 ak Exp $
+# $Id: mailboxparser.PL,v 1.11 2010/03/21 09:55:49 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -34,11 +34,11 @@ use Path::Class::File::Lockable;
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-my $Zci = undef();		# Kanadzuchi System object
-my $Cmd = undef();		# Kanadzuchi::UI::CLI object
-my $Out = undef();		# Output directory(Temp log)
-my $Fmt = undef();		# Output format
-my $Mbox = undef();		# Mailbox Object(Path::Class::File)
+my $Zci;		# (Kanadzuchi) System object
+my $Cmd;		# (Kanadzuchi::UI::CLI) Commandline object
+my $Out;		# (String) Output directory for temp log
+my $Fmt;		# (String) Output format
+my $Mbox;		# (Path::Class::File) Mailbox Object
 my $Mail = {
 	'stdin' => 0,
 	'files' => [],

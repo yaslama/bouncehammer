@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.6 2010/03/19 07:38:54 ak Exp $
+# $Id: logger.PL,v 1.7 2010/03/21 09:55:49 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -35,10 +35,10 @@ use Path::Class::File::Lockable;
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-my $Zci = undef();		# Kanadzuchi System object
-my $Cmd = undef();		# Kanadzuchi::UI::CLI object
-my $Templd = undef();		# Temp Log Dir, Path::Class::Dir object
-my $Templf = undef();		# Temp Log File, Path::Class::File object
+my $Zci;		# (Kanadzuchi) System object
+my $Cmd;		# (Kanadzuchi::UI::CLI) Commandline object
+my $Templd;		# (Path::Class::Dir) Temp Log Dir object
+my $Templf;		# (Path::Class::File) Temp Log File object
 
 my $CLIOPTION = {
 	'conf'		=> ( 1 << 0 ),
@@ -119,8 +119,8 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 		# |  _|  | || |\  | |_| |   | | | |  | |  __/| |__| |_| | |_| |
 		# |_|   |___|_| \_|____/    |_| |_|  |_|_|   |_____\___/ \____|
 		#
-		$__md5digestv = undef();	# Digest::MD5 object
-		$__tmppcflock = undef();	# Path::Class::File::Lockable
+		$__md5digestv = undef();	# (Digest::MD5) object
+		$__tmppcflock = undef();	# (Path::Class::File::Lockable) object
 		$__tmplf4find = \$__f->stringify();
 
 		if( defined($Templf) )
@@ -343,9 +343,9 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 
 
 	# Create TheHammer::Log object(Temp log + Regular log)
-	my $_regularld = undef();	# String, regular log directory
-	my $_regularlf = undef();	# String, regular log file
-	my $_objherlog = undef();	# TheHammer::Log object
+	my $_regularld;		# (String) regular log directory
+	my $_regularlf;		# (String) regular log file
+	my $_objherlog;		# (Kanadzuchi::Log) object
 
 
 	# Prepare progress bar
@@ -370,7 +370,6 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 		#    \_/\_/  |_| \_\___| |_| |_____| |_| \_\_____|\___/ \____|_____/_/   \_\_| \_\ |_____\___/ \____|
 		#
 		my $__s = \$Zci->config->{'file'}->{'storage'};
-		my $__r = undef();
 
 		# Set regular log directory
 		if( -w $Zci->config->{'directory'}->{'log'} )

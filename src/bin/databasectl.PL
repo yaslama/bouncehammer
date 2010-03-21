@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.5 2010/03/19 07:38:53 ak Exp $
+# $Id: databasectl.PL,v 1.6 2010/03/21 09:55:49 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -34,11 +34,11 @@ use Time::Piece;
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-my $Zci = undef();		# Kanadzuchi System object
-my $Cmd = undef();		# Kanadzuchi::UI::CLI object
-my $Rdb = undef();		# Kanadzuchi::RDB object
-my $Day = undef();		# The day (before|after), 0 = today, -1 = yesterday
-my $Lfs = [];			# Log files for INSERT or UPDATE
+my $Zci;		# (Kanadzuchi) System object
+my $Cmd;		# (Kanadzuchi::UI::CLI) Commadline object
+my $Rdb;		# (Kanadzuchi::RDB) Database object
+my $Day;		# (Integer) The day (before|after), 0 = today, -1 = yesterday
+my $Lfs = [];		# (Ref->Array) Log files for INSERT or UPDATE
 
 my $CLIOPTION = {
 	'conf'		=> ( 1 << 0 ),

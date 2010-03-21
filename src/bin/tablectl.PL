@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: tablectl.PL,v 1.6 2010/03/19 07:38:54 ak Exp $
+# $Id: tablectl.PL,v 1.7 2010/03/21 09:55:50 ak Exp $
 # -Id: tablectl.PL,v 1.12 2010/02/21 20:09:01 ak Exp -
 # -Id: tablectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: tablectl.PL,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -35,12 +35,12 @@ use Error ':try';
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-my $Zci = undef();		# Kanadzuchi System object
-my $Cmd = undef();		# Kanadzuchi::UI::CLI object
-my $Rdb = undef();		# Kanadzuchi::RDB object
-my $Tab = undef();		# Master table, Kanadzuchi::RDB::Table::* object
-my $Fmt = undef();		# Fotmat
-my $Given = {};			# Hash reference for $Tab
+my $Zci;		# (Kanadzuchi) System object
+my $Cmd;		# (Kanadzuchi::UI::CLI) Commandline object
+my $Rdb;		# (Kanadzuchi::RDB) Database object
+my $Tab;		# (Kanadzuchi::RDB::Table::*) Master table object
+my $Fmt;		# (String) Output fotmat
+my $Given = {};		# (Ref->Hash) $Tab
 
 my $CLIOPTION = {
 	'conf'		=> ( 1 << 0 ),
@@ -177,8 +177,8 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		#  ___) | |___| |___| |__| |___  | |_  | |___ | | ___) || |  
 		# |____/|_____|_____|_____\____| |_( ) |_____|___|____/ |_|  
 		#                                  |/
-		my $_resultset = undef();		# DBIx::Class::ResultSet object
-		my $_objasctab = undef();		# Text::ASCIITable object
+		my $_resultset;				# (DBIx::Class::ResultSet) Resultset object
+		my $_objasctab;				# (Text::ASCIITable) ASCII Table object
 		my $_fieldname = \$Tab->field();	# Fieldname in the table
 
 		$Cmd->d(2,sprintf("Execute 'SELECT', Print the list\n"));
@@ -390,11 +390,6 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 }
 
 $Cmd->finish();
-
-
-
-
-
 
 
 #  _____ _   _ _   _  ____ _____ ___ ___  _   _ ____  

@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.8 2010/03/19 07:38:53 ak Exp $
+# $Id: datadumper.PL,v 1.9 2010/03/21 09:55:49 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -34,10 +34,10 @@ use Error ':try';
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-my $Zci = undef();		# Kanadzuchi System object
-my $Cmd = undef();		# Kanadzuchi::UI::CLI object
-my $Rdb = undef();		# Kanadzuchi::RDB object
-my $Fmt = undef();		# Output format
+my $Zci;		# (Kanadzuchi) System object
+my $Cmd;		# (Kanadzuchi::UI::CLI) Commandline object
+my $Rdb;		# (Kanadzuchi::RDB) Database object
+my $Fmt;		# (String) Output format
 
 my $CLIOPTION = {
 	'conf'		=> ( 1 << 0 ),
@@ -161,11 +161,11 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 	require Kanadzuchi::RDB::Schema::BounceLogs;
 
 	# Arguments of searchandnew() method
-	my $whereconds = {};		# Where conditions
-	my $pageconfig = {};		# Pager configuration
+	my $whereconds = {};		# (Ref->Hash) Where conditions
+	my $pageconfig = {};		# (Ref->Hash) Pager configuration
 	my $dumpeddata = [];		# (Ref->Array) Dumped results
-	my $objhlogger = undef();	# K::Log object
-	my $reqsobject = 0;		# Requires object
+	my $objhlogger = undef();	# (Kanadzuchi::Log) Log object
+	my $reqsobject = 0;		# (Integer) Flag; Requires object
 
 	# Check parameters: recipient, senderdomain, destination, hostgroup, and reason
 	foreach my $_key ( keys(%$WhereCondition) )

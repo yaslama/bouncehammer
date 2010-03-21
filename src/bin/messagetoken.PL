@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: messagetoken.PL,v 1.4 2010/03/19 07:38:54 ak Exp $
+# $Id: messagetoken.PL,v 1.5 2010/03/21 09:55:50 ak Exp $
 # -Id: messagetoken.PL,v 1.3 2010/02/21 20:09:01 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi:Command::
@@ -30,9 +30,9 @@ use Error ':try';
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-my $Zci = undef();		# Kanadzuchi System object
-my $Cmd = undef();		# Kanadzuchi::UI::CLI object
-my $AaR = {};			# Addresser and Recipient
+my $Zci;		# (Kanadzuchi) System object
+my $Cmd;		# (Kanadzuchi::UI::CLI) Database object
+my $AaR = {};		# (Ref->Hash) Addresser and Recipient
 
 my $CLIOPTION = {
 	'conf'		=> ( 1 << 0 ),
@@ -114,6 +114,7 @@ if( $Cmd->operation & $Cmd->option->{'token'} )
 }
 
 $Cmd->finish();
+
 
 #  _____ _   _ _   _  ____ _____ ___ ___  _   _ ____  
 # |  ___| | | | \ | |/ ___|_   _|_ _/ _ \| \ | / ___| 
