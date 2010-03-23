@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.2 2010/03/01 20:58:44 ak Exp $
+# $Id: Makefile.am,v 1.3 2010/03/23 20:31:28 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/src/lib, is processed by 
 # automake to create Makefile.in.
@@ -14,6 +14,7 @@ distlib:
 		-e 's|\([^:]\)//|\1/|g' > $(distdir)/$(modules)
 
 install-am: distlib
+	test -d $(instdir) || mkdir -p $(instdir)
 	$(INSTALL) -c -m 0644 $(distdir)/$(modules) $(instdir)/
 
 uninstall-am:

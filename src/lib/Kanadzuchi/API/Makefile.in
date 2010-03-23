@@ -14,12 +14,7 @@
 
 @SET_MAKE@
 
-# $Id: Makefile.am,v 1.2 2010/03/23 07:56:11 ak Exp $
-# Copyright (C) 2009,2010 Cubicroot Co. Ltd.
-# This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/API,
-# is processed by automake to create Makefile.in.
 VPATH = @srcdir@
-pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
@@ -47,7 +42,17 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 SOURCES =
 DIST_SOURCES =
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
+am__installdirs = "$(DESTDIR)$(pkgdatadir)"
+pkgdataDATA_INSTALL = $(INSTALL_DATA)
+DATA = $(pkgdata_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+pkgdatadir = @libdir@/Kanadzuchi/API
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AUTOCONF = @AUTOCONF@
@@ -84,9 +89,11 @@ PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
+PATCH = @PATCH@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
 PERLDOC = @PERLDOC@
+PI_IMPLEMENT_TB = @PI_IMPLEMENT_TB@
 PROVE = @PROVE@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -145,9 +152,16 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-modules = HTTP.pm Dispatch.pm
+
+# $Id: Makefile.am,v 1.5 2010/03/23 20:31:32 ak Exp $
+# Copyright (C) 2009,2010 Cubicroot Co. Ltd.
+# This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/API,
+# is processed by automake to create Makefile.in.
+#
 distdir = $(BUILDROOT)/dist/lib/Kanadzuchi/API
-instdir = @libdir@/Kanadzuchi/API
+modules = Dispatch.pm
+instdir = $(pkgdatadir)
+pkgdata_DATA = HTTP.pm
 all: all-am
 
 .SUFFIXES:
@@ -180,6 +194,23 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+install-pkgdataDATA: $(pkgdata_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(pkgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"
+	@list='$(pkgdata_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(pkgdataDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(pkgdatadir)/$$f'"; \
+	  $(pkgdataDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(pkgdatadir)/$$f"; \
+	done
+
+uninstall-pkgdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(pkgdata_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(pkgdatadir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(pkgdatadir)/$$f"; \
+	done
 tags: TAGS
 TAGS:
 
@@ -215,8 +246,11 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile
+all-am: Makefile $(DATA)
 installdirs:
+	for dir in "$(DESTDIR)$(pkgdatadir)"; do \
+	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -254,7 +288,7 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-pkgdataDATA
 
 install-dvi: install-dvi-am
 
@@ -295,12 +329,17 @@ ps-am:
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am
+	install-pdf install-pdf-am install-pkgdataDATA install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
+	uninstall-am uninstall-pkgdataDATA
+
 
 all-am: distlib
+	test -d $(distdir) || mkdir -p $(distdir)
+	cp -Rp $(pkgdata_DATA) $(distdir)/
+
 distlib:
 	test -d $(distdir) || mkdir -p $(distdir)
 	$(CAT) $(modules) | $(SED) \
@@ -312,14 +351,22 @@ distlib:
 		-e 's|\([^:]\)//|\1/|g' > $(distdir)/$(modules)
 
 install-am: distlib
-	$(INSTALL) -c -m 0644 $(distdir)/$(modules) $(instdir)/
+	test -d $(instdir) || mkdir -p $(instdir)
+	for L in $(modules) ; do \
+		$(INSTALL) -c -m 0644 $(distdir)/$$L $(instdir)/ ;\
+	done
+	test -d $(pkgdatadir) || mkdir -p $(pkgdatadir)
+	for P in $(pkgdata_DATA) ; do \
+		$(INSTALL) -c -m 0644 $(distdir)/$$P $(pkgdatadir)/ ;\
+	done
 
 uninstall-am:
 	rm -f $(instdir)/$(modules)
+	rm -f $(pkgdatadir)/*.pm
 
 .PHONY: clean
 clean:
-	rm -f $(distdir)/$(modules)
+	rm -f $(distdir)/*.pm
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
