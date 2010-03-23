@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.26 2010/03/23 06:37:05 ak Exp $
+# $Id: Makefile.am,v 1.29 2010/03/23 21:40:13 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -6,19 +6,36 @@
 ENGINENAME = Kanadzuchi
 SYSTEMNAME = BounceHammer
 SYSVERSION = 2.2.0
+CMD_MODULE = ./Modules.PL
+CMD_IMPLEM = ./Implement.PL
+PATCH_TBOP = diff/perl-TB-option-on-filehandle.patch
 SUBDIRS = src template
 
 .PHONY: clean
+all-am: Makefile patch
 instal-am: sublocalstatedir message
 clean-am:
-	rm -f ./*~ ./*.bak ./*.tmp ./*.db
+	@test "$(PI_IMPLEMENT_TB)" = "NO" && $(PATCH) -R < $(PATCH_TBOP) || true
+	rm -f ./*~ ./*.bak ./*.tmp ./*.db ./diff/*.done
 	rm -fr ./.temp ./dist ./.test
+	find . -name '*.rej' -delete
 
 check-pm:
-	@test -x $(PERL) && test -f ./Modules.PL && $(PERL) ./Modules.PL check
+	@test -x $(PERL) && test -f $(CMD_MODULE) && $(PERL) $(CMD_MODULE) check
+
+check-implement:
+	@test -x $(PERL) && test -f $(CMD_IMPLEM) && $(PERL) $(CMD_IMPLEM) tb
 
 test:
 	@mkdir -p ./.test && test -w ./.test && $(PROVE) -w
+
+patch:
+	@if [ "$(PI_IMPLEMENT_TB)" = "NO" -a ! $(PATCH_TBOP).done ]; then \
+		$(PATCH) -Np0 < $(PATCH_TBOP) ;\
+		$(TOUCH) $(PATCH_TBOP).done ;\
+	else \
+		true ;\
+	fi
 
 sublocalstatedir:
 	@mkdir -pm 0755 @localstatedir@/{cache,db,incoming,log,run,spool,tmp}
