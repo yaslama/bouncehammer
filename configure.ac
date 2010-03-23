@@ -1,6 +1,6 @@
 dnl #                                               -*- Autoconf -*-
 dnl # Process this file with autoconf to produce a configure script.
-dnl # $Id: configure.ac,v 1.16 2010/03/23 06:37:06 ak Exp $
+dnl # $Id: configure.ac,v 1.17 2010/03/23 08:55:34 ak Exp $
 dnl # -Id: configure.ac,v 1.8 2009/12/01 10:35:23 ak Exp -
 dnl # -Id: configure.ac,v 1.35 2009/08/27 05:09:04 ak Exp -
 dnl # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -151,6 +151,7 @@ AC_CONFIG_FILES([Makefile
 			src/lib/Kanadzuchi/UI/Makefile
 			src/lib/Kanadzuchi/UI/Web/Makefile
 			src/lib/Makefile
+			src/libexec/Makefile
 			src/sql/Makefile
 			template/Makefile
 			template/standard/Makefile
