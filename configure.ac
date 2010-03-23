@@ -1,6 +1,6 @@
 dnl #                                               -*- Autoconf -*-
 dnl # Process this file with autoconf to produce a configure script.
-dnl # $Id: configure.ac,v 1.17 2010/03/23 08:55:34 ak Exp $
+dnl # $Id: configure.ac,v 1.20 2010/03/23 20:31:24 ak Exp $
 dnl # -Id: configure.ac,v 1.8 2009/12/01 10:35:23 ak Exp -
 dnl # -Id: configure.ac,v 1.35 2009/08/27 05:09:04 ak Exp -
 dnl # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -28,6 +28,7 @@ AC_PATH_PROG(XARGS, xargs, :, /bin:/usr/bin:/usr/local/bin)
 AC_PATH_PROG(CHMOD, chmod, :, /bin:/usr/bin:/usr/local/bin)
 AC_PATH_PROG(CHOWN, chown, :, /bin:/usr/bin:/usr/local/bin)
 AC_PATH_PROG(TOUCH, touch, :, /bin:/usr/bin:/usr/local/bin)
+AC_PATH_PROG(PATCH, patch, :, /bin:/usr/bin:/usr/local/bin)
 AC_PATH_PROGS(SQLITE, sqlite sqlite3, :, /bin:/usr/bin:/usr/local/bin)
 
 AC_PROG_AWK
@@ -122,7 +123,17 @@ else
 	mkdir -p ./dist
 fi
 
-
+dnl # Check perl implementation
+AC_MSG_CHECKING(for perl -T and -B operator on filehandles)
+PI_TBOPERATOR=`$PERL ./Implement.PL tb`
+if test -n "$PI_TBOPERATOR" ; then
+	AC_MSG_RESULT(no $PI_TBOPERATOR)
+	PI_IMPLEMENT_TB=NO
+	AC_SUBST(PI_IMPLEMENT_TB)
+else
+	AC_MSG_RESULT(yes)
+	PI_IMPLEMENT_TB=YES
+fi
 
 dnl # Checks for header files.
 
