@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES.JA,v 1.7 2010/03/23 08:49:54 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.8 2010/03/23 19:23:04 ak Exp $
 -----------------------------------------------------------------------
  オープンソースのバウンスメール解析システム``BounceHammer''のリリース
  ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
@@ -17,12 +17,17 @@
     * lib/Kanadzuchi/UI/Web/Dispatch.pm
     * libexec/mp-startup.pl
     * share/script/more-example-senderdomains.sql
+    * Implement.PL
     
   新機能:
     * BounceHammerがApache2.2上のmod_perl2で動作するようになりました。
 
   細かな改善点:
     * 変数宣言の効率化。
+    * 新しいmakeターゲット "check-implement"
+    * WebUIのDispatch設定(CGI)はDispatch.pmに移動しました。
+    * configureスクリプトは"patch"プログラムを必要とし、また、ファイル
+      ハンドルに対する-T,-B演算子の実装をチェックします。
 
   修正されたバグ:
     * WebUI のページフッタ内リンクテキストの色が薄すぎる点を修正しまし
