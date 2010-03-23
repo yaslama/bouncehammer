@@ -1,5 +1,5 @@
---- src/lib/Kanadzuchi/Mbox.pm	2010-02-22 05:24:12.000000000 +0900
-+++ src/lib/Kanadzuchi/Mbox.pm	2010-02-22 13:26:21.000000000 +0900
+--- dist/lib/Kanadzuchi/Mbox.pm	2010-02-22 05:24:12.000000000 +0900
++++ dist/lib/Kanadzuchi/Mbox.pm	2010-02-22 13:26:21.000000000 +0900
 @@ -219,9 +219,8 @@
  	unless( ref($file) eq q|SCALAR| )
  	{
