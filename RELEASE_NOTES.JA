@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES.JA,v 1.5 2010/03/23 07:55:08 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.6 2010/03/23 08:33:00 ak Exp $
 -----------------------------------------------------------------------
  オープンソースのバウンスメール解析システム``BounceHammer''のリリース
  ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
@@ -15,6 +15,7 @@
   新しいファイル:
     * lib/Kanadzuchi/API/Dispatch.pm
     * lib/Kanadzuchi/UI/Web/Dispatch.pm
+    * share/script/more-example-senderdomains.sql
     
   新機能:
     * BounceHammerがApache2.2上のmod_perl2で動作するようになりました。
