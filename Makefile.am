@@ -1,11 +1,11 @@
-# $Id: Makefile.am,v 1.25 2010/03/19 07:38:19 ak Exp $
+# $Id: Makefile.am,v 1.26 2010/03/23 06:37:05 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer, is processed by automake to create Makefile.in.
 ENGINENAME = Kanadzuchi
 SYSTEMNAME = BounceHammer
-SYSVERSION = 2.1.0
+SYSVERSION = 2.2.0
 SUBDIRS = src template
 
 .PHONY: clean
