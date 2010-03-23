@@ -13,6 +13,7 @@ my $Modules = [
 	q(Kanadzuchi::UI::Web::Summary),
 	q(Kanadzuchi::UI::Web::Test),
 	q(Kanadzuchi::UI::Web::Update),
+	q(Kanadzuchi::UI::Web::Dispatch),
 ];
 
 plan( tests => $#{$Modules} + 1 );
