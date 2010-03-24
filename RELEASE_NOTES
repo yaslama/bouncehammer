@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.27 2010/03/23 19:23:04 ak Exp $
+ $Id: RELEASE_NOTES,v 1.28 2010/03/24 21:46:39 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -31,6 +31,8 @@
     * WebUI Dispatcher settings(CGI) are moved to Dispatch.pm .
     * The configure script requires "patch" program and checks implemen-
       tation of -T,-B operarator on filehandle.
+    * The patch in ./diff directory is applied by the make command auto-
+      matically.
 
   Fixed bugs:
     * Fixed an issue that hyperlink text color in the WebUI page footer
