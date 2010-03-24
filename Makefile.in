@@ -169,7 +169,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
-# $Id: Makefile.am,v 1.31 2010/03/24 21:46:39 ak Exp $
+# $Id: Makefile.am,v 1.32 2010/03/24 21:52:01 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -615,7 +615,7 @@ test:
 
 apply-patch:
 	if [ "$(PI_IMPLEMENT_TB)" = "NO" ]; then \
-		$(PATCH) -tuN -p0 < $(PATCH_TBOP) || true ;\
+		$(PATCH) -tuNs -p0 < $(PATCH_TBOP) || true ;\
 		$(TOUCH) $(PATCH_TBOP).done ;\
 	else \
 		true ;\
@@ -623,7 +623,7 @@ apply-patch:
 
 reverse-patch:
 	if [ "$(PI_IMPLEMENT_TB)" = "NO" ]; then \
-		test -f $(PATCH_TBOP).done && $(PATCH) -tuR -p0 < $(PATCH_TBOP) || true ;\
+		test -f $(PATCH_TBOP).done && $(PATCH) -tuRs -p0 < $(PATCH_TBOP) || true ;\
 		rm -f $(PATCH_TBOP).done ;\
 	fi
 
