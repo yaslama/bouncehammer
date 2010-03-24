@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.30 2010/03/24 08:40:31 ak Exp $
+# $Id: Makefile.am,v 1.31 2010/03/24 21:46:39 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -8,21 +8,20 @@ SYSTEMNAME = BounceHammer
 SYSVERSION = 2.2.0
 CMD_MODULE = ./Modules.PL
 CMD_IMPLEM = ./Implement.PL
-PATCH_TBOP = diff/perl-TB-option-on-filehandle.patch
+PATCH_TBOP = ./diff/perl-TB-option-on-filehandle.patch
 SUBDIRS = src template
 
 .PHONY: clean
-all-am: Makefile patch
+all-am: Makefile apply-patch
 instal-am: sublocalstatedir message
-clean-am:
-	@if [ "$(PI_IMPLEMENT_TB)" = "NO" ]; then \
-		test -f $(PATCH_TBOP).done && $(PATCH) -R -p0 < $(PATCH_TBOP) || true ;\
-		rm -f $(PATCH_TBOP).done ;\
-	fi
+clean-am: reverse-patch
 	rm -f ./*~ ./*.bak ./*.tmp ./*.db ./diff/*.done
 	find . -name '*.rej' -type f -exec rm -f {} \;
 	find . -name '*.rej.orig' -type f -exec rm -f {} \;
-	rm -fr ./.temp ./dist ./.test
+	rm -fr ./.temp ./.test
+
+distclean-am: clean-am
+	rm -fr ./dist
 
 check-pm:
 	@test -x $(PERL) && test -f $(CMD_MODULE) && $(PERL) $(CMD_MODULE) check
@@ -33,18 +32,24 @@ check-implement:
 test:
 	@mkdir -p ./.test && test -w ./.test && $(PROVE) -w
 
-patch:
-	@if [ "$(PI_IMPLEMENT_TB)" = "NO" ]; then \
-		test -f $(PATCH_TBOP).done || $(PATCH) -N -p0 < $(PATCH_TBOP) || true ;\
+apply-patch:
+	if [ "$(PI_IMPLEMENT_TB)" = "NO" ]; then \
+		$(PATCH) -tuN -p0 < $(PATCH_TBOP) || true ;\
 		$(TOUCH) $(PATCH_TBOP).done ;\
 	else \
 		true ;\
 	fi
 
+reverse-patch:
+	if [ "$(PI_IMPLEMENT_TB)" = "NO" ]; then \
+		test -f $(PATCH_TBOP).done && $(PATCH) -tuR -p0 < $(PATCH_TBOP) || true ;\
+		rm -f $(PATCH_TBOP).done ;\
+	fi
+
 sublocalstatedir:
-	@mkdir -pm 0755 @localstatedir@/{cache,db,incoming,log,run,spool,tmp}
-	@$(CHMOD) g+w  @localstatedir@/db
-	@$(CHMOD) 1777 @localstatedir@/{cache,incoming,run,spool,tmp}
+	mkdir -pm 0755 @localstatedir@/{cache,db,incoming,log,run,spool,tmp}
+	$(CHMOD) g+w  @localstatedir@/db
+	$(CHMOD) 1777 @localstatedir@/{cache,incoming,run,spool,tmp}
 
 message:
 	@echo
