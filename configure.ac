@@ -1,6 +1,6 @@
 dnl #                                               -*- Autoconf -*-
 dnl # Process this file with autoconf to produce a configure script.
-dnl # $Id: configure.ac,v 1.20 2010/03/23 20:31:24 ak Exp $
+dnl # $Id: configure.ac,v 1.21 2010/03/25 02:08:38 ak Exp $
 dnl # -Id: configure.ac,v 1.8 2009/12/01 10:35:23 ak Exp -
 dnl # -Id: configure.ac,v 1.35 2009/08/27 05:09:04 ak Exp -
 dnl # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -24,17 +24,9 @@ AC_PATH_PROG(SHELL, sh, :, /bin:/usr/bin:/usr/local/bin)
 
 AC_PROG_LN_S
 AC_PATH_PROG(CAT, cat, :, /bin:/usr/bin:/usr/local/bin)
-AC_PATH_PROG(XARGS, xargs, :, /bin:/usr/bin:/usr/local/bin)
 AC_PATH_PROG(CHMOD, chmod, :, /bin:/usr/bin:/usr/local/bin)
-AC_PATH_PROG(CHOWN, chown, :, /bin:/usr/bin:/usr/local/bin)
 AC_PATH_PROG(TOUCH, touch, :, /bin:/usr/bin:/usr/local/bin)
 AC_PATH_PROG(PATCH, patch, :, /bin:/usr/bin:/usr/local/bin)
-AC_PATH_PROGS(SQLITE, sqlite sqlite3, :, /bin:/usr/bin:/usr/local/bin)
-
-AC_PROG_AWK
-if test "x$AWK" = x; then
-	AC_MSG_ERROR([*** Cannot find awk])
-fi
 
 AC_PATH_PROG(FIND, find, :, /bin:/usr/bin:/usr/local/bin)
 if test "x$FIND" = x; then
@@ -44,11 +36,6 @@ fi
 AC_PATH_PROG(SED, sed, :, /bin:/usr/bin:/usr/local/bin)
 if test "x$SED" = x; then
 	AC_MSG_ERROR([*** Cannot find sed program])
-fi
-
-AC_PATH_PROGS(GREP, grep egrep, :, /bin:/usr/bin:/usr/local/bin)
-if test "x$GREP" = x; then
-	AC_MSG_ERROR([*** Cannot find grep program(grep, egrep)])
 fi
 
 AC_ARG_ENABLE(debug,
