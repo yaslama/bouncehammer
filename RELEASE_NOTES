@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.28 2010/03/24 21:46:39 ak Exp $
+ $Id: RELEASE_NOTES,v 1.29 2010/03/25 02:08:38 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -20,6 +20,7 @@
     * lib/Kanadzuchi/UI/Web/Dispatch.pm
     * libexec/mp-startup.pl
     * share/script/more-example-senderdomains.sql
+    * share/template/standard/stylesheet/testparse.css
     * Implement.PL
 
   New functionality:

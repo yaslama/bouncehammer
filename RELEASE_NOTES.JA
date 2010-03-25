@@ -1,6 +1,6 @@
-		BOUNCEHAMMER/RELEASE_NOTES
+		BOUNCEHAMMER/RELEASE_NOTES.JA (utf-8/LF)
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES.JA,v 1.9 2010/03/24 21:46:39 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.10 2010/03/25 02:08:38 ak Exp $
 -----------------------------------------------------------------------
  オープンソースのバウンスメール解析システム``BounceHammer''のリリース
  ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
@@ -17,6 +17,7 @@
     * lib/Kanadzuchi/UI/Web/Dispatch.pm
     * libexec/mp-startup.pl
     * share/script/more-example-senderdomains.sql
+    * share/template/standard/stylesheet/testparse.css
     * Implement.PL
     
   新機能:
