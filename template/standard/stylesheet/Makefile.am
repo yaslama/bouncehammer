@@ -10,5 +10,6 @@ pkgdata_DATA = bouncehammer.css \
 	pager.css \
 	profile.css \
 	record.css \
-	summary.css
+	summary.css \
+	testparse.css
 

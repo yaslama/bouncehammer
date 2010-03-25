@@ -1,0 +1,51 @@
+/* $Id: testparse.css,v 1.1 2010/03/25 02:11:57 ak Exp $ */
+/* Copyright 2009,2010 Cubicroot Co. Ltd. */
+/* Record classes */
+#ChooseFile {
+	width: 100%;
+}
+
+input.emailfile {
+	border-width: 1px;
+	border-style: dotted;
+	border-color: #afafb0; /* Gin-nezu */
+	padding: 4px;
+}
+
+textarea.emailtext {
+	margin: 8px 0 4px 0;
+	padding: 4px;
+	font-size: 10px;
+	border-width: 1px;
+	border-style: dotted;
+	border-color: #afafb0; /* Gin-nezu */
+	overflow-y: auto;
+}
+
+td.key { /* LHS */
+	margin: 2px 0;
+	padding: 2px 8px 2px 2px;
+	font-weight: bold;
+	vertical-align: middle;
+	font-size: 11px;
+}
+
+td.value, td.extra {
+	margin: 2px 0;
+	padding: 2px 0 2px 2px;
+	font-size: 11px;
+}
+
+span.token input {
+	width: 320px;
+	padding: 4px;
+	color: #524e4d; /* Keshizumi-iro */
+	background: #e5e4e6; /* Shiraumenezu */
+	border-color: #d4dcd6;	/* Sobakiri-iro */
+	border-width: 0px;
+	border-style: solid;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+

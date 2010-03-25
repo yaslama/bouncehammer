@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.5 2010/03/21 06:54:48 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.6 2010/03/25 02:11:57 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -104,10 +104,6 @@ p#Copyright, p#Product, p#License {
 	font-size: 10px;
 	vertical-align: middle;
 	text-align: right;
-}
-
-#ChooseFile {
-	font-size: 10px;
 }
 
 div#search-condition {
@@ -305,6 +301,10 @@ span.flatbutton:hover {
 input.flatbutton:hover {
 	border-color: #595857; /* Sumi */
 	color: #007bbb; /* Kompeki */
+}
+
+span.flatbutton[disabled], input.flatbutton[disabled] {
+	color: #afafb0; /* Gin-nezu */
 }
 
 /* Anchor pseudo classes in flatbutton class */
