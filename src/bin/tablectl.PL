@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: tablectl.PL,v 1.7 2010/03/21 09:55:50 ak Exp $
+# $Id: tablectl.PL,v 1.8 2010/03/25 15:49:14 ak Exp $
 # -Id: tablectl.PL,v 1.12 2010/02/21 20:09:01 ak Exp -
 # -Id: tablectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: tablectl.PL,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -112,6 +112,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		{
 			# Create master table object(Tab)
 			$Tab = Kanadzuchi::RDB::MasterTable->newtable( $Rdb->table() );
+			Kanadzuchi::Exception::Database->throw( '-text' => 'No such table' ) unless( defined($Tab) );
 		}
 		else
 		{
@@ -588,8 +589,8 @@ sub help
 	printf( STDERR "\n" );
 	printf( STDERR " * Examples\n" );
 	printf( STDERR "  %s -C./test-run.cf -Tw --list -Fa\n", $Cmd->calledfrom() );
-	printf( STDERR "  %s -Ts --insert --name 'example.jp' --discription 'Ex' -v\n", $Cmd->calledfrom() );
-	printf( STDERR "  %s -Ts --update --id 2 --discription 'My Domain'\n", $Cmd->calledfrom() );
+	printf( STDERR "  %s -ts --insert --name 'example.jp' --discription 'Ex' -v\n", $Cmd->calledfrom() );
+	printf( STDERR "  %s -ts --update --id 2 --discription 'My Domain'\n", $Cmd->calledfrom() );
 	printf( STDERR "\n" );
 	return(1);
 }
