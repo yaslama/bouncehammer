@@ -1,4 +1,4 @@
-# $Id: Profile.pm,v 1.5 2010/03/01 23:42:12 ak Exp $
+# $Id: Profile.pm,v 1.6 2010/03/25 02:10:24 ak Exp $
 # -Id: Profile.pm,v 1.2 2009/08/31 06:58:25 ak Exp -
 # -Id: Profile.pm,v 1.3 2009/08/17 06:54:30 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -41,6 +41,9 @@ sub profile_ontheweb
 		'cfversion' => $self->{'settings'}->{'version'},
 		'sysuptime' => qx(uptime),
 		'syslanguage' => $self->{'webconfig'}->{'language'},
+		'scriptengine' => $ENV{'MOD_PERL'} || 'CGI',
+		'serversoftware' => $ENV{'SERVER_SOFTWARE'} || 'Unknown',
+		'serverhost' => $ENV{'SERVER_NAME'}.':'.$ENV{'SERVER_PORT'},
 	);
 	$self->tt_process($file);
 }
