@@ -1,7 +1,11 @@
 [%- IF token -%]
 	<div class = 'messagetoken'>
-		<div class = 'pair'>[% addresser %]:[% recipient %]</div>
-		<div class = 'token'>[% token %]</div>
+		[%- IF addresser AND recipient -%]
+			<div class = 'pair'>[% addresser %]:[% recipient %]</div>
+			<div class = 'token'>[% token %]</div>
+		[%- ELSE -%]
+			<span class = 'errortext'>引数が足りません。</span>
+		[%- END -%]
 	</div>
 [%- END -%]
 

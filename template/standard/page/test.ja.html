@@ -9,7 +9,7 @@
 	<style type = 'text/css'>
 	<!--
 		[% INCLUDE bouncehammer.css %]
-		[% INCLUDE record.css %]
+		[% INCLUDE testparse.css %]
 	-->
 	</style>
 	[%- SET DOPARSE = '解析' -%]
@@ -51,7 +51,7 @@
 							<tr>
 								<td class = 'key'>メール(メールボックス)</td>
 								<td class = 'value'>
-									<input type = 'file' name = 'emailfile' style = 'border: 1px dotted #b2b2b2; padding: 4px;'
+									<input type = 'file' name = 'emailfile' class = 'emailfile'
 										onChange = "checkef.innerHTML = '&#9745; 使用'; doparse.disabled = false;" />&nbsp; 
 									[%- IF maxsize == 0 -%]
 										<strong> &lt; 無制限 </strong>
@@ -74,9 +74,8 @@
 										<a href = "javascript:void(0);" onClick = "toggleIt('emailtextarea');">表示</a>
 									</span><br />
 									<textarea name = 'emailtext' id = 'emailtextarea' onKeyUp = "doparse.disabled = false;"
-										onChange = "checket.innerHTML = '&#9745; 使用';"
-										style = 'width: 420px; height: 384px; display: none; border: 1px dotted #b2b2b2;
-											margin: 4px 0; padding: 0 0 0 1px; overflow-y: auto;'></textarea>
+										onChange = "checket.innerHTML = '&#9745; 使用';" class = 'emailtext'
+										style = 'display: none;' rows = '24' cols = '48'></textarea>
 								</td>
 								<td class = 'extra' id = 'checket'> </td>
 							</tr>
@@ -117,10 +116,13 @@
 							</tr>
 
 							<tr>
-								<td style = 'margin: 4px 0;'>
+								<td class = 'key' style = 'margin: 4px 0;'>
 									<br />
-									<input type = 'submit' id = 'doparse' value = '[% DOPARSE %]' class = 'flatbutton' disabled />&nbsp;
-									<input type = 'reset' value = 'リセット' class = 'flatbutton' />&nbsp;
+									<input type = 'submit' id = 'doparse' value = '[% DOPARSE %]' class = 'flatbutton' disabled />
+								</td>
+								<td class = 'value'></td>
+								<td class = 'extra'>
+									<input type = 'reset' value = 'リセット' class = 'flatbutton' />
 								</td>
 							</tr>
 						</tbody>

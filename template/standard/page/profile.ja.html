@@ -31,23 +31,39 @@
 				<table>
 					<tbody>
 						<tr>
-							<td class = 'key'>システム名称</td>
+							<td class = 'key'>システムの名称</td>
 							<td class = 'value'>[% systemname %]</td>
 						</tr>
 
 						<tr>
-							<td class = 'key'>システムバージョン</td>
-							<td class = 'value'>[% sysversion %]</td>
-						</tr>
-
-						<tr>
-							<td class = 'key'>設定ファイルバージョン</td>
-							<td class = 'value'>[% cfversion %]</td>
+							<td class = 'key'><span style = 'font-size:10px;'>システム/設定ファイルのバージョン</span></td>
+							<td class = 'value'><span style = 'font-size:15px;'>[% sysversion %]</span>/[% cfversion %]</td>
 						</tr>
 
 						<tr>
 							<td class = 'key'>既定の言語</td>
 							<td class = 'value'>[% syslanguage %]</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<h2>サーバ</h2>
+			<div class = 'profile'>
+				<table>
+					<tbody>
+						<tr>
+							<td class = 'key'>サーバ名</td>
+							<td class = 'value'>[% serverhost %]</td>
+						</tr>
+						<tr>
+							<td class = 'key'>サーバのソフトウェア</td>
+							<td class = 'value'>[% serversoftware %]</td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>スクリプトエンジン</td>
+							<td class = 'value'>[% scriptengine %]</td>
 						</tr>
 
 						<tr>
