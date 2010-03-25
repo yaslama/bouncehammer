@@ -4,7 +4,8 @@
 # automake to create Makefile.in.
 
 sysconf_DATA = aliases-example bouncehammer.cf-example crontab-example \
-	neighbor-domains-example prove.cf test-run.cf webui.cf-example
+	neighbor-domains-example prove.cf test-run.cf webui.cf-example \
+	httpd.conf-example
 distdir = $(BUILDROOT)/dist/etc
 instdir = @sysconfdir@
 
