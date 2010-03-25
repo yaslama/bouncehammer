@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.9 2010/03/21 09:55:49 ak Exp $
+# $Id: datadumper.PL,v 1.10 2010/03/25 15:49:14 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -477,13 +477,13 @@ sub help
 	printf( STDERR "\n" );
 	printf( STDERR " * QUERY OPTIONS\n" );
 	printf( STDERR "    -A, --alldata              : Show all data: include a record that is disabled(=1)\n");
-	printf( STDERR "    -a, --addresser <str>      : Sender address(Addresser).\n");
-	printf( STDERR "    -r, --recipient <str>      : Recipient address.\n");
-	printf( STDERR "    -s, --senderdomain <str>   : Sender domain name.\n");
-	printf( STDERR "    -d, --destination <str>    : Destination domain name.\n");
-	printf( STDERR "    -w, --reason <str>         : Reason, see tablectl -Tw --list\n");
-	printf( STDERR "    -g, --hostgroup <str>      : Host group, see tablectl -Tc --list\n");
-	printf( STDERR "    -p, --provider <str>       : Provider name, see tablectl -Tc --list\n");
+	printf( STDERR "    -a, --addresser <str>      : Sender address(Addresser), see tablectl -ta --list\n");
+	printf( STDERR "    -r, --recipient <str>      : Recipient address,\n");
+	printf( STDERR "    -s, --senderdomain <str>   : Sender domain name, see tablectl -ts --list\n");
+	printf( STDERR "    -d, --destination <str>    : Destination domain name, see tablectl -td --list\n");
+	printf( STDERR "    -w, --reason <str>         : Reason, see tablectl -tw --list\n");
+	printf( STDERR "    -g, --hostgroup <str>      : Host group, see tablectl -th --list\n");
+	printf( STDERR "    -p, --provider <str>       : Provider name, see tablectl -tp --list\n");
 	printf( STDERR "    -t, --token <str>          : Message token(MD5 hash value)\n");
 	printf( STDERR "    -h, --howrecent <str>      : How recent the mail is past <day> days, e.g.)\n");
 	printf( STDERR "                                 1w = 1 weeks, 2d = 2 days(default), 3h = 3 hours,\n");
