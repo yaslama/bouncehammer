@@ -1,4 +1,4 @@
-# $Id: 502_bin-tablectl.t,v 1.8 2010/03/19 07:40:39 ak Exp $
+# $Id: 502_bin-tablectl.t,v 1.9 2010/03/25 15:50:36 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 106 );
+use Test::More ( tests => 427 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',106) if($@);
+	skip('Because no IPC::Cmd for testing',427) if($@);
 
 	use Kanadzuchi::Test::CLI;
 	use Kanadzuchi;
@@ -39,12 +39,10 @@ SKIP: {
 		{
 			'name' => 'Format is (YAML|JSON)',
 			'option' => $O.q( -Fy ),
-			'length' => 1659,
 		},
 		{
 			'name' => 'Format is ASCIITable',
 			'option' => $O.q( -Fa ),
-			'length' => 1512,
 		},
 	];
 
@@ -54,7 +52,7 @@ SKIP: {
 	# |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 	#
 	SKIP: {
-		my $S = 106;	# Skip
+		my $S = 427;	# Skip
 		eval { require DBI; }; skip( 'Because no DBI for testing', $S ) if( $@ );
 		eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $S ) if( $@ );
 		eval { $E->environment(2); }; 
@@ -85,89 +83,104 @@ SKIP: {
 			is( ( $#{$Y} + 1 ), $R , $E->output.q{ have }.$R.q{ records} );
 		}
 
-		SENDERDOMAINS: {
-			my $sdcache = [];
+		EACH_TABLE: foreach my $tablename ( 'senderdomain', 'addresser', 'destination', 'provider', 'hostgroup', 'reason' ) 
+		{
+			my $tabchar = lc(substr($tablename,0,1));
+			my $colname = 'name';
+			my $tccache = [];
 			my $idcache = {};
 			my $command = q();
 			my $xstatus = 0;
 			my $xresult = q();
 			my $yamlret = undef();
+			my $insertx = 0;
+			my $deletex = 0;
+
+			$colname = 'domainname' if( $tabchar eq 's' || $tabchar eq 'd' );
+			$colname = 'email' if( $tabchar eq 'a' );
+			do { $colname = 'why'; $tabchar = 'w' } if( $tabchar eq 'r' );
 
 			INSERT: foreach my $y ( @$Y )
 			{
-				next() if( grep( { $y->{'senderdomain'} eq $_ } @$sdcache ) );
+				next() if( grep( { $y->{$tablename} eq $_ } @$tccache ) );
 
-				$command = $E->perl().$E->command().$O.q{ --table s --insert --name }.$y->{'senderdomain'};
+				$command = $E->perl().$E->command().$O.q{ --table }.$tabchar.q{ --insert --name }.$y->{$tablename};
 				$xstatus = scalar(IPC::Cmd::run( 'command' => $command ));
 
-				ok( $xstatus, q{INSERT: domainname = }.$y->{'senderdomain'} );
-				push( @$sdcache, $y->{'senderdomain'} );
+				ok( $xstatus, $tablename.q{ INSERT: name = }.$y->{$tablename} );
+				push( @$tccache, lc($y->{$tablename}) );
+				$insertx++;
 			}
 		
 			FIRSTDUMP: {
-				$command = $E->perl().$E->command().$O.q{ --table s --list > }.$E->tempdir().q{/tablectl-dump.dat};
+				$command = $E->perl().$E->command().$O.q{ --table }.$tabchar.q{ --list > }.$E->tempdir().q{/tablectl-dump.}.$tabchar.q{.dat};
 				$xstatus = scalar(IPC::Cmd::run( command => $command ));
-				ok( $xstatus, q{Dumped to }.$E->tempdir() );
+				ok( $xstatus, $tablename.q{ Dumped to }.$E->tempdir() );
 			}
 
 			RECORDS1: {
-				$command = $E->perl().$E->command().$O.q{ --table s --list};
+				$command = $E->perl().$E->command().$O.q{ --table }.$tabchar.q{ --list};
 				$xresult = qx( $command );
 				$yamlret = JSON::Syck::Load( $xresult );
 
 				isa_ok( $yamlret, q|ARRAY| );
-				is( $#{$yamlret}, $#{$sdcache}, $#{$sdcache}.q{ records are inserted} );
+				is( $insertx, scalar(@$tccache), $tablename.q{ }.scalar(@$tccache).q{ records are inserted} );
 			}
 
-			SELECT1: foreach my $c ( @$sdcache )
+			SELECT1: foreach my $c ( @$tccache )
 			{
-				$command = $E->perl().$E->command().$O.q{ --table s --list --name }.$c;
+				$command = $E->perl().$E->command().$O.q{ --table }.$tabchar.q{ --list --name }.$c;
 				$xresult = qx( $command );
 				$yamlret = JSON::Syck::Load( $xresult );
 
-				is( $yamlret->[0]->{'domainname'}, $c, q{SELECT: domainname = }.$c );
+				is( $yamlret->[0]->{$colname}, $c, $tablename.q{ SELECT: name = }.$c );
 				$idcache->{ $yamlret->[0]->{'id'} } = $c;
 			}
 
 			UPDATE: foreach my $i ( keys(%$idcache) )
 			{
-				$command = $E->perl().$E->command().$O.q{ --table s --update --id }.$i.q{ --description }.uc($idcache->{$i});
+				$command = $E->perl().$E->command().$O.q{ --table }.$tabchar.q{ --update --id }.$i.q{ --description }.uc($idcache->{$i});
 				$xstatus = scalar(IPC::Cmd::run( 'command' => $command ) );
 
-				ok( $xstatus, q{UPDATE: description = }.uc($idcache->{$i}) );
+				ok( $xstatus, $tablename.q{ UPDATE: description = }.uc($idcache->{$i}) );
 			}
 
 			SELECT2: foreach my $i ( keys(%$idcache) )
 			{
-				$command = $E->perl().$E->command().$O.q{ --table s --list --id }.$i;
+				$command = $E->perl().$E->command().$O.q{ --table }.$tabchar.q{ --list --id }.$i;
 				$xresult = qx( $command );
 				$yamlret = JSON::Syck::Load( $xresult );
 
-				is( $yamlret->[0]->{'domainname'}, $idcache->{$i}, q{SELECT: domainname = }.$idcache->{$i} );
+				is( $yamlret->[0]->{$colname}, $idcache->{$i}, $tablename.q{ SELECT: name = }.$idcache->{$i} );
 			}
 
 			DUMPAGAIN: foreach my $s ( @$Suite )
 			{
-				$command = $E->perl().$E->command().$s->{'option'}.q{ --table s --list };
+				$command = $E->perl().$E->command().$s->{'option'}.q{ --table }.$tabchar.q{ --list };
 				$xresult = qx($command);
-				is( length($xresult), $s->{'length'}, $s->{'name'}.q{/length = }.$s->{'length'} );
+				ok( length($xresult), $tablename.q{ length = }.length($xresult));
 			}
 
+			next() unless( $tablename eq 'senderdomain' );
 			DELETE: foreach my $i ( keys(%$idcache) )
 			{
-				$command = $E->perl().$E->command().$O.q{ --table s --remove --id }.$i;
+				$command = $E->perl().$E->command().$O.q{ --table }.$tabchar.q{ --remove --id }.$i;
 				$xstatus = scalar(IPC::Cmd::run( 'command' => $command ) );
 
-				ok( $xstatus, q{DELETE: id = }.$i.q{, domainname = }.$idcache->{$i} );
+				ok( $xstatus, $tablename.q{ DELETE: id = }.$i.q{, domainname = }.$idcache->{$i} );
+				$deletex++;
 			}
 
 			RECORDS2: {
-				$command = $E->perl().$E->command().$O.q{ --table s --list};
+				$command = $E->perl().$E->command().$O.q{ --table }.$tabchar.q{ --list};
 				$xresult = qx( $command );
 				$yamlret = JSON::Syck::Load( $xresult );
-				is( ( $#{$yamlret} + 1 ), 0, q{Recores in the database have been removed} );
+				is( ( $#{$yamlret} + 1 ), ( $insertx - $deletex ), $tablename.q{ }.$deletex.q{ Recores in the database have been removed} );
 			}
-		}
+
+		} # End of EACH_TABLE
+
+
 	} # End of SKIP
 }
 __END__
