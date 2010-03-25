@@ -1,4 +1,4 @@
-# $Id: Table.pm,v 1.12 2010/03/04 08:33:25 ak Exp $
+# $Id: Table.pm,v 1.13 2010/03/25 15:49:56 ak Exp $
 # -Id: Table.pm,v 1.1 2009/08/29 09:08:01 ak Exp -
 # -Id: Table.pm,v 1.6 2009/05/29 08:22:21 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -214,12 +214,16 @@ sub select
 	#
 	# @Description	Not Implemented
 	# @Param <ref>	(K::RDB)
-	# @Param <key>	(String) Sort order(column name)
+	# @Param <col>	(String) Sort order(column name)
+	# @Param <ref>	(Ref->Ref->Hash) Pager config
 	# @Return	(Arrayref) records
 	my $self = shift();
 	my $dobj = shift() || return([]);
 	my $sort = shift() || q(id);
-	my $rset = undef();	# K::R::S::Resultset
+	my $page = shift() || \{};
+
+	my $rset = undef();	# Kanadzuchi::RDB::*::Resultset
+	my $rspp = undef();	# Pager with ResultSet
 	my $aref = [];
 	my $name = $self->{'field'};
 
@@ -227,10 +231,33 @@ sub select
 	eval {
 		my $_sock = $dobj->handle->resultset( $self->{'table'} );
 		my $_cond = {};
-		my $_sort = { 'order_by' => $sort };
-		$rset = $_sock->search( $_cond, $_sort );
+		my $_page = { 'order_by' => $sort };
+
+		# Set pager config if the value is defined.
+		$_page->{'order_by'} .= q{ desc} if( $$page->{'descendorderby'} );
+		$_page->{'page'} = $$page->{'currentpagenum'} if( defined($$page->{'page'}) );
+		$_page->{'rows'} = $$page->{'resultsperpage'} if( defined($$page->{'rows'}) );
+
+		# Send query with pager config
+		$rset = $_sock->search( $_cond, $_page );
+		$rspp = $rset->pager() if( $_page->{'page'} && $_page->{'rows'} );
 	};
 	return([]) if( $@ );
+
+	if( defined($rspp) )
+	{
+		# Set paging information to 'pager' variable(ref)
+		$$page = {
+			'colnameorderby' => $$page->{'colnameorderby'},
+			'descendorderby' => $$page->{'descendorderby'},
+			'firstpagenumber' => $rspp->first_page(),
+			'lastpagenumber' => $rspp->last_page(),
+			'resultsperpage' => $rspp->entries_per_page(),
+			'currentpagenum' => $rspp->current_page(),
+			'totalentries' => $rspp->total_entries(),
+			'firstentry' => $rspp->first(),
+			'lastentry' => $rspp->last(), };
+	}
 
 	while( my $_r = $rset->next() )
 	{
