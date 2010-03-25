@@ -1,4 +1,4 @@
-# $Id: RDB.pm,v 1.8 2010/03/19 04:04:04 ak Exp $
+# $Id: RDB.pm,v 1.9 2010/03/25 14:50:53 ak Exp $
 # -Id: Stored.pm,v 1.5 2009/12/31 16:30:13 ak Exp -
 # -Id: Stored.pm,v 1.1 2009/08/29 07:33:13 ak Exp -
 # -Id: Stored.pm,v 1.14 2009/08/12 01:59:20 ak Exp -
@@ -102,11 +102,13 @@ sub searchandnew
 
 		if( $_colnameorderby eq 'senderdomain' || $_colnameorderby eq 'destination' )
 		{
-			$_colnameorderby .= q{.domainname} 
+			push( @$_jointablenames, $_colnameorderby ) unless( grep { $_ eq $_colnameorderby } @$_jointablenames );
+			$_colnameorderby .= q{.domainname};
 		}
 		elsif( $_colnameorderby eq 'addresser' )
 		{
-			$_colnameorderby .= q{.email} 
+			push( @$_jointablenames, 'addresser' ) unless( grep { $_ eq 'addresser' } @$_jointablenames );
+			$_colnameorderby .= q{.email};
 		}
 
 		$_colnameorderby .= q{ desc} if( $_descendorderby );
@@ -131,7 +133,7 @@ sub searchandnew
 		{
 			$wcond->{'addresser'} = lc($wcond->{'addresser'});
 			$_wherecondition->{'addresser.email'} = $wcond->{'addresser'};
-			push( @$_jointablenames, 'addresser' );
+			push( @$_jointablenames, 'addresser' ) unless( grep { $_ eq 'addresser' } @$_jointablenames );
 		}
 
 		# Where Cond.: Recipient
@@ -142,27 +144,29 @@ sub searchandnew
 		}
 
 		# Where Cond.: Sender domain name
-		if( $wcond->{'senderdomain'} )
-		{
-			$wcond->{'senderdomain'} = lc($wcond->{'senderdomain'});
-			$_wherecondition->{'senderdomain.domainname'} = $wcond->{'senderdomain'};
-			push( @$_jointablenames, 'senderdomain' );
-		}
-		elsif( $wcond->{'addresser'} )
+		if( ! $wcond->{'senderdomain'} && $wcond->{'addresser'} )
 		{
 			($wcond->{'senderdomain'}) = $wcond->{'addresser'} =~ m{[@](.+)\z};
 		}
 
+		if( $wcond->{'senderdomain'} )
+		{
+			$wcond->{'senderdomain'} = lc($wcond->{'senderdomain'});
+			$_wherecondition->{'senderdomain.domainname'} = $wcond->{'senderdomain'};
+			push( @$_jointablenames, 'senderdomain' ) unless( grep { $_ eq 'senderdomain' } @$_jointablenames );
+		}
+
 		# Where Cond.: Destination domain name
+		if( ! $wcond->{'destination'} && $wcond->{'recipient'} )
+		{
+			($wcond->{'destination'}) = $wcond->{'recipient'} =~ m{[@](.+)\z};
+		}
+
 		if( $wcond->{'destination'} )
 		{
 			$wcond->{'destination'} = lc($wcond->{'destination'});
 			$_wherecondition->{'destination.domainname'} = $wcond->{'destination'};
-			push( @$_jointablenames, 'destination' );
-		}
-		elsif( $wcond->{'recipient'} )
-		{
-			($wcond->{'destination'}) = $wcond->{'recipient'} =~ m{[@](.+)\z};
+			push( @$_jointablenames, 'destination' ) unless( grep { $_ eq 'destination' } @$_jointablenames );
 		}
 
 		# Where Cond.: Message token string
