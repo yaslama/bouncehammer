@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.29 2010/03/25 02:08:38 ak Exp $
+ $Id: RELEASE_NOTES,v 1.31 2010/03/25 15:48:24 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -21,14 +21,17 @@
     * libexec/mp-startup.pl
     * share/script/more-example-senderdomains.sql
     * share/template/standard/stylesheet/testparse.css
+    * etc/httpd.conf-example
     * Implement.PL
 
   New functionality:
     * BounceHammer works on mod_perl2 with Apache 2.2.
+    * JSON format avaiable as a download format from WebUI.
 
   Assorted improvements and code cleanup:
     * Variable declaration improvement.
-    * New make target "check-implement"
+    * HTML Templates and stylesheets improvement.
+    * New make targets: check-implement, apply-patch, and reverse-patch.
     * WebUI Dispatcher settings(CGI) are moved to Dispatch.pm .
     * The configure script requires "patch" program and checks implemen-
       tation of -T,-B operarator on filehandle.
@@ -40,6 +43,8 @@
       is light; share/template/standard/stylesheet/bouncehammer.cf .
     * Fixed an issue that the URL text is not selected  by clicking the
       text(WebUI).
+    * Fixed an issue that datadumper and WebUI search form  cannnot get
+      the results order by 'addresser'.
 
 -----------------------------------------------------------------------
 2.1.0/2.0.0	2010/03/19
