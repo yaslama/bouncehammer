@@ -1,4 +1,4 @@
-# $Id: Dispatch.pm,v 1.1 2010/03/23 06:39:50 ak Exp $
+# $Id: Dispatch.pm,v 1.2 2010/03/26 07:20:08 ak Exp $
 # -Id: Index.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Index.pm,v 1.3 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -28,11 +28,11 @@ use base 'CGI::Application::Dispatch';
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
 my $Settings = {
-	coreconfig	=> '__KANADZUCHIETC__/bouncehammer.cf',
-	webconfig	=> '__KANADZUCHIETC__/webui.cf',
-	mailboxparser	=> '__KANADZUCHIBIN__/mailboxparser',
-	databasectl	=> '__KANADZUCHIBIN__/databasectl',
-	template	=> '__KANADZUCHIDATA__/template',
+	'coreconfig'	=> '__KANADZUCHIETC__/bouncehammer.cf',
+	'webconfig'	=> '__KANADZUCHIETC__/webui.cf',
+	'mailboxparser'	=> '__KANADZUCHIBIN__/mailboxparser',
+	'databasectl'	=> '__KANADZUCHIBIN__/databasectl',
+	'template'	=> '__KANADZUCHIDATA__/template',
 };
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ 
@@ -59,10 +59,10 @@ my $DispatchTables = [
 	'download/:pi_format?/:pi_condition?/:pi_orderby?' => {
 						'app' => 'Web::Search',
 						'rm'  => 'Search' },
-	'tables/:pi_tablename/sort/:pi_orderby' => {
+	'tables/:pi_tablename/sort/:pi_orderby/:pi_page?/:pi_rpp?' => {
 				'app' => 'Web::MasterTables',
 				'rm'  => 'TableList' },
-	'tables/:pi_tablename/list' => {
+	'tables/:pi_tablename/list/:pi_page?/:pi_rpp?' => {
 				'app' => 'Web::MasterTables',
 				'rm'  => 'TableList' },
 	'tables/:pi_tablename/create' => {
@@ -77,8 +77,8 @@ my $DispatchTables = [
 ];
 
 my $DispatchArgsToNew = {
-	TMPL_PATH => [],
-	PARAMS => {
+	'TMPL_PATH' => [],
+	'PARAMS' => {
 		'cf' => $Settings->{'coreconfig'},
 		'wf' => $Settings->{'webconfig'},
 		'tf' => $Settings->{'template'},
