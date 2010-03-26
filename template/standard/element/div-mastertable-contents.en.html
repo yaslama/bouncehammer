@@ -1,5 +1,5 @@
 [% FOREACH R IN tablecontents %]
-	[%- IF tablename == 'Senderdomains' or tablename == 'Destinations' -%]
+	[%- IF tablename == 'senderdomains' or tablename == 'destinations' -%]
 		[%- prototype.form_remote_tag( {
 				url => "${scriptname}/tables/${tablename}/update",
 				update => "mtr-${R.id}",
@@ -35,12 +35,16 @@
 				<td class = 'theID'>[% R.id %] &nbsp;</td>
 				<td class = 'shortName' id = 'name_of_[% R.id %]'>[% R.name %]</td>
 				<td class = 'longDescription'>
-					[%- IF tablename == 'Reasons' -%]
+					[%- IF tablename == 'reasons' -%]
 						<span class = 'reason [% R.name %]'>&nbsp;&nbsp; &nbsp;</span>
 					[%- END -%]
-					[% R.description %]
+					<input type = 'text' id = 'desc_of_[% R.id %]' class = 'readonlytext' name = 'desc'
+						value = '[% R.description %]' readonly = 'readonly' />
 				</td>
-				<td class = 'null'>&nbsp;</td>
+				<td class = 'theMethod'>
+					&nbsp;<input type = 'submit' id = 'do_update_[% R.id %]' value = 'ReadOnly' 
+						class = 'flatbutton' disabled />
+				</td>
 			</tr>
 			</tbody>
 		</table>

@@ -31,19 +31,45 @@
 				<table>
 					<tbody>
 						<tr>
-							<td class = 'key'>システムの名称</td>
-							<td class = 'value'>[% systemname %]</td>
+							<td class = 'key'>システム名称/バージョン</td>
+							<td class = 'value'><strong>[% systemname %] version [% sysversion %]</strong></td>
 						</tr>
 
 						<tr>
-							<td class = 'key'><span style = 'font-size:10px;'>システム/設定ファイルのバージョン</span></td>
-							<td class = 'value'><span style = 'font-size:15px;'>[% sysversion %]</span>/[% cfversion %]</td>
+							<td class = 'key'>設定ファイル</td>
+							<td class = 'value'>[% sysconfpath %] (ver. [% sysconfig.version %])<br />[% webconfpath %]</td>
 						</tr>
 
 						<tr>
-							<td class = 'key'>既定の言語</td>
-							<td class = 'value'>[% syslanguage %]</td>
+							<td class = 'key'>データベースの種類</td>
+							<td class = 'value'>[% sysconfig.database.dbtype %]</td>
 						</tr>
+
+						<tr>
+							<td class = 'key'>データベース名</td>
+							<td class = 'value'>[% sysconfig.database.dbname %]</td>
+						</tr>
+						[%- IF sysconfig.database.dbtype != 'SQLite' -%]
+							<tr>
+								<td class = 'key'>データベースホスト:ポート</td>
+								<td class = 'value'>[% sysconfig.database.hostname %]:[% sysconfig.database.port %]</td>
+							</tr>
+						[%- END -%]
+						<tr>
+							<td class = 'key'>圧縮形式(ダウンロード)</td>
+							<td class = 'value'>[% webconfig.archive.compress.type %]</td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>暗号化方式(URL)</td>
+							<td class = 'value'>[% webconfig.security.crypt.cipher %]</td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>ブラウザの言語/既定値</td>
+							<td class = 'value'><strong style = 'font-size:13px;'>[% mylanguage %]</strong>/[% webconfig.language %]</td>
+						</tr>
+						
 					</tbody>
 				</table>
 			</div>
@@ -53,7 +79,7 @@
 				<table>
 					<tbody>
 						<tr>
-							<td class = 'key'>サーバ名</td>
+							<td class = 'key'>サーバ名:ポート番号</td>
 							<td class = 'value'>[% serverhost %]</td>
 						</tr>
 						<tr>

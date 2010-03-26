@@ -1,7 +1,7 @@
 [% INCLUDE "dtd-xhtml.html" %]
 <head>
 	[% INCLUDE "meta-http-equiv.html" %]
-	<title>[% systemname %]/Tables/[% tablename %]</title>
+	<title>[% systemname %]/Tables/[% titlename %]</title>
 	[% prototype.define_javascript_functions %]
 	<script type = 'text/javascript'>
 		[% INCLUDE bouncehammer.js %]
@@ -10,13 +10,14 @@
 	<!--
 		[% INCLUDE bouncehammer.css %]
 		[% INCLUDE mastertable.css %]
+		[% INCLUDE pager.css %]
 	-->
 	</style>
 	[%- SET showmastertables = 1 -%]
 </head>
 <body>
 	<div id = 'ThePage'>
-		<h1>[% head1title %]/Tables/[% tablename %]</h1>
+		<h1>[% head1title %]/Tables/[% titlename %]</h1>
 		<div id = 'North-Ward'>
 			[% INCLUDE "div-menubar.${mylanguage}.html" %]
 		</div>
@@ -24,16 +25,16 @@
 			[% INCLUDE "div-index.${mylanguage}.html" %]
 		</div>
 		<div id = 'East-Ward'>
-			[%- IF tablename == 'Senderdomains' %]
+			[%- IF tablename == 'senderdomains' %]
 				[% INCLUDE "h-senderdomain-descr.${mylanguage}.html" %]
 			[%- END -%]
-			[%- IF tablename == 'Destinations' %]
+			[%- IF tablename == 'destinations' %]
 				[% INCLUDE "h-destination-descr.${mylanguage}.html" %]
 			[%- END -%]
-			[%- IF tablename == 'Reasons' %]
+			[%- IF tablename == 'reasons' %]
 				[% INCLUDE "h-reason-select.${mylanguage}.html" %]
 			[%- END -%]
-			[%- IF tablename == 'Hostgroups' %]
+			[%- IF tablename == 'hostgroups' %]
 				[% INCLUDE "h-hostgroup-select.${mylanguage}.html" %]
 			[%- END -%]
 		</div>
@@ -44,7 +45,10 @@
 				<div class = 'result'><p class = 'exception'>[%- errormessage -%]</p></div>
 			[%- END -%]
 			
-			<h2>Master Table([% tablename %])</h2>
+			<h2>Master Table([% titlename %])</h2>
+			<div class = 'pager'>
+				[% INCLUDE "div-pager.${mylanguage}.html" %]
+			</div>
 			<div class = 'result'>
 				<table class = 'tableheadings'>
 					<thead class = 'mastertable'>
@@ -52,30 +56,24 @@
 							<th class = 'theID'>
 								<form action = '[% "${scriptname}/tables/${tablename}/sort/id" %]' method = 'POST' id = 'sortbyid'>
 									<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
-									<span class = 'baguette'>
 									<a href = "javascript:void(0);" onClick = "sortbyid.submit(); return(false);"
 										title = 'Sort by ID'>[%- IF sortby == 'Id' -%]*[%- END -%]ID &#9652;</a>
-									</span>
 								</form>
 							</th>
 							<th class = 'theName'>
 								<form action = '[% "${scriptname}/tables/${tablename}/sort/${fieldname}" %]' method = 'POST' id = 'sortbyname'>
 									<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
-									<span class = 'baguette'>
 									<a href = "javascript:void(0);" onClick = "sortbyname.submit(); return(false);"
 										title = 'Sort by [% fieldname %]'>
 										[%- IF sortby == fieldname -%]*[%- END -%][% fieldname %] &#9652;</a>
-									</span>
 								</form>
 							</th>
 							<th class = 'theDescription'>
 								<form action = '[% "${scriptname}/tables/${tablename}/sort/description" %]' method = 'POST' id = 'sortbydesc'>
 									<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
-									<span class = 'baguette'>
 									<a href = "javascript:void(0);" onClick = "sortbydesc.submit(); return(false);" 
 										title = 'Sort by Description'>
-										[%- IF sortby == 'Description' -%]*[%- END -%]Description &#9652;</a>
-									</span>
+										[%- IF sortby == 'description' -%]*[%- END -%]description &#9652;</a>
 								</form>
 							</th>
 							<th class = 'theMethod'>&nbsp; </th>
@@ -90,11 +88,16 @@
 
 				<div id = 'here_is_new_record' class = 'stored'></div>
 
-				[%- IF tablename == 'Senderdomains' AND isreadonly != 1 -%]
+				[%- IF tablename == 'senderdomains' AND isreadonly != 1 -%]
 					[% INCLUDE "div-create-a-new-mastertable-record.${mylanguage}.html" %]
 					[% INCLUDE "div-delete-a-mastertable-record.${mylanguage}.html" %]
 				[%- END -%]
 			</div>
+			[%- IF pagersinthequery.resultsperpage > 10 AND pagersinthequery.totalentries > 10 AND hascondition > 0 -%]
+				<div class = 'pager'>
+					[% INCLUDE "div-pager.${mylanguage}.html" %]
+				</div>
+			[%- END -%]
 		</div>
 		<div id = 'South-Ward'>
 		</div>
