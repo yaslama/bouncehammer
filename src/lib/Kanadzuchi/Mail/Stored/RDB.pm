@@ -1,4 +1,4 @@
-# $Id: RDB.pm,v 1.9 2010/03/25 14:50:53 ak Exp $
+# $Id: RDB.pm,v 1.10 2010/03/26 07:21:27 ak Exp $
 # -Id: Stored.pm,v 1.5 2009/12/31 16:30:13 ak Exp -
 # -Id: Stored.pm,v 1.1 2009/08/29 07:33:13 ak Exp -
 # -Id: Stored.pm,v 1.14 2009/08/12 01:59:20 ak Exp -
@@ -214,14 +214,14 @@ sub searchandnew
 			'prefetch' => $_prefetchtables, };
 	}
 
-	PAGING: {
-		#  ____   _    ____ ___ _   _  ____ 
-		# |  _ \ / \  / ___|_ _| \ | |/ ___|
-		# | |_) / _ \| |  _ | ||  \| | |  _ 
-		# |  __/ ___ \ |_| || || |\  | |_| |
-		# |_| /_/   \_\____|___|_| \_|\____|
-		# 
-		# Set paging configuration: a page number and results per page.
+	PAGINATION: {
+		#  ____   _    ____ ___ _   _    _  _____ ___ ___  _   _ 
+		# |  _ \ / \  / ___|_ _| \ | |  / \|_   _|_ _/ _ \| \ | |
+		# | |_) / _ \| |  _ | ||  \| | / _ \ | |  | | | | |  \| |
+		# |  __/ ___ \ |_| || || |\  |/ ___ \| |  | | |_| | |\  |
+		# |_| /_/   \_\____|___|_| \_/_/   \_\_| |___\___/|_| \_|
+		#                                                        
+		# Set pagination: a page number and results per page.
 		if( $_resultsperpage && $_currentpagenum )
 		{
 			$_joinstatements->{'page'} = $_currentpagenum;
@@ -242,7 +242,7 @@ sub searchandnew
 
 	if( defined($rpage) )
 	{
-		# Set paging information to 'pager' variable(ref)
+		# Set values for pagination to 'pager' variable(ref)
 		$$pager = {
 			'colnameorderby'	=> $$pager->{'colnameorderby'},
 			'descendorderby'	=> $$pager->{'descendorderby'},
