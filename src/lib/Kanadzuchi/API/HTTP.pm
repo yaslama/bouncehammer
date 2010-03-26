@@ -1,4 +1,4 @@
-# $Id: HTTP.pm,v 1.9 2010/03/19 04:03:45 ak Exp $
+# $Id: HTTP.pm,v 1.10 2010/03/26 07:18:31 ak Exp $
 # -Id: HTTP.pm,v 1.3 2009/10/06 00:36:49 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::
@@ -84,7 +84,7 @@ sub cgiapp_prerun
 
 	# Set values to Kanadzuchi::Database object, Create data source name
 	try {
-		unless( $self->{'database'}->setup($self->{'settings'}->{'database'}) )
+		unless( $self->{'database'}->setup($self->{'sysconfig'}->{'database'}) )
 		{
 			Kanadzuchi::Exception::API->throw( '-text' => 'Failed to setup' );
 		}
@@ -154,7 +154,7 @@ sub loadconfig
 
 	use Kanadzuchi::Metadata;
 	$json = shift( @{Kanadzuchi::Metadata->to_object($conf)} );
-	$self->{'settings'} = $json if( ref($json) eq q|HASH| );
+	$self->{'sysconfig'} = $json if( ref($json) eq q|HASH| );
 
 	$yaml = shift( @{Kanadzuchi::Metadata->to_object($webc)} );
 	$self->{'webconfig'} = $yaml if( ref($yaml) eq q|HASH| );
@@ -187,10 +187,10 @@ sub api_query
 	my $answer = [];
 	my $isjson = 1;
 	my $string = q();
-	my $paging = { 'currentpagenum' => 1, 'resultperpage' => 1 };
+	my $pagecf = { 'currentpagenum' => 1, 'resultperpage' => 1 };
 	my $wherec = { 'token' => lc($self->param('token')) };
 
-	$answer = Kanadzuchi::Mail::Stored::RDB->searchandnew( $self->{'database'}, $wherec, \$paging, 1 );
+	$answer = Kanadzuchi::Mail::Stored::RDB->searchandnew( $self->{'database'}, $wherec, \$pagecf, 1 );
 	$string = Kanadzuchi::Mail::Stored::RDB->serialize( $answer, $isjson );
 
 	return($string);
