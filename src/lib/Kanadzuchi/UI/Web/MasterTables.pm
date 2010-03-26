@@ -1,4 +1,4 @@
-# $Id: MasterTables.pm,v 1.9 2010/03/04 08:35:42 ak Exp $
+# $Id: MasterTables.pm,v 1.10 2010/03/26 07:20:08 ak Exp $
 # -Id: MasterTables.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: MasterTables.pm,v 1.7 2009/08/15 15:06:56 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -39,18 +39,35 @@ sub tablelist_ontheweb
 	my $aref = [];
 	my $tobj = undef();
 	my $tmpl = q(mastertable.).$self->{'language'}.q(.html);
-	my $sort = lc($self->param('pi_orderby')) || q();
 	my $tabc = $self->{'webconfig'}->{'database'}->{'table'};
+	my $cond = {};	# WHERE Conditioin, For Future Release
+	my $page = { 
+		'colnameorderby' => lc($self->param('pi_orderby')) || q(),
+		'currentpagenum' => $self->param('pi_page') || 1,
+		'resultsperpage' => $self->param('pi_rpp') || 10,
+	};
+
 
 	$self->{'tablename'} = lc($self->param('pi_tablename'));
+
+	# Host Groups and Reasons does not use pager
+	if( $self->{'tablename'} eq 'hostgroups' || $self->{'tablename'} eq 'reasons' )
+	{
+		$page->{'resultsperpage'} = 25;
+	}
+
 	$tobj = Kanadzuchi::RDB::MasterTable->newtable( $self->{'tablename'} );
-	$aref = $tobj->select( $self->{'database'}, $sort );
+	$aref = $tobj->select( $self->{'database'}, $cond, \$page );
 
 	$self->tt_params( 
-		'tablename' => ucfirst($self->{'tablename'}),
-		'fieldname' => ucfirst($tobj->field()),
-		'sortby' => ucfirst($sort),
+		'titlename' => ucfirst($self->{'tablename'}),
+		'tablename' => $self->{'tablename'},
+		'fieldname' => $tobj->field(),
+		'sortby' => $page->{'colnameorderby'},
 		'isreadonly' => $tabc->{ $self->{'tablename'} }->{'readonly'},
+		'contentsname' => 'table',
+		'hascondition' => 0,
+		'pagersinthequery' => $page,
 		'tablecontents' => $aref );
 	$self->tt_process($tmpl);
 }
@@ -143,8 +160,9 @@ sub tablectl_ontheweb
 			}
 
 			$self->tt_params(
-				'tablename' => ucfirst($self->{'tablename'}),
-				'fieldname' => ucfirst($table->field()),
+				'titlename' => ucfirst($self->{'tablename'}),
+				'tablename' => $self->{'tablename'},
+				'fieldname' => $table->field(),
 				'tablecontents' => $aref );
 		}
 		elsif( $action eq 'update' )
@@ -181,8 +199,9 @@ sub tablectl_ontheweb
 			}
 
 			$self->tt_params(
-				'tablename' => ucfirst($self->{'tablename'}),
-				'fieldname' => ucfirst($table->field()),
+				'titlename' => ucfirst($self->{'tablename'}),
+				'tablename' => $self->{'tablename'},
+				'fieldname' => $table->field(),
 				'tablecontents' => $aref );
 
 		}
@@ -241,8 +260,9 @@ sub tablectl_ontheweb
 
 			$aref = $table->select( $self->{'database'} );
 			$self->tt_params( 
-				'tablename' => ucfirst($self->{'tablename'}),
-				'fieldname' => ucfirst($table->field()),
+				'titlename' => ucfirst($self->{'tablename'}),
+				'tablename' => $self->{'tablename'},
+				'fieldname' => $table->field(),
 				'errormessage' => $_err,
 				'tablecontents' => $aref,
 				'removedrecord' => $_old, );
@@ -252,8 +272,9 @@ sub tablectl_ontheweb
 			# Unknown or empty action
 			$tmpl = $errt;
 			$self->tt_params(
-				'tablename' => ucfirst($self->{'tablename'}),
-				'fieldname' => ucfirst($table->field()),
+				'titlename' => ucfirst($self->{'tablename'}),
+				'tablename' => $self->{'tablename'},
+				'fieldname' => $table->field(),
 				'tablecontents' => [ {
 					'name' => $self->{'tablename'},
 					'description' => q(Unknown or empty action.), } ],
@@ -266,8 +287,9 @@ sub tablectl_ontheweb
 		# Invalid table name
 		$tmpl = $errt;
 		$self->tt_params(
-			'tablename' => ucfirst($self->{'tablename'}),
-			'fieldname' => q(Unknown),
+			'titlename' => ucfirst($self->{'tablename'}),
+			'tablename' => $self->{'tablename'},
+			'fieldname' => q(unknown),
 			'tablecontents' => [ {
 				'name' => $self->{'tablename'},
 				'description' => q(Unknown table name.), } ],
