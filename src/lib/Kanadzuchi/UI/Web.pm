@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.10 2010/03/01 23:42:10 ak Exp $
+# $Id: Web.pm,v 1.11 2010/03/26 07:19:15 ak Exp $
 # -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
 # -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -55,13 +55,14 @@ sub cgiapp_init
 	my $webc = $self->param('wf');	# String, WebUI config file
 	my $tmpl = $self->param('tf');	# String, Templates
 	my $path = [];			# Array ref, INCLUDE_PATH
+	my $lang = $ENV{'HTTP_ACCEPT_LANGUAGE'} || q(en-us);
 
 	# Insert the template paths, '../tmpl/*' overrides configurated sytem
 	# template directory in bouncehammer.cf
 	foreach my $__subdir ( 'page', 'help', 'element', 'stylesheet', 'javascript' )
 	{
 		push( @{$path}, 
-			'../tmplates/standard/'.$__subdir,
+			'../tmplate/standard/'.$__subdir,
 			$tmpl.q(/standard/).$__subdir );
 	}
 
@@ -77,10 +78,7 @@ sub cgiapp_init
 
 	if( ! defined($s->param('language')) )
 	{
-		my $_lang = 
-			$q->param('language') ||
-			substr( $ENV{'HTTP_ACCEPT_LANGUAGE'}, 0, 2 ) ||
-			$self->{'language'} || q(en);
+		my $_lang = $q->param('language') || substr( $lang, 0, 2 ) || $self->{'language'} || q(en);
 		$s->param( '-name' => 'language', '-value' => $_lang );
 		$s->expire($self->{'webconfig'}->{'session'}->{'expires'});
 	}
@@ -132,7 +130,7 @@ sub cgiapp_prerun
 
 	# Set values to Kanadzuchi::Database object, Create data source name
 	try {
-		unless( $self->{'database'}->setup($self->{'settings'}->{'database'}) )
+		unless( $self->{'database'}->setup($self->{'sysconfig'}->{'database'}) )
 		{
 			Kanadzuchi::Exception::Web->throw( '-text' => 'Failed to setup' );
 		}
@@ -184,19 +182,24 @@ sub tt_pre_process
 	# |t|t|_|p|r|e|_|p|r|o|c|e|s|s|
 	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 	my $self = shift();
-	my $port = ( $ENV{'SERVER_PORT'} == 80 ? q() : qq|:$ENV{'SERVER_PORT'}| );
-	my $host = $ENV{'HTTP_HOST'} || $ENV{'SERVER_NAME'}.$port;
-	( my $vers = $Kanadzuchi::VERSION ) =~ s{[.]\d+\z}{};
+	my $port = $ENV{'SERVER_PORT'} || 0;
+	my $host = $ENV{'HTTP_HOST'} || q(localhost);
+	my $vers = $Kanadzuchi::VERSION || q(0.0.0);
+	my $scri = $ENV{'SCRIPT_NAME'} || q(/);
+	my $path = $ENV{'PATH_INFO'} || q();
+
+	$host .= ( $port != 0 && $port != 80 ) ? q(:).$port : q();
+	$vers =~ s{[.]\d+\z}{};
 
 	$self->tt_params( 
-		'systemname' => $self->{'settings'}->{'system'},
+		'systemname' => $Kanadzuchi::SYSNAME,
 		'sysversion' => $Kanadzuchi::VERSION,
-		'scriptname' => $ENV{'SCRIPT_NAME'},
-		'head1title' => $self->{'settings'}->{'system'}.q(<sup>).$vers.q(</sup>),
-		'thepageuri' => q(http://).$host.$ENV{'SCRIPT_NAME'},
+		'scriptname' => $scri,
+		'head1title' => $Kanadzuchi::SYSNAME.q(<sup>).$vers.q(</sup>),
+		'thepageuri' => q(http://).$host.$scri,
 		'mylanguage' => $self->{'language'},
 		'prototype' => $self->prototype,
-		'pathinfo' => $ENV{'PATH_INFO'},
+		'pathinfo' => $path,
 		'thisyear' => $self->{'datetime'}->year(),
 		'tzoffset' => Kanadzuchi::Time->second2tz( $self->{'datetime'}->tzoffset() ),
 	);
@@ -232,7 +235,7 @@ sub loadconfig
 
 	use Kanadzuchi::Metadata;
 	$json = shift( @{Kanadzuchi::Metadata->to_object($conf)} );
-	$self->{'settings'} = $json if( ref($json) eq q|HASH| );
+	$self->{'sysconfig'} = $json if( ref($json) eq q|HASH| );
 
 	$yaml = shift( @{Kanadzuchi::Metadata->to_object($webc)} );
 	$self->{'webconfig'} = $yaml if( ref($yaml) eq q|HASH| );
