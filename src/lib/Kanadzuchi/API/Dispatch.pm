@@ -1,4 +1,4 @@
-# $Id: Dispatch.pm,v 1.1 2010/03/23 07:57:39 ak Exp $
+# $Id: Dispatch.pm,v 1.2 2010/03/26 07:18:31 ak Exp $
 # -Id: Index.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Index.pm,v 1.3 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -28,8 +28,8 @@ use base 'CGI::Application::Dispatch';
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
 my $Settings = {
-	coreconfig	=> '__KANADZUCHIETC__/bouncehammer.cf',
-	webconfig	=> '__KANADZUCHIETC__/webui.cf',
+	'coreconfig'	=> '__KANADZUCHIETC__/bouncehammer.cf',
+	'webconfig'	=> '__KANADZUCHIETC__/webui.cf',
 };
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ 
@@ -43,8 +43,8 @@ my $DispatchTables = [
 ];
 
 my $DispatchArgsToNew = {
-	TMPL_PATH => [],
-	PARAMS => {
+	'TMPL_PATH' => [],
+	'PARAMS' => {
 		'cf' => $Settings->{'coreconfig'},
 		'wf' => $Settings->{'webconfig'},
 	},
