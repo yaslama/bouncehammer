@@ -6,6 +6,7 @@ use Test::More;
 my $Modules = [
 	q(Kanadzuchi::API),
 	q(Kanadzuchi::API::HTTP),
+	q(Kanadzuchi::API::Dispatch),
 ];
 
 plan( tests => $#{$Modules} + 1 );
