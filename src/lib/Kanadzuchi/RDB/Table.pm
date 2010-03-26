@@ -1,4 +1,4 @@
-# $Id: Table.pm,v 1.13 2010/03/25 15:49:56 ak Exp $
+# $Id: Table.pm,v 1.14 2010/03/26 07:21:43 ak Exp $
 # -Id: Table.pm,v 1.1 2009/08/29 09:08:01 ak Exp -
 # -Id: Table.pm,v 1.6 2009/05/29 08:22:21 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -214,12 +214,12 @@ sub select
 	#
 	# @Description	Not Implemented
 	# @Param <ref>	(K::RDB)
-	# @Param <col>	(String) Sort order(column name)
+	# @Param <ref>	(Ref->Hash) WHERE condition
 	# @Param <ref>	(Ref->Ref->Hash) Pager config
 	# @Return	(Arrayref) records
 	my $self = shift();
 	my $dobj = shift() || return([]);
-	my $sort = shift() || q(id);
+	my $cond = shift() || {};
 	my $page = shift() || \{};
 
 	my $rset = undef();	# Kanadzuchi::RDB::*::Resultset
@@ -227,16 +227,16 @@ sub select
 	my $aref = [];
 	my $name = $self->{'field'};
 
-	$sort = $self->_is_validcolumn($sort) ? $sort : q(id);
 	eval {
 		my $_sock = $dobj->handle->resultset( $self->{'table'} );
-		my $_cond = {};
-		my $_page = { 'order_by' => $sort };
+		my $_sort = $$page->{'colnameorderby'} || q(id);
+		my $_cond = {};		# WHERE Condition, For Future Release
+		my $_page = { 'order_by' => $self->_is_validcolumn($_sort) ? $_sort : q(id), };
 
 		# Set pager config if the value is defined.
 		$_page->{'order_by'} .= q{ desc} if( $$page->{'descendorderby'} );
-		$_page->{'page'} = $$page->{'currentpagenum'} if( defined($$page->{'page'}) );
-		$_page->{'rows'} = $$page->{'resultsperpage'} if( defined($$page->{'rows'}) );
+		$_page->{'page'} = $$page->{'currentpagenum'} if( defined($$page->{'currentpagenum'}) );
+		$_page->{'rows'} = $$page->{'resultsperpage'} if( defined($$page->{'resultsperpage'}) );
 
 		# Send query with pager config
 		$rset = $_sock->search( $_cond, $_page );
@@ -246,7 +246,7 @@ sub select
 
 	if( defined($rspp) )
 	{
-		# Set paging information to 'pager' variable(ref)
+		# Set values for pagination to 'pager' variable(ref)
 		$$page = {
 			'colnameorderby' => $$page->{'colnameorderby'},
 			'descendorderby' => $$page->{'descendorderby'},
