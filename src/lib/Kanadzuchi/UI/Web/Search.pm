@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.19 2010/03/04 21:19:28 ak Exp $
+# $Id: Search.pm,v 1.20 2010/03/26 07:20:08 ak Exp $
 # -Id: Search.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Search.pm,v 1.11 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -228,9 +228,9 @@ sub search_ontheweb
 
 
 		my $_queryp = $self->query;
-		my $_config = $self->{'settings'};
+		my $_config = $self->{'sysconfig'};
 		my $_uiconf = $self->{'webconfig'};
-		my $_dbconf = $self->{'settings'}->{'database'};
+		my $_dbconf = $self->{'sysconfig'}->{'database'};
 
 		#  _____ ___  ____  __  __    _  _____ 
 		# |  ___/ _ \|  _ \|  \/  |  / \|_   _|
@@ -420,6 +420,7 @@ sub search_ontheweb
 				$self->{'database'}, $paramsinthequery, \$pagersinthequery, $requiresobject );
 		$self->tt_params( 
 			'bouncemessages' => $aref,
+			'contentsname' => 'search',
 			'hascondition' => $hassearchcondition,
 			'searchcondition' => $paramsinthequery,
 			'encryptedforuri' => $encryptedcondition,

@@ -1,4 +1,4 @@
-# $Id: Test.pm,v 1.14 2010/03/01 23:42:12 ak Exp $
+# $Id: Test.pm,v 1.15 2010/03/26 07:20:08 ak Exp $
 # -Id: Test.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Test.pm,v 1.10 2009/08/17 12:39:31 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -73,9 +73,9 @@ sub parse_ontheweb
 		my $temporaryf = q();
 		my $tmpmailbox = undef();
 
-		$temporaryf .= $self->{'settings'}->{'file'}->{'templog'}->{'prefix'}.q(-draw.);
+		$temporaryf .= $self->{'sysconfig'}->{'file'}->{'templog'}->{'prefix'}.q(-draw.);
 		$temporaryf .= time().q(.).$ENV{'REMOTE_ADDR'}.q(.).sprintf("%4x",$ENV{'REMOTE_PORT'}).$$.q(.);
-		$temporaryf .= (rand(8) * 1000).q(.).$self->{'settings'}->{'file'}->{'templog'}->{'suffix'};
+		$temporaryf .= (rand(8) * 1000).q(.).$self->{'sysconfig'}->{'file'}->{'templog'}->{'suffix'};
 		$tmpmailbox = new Path::Class::File( qq{$temporaryd/$temporaryf} );
 
 		my $givenemail = q();	# Email file name

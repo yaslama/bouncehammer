@@ -1,4 +1,4 @@
-# $Id: Summary.pm,v 1.7 2010/03/02 04:29:27 ak Exp $
+# $Id: Summary.pm,v 1.8 2010/03/26 07:20:08 ak Exp $
 # -Id: Summary.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Summary.pm,v 1.1 2009/08/18 02:37:53 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -66,7 +66,7 @@ sub summary_ontheweb
 	$tabsd->{'myname'} = q(senderdomains);
 	$tabsd->{'screen'} = q(SenderDomains);
 	$tabsd->{'object'} = new Kanadzuchi::RDB::Table::SenderDomains();
-	$tabsd->{'arrayr'} = $tabsd->{'object'}->select( $self->{'database'}, q() );
+	$tabsd->{'arrayr'} = $tabsd->{'object'}->select( $self->{'database'} );
 
 	# Count the number of records in Destinations table
 	require Kanadzuchi::RDB::Table::Destinations;
@@ -74,7 +74,7 @@ sub summary_ontheweb
 	$tabde->{'myname'} = q(destinations);
 	$tabde->{'screen'} = ucfirst($tabde->{'myname'});
 	$tabde->{'object'} = new Kanadzuchi::RDB::Table::Destinations();
-	$tabde->{'arrayr'} = $tabde->{'object'}->select( $self->{'database'}, q() );
+	$tabde->{'arrayr'} = $tabde->{'object'}->select( $self->{'database'} );
 
 	foreach my $_tab ( $tabsd, $tabde )
 	{
