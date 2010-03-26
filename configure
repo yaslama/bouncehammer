@@ -655,6 +655,7 @@ CAT
 CHMOD
 TOUCH
 PATCH
+GREP
 FIND
 SED
 ENABLE_DEBUGCODE
@@ -2591,6 +2592,59 @@ fi
 
 
 
+for ac_prog in grep egrep
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
+if test "${ac_cv_path_GREP+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $GREP in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_GREP="$GREP" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy="/bin:/usr/bin:/usr/local/bin"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_path_GREP="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+GREP=$ac_cv_path_GREP
+if test -n "$GREP"; then
+  { echo "$as_me:$LINENO: result: $GREP" >&5
+echo "${ECHO_T}$GREP" >&6; }
+else
+  { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+fi
+
+
+  test -n "$GREP" && break
+done
+test -n "$GREP" || GREP=":"
+
+if test "x$GREP" = x; then
+	{ { echo "$as_me:$LINENO: error: *** Cannot find grep program(grep, egrep)" >&5
+echo "$as_me: error: *** Cannot find grep program(grep, egrep)" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
 # Extract the first word of "find", so it can be a program name with args.
 set dummy find; ac_word=$2
 { echo "$as_me:$LINENO: checking for $ac_word" >&5
@@ -3695,6 +3749,7 @@ CAT!$CAT$ac_delim
 CHMOD!$CHMOD$ac_delim
 TOUCH!$TOUCH$ac_delim
 PATCH!$PATCH$ac_delim
+GREP!$GREP$ac_delim
 FIND!$FIND$ac_delim
 SED!$SED$ac_delim
 ENABLE_DEBUGCODE!$ENABLE_DEBUGCODE$ac_delim
@@ -3707,7 +3762,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 86; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 87; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
