@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.31 2010/03/25 15:48:24 ak Exp $
+ $Id: RELEASE_NOTES,v 1.33 2010/03/26 07:30:41 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -25,7 +25,7 @@
     * Implement.PL
 
   New functionality:
-    * BounceHammer works on mod_perl2 with Apache 2.2.
+    * BounceHammer now works on mod_perl2 with Apache 2.2.
     * JSON format avaiable as a download format from WebUI.
 
   Assorted improvements and code cleanup:
@@ -37,6 +37,7 @@
       tation of -T,-B operarator on filehandle.
     * The patch in ./diff directory is applied by the make command auto-
       matically.
+    * Pagination of mastertable contents in WebUI.
 
   Fixed bugs:
     * Fixed an issue that hyperlink text color in the WebUI page footer
