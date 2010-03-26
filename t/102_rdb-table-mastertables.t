@@ -1,4 +1,4 @@
-# $Id: 102_rdb-table-mastertables.t,v 1.7 2010/03/04 08:37:01 ak Exp $
+# $Id: 102_rdb-table-mastertables.t,v 1.8 2010/03/26 07:16:31 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -301,7 +301,7 @@ EACH_TABLE: {
 						foreach my $o ( 'id', $tabset->{$tclass}->{'column'}, 'description', 'disabled' )
 						{
 							$previd = 0;
-							$sorted = $object->select( $D, $o );
+							$sorted = $object->select( $D, {}, \{ 'colnameorderby' => $o } );
 							isa_ok( $sorted, q|ARRAY|, q{->select() ORDER BY }.$o.q{ returns array reference} );
 							is( ( $#{$sorted} + 1 ), $record, q{->select() ORDER BY returns }.$record.q{ records} );
 
@@ -326,7 +326,7 @@ EACH_TABLE: {
 							my $argv = defined($e) ? sprintf("%#x", ord($e)) : 'undef()';
 
 							$previd = 0;
-							$sorted = $object->select( $D, $e );
+							$sorted = $object->select( $D, {}, \{ 'colnameorderby' => $e } );
 							isa_ok( $sorted, q|ARRAY|, q{->select() ORDER BY }.$argv.q{ returns array reference} );
 							is( ( $#{$sorted} + 1 ), $record, 
 								'->select() ORDER BY exceptional value: '.$argv.' return '.$record.q{ records} );
