@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.6 2010/03/25 02:11:57 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.7 2010/03/26 07:15:44 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -66,8 +66,9 @@
 	width: 880px;
 	margin: 4px 0 4px 0;
 	padding: 8px;
+	font-weight: bold;
 	color: #524e4d; /* Keshizumi-iro */
-	background: #e5e4e6; /* Shiraumenezu */
+	background: #eaf4fc; /* Geppaku */
 	border-color: #d4dcd6;	/* Sobakiri-iro */
 	border-width: 0px;
 	border-style: solid;
