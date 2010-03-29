@@ -1,4 +1,4 @@
-/* $Id: testparse.css,v 1.2 2010/03/29 00:36:21 ak Exp $ */
+/* $Id: testparse.css,v 1.3 2010/03/29 04:37:01 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Record classes */
 #ChooseFile {
@@ -13,10 +13,14 @@ iframe.parseddata {
 }
 
 input.emailfile {
-	border-width: 1px;
-	border-style: dotted;
-	border-color: #afafb0; /* Gin-nezu */
+	margin: 2px 4px;
 	padding: 4px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #afafb0; /* Gin-nezu */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
 }
 
 textarea.emailtext {
@@ -52,5 +56,17 @@ td.value, td.extra {
 	margin: 2px 0;
 	padding: 2px 0 2px 2px;
 	font-size: 11px;
+}
+
+div.result .upload-summary {
+	margin: 2px 0;
+	padding: 4px;
+	background: #fbfaf5; /* Kinari-iro */
+	border-style: solid;
+	border-width: 1px;
+	border-color: #7b7c7d; /* Namari-iro */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
 }
 

@@ -1,0 +1,27 @@
+/* $Id: search.css,v 1.1 2010/03/29 04:37:01 ak Exp $ */
+/* Copyright 2009,2010 Cubicroot Co. Ltd. */
+/* Search form classes */
+div#search-condition {
+	background: #f8fbf8; /* Hakuji */
+	padding: 8px 2px;
+	border-color: #c1e4e9; /* Geppaku */
+	border-width: 1px;
+	border-style: solid;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+
+div#search-condition div.subgroup {
+	margin-top: 12px;
+	padding-top: 12px;
+	border-width: 1px 0 0 0;
+	border-style: solid;
+	border-color: #d4dcd6;	/* Sobakiri-iro */
+}
+
+div#search-query {
+	background: #f8f4e6; /* Zouge-iro */
+	padding: 8px;
+}
+
