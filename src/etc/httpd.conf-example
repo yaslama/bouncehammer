@@ -1,0 +1,37 @@
+# $Id: httpd.conf-example,v 1.2 2010/03/29 04:35:16 ak Exp $
+# 
+LoadModule perl_module modules/mod_perl.so
+NameVirtualHost *:80
+<VirtualHost *:80>
+	# http://bouncehammer.example.jp/
+	ServerName	bouncehammer.example.jp
+	ServerAdmin	webmaster@example.jp
+	DocumentRoot	"/home/bouncehammer/public_html"
+	CustomLog	"/home/bouncehammer/logs/access_log" combined
+	ErrorLog	"/home/bouncehammer/logs/error_log"
+	DirectoryIndex	index.cgi
+
+	Alias /cgiperl/ /home/bouncehammer/public_html/
+	Alias /modperl/ /home/bouncehammer/public_html/
+	PerlRequire /usr/local/bouncehammer/libexec/mp-startup.pl
+
+	<Directory "/home/bouncehammer/public_html">
+		Options ExecCGI
+		Order deny,allow
+		Deny from all
+		Allow from 192.0.2.0/24
+	</Directory>
+
+	<Location /cgiperl>
+		# CGI
+		AddHandler cgi-script .cgi
+		PerlHandler ModPerl::PerlRun
+	</Location>
+
+	<Location /modperl>
+		# mod_perl2
+		PerlHandler ModPerl::Registry
+		AddHandler perl-script .cgi
+        </Location>
+</VirtualHost>
+
