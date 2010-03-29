@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES.JA (utf-8/LF)
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES.JA,v 1.14 2010/03/29 04:34:45 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.15 2010/03/29 08:13:27 ak Exp $
 -----------------------------------------------------------------------
  オープンソースのバウンスメール解析システム``BounceHammer''のリリース
  ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
@@ -28,8 +28,9 @@
     * WebUIでJSONフォーマットでのダウンロードが可能になりました。
 
   細かな改善点:
+    * mailboxparserの解析精度が向上しました。
     * 変数宣言の効率化。
-    * HTMLテンプレートとスタイルシートの改善
+    * HTMLテンプレートとスタイルシートの改善。
     * 新しいmakeターゲット:check-implement, apply-patch, reverse-patch
     * WebUIのDispatch設定(CGI)はDispatch.pmに移動しました。
     * configureスクリプトは"patch"プログラムを必要とし、また、ファイル

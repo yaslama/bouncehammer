@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.34 2010/03/29 04:34:45 ak Exp $
+ $Id: RELEASE_NOTES,v 1.35 2010/03/29 08:13:27 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -31,6 +31,7 @@
     * JSON format avaiable as a download format from WebUI.
 
   Assorted improvements and code cleanup:
+    * Analytical accuracy of mailboxparser improvement.
     * Variable declaration improvement.
     * HTML Templates and stylesheets improvement.
     * New make targets: check-implement, apply-patch, and reverse-patch.
