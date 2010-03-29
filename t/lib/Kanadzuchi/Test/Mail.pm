@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.8 2010/02/19 14:33:02 ak Exp $
+# $Id: Mail.pm,v 1.9 2010/03/29 08:25:40 ak Exp $
 package Kanadzuchi::Test::Mail;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -29,10 +29,12 @@ our $MethodList = {
 		'is_hostunknown',
 		'is_mailboxfull',
 		'is_toobigmesg',
+		'is_exceedlimit',
 		'is_norelaying',
 		'is_securityerror',
 		'is_mailererror',
 		'is_onhold',
+		'is_somethingelse',
 		'is_permerror',
 		'is_temperror',
 	],
