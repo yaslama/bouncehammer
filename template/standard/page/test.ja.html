@@ -8,8 +8,8 @@
 	</script>
 	<style type = 'text/css'>
 	<!--
-		[% INCLUDE bouncehammer.css %]
-		[% INCLUDE testparse.css %]
+	[% INCLUDE bouncehammer.css %]
+	[% INCLUDE testparse.css %]
 	-->
 	</style>
 	[%- SET DOPARSE = '解析' -%]
@@ -54,7 +54,7 @@
 									<input type = 'file' name = 'emailfile' class = 'emailfile'
 										onChange = "checkef.innerHTML = '&#9745; 使用'; doparse.disabled = false;" />&nbsp; 
 									[%- IF maxsize == 0 -%]
-										<strong> &lt; 無制限 </strong>
+										<strong> == 無制限 </strong>
 									[%- ELSE -%]
 										<strong> &lt; [% maxsize %] バイト </strong>
 									[%- END -%]
@@ -86,9 +86,9 @@
 									最初の
 									<select name = 'parsenmessages' onChange = "doparse.disabled = false;">
 										<option value = '1' >1</option>
-										<option value = '3' selected>3</option>
+										<option value = '3' >3</option>
 										<option value = '5' >5</option>
-										<option value = '10' >10</option>
+										<option value = '10' selected>10</option>
 									</select>
 									件まで解析する
 								</td>
