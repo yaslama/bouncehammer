@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.12 2010/03/29 08:23:33 ak Exp $
+# $Id: mailboxparser.PL,v 1.13 2010/03/29 11:46:10 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -44,6 +44,7 @@ my $Mail = {
 	'files' => [],
 	'dirs' => [], };
 my $Skip = {
+	'temperror'	=> 0,
 	'norelaying'	=> 0,
 	'mailererror'	=> 0,
 	'hostunknown'	=> 0,
@@ -395,6 +396,7 @@ sub parse_options
 		$_opt_silent,
 		$_opt_safe,
 		$_opt_skip,
+		$_opt_skip_temperror,
 		$_opt_skip_norelaying,
 		$_opt_skip_mailererror,
 		$_opt_skip_hostunknown,
@@ -421,6 +423,7 @@ sub parse_options
 			'safe'		=> \$_opt_safe,
 			's'		=> \$_opt_skip,
 			'skip'		=> \$_opt_skip,
+			'skip-temperror'   => \$_opt_skip_temperror,
 			'skip-norelaying'  => \$_opt_skip_norelaying,
 			'skip-mailererror' => \$_opt_skip_mailererror,
 			'skip-hostunknown' => \$_opt_skip_hostunknown,
@@ -519,8 +522,10 @@ sub parse_options
 	if( $_opt_safe  ){ $_operation |= $Cmd->option->{'safe'};  }
 
 	# Skip by the reason 
-	if( $_opt_skip || $_opt_skip_norelaying || $_opt_skip_mailererror || $_opt_skip_hostunknown )
-	{
+	if( $_opt_skip || $_opt_skip_temperror || $_opt_skip_norelaying 
+		|| $_opt_skip_mailererror || $_opt_skip_hostunknown ){
+
+		if( $_opt_skip || $_opt_skip_temperror   ){ $Skip->{'temperror'} = 1; }
 		if( $_opt_skip || $_opt_skip_norelaying  ){ $Skip->{'norelaying'} = 1; }
 		if( $_opt_skip || $_opt_skip_mailererror ){ $Skip->{'mailererror'} = 1; }
 		if( $_opt_skip || $_opt_skip_hostunknown ){ $Skip->{'hostunknown'} = 1; }
@@ -548,6 +553,7 @@ sub help
 	printf( STDERR "    -g, --greed         : %s greedily parse messages\n", $Cmd->calledfrom() );
 	printf( STDERR "    -S, --safe          : (SLOW) The parser output all their decoded body data to disk files.\n");
 	printf( STDERR "    -s, --skip          : Skip if the reason is the followings, \n");
+	printf( STDERR "    --skip-temperror    :  - Skip if the status is temporary error(4xx).\n");
 	printf( STDERR "    --skip-norelaying   :  - Skip if the reason is 'Relaying Denied'.\n");
 	printf( STDERR "    --skip-mailererror  :  - Skip if the reason is 'Mailer Error'.\n");
 	printf( STDERR "    --skip-hostunknown  :  - Skip if the reason is 'Host Unknown'.\n");
