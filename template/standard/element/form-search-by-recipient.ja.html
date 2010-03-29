@@ -95,7 +95,7 @@
 				<tr>
 					<td class = 'key'>並び順</td>
 					<td class = 'value'>
-						<fieldset style = 'border-width: 1px;'>
+						<fieldset style = 'border-width: 1px; line-height: 16px;'>
 							<legend>項目名</legend>
 							<span><input type = 'radio' name = 'orderby' value = 'id' checked /> ID</span> &nbsp; &nbsp; 
 							<span><input type = 'radio' name = 'orderby' value = 'addresser' /> 発信者アドレス</span> &nbsp; &nbsp; 
@@ -142,10 +142,14 @@
 								if( this.checked == true ){
 									disableIt('resultsperpage');
 									dosearch.value = 'ダウンロード(4)';
+									enableIt('yamlff');
+									enableIt('jsonff');
 								}
 								else{
 									enableIt('resultsperpage');
 									dosearch.value = '検索(4)';
+									disableIt('yamlff');
+									disableIt('jsonff');
 								}"/>
 						検索結果をダウンロードする
 					</td>
@@ -157,8 +161,10 @@
 					<td class = 'value'>
 						<fieldset style = 'border-width: 1px;'>
 							<legend>形式</legend>
-							<span><input type = 'radio' name = 'downloadformat' value = 'yaml' checked /> YAML</span> &nbsp; &nbsp; 
-							<span><input type = 'radio' name = 'downloadformat' value = 'json' checked /> JSON</span> &nbsp; &nbsp; 
+							<span><input id = 'yamlff' type = 'radio' name = 'downloadformat' value = 'yaml' disabled checked />
+								YAML</span> &nbsp; &nbsp; 
+							<span><input id = 'jsonff' type = 'radio' name = 'downloadformat' value = 'json' disabled />
+								JSON</span> &nbsp; &nbsp; 
 						</fieldset>
 					</td>
 					<td class = 'extra' id = 'checkff'></td>

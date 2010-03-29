@@ -17,6 +17,7 @@
 		html { overflow-x: hidden; overflow-y: auto; margin: 0; padding: 0; }
 		[% INCLUDE bouncehammer.css %]
 		[% INCLUDE record.css %]
+		[% INCLUDE testparse.css %]
 		-->
 		</style>
 
@@ -88,7 +89,8 @@
 				[% IF outputformat == "html" %]
 					[% INCLUDE "div-result.${mylanguage}.html" %]
 				[% ELSE %]
-					<pre>[% parseddatatext %]</pre>
+					<textarea name = 'serialized' id = 'serialized' class = 'serialized'
+						rows = '12' cols = '90' readonly = 'readonly'>[% parseddatatext %]</textarea>
 				[% END %]
 			[%- ELSE -%]
 				[%- IF parseerror == "toobig" -%]

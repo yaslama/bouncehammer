@@ -88,7 +88,7 @@
 
 				<div id = 'here_is_new_record' class = 'stored'></div>
 
-				[%- IF tablename == 'senderdomains' AND isreadonly != 1 -%]
+				[%- IF ( tablename == 'senderdomains' OR tablename == 'destinations' ) AND isreadonly == 0 -%]
 					[% INCLUDE "div-create-a-new-mastertable-record.${mylanguage}.html" %]
 					[% INCLUDE "div-delete-a-mastertable-record.${mylanguage}.html" %]
 				[%- END -%]

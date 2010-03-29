@@ -95,7 +95,7 @@
 				<tr>
 					<td class = 'key'>Sort order by</td>
 					<td class = 'value'>
-						<fieldset style = 'border-width: 1px;'>
+						<fieldset style = 'border-width: 1px; line-height: 16px;'>
 							<legend>Column</legend>
 							<span><input type = 'radio' name = 'orderby' value = 'id' checked /> ID</span> &nbsp; &nbsp; 
 							<span><input type = 'radio' name = 'orderby' value = 'addresser' /> Addresser</span> &nbsp; &nbsp; 
@@ -142,10 +142,14 @@
 								if( this.checked == true ){
 									disableIt('resultsperpage');
 									dosearch.value = 'Download(4)';
+									enableIt('yamlff');
+									enableIt('jsonff');
 								}
 								else{
 									enableIt('resultsperpage');
 									dosearch.value = 'Search(4)';
+									disableIt('yamlff');
+									disableIt('jsonff');
 								}"/>
 						Enable download
 					</td>
@@ -153,12 +157,14 @@
 				</tr>
 
 				<tr>
-					<td class = 'key'>Format</td>
+					<td class = 'key'>File format</td>
 					<td class = 'value'>
-						<fieldset style = 'border-width: 1px;'>
+						<fieldset id = 'fileformat' style = 'border-width: 1px;'>
 							<legend>Format</legend>
-							<span><input type = 'radio' name = 'downloadformat' value = 'yaml' checked /> YAML</span> &nbsp; &nbsp; 
-							<span><input type = 'radio' name = 'downloadformat' value = 'json' /> JSON</span> &nbsp; &nbsp; 
+							<span><input id = 'yamlff' type = 'radio' name = 'downloadformat' value = 'yaml' disabled checked />
+								YAML</span> &nbsp; &nbsp; 
+							<span><input id = 'jsonff' type = 'radio' name = 'downloadformat' value = 'json' disabled />
+								JSON</span> &nbsp; &nbsp; 
 						</fieldset>
 					</td>
 					<td class = 'extra' id = 'checkff'></td>

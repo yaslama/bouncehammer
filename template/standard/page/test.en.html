@@ -88,6 +88,7 @@
 										<option value = '1' >1</option>
 										<option value = '3' selected>3</option>
 										<option value = '5' >5</option>
+										<option value = '10' >10</option>
 									</select>
 									Messages in the mailbox
 								</td>
@@ -98,19 +99,20 @@
 								<td class = 'key'>Output Format</td>
 								<td class = 'value'>
 									<span><input type = 'radio' name = 'format' value = 'html' checked /> HTML</span> &nbsp; 
-									<!--
 									<span><input type = 'radio' name = 'format' value = 'yaml' /> YAML</span> &nbsp; 
-									<span><input type = 'radio' name = 'format' value = 'asciitable' /> ASCII Table</span> &nbsp; 
-									-->
+									<span><input type = 'radio' name = 'format' value = 'json' /> JSON</span> &nbsp; 
 								</td>
 								<td class = 'extra' id = 'checkof'> </td>
 							</tr>
 
 							<tr>
-								<td class = 'key'>Register into DB</td>
+								<td class = 'key'>Insert into DB</td>
 								<td class = 'value'>
 									<input type = 'checkbox' name = 'register' />
-									Register results into BounceLogs database after parsing.
+									Insert the results into BounceLogs database after parsing.<br />
+									<span class = 'shortdescription'>The sender domain must exist in the
+										<a href = '[% scriptname %]/tables/senderdomain'>SenderDomains</a> table.
+									</span>
 								</td>
 								<td class = 'extra'></td>
 							</tr>
@@ -131,10 +133,9 @@
 				</form>
 			</div>
 
-			<div style = 'margin: 12px 0; padding: 0;'>
-				<iframe name = 'parseddata' id = 'parseddata' frameborder = '1' width = '794'
-					height = '1' marginheight = '0' marginwidth = '0' 
-					style = 'border: 0px solid; margin: 0;'></iframe>
+			<div style = 'margin: 12px 1px; padding: 0;'>
+				<iframe name = 'parseddata' id = 'parseddata' frameborder = '0' width = '605'
+					height = '1' marginheight = '0' marginwidth = '0' ></iframe>
 			</div>
 		</div>
 		<div id = 'South-Ward'>

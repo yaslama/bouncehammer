@@ -23,7 +23,17 @@
 			</select>
 			&nbsp;
 			<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
+			<input type = 'hidden' name = 'action' value = 'delete' />
+			<input type = 'hidden' name = 'colnameorderby' value = '[% pagersinthequery.colnameorderby %]' />
+			<input type = 'hidden' name = 'currentpagenum' value = '[% pagersinthequery.currentpagenum %]' />
+			<input type = 'hidden' name = 'resultsperpage' value = '[% pagersinthequery.resultsperpage %]' />
 			<input type = 'submit' value = '削除する' class = 'flatbutton' />
+			<br />
+			<span class = 'warnings'>
+				<strong>注意!:</strong>
+				BounceLogsテーブルから外部キーとして参照されている
+				[% tablename %]テーブルのデータを削除すると、参照整合性が破壊されます。
+			</span>
 		</fieldset>
 	</form>
 </div>

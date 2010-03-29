@@ -88,6 +88,7 @@
 										<option value = '1' >1</option>
 										<option value = '3' selected>3</option>
 										<option value = '5' >5</option>
+										<option value = '10' >10</option>
 									</select>
 									件まで解析する
 								</td>
@@ -98,10 +99,8 @@
 								<td class = 'key'>出力形式</td>
 								<td class = 'value'>
 									<span><input type = 'radio' name = 'format' value = 'html' checked /> HTML</span> &nbsp; 
-									<!--
 									<span><input type = 'radio' name = 'format' value = 'yaml' /> YAML</span> &nbsp; 
-									<span><input type = 'radio' name = 'format' value = 'asciitable' /> ASCII Table</span> &nbsp; 
-									-->
+									<span><input type = 'radio' name = 'format' value = 'json' /> JSON</span> &nbsp; 
 								</td>
 								<td class = 'extra' id = 'checkof'> </td>
 							</tr>
@@ -110,7 +109,11 @@
 								<td class = 'key'>DBに登録</td>
 								<td class = 'value'>
 									<input type = 'checkbox' name = 'register' />
-									解析後に結果をBounceLogsデータベースに登録する
+									解析後に結果をBounceLogsデータベースに登録する<br />
+									<span class = 'shortdescription'>発信者ドメインが
+										<a href = '[% scriptname %]/tables/senderdomain'>SenderDomains</a> テーブルに
+										登録されている必要があります。
+									</span>
 								</td>
 								<td class = 'extra'></td>
 							</tr>
@@ -132,9 +135,8 @@
 			</div>
 
 			<div style = 'margin: 12px 0; padding: 0;'>
-				<iframe name = 'parseddata' id = 'parseddata' frameborder = '1' width = '794'
-					height = '1' marginheight = '0' marginwidth = '0' 
-					style = 'border: 0px solid; margin: 0;'></iframe>
+				<iframe name = 'parseddata' id = 'parseddata' frameborder = '0' width = '605'
+					height = '1' marginheight = '0' marginwidth = '0' ></iframe>
 			</div>
 		</div>
 		<div id = 'South-Ward'>
