@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES.JA (utf-8/LF)
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES.JA,v 1.15 2010/03/29 08:13:27 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.16 2010/03/29 11:45:42 ak Exp $
 -----------------------------------------------------------------------
  オープンソースのバウンスメール解析システム``BounceHammer''のリリース
  ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
@@ -26,6 +26,7 @@
   新機能:
     * BounceHammerがApache2.2上のmod_perl2で動作するようになりました。
     * WebUIでJSONフォーマットでのダウンロードが可能になりました。
+    * bin/mailboxparserコマンドの新しいオプション: --skip-temperror
 
   細かな改善点:
     * mailboxparserの解析精度が向上しました。
