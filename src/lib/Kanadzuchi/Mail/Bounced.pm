@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.5 2010/03/01 23:41:51 ak Exp $
+# $Id: Bounced.pm,v 1.6 2010/03/29 08:24:33 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -288,7 +288,7 @@ sub eatit
 		#
 		unless( $bouncemesg->{'action'} )
 		{
-			$tempstring = $mimeentity->get('Action') || next();
+			$tempstring = $mimeentity->get('Action') || q{Failed};
 			chomp($tempstring);
 			next(BUILD) unless( lc($tempstring) eq q{failed} );
 		}
@@ -313,7 +313,6 @@ sub eatit
 				'bounced' => int( $tempstring->epoch() - $tempoffset ),
 			);
 
-		# $thisobject->{'hostgroup'} = $thisobject->get_hostgroup();
 		$thisobject->{'reason'} = $thisobject->tellmewhy();
 
 		if( grep( { $_ == 1 } values( %{$confx->{'skip'}} ) ) )
@@ -358,11 +357,11 @@ sub tellmewhy
 	elsif( $self->is_hostunknown()   ){ $rwhy = 'hostunknown'; }
 	elsif( $self->is_mailboxfull()   ){ $rwhy = 'mailboxfull'; }
 	elsif( $self->is_toobigmesg()    ){ $rwhy = 'mesgtoobig'; }
+	elsif( $self->is_exceedlimit()   ){ $rwhy = 'exceedlimit'; }
 	elsif( $self->is_securityerror() ){ $rwhy = 'securityerr'; }
 	elsif( $self->is_mailererror()   ){ $rwhy = 'mailererror'; }
 	elsif( $self->is_onhold()        ){ $rwhy = 'onhold'; }
-	else                              { $rwhy = 'undefined'; }
-
+	else{ $rwhy = $self->is_somethingelse() ? $self->{'reason'} : 'undefined'; }
 	return($rwhy);
 }
 
@@ -525,6 +524,45 @@ sub is_mailboxfull
 	return($ismf);
 }
 
+sub is_exceedlimit
+{
+	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	# |i|s|_|e|x|c|e|e|d|l|i|m|i|t|
+	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	#
+	# @Description	exceed limit or not
+	# @Param	<None>
+	# @Return	(Integer) 1 = The message size exceeds limit
+	#		(Integer) 0 = is not
+	# @See		http://www.ietf.org/rfc/rfc2822.txt
+	my $self = shift();
+	my $stat = $self->{'deliverystatus'} || return(0);
+	my $isxl = 0;
+
+	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	{
+		$isxl = 1 if( $self->{'reason'} eq 'exceedlimit' );
+	}
+	else
+	{
+		if( $stat == 523 )
+		{
+			# Status: 5.2.3
+			# Diagnostic-Code: SMTP; 552 5.2.3 Message size exceeds fixed maximum message size
+			$isxl = 1;
+		}
+		else
+		{
+			my $bclass = q|Kanadzuchi::Mail::Why::ExceedLimit|;
+			my $dicode = $self->{'diagnosticcode'};
+			eval { use Kanadzuchi::Mail::Why::ExceedLimit; };
+
+			$isxl = 1 if( $bclass->is_included($dicode) );
+		}
+	}
+	return($isxl);
+}
+
 sub is_toobigmesg
 {
 	# +-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -652,6 +690,49 @@ sub is_mailererror
 		}
 	}
 	return($isme);
+}
+
+sub is_somethingelse
+{
+	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	# |i|s|_|s|o|m|e|t|h|i|n|g|e|l|s|e|
+	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	#
+	# @Description	Reason is something else?
+	# @Param	<None>
+	# @Return	(Integer) 1 = Something else
+	#		(Integer) 0 = Unknown reason...
+	my $self = shift();
+	my $stat = $self->{'deliverystatus'} || return(0);
+	my $diag = q();
+	my $else = q();
+	return(1) if( $self->{'reason'} );
+
+	if( $stat == 516 || $stat == 416 )
+	{
+		$else = 'hasmoved';
+		$diag = 'Mailbox has moved';
+	}
+	elsif( $stat == 531 || $stat == 431 )
+	{
+		$else = 'systemfull';
+		$diag = 'Mail system full';
+	}
+	elsif( $stat == 532 || $stat == 432 )
+	{
+		$else = 'notaccept';
+		$diag = 'System not accepting network messages';
+	}
+	elsif( $stat == 547 || $stat == 447 )
+	{
+		$diag = 'Delivery time expired';
+	}
+
+	$self->{'reason'} ||= $else;
+	$self->{'description'}->{'diagnosticcode'} ||= $diag;
+
+	return(1) if( $self->{'reason'} );
+	return(0);
 }
 
 sub is_onhold

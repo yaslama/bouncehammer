@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.4 2010/03/01 23:41:41 ak Exp $
+# $Id: Mbox.pm,v 1.5 2010/03/29 08:23:59 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -189,6 +189,7 @@ sub _breakit
 		return( q{} ) unless( $theheadpart->{'content-type'} );
 		return( q{} )
 			unless(	$theheadpart->{'content-type'} =~ m{^multipart/report} ||
+				$theheadpart->{'content-type'} =~ m{^multipart/mixed} ||
 				$theheadpart->{'content-type'} =~ m{^message/delivery-status} ||
 				$theheadpart->{'content-type'} =~ m{^message/rfc822} ||
 				$theheadpart->{'content-type'} =~ m{^text/rfc822-headers} );
@@ -300,7 +301,7 @@ sub parseit
 		# 2. Parse email headers
 		foreach my $_eh ( @{$emailheader->{'regular'}}, @{$emailheader->{'irregular'}} )
 		{
-			( $_mesg->{'head'}->{ lc($_eh) } ) = $_head =~ m/^${_eh}:[ ]*(.+?)$/m;
+			( $_mesg->{'head'}->{ lc($_eh) } ) = $_head =~ m/^${_eh}:[ ]*(.+?)$/mi;
 		}
 
 		# 3. Rewrite the part of message body
@@ -323,44 +324,44 @@ sub parseit
 		if( $self->{'greed'} )
 		{
 			# Addresser
-			$_mesg->{'body'} =~ s{^Resent-Reply-To:[ ]*(.+)$}{<<<<: Resent-Reply-To: $1}m;
-			$_mesg->{'body'} =~ s{^Apparently-From:[ ]*(.+)$}{<<<<: Apparently-From: $1}m;
-			$_mesg->{'body'} =~ s{^Resent-Sender:[ ]*(.+)$}{<<<<: Resent-Sender: $1}m;
-			$_mesg->{'body'} =~ s{^Resent-From:[ ]*(.+)$}{<<<<: Resent-From: $1}m;
-			$_mesg->{'body'} =~ s{^Sender:[ ]*(.+)$}{<<<<: Sender: $1}m;
+			$_mesg->{'body'} =~ s{^[Rr]esent-[Rr]eply-[Tt]o:[ ]*(.+)$}{<<<<: Resent-Reply-To: $1}m;
+			$_mesg->{'body'} =~ s{^[Aa]pparently-[Ff]rom:[ ]*(.+)$}{<<<<: Apparently-From: $1}m;
+			$_mesg->{'body'} =~ s{^[Rr]esent-[Ss]ender:[ ]*(.+)$}{<<<<: Resent-Sender: $1}m;
+			$_mesg->{'body'} =~ s{^[Rr]esent-[Ff]rom:[ ]*(.+)$}{<<<<: Resent-From: $1}m;
+			$_mesg->{'body'} =~ s{^[Ss]ender:[ ]*(.+)$}{<<<<: Sender: $1}m;
 
 			# Recipient
-			$_mesg->{'body'} =~ s{^X-Envelope-To:[ ]*(.+)$}{<<<<: X-Envelope-To: $1}m;
-			$_mesg->{'body'} =~ s{^Apparently-To:[ ]*(.+)$}{<<<<: Apparently-To: $1}m;
-			$_mesg->{'body'} =~ s{^Envelope-To:[ ]*(.+)$}{<<<<: Envelope-To: $1}m;
-			$_mesg->{'body'} =~ s{^Resent-To:[ ]*(.+)$}{<<<<: Resent-To: $1}m;
+			$_mesg->{'body'} =~ s{^[Xx]-[Ee]nvelope-[Tt]o:[ ]*(.+)$}{<<<<: X-Envelope-To: $1}m;
+			$_mesg->{'body'} =~ s{^[Aa]pparently-[Tt]o:[ ]*(.+)$}{<<<<: Apparently-To: $1}m;
+			$_mesg->{'body'} =~ s{^[Ee]nvelope-[Tt]o:[ ]*(.+)$}{<<<<: Envelope-To: $1}m;
+			$_mesg->{'body'} =~ s{^[Rr]esent-[Tt]o:[ ]*(.+)$}{<<<<: Resent-To: $1}m;
 
 			# Date
-			$_mesg->{'body'} =~ s{^Resent-Date:[ ]*(.+)$}{<<<<: Resent-Date: $1}m;
-			$_mesg->{'body'} =~ s{^Posted-Date:[ ]*(.+)$}{<<<<: Posted-Date: $1}m;
-			$_mesg->{'body'} =~ s{^Posted:[ ]*(.+)$}{<<<<: Posted: $1}m;
+			$_mesg->{'body'} =~ s{^[Rr]esent-[Dd]ate:[ ]*(.+)$}{<<<<: Resent-Date: $1}m;
+			$_mesg->{'body'} =~ s{^[Pp]osted-[Dd]ate:[ ]*(.+)$}{<<<<: Posted-Date: $1}m;
+			$_mesg->{'body'} =~ s{^[Pp]osted:[ ]*(.+)$}{<<<<: Posted: $1}m;
 		}
 
 		# Mark required headers
-		$_mesg->{'body'} =~ s{^Errors-To:[ ]*(.+)([;].+)?$}{<<<<: Errors-To: $1}m;
-		$_mesg->{'body'} =~ s{^Delivered-To:[ ]*(.+)$}{<<<<: Delivered-To: $1}m;
-		$_mesg->{'body'} =~ s{^Return-Path:[ ]*(.+)$}{<<<<: Return-Path: $1}m;
-		$_mesg->{'body'} =~ s{^Final-Recipient:[ ]*[Rr][Ff][Cc]822;[ ]*(.+)$}{<<<<: Final-Recipient: $1}m;
-		$_mesg->{'body'} =~ s{^Original-Recipient:[ ]*[Rr][Ff][Cc]822;[ ]*(.+)$}{<<<<: Original-Recipient: $1}m;
-		$_mesg->{'body'} =~ s{^Diagnostic-Code:[ ]*(.+)$}{<<<<: Diagnostic-Code: $1}m;
-		$_mesg->{'body'} =~ s{^Arrival-Date:[ ]*(.+)$}{<<<<: Arrival-Date: $1}m;
-		$_mesg->{'body'} =~ s{^Last-Attempt-Date:[ ]*(.+)$}{<<<<: Last-Attempt-Date: $1}m;
-		$_mesg->{'body'} =~ s{^X-Actual-Recipient:[ ]*[Rf][Ff][Cc]822;[ ]*(.+)$}{<<<<: X-Actual-Recipient: $1}m;
-		$_mesg->{'body'} =~ s{^X-Actual-Recipient:[ ]*(.+)$}{<<<<: X-Actual-Recipient: $1}m;
-		$_mesg->{'body'} =~ s{^X-Postfix-Sender:[ ]*(.+)$}{<<<<: X-Postfix-Sender: $1}m;
-		$_mesg->{'body'} =~ s{^X-Envelope-From:[ ]*(.+)$}{<<<<: X-Envelope-From: $1}m;
-		$_mesg->{'body'} =~ s{^Envelope-From:[ ]*(.+)$}{<<<<: Envelope-From: $1}m;
-		$_mesg->{'body'} =~ s{^Action:[ ]*(\S+)$}{<<<<: Action: $1}m;
-		$_mesg->{'body'} =~ s{^Status:[ ]*(\d[.]\d[.]\d).*$}{<<<<: Status: $1}m;
-		$_mesg->{'body'} =~ s{^Date:[ ]*(.+)$}{<<<<: Date: $1}m;
-		$_mesg->{'body'} =~ s{^From:[ ]*(.+)$}{<<<<: From: $1}gm;
-		$_mesg->{'body'} =~ s{^Reply-To:[ ]*(.+)$}{<<<<: Reply-To: $1}m;
-		$_mesg->{'body'} =~ s{^To:[ ]*(.+)$}{<<<<: To: $1}m;
+		$_mesg->{'body'} =~ s{^[Ee]rrors-[Tt]o:[ ]*(.+)([;].+)?$}{<<<<: Errors-To: $1}m;
+		$_mesg->{'body'} =~ s{^[Dd]elivered-[Tt]o:[ ]*(.+)$}{<<<<: Delivered-To: $1}m;
+		$_mesg->{'body'} =~ s{^[Rr]eturn-[Pp]ath:[ ]*(.+)$}{<<<<: Return-Path: $1}m;
+		$_mesg->{'body'} =~ s{^[Ff]inal-[Rr]ecipient:[ ]*[Rr][Ff][Cc]822;[ ]*(.+)$}{<<<<: Final-Recipient: $1}m;
+		$_mesg->{'body'} =~ s{^[Oo]riginal-[Rr]ecipient:[ ]*[Rr][Ff][Cc]822;[ ]*(.+)$}{<<<<: Original-Recipient: $1}m;
+		$_mesg->{'body'} =~ s{^[Dd]iagnostic-[Cc]ode:[ ]*(.+)$}{<<<<: Diagnostic-Code: $1}m;
+		$_mesg->{'body'} =~ s{^[Aa]rrival-[Dd]ate:[ ]*(.+)$}{<<<<: Arrival-Date: $1}m;
+		$_mesg->{'body'} =~ s{^[Ll]ast-[Aa]ttempt-[Dd]ate:[ ]*(.+)$}{<<<<: Last-Attempt-Date: $1}m;
+		$_mesg->{'body'} =~ s{^[Xx]-[Aa]ctual-[Rr]ecipient:[ ]*[Rf][Ff][Cc]822;[ ]*(.+)$}{<<<<: X-Actual-Recipient: $1}m;
+		$_mesg->{'body'} =~ s{^[Xx]-[Aa]ctual-[Rr]ecipient:[ ]*(.+)$}{<<<<: X-Actual-Recipient: $1}m;
+		$_mesg->{'body'} =~ s{^[Xx]-[Pp]ostfix-[Ss]ender:[ ]*(.+)$}{<<<<: X-Postfix-Sender: $1}m;
+		$_mesg->{'body'} =~ s{^[Xx]-[Ee]nvelope-[Ff]rom:[ ]*(.+)$}{<<<<: X-Envelope-From: $1}m;
+		$_mesg->{'body'} =~ s{^[Ee]nvelope-[Ff]rom:[ ]*(.+)$}{<<<<: Envelope-From: $1}m;
+		$_mesg->{'body'} =~ s{^[Aa]ction:[ ]*(\S+)$}{<<<<: Action: $1}m;
+		$_mesg->{'body'} =~ s{^[Ss]tatus:[ ]*(\d[.]\d[.]\d).*$}{<<<<: Status: $1}m;
+		$_mesg->{'body'} =~ s{^[Dd]ate:[ ]*(.+)$}{<<<<: Date: $1}m;
+		$_mesg->{'body'} =~ s{^[Ff]rom:[ ]*(.+)$}{<<<<: From: $1}gm;
+		$_mesg->{'body'} =~ s{^[Rr]eply-[Tt]o:[ ]*(.+)$}{<<<<: Reply-To: $1}m;
+		$_mesg->{'body'} =~ s{^[Tt]o:[ ]*(.+)$}{<<<<: To: $1}m;
 
 		$_mesg->{'body'} =~ s{^\w.+[\r\n]}{}gm;			# Delete non-required headers
 		$_mesg->{'body'} =~ s{^<<<<:\s}{}gom;			# Delete the mark

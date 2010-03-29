@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.11 2010/03/21 09:55:49 ak Exp $
+# $Id: mailboxparser.PL,v 1.12 2010/03/29 08:23:33 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -126,7 +126,6 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		my $tmpmailbox = new Path::Class::File($Cmd->tmpdir->stringify().q{/tempmailbox.mbox});
 		my $mboxhandle;		# (IO::File) object for a temporary mailbox
 		my $mfcontents;		# (String) Contents of the mailbox
-		my $havenofrom = [];	# (Ref->Array) Messages which have no 'Fron_' line
 		my $md5digests = [];	# (Ref->Array) MD5 digest strings of each file
 		my $filedigest;		# (String) MD5 digest of each file
 
@@ -137,18 +136,6 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			READ_THE_DIRECTORY: while( my $mf = $d->next() )
 			{
 				next() if( -z $mf || ! -r _ || ! -f _ || ! -T _ );
-
-				# Does first 5 bytes of the message is 'From_' ?
-				my $_1st5b = q{};
-
-				open( my $_eachmboxfh, q{<}, $mf ) || next();
-				if( sysread( $_eachmboxfh, $_1st5b, 5 ) && $_1st5b ne 'From ' )
-				{
-					$filedigest = Digest::MD5->new()->addfile($mf->openr())->hexdigest();
-					push( @$havenofrom, $filedigest )
-				}
-				$_eachmboxfh->close();
-
 				push( @{$Mail->{'files'}}, $mf );
 			}
 
@@ -181,8 +168,8 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			open( my $_eachmboxfh, q{<}, $mf ) || next();
 			sysread( $_eachmboxfh, $mfcontents, -s $mf );
 
-			# The message has no 'From_' line
-			printf( $mboxhandle "%s", $pseudofrom ) if( grep { $filedigest eq $_ } @$havenofrom );
+			# Does first 5 bytes of the message is 'From_' ?
+			printf( $mboxhandle "%s", $pseudofrom ) if( substr($mfcontents,0,5) ne 'From ' );
 			printf( $mboxhandle "%s", $mfcontents ) if( $mfcontents );
 			$_eachmboxfh->close();
 
