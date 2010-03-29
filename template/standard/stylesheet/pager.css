@@ -1,4 +1,4 @@
-/* $Id: pager.css,v 1.2 2010/02/26 12:34:42 ak Exp $ */
+/* $Id: pager.css,v 1.3 2010/03/29 01:28:01 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Pager Classes */
 div.pager {
@@ -6,7 +6,8 @@ div.pager {
 	padding: 1px 2px;
 	background: #383c3c; /* Youkan-iro */
 	color: #e5e4e6; /* Shiraumenezu */
-	font-size: 10px;
+	font-size: 11px;
+	font-weight: bold;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;
