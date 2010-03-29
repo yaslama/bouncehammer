@@ -1,4 +1,4 @@
-# $Id: MasterTables.pm,v 1.10 2010/03/26 07:20:08 ak Exp $
+# $Id: MasterTables.pm,v 1.11 2010/03/29 00:34:38 ak Exp $
 # -Id: MasterTables.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: MasterTables.pm,v 1.7 2009/08/15 15:06:56 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -47,7 +47,6 @@ sub tablelist_ontheweb
 		'resultsperpage' => $self->param('pi_rpp') || 10,
 	};
 
-
 	$self->{'tablename'} = lc($self->param('pi_tablename'));
 
 	# Host Groups and Reasons does not use pager
@@ -88,14 +87,18 @@ sub tablectl_ontheweb
 	my $table = undef();
 	my $query = $self->query;
 	my $tabcf = $self->{'webconfig'}->{'database'}->{'table'};
-	my $action = $ENV{'PATH_INFO'};
+	my $rdonly = 1;
+	my $action = $query->param('action') || $ENV{'PATH_INFO'};
 
 	$self->{'tablename'} = lc($self->param('pi_tablename'));
 	$table = Kanadzuchi::RDB::MasterTable->newtable( $self->{'tablename'} );
+	$rdonly = $tabcf->{ $self->{'tablename'} }->{'readonly'};
 
 	if( $table )
 	{
+		# Pick up the string from PATH_INFO
 		$action =~ s{\A.+/([a-zA-Z]+)\z}{$1};
+
 		if( $action eq 'create' )
 		{
 			require Kanadzuchi::RFC2822;
@@ -163,6 +166,8 @@ sub tablectl_ontheweb
 				'titlename' => ucfirst($self->{'tablename'}),
 				'tablename' => $self->{'tablename'},
 				'fieldname' => $table->field(),
+				'isreadonly' => $rdonly,
+				'contentsname' => 'table',
 				'tablecontents' => $aref );
 		}
 		elsif( $action eq 'update' )
@@ -202,6 +207,8 @@ sub tablectl_ontheweb
 				'titlename' => ucfirst($self->{'tablename'}),
 				'tablename' => $self->{'tablename'},
 				'fieldname' => $table->field(),
+				'isreadonly' => $rdonly,
+				'contentsname' => 'table',
 				'tablecontents' => $aref );
 
 		}
@@ -212,6 +219,11 @@ sub tablectl_ontheweb
 			my $_err = q();	# Error message
 			my $_old = [];	# Array reference of Removed record
 			my $_wbr = {};	# Hash reference of the record(will be removed)
+			my $_pgn = {
+					'colnameorderby' => $query->param('colnameorderby') || q(),
+					'currentpagenum' => $query->param('currentpagenum') || 1,
+					'resultsperpage' => $query->param('resultsperpage') || 10,
+				};
 
 			if( defined($query->param('record_will_be_delete')) )
 			{
@@ -258,14 +270,18 @@ sub tablectl_ontheweb
 				}
 			}
 
-			$aref = $table->select( $self->{'database'} );
+			$aref = $table->select( $self->{'database'}, {}, \$_pgn );
 			$self->tt_params( 
 				'titlename' => ucfirst($self->{'tablename'}),
 				'tablename' => $self->{'tablename'},
 				'fieldname' => $table->field(),
+				'isreadonly' => $rdonly,
+				'contentsname' => 'table',
+				'hascondition' => 0,
 				'errormessage' => $_err,
 				'tablecontents' => $aref,
-				'removedrecord' => $_old, );
+				'removedrecord' => $_old,
+				'pagersinthequery' => $_pgn );
 		}
 		else
 		{
@@ -275,6 +291,8 @@ sub tablectl_ontheweb
 				'titlename' => ucfirst($self->{'tablename'}),
 				'tablename' => $self->{'tablename'},
 				'fieldname' => $table->field(),
+				'isreadonly' => $rdonly,
+				'contentsname' => 'table',
 				'tablecontents' => [ {
 					'name' => $self->{'tablename'},
 					'description' => q(Unknown or empty action.), } ],
@@ -290,6 +308,8 @@ sub tablectl_ontheweb
 			'titlename' => ucfirst($self->{'tablename'}),
 			'tablename' => $self->{'tablename'},
 			'fieldname' => q(unknown),
+			'isreadonly' => $rdonly,
+			'contentsname' => 'table',
 			'tablecontents' => [ {
 				'name' => $self->{'tablename'},
 				'description' => q(Unknown table name.), } ],

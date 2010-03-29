@@ -1,4 +1,4 @@
-# $Id: Test.pm,v 1.15 2010/03/26 07:20:08 ak Exp $
+# $Id: Test.pm,v 1.16 2010/03/29 00:34:38 ak Exp $
 # -Id: Test.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Test.pm,v 1.10 2009/08/17 12:39:31 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -148,7 +148,7 @@ sub parse_ontheweb
 				$pseudofrom = q();
 				$pastedmail = $cgiq->param('emailtext');
 				$pastedmail =~ s{(\x0d\x0a|\x0d|\x0a)}{\n}gm;	# CRLF, CR -> LF
-				
+
 				# Add Pseudo 'From' line
 				if( $pastedmail =~ m{\AFrom: .+ [@]ezweb[.]ne[.]jp[>]?\z}m )
 				{
@@ -246,7 +246,7 @@ sub parse_ontheweb
 			eval{ $tmpmailbox->remove(); };
 			last();
 		} # End of while(1)
-		
+
 		$self->tt_params( 
 			'bouncemessages' => $aref,
 			'parseddatatext' => $parseddata,
