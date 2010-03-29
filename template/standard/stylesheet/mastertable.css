@@ -1,4 +1,4 @@
-/* $Id: mastertable.css,v 1.3 2010/03/26 07:15:44 ak Exp $ */
+/* $Id: mastertable.css,v 1.4 2010/03/29 00:36:21 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Master table classes */
 table.stored {
@@ -98,6 +98,17 @@ tbody.mastertable tr td {
 
 .mastertable .theDescription input.rewritabletext {
 	width: 248px;
+}
+.mastertable input.removedtext {
+	padding: 3px;
+	width: 248px;
+	border-style: solid;
+	border-color: #d4dcd6;	/* Sobakiri-iro */
+	border-width: 1px;
+	color: #9ea1a3; /* Suzu-iro */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
 }
 
 .mastertable .theMethod {

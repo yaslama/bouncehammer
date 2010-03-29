@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.7 2010/03/26 07:15:44 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.8 2010/03/29 00:36:21 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -304,8 +304,9 @@ input.flatbutton:hover {
 	color: #007bbb; /* Kompeki */
 }
 
-span.flatbutton[disabled], input.flatbutton[disabled] {
+input.flatbutton[disabled], input.flatbutton[disabled]:hover {
 	color: #afafb0; /* Gin-nezu */
+	border-color: #d4dcd6;	/* Sobakiri-iro */
 }
 
 /* Anchor pseudo classes in flatbutton class */
@@ -362,6 +363,22 @@ ul.index a:hover, ul.index a:visited:hover {
 ul.index a:visited { 
 	color: #595857; /* Sumi */
 	text-decoration: none; 
+}
+
+span.warnings {
+	color: #c9171e; /* Kokihi */
+}
+
+span.shortdescription {
+	font-size: 10px;
+	margin: 2px 0 2px 16px;
+	color: #89c3eb; /* Wasurenagusa-iro */
+}
+
+span.shortdescription a {
+	color: #84b9cb;	/* Asahanada */
+	font-weight: bold;
+	text-decoration: underline;
 }
 
 p.description { 
