@@ -1,4 +1,4 @@
-# $Id: 500_bin-mailboxparser.t,v 1.15 2010/03/19 07:40:39 ak Exp $
+# $Id: 500_bin-mailboxparser.t,v 1.16 2010/03/29 11:47:27 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 66 );
+use Test::More ( tests => 70 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',66) if($@);
+	skip('Because no IPC::Cmd for testing',70) if($@);
 
 	use Kanadzuchi::Test::CLI;
 	use Kanadzuchi;
@@ -61,7 +61,12 @@ SKIP: {
 		{
 			'name' => 'Skip all',
 			'option' => $O.q( --skip),
-			'count' => 34,
+			'count' => 32,
+		},
+		{
+			'name' => 'Skip temporary error',
+			'option' => $O.q( --skip-temperror),
+			'count' => 35,
 		},
 		{
 			'name' => 'Skip no-relaying',
