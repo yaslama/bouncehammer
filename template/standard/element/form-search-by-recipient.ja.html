@@ -121,7 +121,7 @@
 					<td class = 'key'>表示件数/頁</td>
 					<td class = 'value'>
 						<select name = 'resultsperpage' id = 'resultsperpage'>
-							[%- FOREACH RPP IN [5,10,25,50,75,100] -%]
+							[%- FOREACH RPP IN [10,25,50,75,100] -%]
 								<option value = '[%- RPP -%]' [%- IF RPP == 10 -%] selected [%- END -%]>
 									[% RPP %]
 								</option>
