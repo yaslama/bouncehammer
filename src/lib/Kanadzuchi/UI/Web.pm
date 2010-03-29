@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.11 2010/03/26 07:19:15 ak Exp $
+# $Id: Web.pm,v 1.12 2010/03/27 14:14:20 ak Exp $
 # -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
 # -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -62,7 +62,7 @@ sub cgiapp_init
 	foreach my $__subdir ( 'page', 'help', 'element', 'stylesheet', 'javascript' )
 	{
 		push( @{$path}, 
-			'../tmplate/standard/'.$__subdir,
+			'../template/standard/'.$__subdir,
 			$tmpl.q(/standard/).$__subdir );
 	}
 
