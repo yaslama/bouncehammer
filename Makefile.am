@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.32 2010/03/24 21:52:01 ak Exp $
+# $Id: Makefile.am,v 1.33 2010/03/30 02:23:45 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -13,7 +13,7 @@ SUBDIRS = src template
 
 .PHONY: clean
 all-am: Makefile apply-patch
-instal-am: sublocalstatedir message
+install-am: sublocalstatedir message
 clean-am: reverse-patch
 	rm -f ./*~ ./*.bak ./*.tmp ./*.db ./diff/*.done
 	find . -name '*.rej' -type f -exec rm -f {} \;
