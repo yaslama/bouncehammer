@@ -150,7 +150,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
-# $Id: Makefile.am,v 1.6 2010/03/23 20:31:36 ak Exp $
+# $Id: Makefile.am,v 1.7 2010/03/30 02:25:22 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/UI/Web,
 # is processed by automake to create Makefile.in.
@@ -349,7 +349,7 @@ distlib:
 		-e 's|__PERLEXECUTABLE__|!$(PERL)|g' \
 		-e 's|\([^:]\)//|\1/|g' > $(distdir)/$(modules)
 
-install-am: distlib
+install-am: all-am
 	test -d $(instdir) || mkdir -p $(instdir)
 	for L in $(modules) ; do \
 		$(INSTALL) -c -m 0644 $(distdir)/$$L $(instdir)/ ;\
