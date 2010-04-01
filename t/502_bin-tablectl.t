@@ -1,4 +1,4 @@
-# $Id: 502_bin-tablectl.t,v 1.9 2010/03/25 15:50:36 ak Exp $
+# $Id: 502_bin-tablectl.t,v 1.10 2010/04/01 08:05:21 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 427 );
+use Test::More ( tests => 365 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',427) if($@);
+	skip('Because no IPC::Cmd for testing',365) if($@);
 
 	use Kanadzuchi::Test::CLI;
 	use Kanadzuchi;
@@ -52,7 +52,7 @@ SKIP: {
 	# |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 	#
 	SKIP: {
-		my $S = 427;	# Skip
+		my $S = 365;	# Skip
 		eval { require DBI; }; skip( 'Because no DBI for testing', $S ) if( $@ );
 		eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $S ) if( $@ );
 		eval { $E->environment(2); }; 
@@ -83,7 +83,7 @@ SKIP: {
 			is( ( $#{$Y} + 1 ), $R , $E->output.q{ have }.$R.q{ records} );
 		}
 
-		EACH_TABLE: foreach my $tablename ( 'senderdomain', 'addresser', 'destination', 'provider', 'hostgroup', 'reason' ) 
+		EACH_TABLE: foreach my $tablename ( 'senderdomain', 'addresser', 'destination', 'provider' )
 		{
 			my $tabchar = lc(substr($tablename,0,1));
 			my $colname = 'name';
@@ -102,7 +102,7 @@ SKIP: {
 
 			INSERT: foreach my $y ( @$Y )
 			{
-				next() if( grep( { $y->{$tablename} eq $_ } @$tccache ) );
+				next() if( grep( { lc($y->{$tablename}) eq $_ } @$tccache ) );
 
 				$command = $E->perl().$E->command().$O.q{ --table }.$tabchar.q{ --insert --name }.$y->{$tablename};
 				$xstatus = scalar(IPC::Cmd::run( 'command' => $command ));
