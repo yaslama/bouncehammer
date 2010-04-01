@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.18 2010/03/01 23:41:41 ak Exp $
+# $Id: Mail.pm,v 1.19 2010/04/01 08:02:12 ak Exp $
 # -Id: Message.pm,v 1.1 2009/08/29 07:32:59 ak Exp -
 # -Id: BounceMessage.pm,v 1.13 2009/08/21 02:43:14 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -288,7 +288,6 @@ sub new
 		$argvs->{'diagnosticcode'} = q() unless( defined($argvs->{'diagnosticcode'}) );
 		$argvs->{'deliverystatus'} = 0 unless( defined($argvs->{'deliverystatus'}) );
 	}
-
 	return( $class->SUPER::new($argvs));
 }
 
