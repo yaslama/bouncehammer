@@ -1,4 +1,4 @@
-# $Id: 000_compile-core.t,v 1.11 2010/03/07 03:38:15 ak Exp $
+# $Id: 000_compile-core.t,v 1.12 2010/04/01 08:05:21 ak Exp $
 use strict;
 use warnings;
 use lib qw(./t/lib ./dist/lib ./src/lib);
@@ -20,6 +20,7 @@ my $Modules = [
 	q(Kanadzuchi::Mail::Bounced::Generic),
 	q(Kanadzuchi::Mail::Bounced::NTTDoCoMo),
 	q(Kanadzuchi::Mail::Bounced::SoftBank),
+	q(Kanadzuchi::Mail::Bounced::Yahoo),
 	q(Kanadzuchi::Mail::Group),
 	q(Kanadzuchi::Mail::Group::JP::Cellphone),
 	q(Kanadzuchi::Mail::Group::JP::Smartphone),
@@ -40,6 +41,7 @@ my $Modules = [
 	q(Kanadzuchi::Mbox::Google),
 	q(Kanadzuchi::Mbox::KLab),
 	q(Kanadzuchi::Mbox::aubyKDDI),
+	q(Kanadzuchi::Mbox::qmail),
 	q(Kanadzuchi::Metadata),
 	q(Kanadzuchi::RDB),
 	q(Kanadzuchi::RDB::MasterTable),
@@ -56,6 +58,7 @@ my $Modules = [
 	q(Kanadzuchi::RDB::Table::HostGroups),
 	q(Kanadzuchi::RDB::Table::Reasons),
 	q(Kanadzuchi::RDB::Table::SenderDomains),
+	q(Kanadzuchi::RFC1893),
 	q(Kanadzuchi::RFC2606),
 	q(Kanadzuchi::RFC2822),
 	q(Kanadzuchi::Statistics),
