@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.5 2010/03/29 08:23:59 ak Exp $
+# $Id: Mbox.pm,v 1.6 2010/04/01 08:02:12 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -106,6 +106,7 @@ sub _breakit
 		'aubykddi'	=> ( 1 << 0 ),
 		'accelmail'	=> ( 1 << 1 ),
 		'googlemail'	=> ( 1 << 2 ),
+		'djbqmail'	=> ( 1 << 3 ),
 	};
 
 	# Check whether or not the message is a bounce mail.
@@ -127,6 +128,27 @@ sub _breakit
 		$fwdmesgbody =~ s{^[>]+[ ]}{}gm;
 		$fwdmesgbody =~ s{^[>]$}{}gm;
 		$newmesgbody =  $fwdmesgbody;
+	}
+
+	#  ___                           _                              
+	# |_ _|_ __ _ __ ___  __ _ _   _| | __ _ _ __    __ _ _ __ ___  
+	#  | || '__| '__/ _ \/ _` | | | | |/ _` | '__|  / _` | '_ ` _ \ 
+	#  | || |  | | |  __/ (_| | |_| | | (_| | |    | (_| | | | | | |
+	# |___|_|  |_|  \___|\__, |\__,_|_|\__,_|_|     \__, |_| |_| |_|
+	#                    |___/                         |_|          
+	# Pre-Process eMail headers and body part of message which generated
+	# by qmail, see http://cr.yp.to/qmail.html
+	#   e.g.) Received: (qmail 12345 invoked for bounce); 29 Apr 2009 12:34:56 -0000
+	#         Subject: failure notice
+	if( lc($theheadpart->{'subject'}) eq 'failure notice' && 
+		grep { $_ =~ m{\A[(]qmail[ ]+\d+[ ]+invoked[ ]+for[ ]+bounce[)]} } @{ $theheadpart->{'received'} } ){
+
+		eval {
+			use Kanadzuchi::Mbox::qmail;
+			$parserclass = q(Kanadzuchi::Mbox::qmail);
+			$pseudofield .= $parserclass->detectus( $theheadpart, $thebodypart );
+			$isirregular |= $irregularof->{'djbqmail'} if( length( $pseudofield ) );
+		};
 	}
 
 	#  ___                           _                          
@@ -268,7 +290,7 @@ sub parseit
 		'irregular' => [ 'X-SPASIGN', 'X-AMERROR', 'X-Failed-Recipients' ],
 	};
 
-	my( $_mesg, $_from, $_head, $_body );
+	my( $_mesg, $_from, $_head, $_body, $__continued, $__ehcounter );
 
 	PARSE_EMAILS: foreach my $_email ( @{$self->{'emails'}} )
 	{
@@ -295,16 +317,41 @@ sub parseit
 			next(PARSE_EMAILS);
 		}
 
-		# 1. From_
+		# 1. Set the content in UNIX From_ Line
 		$_mesg->{'from'} = $_from;
 
 		# 2. Parse email headers
-		foreach my $_eh ( @{$emailheader->{'regular'}}, @{$emailheader->{'irregular'}} )
+		$__continued = 0;	# Flag; Continued from the previous line.
+		$__ehcounter = 0;	# Temporary counter for email headers
+
+		LINES: foreach my $_ln ( split( qq{\n}, $_head ) )
 		{
-			( $_mesg->{'head'}->{ lc($_eh) } ) = $_head =~ m/^${_eh}:[ ]*(.+?)$/mi;
+			HEADERS: foreach my $_eh ( @{$emailheader->{'regular'}}, @{$emailheader->{'irregular'}} )
+			{
+				next(HEADERS) unless( $_ln =~ m{\A$_eh[:][ ]*}i );
+				( $_mesg->{'head'}->{ lc($_eh) } ) = $_ln =~ m/\A${_eh}[:][ ]*(.+?)\z/i;
+			}
+
+			# Get and concatenate 'Received:' headers
+			if( $_ln =~ m{\AReceived[:][ ]*(.+?)\z}i )
+			{
+				push( @{ $_mesg->{'head'}->{'received'} }, $1 );
+				$__continued = 1;
+				$__ehcounter = scalar( @{ $_mesg->{'head'}->{'received'} } ) - 1;
+			}
+			elsif( $_ln =~ m{\A[\s\t]+(.+?)\z} )
+			{
+				# This line is countinued from the previous line.
+				$_mesg->{'head'}->{'received'}->[$__ehcounter] .= q( ).$1;
+			}
+			else
+			{
+				$__continued = 0;
+				$__ehcounter = 0;
+			}
 		}
 
-		# 3. Rewrite the part of message body
+		# 3. Rewrite the part of the message body
 		$_mesg->{'body'} = __PACKAGE__->_breakit( $_mesg, \$_body );
 		$_head = q();
 
