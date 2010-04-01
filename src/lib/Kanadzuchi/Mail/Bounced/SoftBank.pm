@@ -1,4 +1,4 @@
-# $Id: SoftBank.pm,v 1.2 2010/02/21 20:27:31 ak Exp $
+# $Id: SoftBank.pm,v 1.3 2010/04/01 08:03:34 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Bounced::
                                                         
@@ -36,18 +36,26 @@ sub is_filtered
 	#		(Integer) 0 = is not filtered recipient.
 	my $self = shift();
 	my $stat = $self->{'deliverystatus'} || return(0);
+	my $subj = 'filtered';
 	my $isfi = 0;
 
 	if( defined($self->{'reason'}) && length($self->{'reason'}) )
 	{
-		$isfi = 1 if( $self->{'reason'} eq 'filtered' );
+		$isfi = 1 if( $self->{'reason'} eq $subj );
 	}
 	else
 	{
-		# SoftBank Mobile
-		#   Status: 5.2.0
-		#   Diagnostic-Code: <None>
-		$isfi = 1 if( $stat == 520 );
+		if( $stat == Kanadzuchi::RFC1893->standardcode($subj) )
+		{
+			# SoftBank Mobile
+			#   Status: 5.2.0
+			#   Diagnostic-Code: <None>
+			$isfi = 1;
+		}
+		elsif( $stat == Kanadzuchi::RFC1893->internalcode($subj) )
+		{
+			$isfi = 1;
+		}
 	}
 	return($isfi);
 }
@@ -65,18 +73,28 @@ sub is_userunknown
 	# @See		http://www.ietf.org/rfc/rfc2822.txt
 	my $self = shift();
 	my $stat = $self->{'deliverystatus'} || return(0);
+	my $diag = $self->{'diagnosticcode'} || q();
+	my $subj = 'userunknown';
 	my $isuu = 0;
+	my $rxuu = qr{550[ ]Invalid[ ]recipient[:][ ][<].+[>]}o;
 
 	if( defined($self->{'reason'}) && length($self->{'reason'}) )
 	{
-		$isuu = 1 if( $self->{'reason'} eq 'userunknown' );
+		$isuu = 1 if( $self->{'reason'} eq $subj );
 	}
 	else
 	{
-		# Softbank Mobile
-		#   Status: 5.1.1
-		#   Diagnostic-Code: SMTP; 550 Invalid recipient: <***@d.vodafone.ne.jp>
-		$isuu = 1 if( $stat == 511 );
+		if( $stat == Kanadzuchi::RFC1893->standardcode($subj) )
+		{
+			# Softbank Mobile
+			#   Status: 5.1.1
+			#   Diagnostic-Code: SMTP; 550 Invalid recipient: <***@d.vodafone.ne.jp>
+			$isuu = 1;
+		}
+		elsif( $stat == Kanadzuchi::RFC1893->internalcode($subj) && $diag =~ $rxuu )
+		{
+			$isuu = 1;
+		}
 	}
 	return($isuu);
 }
