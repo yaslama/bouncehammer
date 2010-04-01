@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.5 2010/03/01 23:41:53 ak Exp $
+# $Id: WebMail.pm,v 1.6 2010/04/01 08:04:19 ak Exp $
 # -Id: AOL.pm,v 1.1 2009/08/29 07:33:21 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # -Id: Hotmail.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
@@ -83,7 +83,7 @@ my $domains = {
 my $classes = {
 	'aol' => 'Generic',
 	'microsoft' => 'Generic',
-	'yahoo' => 'Generic',
+	'yahoo' => 'Yahoo',
 	'runet' => 'Generic',
 	'apple' => 'Generic',
 	'google' => 'Generic',
@@ -115,6 +115,7 @@ sub detectus
 			$mdata->{'class'} = $Kanadzuchi::Mail::Group::ClassName.q{::}.$classes->{$d};
 			$mdata->{'group'} = 'webmail';
 			$mdata->{'provider'} = $d;
+			require $Kanadzuchi::Mail::Group::ClassPath.'/'.$classes->{$d}.'.pm';
 			last();
 		}
 	}
