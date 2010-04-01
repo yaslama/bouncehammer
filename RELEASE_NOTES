@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.37 2010/03/30 02:23:45 ak Exp $
+ $Id: RELEASE_NOTES,v 1.38 2010/04/01 08:01:18 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -16,18 +16,22 @@
 -----------------------------------------------------------------------
 2.x.y/2.0.0	2010/0X/YY
   New files:
+    * etc/httpd.conf-example
     * lib/Kanadzuchi/API/Dispatch.pm
+    * lib/Kanadzuchi/Mail/qmail.pm
+    * lib/Kanadzuchi/Mbox/Bounced/Yahoo.pm
+    * lib/Kanadzuchi/RFC1893.pm
     * lib/Kanadzuchi/UI/Web/Dispatch.pm
     * libexec/mp-startup.pl
     * share/script/more-example-senderdomains.sql
     * share/template/standard/stylesheet/reason.css
     * share/template/standard/stylesheet/search.css
     * share/template/standard/stylesheet/testparse.css
-    * etc/httpd.conf-example
     * Implement.PL
 
   New functionality:
     * BounceHammer now works on mod_perl2 with Apache 2.2.
+    * BounceHammer can also analyze the qmail bounce message(QSBMF).
     * JSON format avaiable as a download format from WebUI.
     * New bin/mailboxparser option: --skip-temperror
 
@@ -49,7 +53,8 @@
     * Fixed an issue that the URL text is not selected  by clicking the
       text(WebUI).
     * Fixed an issue that datadumper and WebUI search form  cannnot get
-      the results order by 'addresser'.
+      the results order by 'addresser'. (patch:001)
+    * Fixed an issue that Makefile does not work completely.(patch:002)
 
 -----------------------------------------------------------------------
 2.1.0/2.0.0	2010/03/19
