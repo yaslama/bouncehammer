@@ -1,4 +1,4 @@
-# $Id: aubyKDDI.pm,v 1.2 2010/03/01 23:42:02 ak Exp $
+# $Id: aubyKDDI.pm,v 1.3 2010/04/01 08:04:50 ak Exp $
 # -Id: aubyKDDI.pm,v 1.1 2009/08/29 08:50:38 ak Exp -
 # -Id: aubyKDDI.pm,v 1.1 2009/07/31 09:04:51 ak Exp -
 # Kanadzuchi::Mbox::
@@ -13,6 +13,7 @@
 package Kanadzuchi::Mbox::aubyKDDI;
 use strict;
 use warnings;
+use Kanadzuchi::RFC1893;
 
 #   ____ ____ ____ ____ ____ ____ ____ 
 #  ||M |||e |||t |||h |||o |||d |||s ||
@@ -33,13 +34,15 @@ sub detectus
 	my $mhead = shift();
 	my $mbody = shift();
 	my $phead = q();
+	my $pstat = q();
 
 	# Content-Type: text/plain; ..., X-SPASIGN: NG (spamghetti, au by KDDI)
 	# Filtered recipient returns message that include 'X-SPASIGN' header
 	if( ( $mhead->{'content-type'} =~ m{\Atext/plain} ) && ( $mhead->{'x-spasign'} eq q{NG} ) )
 	{
+		$pstat  = Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode('filtered'));
 		$phead .= q(Action: failed).qq(\n);
-		$phead .= q(Status: 5.2.0).qq(\n);
+		$phead .= q(Status: ).$pstat.qq(\n);
 	}
 
 	return( $phead );

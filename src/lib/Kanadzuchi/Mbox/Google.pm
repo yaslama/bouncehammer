@@ -1,4 +1,4 @@
-# $Id: Google.pm,v 1.2 2010/03/01 23:42:02 ak Exp $
+# $Id: Google.pm,v 1.3 2010/04/01 08:04:50 ak Exp $
 # -Id: Google.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: Google.pm,v 1.1 2009/07/31 09:04:38 ak Exp -
 # Kanadzuchi::Mbox::
@@ -13,6 +13,7 @@
 package Kanadzuchi::Mbox::Google;
 use strict;
 use warnings;
+use Kanadzuchi::RFC1893;
 
 #   ____ ____ ____ ____ ____ ____ ____ 
 #  ||M |||e |||t |||h |||o |||d |||s ||
@@ -47,7 +48,6 @@ sub detectus
 	#	that the other server returned was: 
 	#	550 550 <recipient-address-heare@example.jp>: User unknown (state 14).
 	#
-
 	return(q{}) unless( $mhead->{'from'} =~ m{[@]googlemail[.]com[>]?\z} );
 	return(q{}) unless( $mhead->{'subject'} =~ m{Delivery[ ]Status[ ]Notification} );
 	return(q{}) unless( $$mbody =~ m{This is an automatically generated Delivery Status Notification}i );
@@ -63,7 +63,7 @@ sub detectus
 		my $ebody = qr{Delivery[ ]to[ ]the[ ]following[ ]recipient[ ]failed[ ]permanently:}io;
 		my $ectxt = qr{The[ ]error[ ]that[ ]the[ ]other[ ]server[ ]returned[ ]was:}io;
 		my $dcode = q();
-		my $dstat = q(5.9.9);
+		my $dstat = Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode('onhold'));
 
 		return(q{}) unless( $$mbody =~ m{$ebody\n\n.+$frcpt} );
 

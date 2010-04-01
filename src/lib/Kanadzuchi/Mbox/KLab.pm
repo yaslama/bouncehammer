@@ -1,4 +1,4 @@
-# $Id: KLab.pm,v 1.2 2010/03/01 23:42:02 ak Exp $
+# $Id: KLab.pm,v 1.3 2010/04/01 08:04:50 ak Exp $
 # -Id: KLab.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: KLab.pm,v 1.1 2009/07/31 09:04:39 ak Exp -
 # Kanadzuchi::Mbox::
@@ -13,6 +13,7 @@
 package Kanadzuchi::Mbox::KLab;
 use strict;
 use warnings;
+use Kanadzuchi::RFC1893;
 
 #   ____ ____ ____ ____ ____ ____ ____ 
 #  ||M |||e |||t |||h |||o |||d |||s ||
@@ -33,6 +34,7 @@ sub detectus
 	my $mhead = shift();
 	my $mbody = shift();
 	my $phead = q();
+	my $pstat = q();
 
 	$phead .= sprintf("Date: %s\n", $mhead->{'date'} );
 	$phead .= sprintf("From: %s\n", $mhead->{'to'} );
@@ -40,17 +42,20 @@ sub detectus
 
 	if( lc($mhead->{'x-amerror'}) =~ m{\A[ ]?550[ ]+unknown[ ]+user[ ]+(\S+)\z} )
 	{
-		$phead .= q(Status: 5.1.1).qq(\n);
+		$pstat  = Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode('userunknown'));
+		$phead .= q(Status: ).$pstat.qq(\n);
 		$phead .= q(Final-Recipient: rfc822; ).qq($1\n);
 		$phead .= q(To: ).qq($1\n);
 	}
 	elsif( lc($mhead->{'x-amerror'}) =~ m{ ?504[ ]+command[ ]+parameter[ ]+not[ ]+implemented} )
 	{
-		$phead .= q(Status: 5.2.0).qq(\n);
+		$pstat  = Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode('filtered'));
+		$phead .= q(Status: ).$pstat.qq(\n);
 	}
 	else
 	{
-		$phead .= q(Status: 5.9.9).qq(\n);
+		$pstat  = Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode('onhold'));
+		$phead .= q(Status: ).$pstat.qq(\n);
 	}
 
 	return( $phead );
