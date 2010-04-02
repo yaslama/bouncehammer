@@ -1,4 +1,4 @@
-# $Id: 054_mail-why.t,v 1.2 2009/12/17 20:45:04 ak Exp $
+# $Id: 054_mail-why.t,v 1.3 2010/04/02 11:44:17 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -32,7 +32,6 @@ my $Strings = {
 		q(Message filtered. Please see the faqs section on spam),
 		q(Blocked by policy: No spam please),
 		q(Message rejected due to suspected spam content),
-		q(Access denied),
 		q(Domain of sender address exampe.int does not exist),
 	],
         'hostunknown'	=> [
@@ -46,7 +45,10 @@ my $Strings = {
 		q(Account is over quota),
 		q(Account is temporarily over quota),
 	],
-        'relayingdenied'=> [ q(Relaying denied) ],
+        'relayingdenied'=> [ 
+		q(Relaying denied),
+		q{553 sorry, that domain isn't in my list of allowed rcpthosts (#5.7.1)},
+	],
         'systemfull'	=> [ q(Requested mail action aborted: exceeded storage allocation) ],
         'msgtoobig'	=> [
 		q(Message size exceeds fixed maximum message size),
