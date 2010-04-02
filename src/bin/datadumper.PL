@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.10 2010/03/25 15:49:14 ak Exp $
+# $Id: datadumper.PL,v 1.11 2010/04/02 11:40:03 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -163,8 +163,6 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 	# Arguments of searchandnew() method
 	my $whereconds = {};		# (Ref->Hash) Where conditions
 	my $pageconfig = {};		# (Ref->Hash) Pager configuration
-	my $dumpeddata = [];		# (Ref->Array) Dumped results
-	my $objhlogger = undef();	# (Kanadzuchi::Log) Log object
 	my $reqsobject = 0;		# (Integer) Flag; Requires object
 
 	# Check parameters: recipient, senderdomain, destination, hostgroup, and reason
@@ -248,9 +246,13 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		# | |_| | |_| | |  | |  __/ 
 		# |____/ \___/|_|  |_|_|    
 		#                           
+		my $dumpeddata = [];		# (Ref->Array) Dumped results
+		my $objhlogger = undef();	# (Kanadzuchi::Log) Log object
+		my $linesapage = 500;		# (Integer) How many lines a page
+
 		$reqsobject = 1;
-		$pageconfig->{'resultsperpage'} = int($pageconfig->{'totalentries'}/10) || 100;
-		$pageconfig->{'resultsperpage'} = 100 if( $pageconfig->{'totalentries'} < 100 );
+		$pageconfig->{'resultsperpage'} = int($pageconfig->{'totalentries'}/10) || $linesapage;
+		$pageconfig->{'resultsperpage'} = $linesapage if( $pageconfig->{'totalentries'} < $linesapage );
 		$pageconfig->{'colnameorderby'} = lc( $OrderBy->{'column'} ) || q(id);
 		$pageconfig->{'descendorderby'} = $OrderBy->{'descend'} || 0;
 
@@ -478,7 +480,7 @@ sub help
 	printf( STDERR " * QUERY OPTIONS\n" );
 	printf( STDERR "    -A, --alldata              : Show all data: include a record that is disabled(=1)\n");
 	printf( STDERR "    -a, --addresser <str>      : Sender address(Addresser), see tablectl -ta --list\n");
-	printf( STDERR "    -r, --recipient <str>      : Recipient address,\n");
+	printf( STDERR "    -r, --recipient <str>      : Recipient address\n");
 	printf( STDERR "    -s, --senderdomain <str>   : Sender domain name, see tablectl -ts --list\n");
 	printf( STDERR "    -d, --destination <str>    : Destination domain name, see tablectl -td --list\n");
 	printf( STDERR "    -w, --reason <str>         : Reason, see tablectl -tw --list\n");
@@ -515,6 +517,5 @@ sub help
 	printf( STDERR "\n" );
 	return(1);
 }
-
 
 __END__
