@@ -1,4 +1,4 @@
-# $Id: qmail.pm,v 1.1 2010/04/01 08:04:50 ak Exp $
+# $Id: qmail.pm,v 1.2 2010/04/02 11:43:36 ak Exp $
 # Kanadzuchi::Mbox::
                          ##  ###    
   #####  ##  ##  ####         ##    
@@ -34,9 +34,10 @@ use Kanadzuchi::RFC2822;
 #
 my $RxQSBMF = {
 	'begin'	=> qr{\AHi[.][ ]This[ ]is[ ]the[ ]}o,
+	'sorry' => qr{\ASorry[,][ ]}o,
 };
 
-my $RxRemoteError = {
+my $RxSMTPError = {
 	'greet' => qr{\AConnected[ ]to[ ].+[ ]but[ ]greeting[ ]failed[.]\z}o,
 	'helo' => qr{\AConnected[ ]to[ ].+[ ]but[ ]my[ ]name[ ]was[ ]rejected[.]\z}o,
 	'mailfrom' => qr{\AConnected[ ]to[ ].+[ ]but[ ]sender[ ]was[ ]rejected[.]\z}o,
@@ -45,7 +46,11 @@ my $RxRemoteError = {
 	'payload' => qr{\A.+[ ]failed[ ]after[ ]I[ ]sent[ ]the[ ]message[.]\z}o,
 };
 
-my $RxLocalError = {};
+# my $RxConnError = {
+# 	'nohost' => qr{\ASorry[,][ ]I[ ]couldn[']t[ ]find[ ]any[ ]host[ ]named[ ]}o,
+# 	'nomxrr' => qr{\ASorry[,][ ]I[ ]couldn[']t[ ]find[ ]a[ ]mail[ ]exchanger[ ]or[ ]IP[ ]address}o,
+# 	'ambimx' => qr{\ASorry[.][ ]Although I[']m listed as a best[-]preference MX or A for that host[,]}o,
+# };
 
 #   ____ ____ ____ ____ ____ ____ ____ 
 #  ||M |||e |||t |||h |||o |||d |||s ||
@@ -66,41 +71,49 @@ sub detectus
 	my $mhead = shift();
 	my $mbody = shift();
 
-	my $re5xx = { 'mailfrom' => 0, 'rcptto' => 0, 'data' => 0, 'payload' => 0, };
-	my $error = { 'remote' => 0, 'local' => 0, };
+	my $se5xx = { 'mailfrom' => 0, 'rcptto' => 0, 'data' => 0, 'payload' => 0, };
+	my $error = { 'conn' => 0, 'smtp' => 0, };
 
 	my $phead = q();
 	my $pstat = 500;
 	my $qmail = 0;		# qmail ?
 
 	my $rhostsaid = q();	# Remote host said: ...
+	my $sorrythat = q();	# Sorry, ....
 	my $rcptintxt = q();	# Recipient address in message body
+	my $statintxt = q();	# #n.n.n Status code in message body
 
 	EACH_LINE: foreach my $_qb ( split( qq{\n}, $$mbody ) )
 	{
 		$qmail = 1 if( $_qb =~ $RxQSBMF->{'begin'} );
 
 		# The line which begins with the string 'Remote host said:'
-		REMOTE_ERROR: foreach my $_ek ( keys(%$re5xx) )
+		SMTP_ERROR: foreach my $_se ( keys(%$se5xx) )
 		{
-			if( $_qb =~ $RxRemoteError->{$_ek} )
+			last() if( $error->{'smtp'} );
+			if( $_qb =~ $RxSMTPError->{$_se} )
 			{
-				$re5xx->{$_ek} = 1;
-				$error->{'remote'} = 1;
+				$se5xx->{$_se} = 1;
+				$error->{smtp} = 1;
 				last();
 			}
 		}
 
+		# The line which begins with the string 'Sorry,...'
+		$error->{'conn'} = 1 if( ! $error->{'smtp'} && $_qb =~ $RxQSBMF->{'sorry'} );
+
 		# Get a mail address from the recipient paragraph.
-		$rcptintxt = $1 if( $_qb =~ m{\A[<](.+[@].+)[>][:]\z} );
-		$rhostsaid = $1 if( $_qb =~ m{\ARemote[ ]host[ ]said:[ ]*(.+)\z} );
+		$rcptintxt = $1 if( $rcptintxt eq q() && $_qb =~ m{\A[<](.+[@].+)[>][:]\z} );
+		$statintxt = $1 if( $statintxt eq q() && $_qb =~ m{[ ][(][#](\d[.]\d[.]\d)[)]\z} );
+		$rhostsaid = $1 if( $error->{'smtp'} && $_qb =~ m{\ARemote[ ]host[ ]said:[ ]*(.+)\z} );
+		$sorrythat = $1 if( $error->{'conn'} && $_qb =~ m{\A(Sorry[,][ ].*)\z} );
 	}
 
 	# Return if it does not include the line begins with 'Hi. This is the qmail...'
 	return(q{}) unless( $qmail );
 
 
-	if( $error->{'remote'} || $error->{'local'} )
+	if( $error->{'smtp'} || $error->{'conn'} )
 	{
 		# Add the pseudo Content-Type header if it does not exist.
 		$mhead->{'content-type'} ||= q(message/delivery-status);
@@ -110,35 +123,41 @@ sub detectus
 			$phead .= q(Final-Recipient: RFC822; ).$rcptintxt.qq(\n);
 		}
 
-		if( $error->{'remote'} && $rhostsaid )
-		{
-			$phead .= q(Diagnostic-Code: ).$rhostsaid.qq(\n);
+		# Add the text that 'Remote host said' or 'Sorry,...' into Diagnostic-Code header.
+		$phead .= q(Diagnostic-Code: ).($rhostsaid || $sorrythat).qq(\n);
 
+		if( $error->{'smtp'} && $rhostsaid )
+		{
 			if( $rhostsaid =~ m{\A\d{3}[-\s](\d[.]\d[.]\d)[ ]} )
 			{
 				# Remote host said: 550-5.1.1 The email account ...
 				$phead .= q(Status: ).$1.qq(\n);
 			}
+			elsif( $statintxt ne q() )
+			{
+				# Status code in text/message body
+				$phead .= q(Status: ).$statintxt.qq(\n);
+			}
 			else
 			{
-				if( $re5xx->{'rcptto'} )
+				if( $se5xx->{'rcptto'} )
 				{
 					# RCPT TO: <who@example.jp> ... REJECTED
 					$pstat = Kanadzuchi::RFC1893->internalcode('userunknown');
 				}
-				elsif( $re5xx->{'payload'} )
+				elsif( $se5xx->{'payload'} )
 				{
+					# Rejected after DATA command
 					$pstat = Kanadzuchi::RFC1893->internalcode('filtered');
 				}
 
-				$phead .= qq(Status: ).Kanadzuchi::RFC1893->int2code($pstat).qq(\n);
+				$phead .= q(Status: ).Kanadzuchi::RFC1893->int2code($pstat).qq(\n);
 			}
 		}
-		elsif( $error->{'local'} )
+		elsif( $error->{'conn'} && $statintxt )
 		{
-
+			$phead .= q(Status: ).$statintxt.qq(\n);
 		}
-
 	}
 
 	return( $phead );
