@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.13 2010/03/29 11:46:10 ak Exp $
+# $Id: mailboxparser.PL,v 1.14 2010/04/02 11:40:03 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -474,8 +474,8 @@ sub parse_options
 		my @_mailfs = ();
 		my @_mailds = ();
 
-		map { $_ =~ y{[, ]}{}d; } @_argvs;
-		@_mailfs = grep { -f $_ && -T _ && -s _ && -r _ } @_argvs;
+		map { $_ =~ y{[ ]}{}d; } @_argvs;
+		@_mailfs = grep { -f $_ && -T _ && -r _ } @_argvs;
 		@_mailds = grep { -d $_ && -x _ && -r _ } @_argvs;
 
 		map { $_ =~ s{\A[ ]}{}g; $_ =~ s{[ ]\z}{}g; } @_mailfs;
