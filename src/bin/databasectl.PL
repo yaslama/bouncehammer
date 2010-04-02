@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.6 2010/03/21 09:55:49 ak Exp $
+# $Id: databasectl.PL,v 1.7 2010/04/02 11:40:03 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -543,7 +543,7 @@ sub parse_options
 
 		my @_logfs = @ARGV;
 
-		map { $_ =~ y{[, ]}{}d; } @_logfs;
+		map { $_ =~ y{[ ]}{}d; } @_logfs;
 		map { $_ =~ s{\A[ ]}{}g; $_ =~ s{[ ]\z}{}g; } @_logfs;
 
 		@$Lfs = map { Path::Class::File->new($_); } @_logfs;
