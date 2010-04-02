@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.8 2010/04/01 08:02:54 ak Exp $
+# $Id: Bounced.pm,v 1.9 2010/04/02 11:41:53 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -132,7 +132,7 @@ sub eatit
 
 			# There is no recipient address, skip.
 			next(BUILD) unless( @$tempemails );
-			map { $_ =~ y{[`'"()<>\r\n$]}{}d; $_ =~ s{\s}{,}g; } @$tempemails;
+			map { $_ =~ y{[`'"()<>\r\n$]}{}d; $_ =~ s{\s}{,}g; $_ =~ s{;.+\z}{}g; } @$tempemails;
 
 			RECIPIENTS: foreach my $_e ( @{ Kanadzuchi::Address->parse($tempemails) } )
 			{
@@ -182,7 +182,7 @@ sub eatit
 			}
 
 			next(BUILD) unless( @$tempemails );
-			map { $_ =~ y{[`'"()<>\r\n$]}{}d; $_ =~ s{\s}{,}g; } @$tempemails;
+			map { $_ =~ y{[`'"()<>\r\n$]}{}d; $_ =~ s{\s}{,}g; $_ =~ s{;.+\z}{}g; } @$tempemails;
 
 
 			ADDRESSER: foreach my $_e ( @{ Kanadzuchi::Address->parse($tempemails) } )
@@ -650,7 +650,7 @@ sub is_toobigmesg
 			# Diagnostic-Code: SMTP; 552 5.3.4 Error: message file too big
 			$istb = 1;
 		}
-		if( $stat == Kanadzuchi::RFC1893->internalcode($subj) )
+		elsif( $stat == Kanadzuchi::RFC1893->internalcode($subj) )
 		{
 			$istb = 1;
 		}
