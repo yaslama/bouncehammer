@@ -1,4 +1,4 @@
-# $Id: UserUnknown.pm,v 1.3 2010/03/01 23:42:00 ak Exp $
+# $Id: UserUnknown.pm,v 1.4 2010/04/02 11:42:26 ak Exp $
 # -Id: UserUnknown.pm,v 1.1 2009/08/29 07:33:28 ak Exp -
 # -Id: UserUnknown.pm,v 1.2 2009/05/11 08:22:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -47,6 +47,7 @@ $Patterns = [
 	qr(unknown address)o,
 	qr(unknown recipient)o,
 	qr([#]5[.]1[.]1 bad address)o,
+	qr(said: 550[-\s]5[.]1[.]1[ ].+[ ]user[ ]unknown[ ])o,
 ];
 
 1;
