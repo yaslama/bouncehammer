@@ -1,4 +1,4 @@
-# $Id: 500_bin-mailboxparser.t,v 1.17 2010/04/09 03:54:30 ak Exp $
+# $Id: 500_bin-mailboxparser.t,v 1.18 2010/04/09 06:40:40 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -46,7 +46,7 @@ SKIP: {
 		{
 			'name' => 'File and Directory',
 			'option' => $O.q| ./examples |,
-			'count' => 74,
+			'count' => 40,
 		},
 		{
 			'name' => 'Greed',
