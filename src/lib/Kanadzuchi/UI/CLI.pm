@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.10 2010/03/19 07:39:58 ak Exp $
+# $Id: CLI.pm,v 1.11 2010/04/09 03:54:01 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                       
@@ -199,6 +199,7 @@ sub init
 	};
 
 	$self->d(1,sprintf( "%s/%s %s\n", $dzci->myname(), $self->{'calledfrom'}, $dzci->version() ));
+	$self->d(1,sprintf( "Command started at %s\n", Time::Piece->new->hms(':') ));
 	$self->d(1,sprintf( "Process ID = %d\n", $self->{'processid'} ));
 	$self->d(2,sprintf( "Pid file = %s\n", $self->{'pf'} ));
 	$self->d(2,sprintf( "Operation = %d [%024b]\n", $self->{'operation'}, $self->{'operation'} ));
