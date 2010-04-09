@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.38 2010/04/01 08:01:18 ak Exp $
+ $Id: RELEASE_NOTES,v 1.39 2010/04/09 03:51:11 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -34,6 +34,7 @@
     * BounceHammer can also analyze the qmail bounce message(QSBMF).
     * JSON format avaiable as a download format from WebUI.
     * New bin/mailboxparser option: --skip-temperror
+    * New bin/mailboxparser option: --backup
 
   Assorted improvements and code cleanup:
     * Analytical accuracy of mailboxparser improvement.
