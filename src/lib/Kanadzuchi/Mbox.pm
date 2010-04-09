@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.6 2010/04/01 08:02:12 ak Exp $
+# $Id: Mbox.pm,v 1.7 2010/04/09 03:52:59 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -412,6 +412,9 @@ sub parseit
 
 		$_mesg->{'body'} =~ s{^\w.+[\r\n]}{}gm;			# Delete non-required headers
 		$_mesg->{'body'} =~ s{^<<<<:\s}{}gom;			# Delete the mark
+
+		# Remove the string which includes multi-byte character
+		$_mesg->{'body'} =~ s{^([Dd]iagnostic-[Cc]ode:[ ]X-Notes;).+$}{$1 MULTI-BYTE CHARACTERS HAVE BEEN REMOVED.}m;
 
 		push( @{$self->{'messages'}}, {
 				'from' => $_mesg->{'from'},
