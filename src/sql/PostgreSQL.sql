@@ -1,4 +1,4 @@
--- $Id: PostgreSQL.sql,v 1.9 2010/03/04 08:36:20 ak Exp $
+-- $Id: PostgreSQL.sql,v 1.10 2010/04/09 06:40:00 ak Exp $
 -- BounceHammer for PostgreSQL
 
 CREATE TABLE t_hostgroups (
@@ -67,7 +67,7 @@ ALTER TABLE ONLY t_reasons ADD CONSTRAINT pk_reasons PRIMARY KEY (id);
 CREATE TABLE t_bouncelogs (
 	id		INTEGER NOT NULL,
 	addresser	INTEGER NOT NULL REFERENCES t_addressers(id),
-	recipient	CHARACTER VARYING(255) NOT NULL UNIQUE,
+	recipient	CHARACTER VARYING(255) NOT NULL,
 	senderdomain	INTEGER NOT NULL REFERENCES t_senderdomains(id),
 	destination	INTEGER NOT NULL REFERENCES t_destinations(id),
 	token		CHARACTER VARYING(40) NOT NULL UNIQUE,
