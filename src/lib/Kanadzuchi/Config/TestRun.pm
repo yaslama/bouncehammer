@@ -1,4 +1,4 @@
-# $Id: TestRun.pm,v 1.6 2010/04/02 11:41:06 ak Exp $
+# $Id: TestRun.pm,v 1.7 2010/04/09 03:53:36 ak Exp $
 # -Id: TestRun.pm,v 1.4 2009/09/01 23:19:46 ak Exp -
 # -Id: TestRun.pm,v 1.2 2009/08/27 05:09:32 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -37,6 +37,7 @@ our $Configuration = {
 		'spool'	=> '/tmp',
 		'incoming' => '/tmp',
 	},
+	'environment'	=> { 'timeout' => 60, },
 };
 
 1;

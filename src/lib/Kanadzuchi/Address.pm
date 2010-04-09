@@ -1,4 +1,4 @@
-# $Id: Address.pm,v 1.4 2010/02/21 20:24:11 ak Exp $
+# $Id: Address.pm,v 1.5 2010/04/09 03:52:58 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                    
@@ -44,7 +44,7 @@ sub new
 	#
 	# @Description	Wrapper method of new()
 	# @Param	<None>
-	# @Return	(K::Address) Object
+	# @Return	(Kanadzuchi::Address) Object
 	my $class = shift();
 	my $argvs = { @_ }; 
 
