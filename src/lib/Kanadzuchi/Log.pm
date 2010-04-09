@@ -1,4 +1,4 @@
-# $Id: Log.pm,v 1.14 2010/03/19 04:03:05 ak Exp $
+# $Id: Log.pm,v 1.15 2010/04/09 03:52:58 ak Exp $
 # -Id: Log.pm,v 1.2 2009/10/06 06:21:47 ak Exp -
 # -Id: Log.pm,v 1.11 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -160,7 +160,7 @@ sub dumper
 	}
 	else
 	{
-		$data .= sprintf( "%s", $head );
+		$data .= $head;
 	}
 
 	# Print left square bracket character for the format JSON
@@ -208,7 +208,7 @@ sub dumper
 	{
 		$atab->{'tab'}->addRowLine();
 		$atab->{'tab'}->addRow( q{}, q{}, q{}, q{Total}, $self->{'count'} );
-		$data = sprintf( "%s", $atab->{'tab'}->draw() );
+		$data = $atab->{'tab'}->draw();
 	}
 	else
 	{
@@ -225,11 +225,11 @@ sub dumper
 		# Dumped data are not required, return true;
 		if( ref($self->{'device'}) eq q|IO::File| )
 		{
-			printf( {$self->{'device'}} "%s", $data );
+			print( {$self->{'device'}} $data );
 		}
 		else
 		{
-			printf( STDOUT "%s", $data );
+			print( STDOUT $data );
 		}
 		return(1);
 	}
