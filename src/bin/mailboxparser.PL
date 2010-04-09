@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.14 2010/04/02 11:40:03 ak Exp $
+# $Id: mailboxparser.PL,v 1.16 2010/04/09 03:51:51 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -27,7 +27,6 @@ use Kanadzuchi;
 use Kanadzuchi::UI::CLI;
 use Error ':try';
 use Time::Piece;
-use Path::Class::File::Lockable;
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -37,6 +36,7 @@ use Path::Class::File::Lockable;
 my $Zci;		# (Kanadzuchi) System object
 my $Cmd;		# (Kanadzuchi::UI::CLI) Commandline object
 my $Out;		# (String) Output directory for temp log
+my $Bak;		# (String) Backup directory for the mailbox
 my $Fmt;		# (String) Output format
 my $Mbox;		# (Path::Class::File) Mailbox Object
 my $Mail = {
@@ -58,8 +58,9 @@ my $CLIOPTION = {
 	'two-way'	=> ( 1 << 4 ),
 	'truncate'	=> ( 1 << 5 ),
 	'remove'	=> ( 1 << 6 ),
-	'greed'		=> ( 1 << 7 ),
-	'safe'		=> ( 1 << 8 ),
+	'backup'	=> ( 1 << 7 ),
+	'greed'		=> ( 1 << 8 ),
+	'safe'		=> ( 1 << 9 ),
 };
 
 #  __  __    _    ___ _   _ 
@@ -111,180 +112,187 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	#
 	require Kanadzuchi::Mail::Bounced;
 	require Kanadzuchi::Mbox;
+	require Kanadzuchi::Log;
 	require Digest::MD5;
 
-	my $hermboxparser;		# Kanadzuchi::Mbox object
-	my $returnedmesgs = [];		# (Ref->Array) K::M::Bounced objects
+	my $chunksofemail = [];		# (Ref->Array) Path::Class::File objects
+	my $chunkmboxsize = ($Zci->config->{'file'}->{'maxsize'} * 0.20787 ) || 33554432;
+
+	$chunkmboxsize = 102400 if( $chunkmboxsize < 102400 );		# 100 KB
+	$chunkmboxsize = 33554432 if( $chunkmboxsize > 33554432 );	# 32 MB
 
 	# Set timeout(ALRM) for reading from STDIN
-	eval{ alarm( ( $Zci->config->{'environment'}->{'timeout'} || 180 ) ) };
+	eval { alarm( ( $Zci->config->{'environment'}->{'timeout'} || 180 ) ) };
 
 	# Read from a Maildir and concatenate files in the directory
 	if( scalar(@{$Mail->{'dirs'}}) || scalar(@{$Mail->{'files'}}) )
 	{
 		# Read from the directory(Maildir)
 		my $pseudofrom = q(From MAILER-DAEMON Sun Dec 31 23:59:59 2000).qq(\n);
-		my $tmpmailbox = new Path::Class::File($Cmd->tmpdir->stringify().q{/tempmailbox.mbox});
+		my $tmpmailbox;		# (Path::Class::File) Temporary mailbox
 		my $mboxhandle;		# (IO::File) object for a temporary mailbox
 		my $mfcontents;		# (String) Contents of the mailbox
-		my $md5digests = [];	# (Ref->Array) MD5 digest strings of each file
 		my $filedigest;		# (String) MD5 digest of each file
+		my $stageofdir = 0;	# (Integer) Stage number
+		my $first5char = q();	# (String) First 5 characters
+
+		$Cmd->d( 2, sprintf( "[This process] Max size of each chunk = %d bytes\n", $chunkmboxsize ));
 
 		SEEK_EACH_DIRECTORY: foreach my $d ( @{$Mail->{'dirs'}} )
 		{
-			$Cmd->d( 1, sprintf( "Seek the directory = %s\n", $d->stringify() ));
+			#  ____  _               _             _           
+			# |  _ \(_)_ __ ___  ___| |_ ___  _ __(_) ___  ___ 
+			# | | | | | '__/ _ \/ __| __/ _ \| '__| |/ _ \/ __|
+			# | |_| | | | |  __/ (__| || (_) | |  | |  __/\__ \
+			# |____/|_|_|  \___|\___|\__\___/|_|  |_|\___||___/
+			#                                                  
+			$Cmd->d( 1, sprintf( "[This process] Seek the directory = %s\n", $d->stringify() ));
 
 			READ_THE_DIRECTORY: while( my $mf = $d->next() )
 			{
 				next() if( -z $mf || ! -r _ || ! -f _ || ! -T _ );
-				push( @{$Mail->{'files'}}, $mf );
+
+				unless( $mboxhandle )
+				{
+					$stageofdir++;
+					$filedigest = Digest::MD5->new()->addfile($mf->openr())->hexdigest();
+					$tmpmailbox = new Path::Class::File(
+							$Cmd->tmpdir->stringify().q{/tempmailbox.}.$filedigest.q{.mbox});
+
+					$tmpmailbox->touch();
+					$mboxhandle = $tmpmailbox->openw();
+					$Cmd->d( 3, sprintf( "[Stage: #%04d] Seek the mailbox file in the directory = %s\n",
+								$stageofdir, $d->stringify() ) );
+				}
+
+				# Read and write
+				$Cmd->d( 5, sprintf( "[Stage: #%04d] Seek the mailbox file in the directory = %s\n",
+							$stageofdir, $mf->stringify() ));
+				open( my $_eachmboxfh, q{<}, $mf ) || next();
+
+				read( $_eachmboxfh, $first5char, 5 );
+				seek( $_eachmboxfh, 0, 0 );
+				unless( $first5char =~ m{\A[A-Za-z]} )
+				{
+					# Skip to the next loop if the file not like email.
+					$Cmd->d( 2, sprintf( "[Stage: #%04d] The file %s not like email\n", 
+								$stageofdir, $mf->stringify() ) );
+					next();
+				}
+
+				# Does first 5 bytes of the message is 'From_' ?
+				read( $_eachmboxfh, $mfcontents, -s $mf );
+				print( $mboxhandle $pseudofrom ) if( $first5char ne 'From ' );
+				print( $mboxhandle $mfcontents ) if( $mfcontents );
+				$_eachmboxfh->close() if( ref($_eachmboxfh) eq q|IO::Handle| );
+				alarm(0);
+
+				# Cleanup or Backup
+				$mf->remove() if( $Cmd->operation & $Cmd->option->{'remove'} );
+				truncate($mf->stringify(),0) if( $Cmd->operation & $Cmd->option->{'truncate'} );
+				File::Copy::move( $mf->stringify(), $Bak ) if( $Cmd->operation & $Cmd->option->{'backup'} );
+
+				if( $tmpmailbox->stat->size > $chunkmboxsize )
+				{
+					# The size of temporary mailbox file is bigger than the limit
+					push( @$chunksofemail, $tmpmailbox );
+					$mboxhandle->close() if( ref($mboxhandle) eq q|IO::Handle| );
+					$mboxhandle = undef();
+					$tmpmailbox = undef();
+				}
+
+			} # End of while(READ_THE_DIRECTORY)
+
+			if( defined($tmpmailbox) && defined($mboxhandle) )
+			{
+				push( @$chunksofemail, $tmpmailbox );
+				$mboxhandle->close();
+				$mboxhandle = undef();
+				$tmpmailbox = undef();
 			}
 
-		} # End of foreach() 
-
-		try {
-			eval {
-				$tmpmailbox->touch();
-				$mboxhandle = $tmpmailbox->openw();
-			}; 
-			Kanadzuchi::Exception::Permission->throw( '-text' => $@ ) if($@);
-		}
-		otherwise {
-			$Cmd->exception(shift());
-			$Cmd->abort();
-		};
+		} # End of foreach(SEEK_EACH_DIRECTORY) 
 
 
 		SEEK_EACH_FILE: foreach my $mf ( @{$Mail->{'files'}} )
 		{
+			#  _____ _ _           
+			# |  ___(_) | ___  ___ 
+			# | |_  | | |/ _ \/ __|
+			# |  _| | | |  __/\__ \
+			# |_|   |_|_|\___||___/
+			#                      
 			next() if( -z $mf || ! -r _ || ! -f _ || ! -T _ );
 
-			# Skip if the file has same MD5 digest
-			$filedigest = Digest::MD5->new()->addfile($mf->openr())->hexdigest();
-			next() if( grep( m{\A$filedigest\z}, @$md5digests ) );
-			push( @{$md5digests}, $filedigest );
+			unless( $mboxhandle )
+			{
+				$filedigest = Digest::MD5->new()->addfile($mf->openr())->hexdigest();
+				$tmpmailbox = new Path::Class::File(
+						$Cmd->tmpdir->stringify().q{/tempmailbox.}.$filedigest.q{.mbox});
+
+				$tmpmailbox->touch();
+				$mboxhandle = $tmpmailbox->openw();
+			}
 
 			# Read and write
-			$Cmd->d( 1, sprintf( "Seek the mailbox file = %s\n", $mf->stringify() ));
-			open( my $_eachmboxfh, q{<}, $mf ) || next();
-			sysread( $_eachmboxfh, $mfcontents, -s $mf );
+			$Cmd->d( 1, sprintf( "[This process] Seek the mailbox file = %s\n", $mf->stringify() ));
+			open( my $_eachmailfh, q{<}, $mf ) || next();
+
+			# Skip to the next loop if the file does not seem to email.
+			read( $_eachmailfh, $first5char, 5 );
+			seek( $_eachmailfh, 0, 0 );
+			unless( $first5char =~ m{\A[A-Za-z]} )
+			{
+				# Skip to the next loop if the file not like email.
+				$Cmd->d( 2, sprintf( "[This process] The file %s not like email\n", $mf->stringify() ) );
+				next();
+			}
 
 			# Does first 5 bytes of the message is 'From_' ?
-			printf( $mboxhandle "%s", $pseudofrom ) if( substr($mfcontents,0,5) ne 'From ' );
-			printf( $mboxhandle "%s", $mfcontents ) if( $mfcontents );
-			$_eachmboxfh->close();
+			read( $_eachmailfh, $mfcontents, -s $mf );
+			print( $mboxhandle $pseudofrom ) if( $first5char ne 'From ' );
+			print( $mboxhandle $mfcontents ) if( $mfcontents );
+			$_eachmailfh->close() if( ref($_eachmailfh) eq q|IO::Handle| );
+			alarm(0);
 
-		} # End of foreach()
+			# Cleanup
+			$mf->remove() if( $Cmd->operation & $Cmd->option->{'remove'} );
+			truncate($mf->stringify(),0) if( $Cmd->operation & $Cmd->option->{'truncate'} );
+			File::Copy::move( $mf->stringify(), $Bak ) if( $Cmd->operation & $Cmd->option->{'backup'} );
 
-		$mboxhandle->close() if( ref($mboxhandle) eq q|IO::File| );
-		$Mbox = new Path::Class::File( $tmpmailbox );
-	}
-
-	if( defined($Mbox) )
-	{
-		try {
-			# Check the mailbox size
-			my $_fsize = $Mbox->stat->size();
-			my $_limit = $Zci->config->{'file'}->{'maxsize'};
-			my $_error = $Mbox->stringify().qq{ is too big: $_fsize ( > $_limit bytes)};
-
-			if( $_fsize > $_limit && $_limit != 0 )
+			if( $tmpmailbox->stat->size > $chunkmboxsize )
 			{
-				Kanadzuchi::Exception::File->throw( '-text' => $_error );
+				# The size of temporary mailbox file is bigger than the limit
+				push( @$chunksofemail, $tmpmailbox );
+				$mboxhandle->close() if( ref($mboxhandle) eq q|IO::Handle| );
+				$mboxhandle = undef();
+				$tmpmailbox = undef();
 			}
-			$hermboxparser = new Kanadzuchi::Mbox( 'file' => $Mbox->stringify() );
-		}
-		catch Kanadzuchi::Exception::File with {
-			$Cmd->exception(shift());
-			$Cmd->abort();
-		};
-	}
-	else
-	{
-		# Read the mailbox From STDIN
-		$hermboxparser = new Kanadzuchi::Mbox();
-	}
 
+		} # End of foreach(SEEK_EACH_FILE)
 
-	if( $Cmd->operation & ( $Cmd->option->{'truncate'} + $Cmd->option->{'remove'} ) )
-	{
-		#   ____ _     _____    _    _   _   _   _ ____  
-		#  / ___| |   | ____|  / \  | \ | | | | | |  _ \ 
-		# | |   | |   |  _|   / _ \ |  \| | | | | | |_) |
-		# | |___| |___| |___ / ___ \| |\  | | |_| |  __/ 
-		#  \____|_____|_____/_/   \_\_| \_|  \___/|_|    
-		#
-		# Clean up, Remove mBox or Truncate mBox
-		# Truncate the mailbox
-		foreach my $f ( @{$Mail->{'files'}} )
+		if( defined($tmpmailbox) && defined($mboxhandle) )
 		{
-			if( $Cmd->operation & $Cmd->option->{'truncate'} )
-			{
-				$Cmd->d(2,sprintf("Truncate the mailbox = %s\n", $f->stringify() ));
-				eval{ truncate($f->stringify(),0); };
-				$Cmd->d(2,"Failed to truncate mailbox\n") if($@);
-			}
-
-			# Remove the mailbox
-			if( $Cmd->operation & $Cmd->option->{'remove'} )
-			{
-				$Cmd->d(2,sprintf("Remove mailbox = %s\n", $f->stringify() ));
-				eval{ $f->remove(); };
-				$Cmd->d(2,"Failed to remove mailbox\n") if($@);
-			}
+			push( @$chunksofemail, $tmpmailbox );
+			$mboxhandle->close() if( ref($mboxhandle) eq q|IO::File| );
+			$mboxhandle = undef();
+			$tmpmailbox = undef();
 		}
+
 	}
+
+
+	my $kanadzuchilog = new Kanadzuchi::Log();
+	my $templogdevice = undef();	# (IO::File) Temporary log
+	my $mailboxparser;		# Kanadzuchi::Mbox object
+	my $returnedmesgs = [];		# (Ref->Array) K::M::Bounced objects
+	my $stageofparser = 0;		# (Integer) Present state number
+	my $msgsintheklog = 0;		# (Integer) The number of parsed messages
+	my $msgsinthembox = 0;		# (Integer) The number of emails in the mbox
+
 	$Mail = undef();	# Flush the variable
 
-	# Decide output directory
 	if( $Cmd->operation & $Cmd->option->{'log'} )
-	{
-		$Out ||= $Zci->config->{'directory'}->{'spool'};
-	}
-
-
-	#  ____  _    _   _ ____  ____  
-	# / ___|| |  | | | |  _ \|  _ \ 
-	# \___ \| |  | | | | |_) | |_) |
-	#  ___) | |__| |_| |  _ <|  __/ 
-	# |____/|_____\___/|_| \_\_|    
-	# 
-	# Slurp the mailbox
-	alarm(0);
-	$hermboxparser->greed( $Cmd->operation & $Cmd->option->{'greed'} ? 1 : 0 );
-	$hermboxparser->slurpit();
-
-	# Put decided configuration values as debug message
-	$Cmd->d(1,sprintf( "Log directory = %s\n", $Out )) if($Cmd->operation & $Cmd->option->{'log'} );
-	$Cmd->d(1,sprintf( "Safe parse\n", $Out )) if($Cmd->operation & $Cmd->option->{'safe'} );
-	$Cmd->d(1,sprintf( "Mbox file is = %s(%d Bytes)\n", (
-					defined($Mbox)
-					? ( $Mbox->stringify(), -s $Mbox->stringify() )
-					: ( '<STDIN>', -1 ) )
-				));
-	$Cmd->d(0,sprintf( "Messages in the mbox = %d\n", $hermboxparser->nmails() )); 
-
-	#  _____    _  _____   ___ _____ 
-	# | ____|  / \|_   _| |_ _|_   _|
-	# |  _|   / _ \ | |    | |  | |  
-	# | |___ / ___ \| |    | |  | |  
-	# |_____/_/   \_\_|   |___| |_|  
-	# 
-	# Parse the mailbox 
-	$hermboxparser->parseit();
-
-	# Call Kanadzuchi::Mail::Bounced->eatit()
-	$returnedmesgs = Kanadzuchi::Mail::Bounced->eatit( 
-				\$hermboxparser, {
-					'cache' => $Cmd->tmpdir(), 
-					'verbose' => $Cmd->debuglevel(), 
-					'skip' => $Skip,
-					'fast' => ( $Cmd->operation() & $Cmd->option->{'safe'} ? 0 : 1 ), } );
-
-	$Cmd->d(0,sprintf( "Bounced message = %d\n", scalar(@{$returnedmesgs}) ));
-
-
-	if( scalar(@{$returnedmesgs}) > 0 )
 	{
 		#  _     ___   ____  ____ _____ ____  
 		# | |   / _ \ / ___|/ ___| ____|  _ \ 
@@ -292,11 +300,106 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		# | |__| |_| | |_| | |_| | |___|  _ < 
 		# |_____\___/ \____|\____|_____|_| \_\
 		# 
-		require Kanadzuchi::Log;
-		my $objherlogger = new Kanadzuchi::Log(
-				entities => $returnedmesgs,
-				count => scalar( @{$returnedmesgs} ),
-			);
+		# Decide output directory
+		$Out ||= $Zci->config->{'directory'}->{'spool'};
+
+		# Log to temporary log file.
+		my $_tmpld = q(/tmp);				# Temporary directory
+		my $_tmplf = q();				# Temporary file name
+		my $_conff = $Zci->config->{'file'};		# File name configurations in YAML
+		my $_objdt = bless(localtime(),'Time::Piece');	# Time::Piece object
+
+		# Set temporary log directory
+		$_tmpld = $Out if( -d $Out && -w _ && -r _ );
+
+		# Create temporary log file name, ex) her.2009-02-11.49b7c9e2.0011c5.tmp
+		$_tmplf = sprintf("%s/%s.%s.%08x.%06x.%s", $_tmpld, $_conff->{'templog'}->{'prefix'},
+				$_objdt->ymd('-'), $_objdt->epoch(), $$, $_conff->{'templog'}->{'suffix'} );
+		$_tmplf = uc($_tmplf) if( -e $_tmplf );		# If it already exists
+		$templogdevice = new IO::File( qq{>> $_tmplf} );
+
+		# Set directory name and log fle name, and format
+		$kanadzuchilog->directory(new Path::Class::Dir($_tmpld));
+		$kanadzuchilog->format('yaml');
+		$kanadzuchilog->logfile( new Path::Class::File($_tmplf) );
+		$kanadzuchilog->logfile->touch();
+		$kanadzuchilog->device( $templogdevice );
+
+		$Cmd->d(1,sprintf( "[This process] Log directory = %s\n", $Out ));
+		$Cmd->d(1,sprintf( "[This process] Temporary log = %s\n", $kanadzuchilog->logfile() ));
+	}
+
+
+	push( @$chunksofemail, q|<STDIN>| ) unless( scalar(@$chunksofemail) );
+	$Cmd->d(1,sprintf( "[This Process] Safe parse\n", $Out )) if($Cmd->operation & $Cmd->option->{'safe'} );
+
+	PARSE_CHUNKS_OF_EMAIL: foreach my $Mbox ( @$chunksofemail )
+	{
+		#  ____                          
+		# |  _ \ __ _ _ __ ___  ___ _ __ 
+		# | |_) / _` | '__/ __|/ _ \ '__|
+		# |  __/ (_| | |  \__ \  __/ |   
+		# |_|   \__,_|_|  |___/\___|_|   
+		#                                
+		if( $Mbox ne q|<STDIN>| )
+		{
+			$mailboxparser = new Kanadzuchi::Mbox( 'file' => $Mbox->stringify() );
+		}
+		else
+		{
+			# Read the mailbox From STDIN
+			$mailboxparser = new Kanadzuchi::Mbox();
+			$Mbox = undef();
+		}
+
+		$stageofparser++;
+
+		#  ____  _    _   _ ____  ____  
+		# / ___|| |  | | | |  _ \|  _ \ 
+		# \___ \| |  | | | | |_) | |_) |
+		#  ___) | |__| |_| |  _ <|  __/ 
+		# |____/|_____\___/|_| \_\_|    
+		# 
+		# Slurp the mailbox
+		$mailboxparser->greed( $Cmd->operation & $Cmd->option->{'greed'} ? 1 : 0 );
+		$mailboxparser->slurpit();
+		alarm(0);	# Reset alarm(Read from STDIN)
+
+		# Put decided configuration values as debug message
+		$Cmd->d(1,sprintf( "[Stage: #%04d] Mailbox file = %s(%d Bytes)\n", $stageofparser, (
+						defined($Mbox)
+						? ( $Mbox->stringify(), -s $Mbox->stringify() )
+						: ( '<STDIN>', -1 ) )
+					));
+		next() unless( $mailboxparser->nmails() );
+
+		#  _____    _  _____   ___ _____ 
+		# | ____|  / \|_   _| |_ _|_   _|
+		# |  _|   / _ \ | |    | |  | |  
+		# | |___ / ___ \| |    | |  | |  
+		# |_____/_/   \_\_|   |___| |_|  
+		# 
+		# Parse the mailbox 
+		$mailboxparser->parseit();
+
+		# Call Kanadzuchi::Mail::Bounced->eatit()
+		$returnedmesgs = Kanadzuchi::Mail::Bounced->eatit( 
+					\$mailboxparser, {
+						'cache' => $Cmd->tmpdir(), 
+						'verbose' => $Cmd->debuglevel(), 
+						'skip' => $Skip,
+						'fast' => ( $Cmd->operation() & $Cmd->option->{'safe'} ? 0 : 1 ), } );
+
+		$Cmd->d( 1, sprintf( "[Stage: #%04d] Parsed Messages/emails in the mailbox = %d/%d\n", 
+					$stageofparser, scalar(@$returnedmesgs), $mailboxparser->nmails() )); 
+		$msgsinthembox += $mailboxparser->nmails();
+		$msgsintheklog += scalar(@$returnedmesgs);
+
+		# There is no parsed messages
+		next() unless( scalar(@{$returnedmesgs}) );
+
+		$kanadzuchilog->entities( $returnedmesgs );
+		$kanadzuchilog->count( scalar( @$returnedmesgs ) );
 
 		if( $Cmd->operation & $Cmd->option->{'log'} )
 		{
@@ -306,41 +409,9 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			# |_____/ / | |__| |_| | |_| |  _|  | || |___| |___ 
 			#      /_/  |_____\___/ \____|_|   |___|_____|_____|
 			# 
-			# Log to temporary log file.
-			my $_tmpld = q(/tmp);				# Temporary directory
-			my $_tmplf = q();				# Temporary file name
-			my $_conff = \$Zci->config->{'file'};		# File name configurations in YAML
-			my $_objdt = bless(localtime(),'Time::Piece');	# Time::Piece object
-
-			# Set temporary log directory
-			$_tmpld = $Out if( -d $Out && -w _ && -r _ );
-
-			# Create temporary log file name, ex) her.2009-02-11.49b7c9e2.0011c5.tmp
-			$_tmplf = sprintf("%s/%s.%s.%08x.%06x.%s", $_tmpld, $$_conff->{'templog'}->{'prefix'},
-					$_objdt->ymd('-'), $_objdt->epoch(), $$, $$_conff->{'templog'}->{'suffix'} );
-			$_tmplf = uc($_tmplf) if( -e $_tmplf );		# If it already exists
-
-			# Set directory name and log fle name, and format
-			$objherlogger->directory(new Path::Class::Dir($_tmpld));
-			$objherlogger->logfile(new Path::Class::File::Lockable($_tmplf));
-			$objherlogger->format('yaml');
-
-			if( $objherlogger->logfile->locked() )
-			{
-				# Temporary logfile is now locked !
-				$Cmd->d(1,sprintf( "Lock file exists = %s\n", $objherlogger->logfile->lock_file() ));
-			}
-			else
-			{
-				$Cmd->d(1,sprintf( "Writing temporary log = %s\n", $objherlogger->logfile() ));
-
-				$objherlogger->logfile->touch();
-				$objherlogger->logfile->lock();
-				$objherlogger->device($objherlogger->logfile->openw());
-				$objherlogger->logger();
-				$objherlogger->device->close() if( ref($objherlogger->device()) eq q|IO::File| );
-				$objherlogger->logfile->unlock();
-			}
+			$kanadzuchilog->format('yaml');
+			$kanadzuchilog->device($templogdevice);
+			$kanadzuchilog->logger();
 		}
 
 		if( ! ( $Cmd->operation & $Cmd->option->{'log'} ) || $Cmd->operation & $Cmd->option->{'two-way'} )
@@ -352,12 +423,17 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			#      /_/  |____/ \____|_| \_\_____|_____|_| \_|
 			# 
 			# Output to the screen
-			$Cmd->d(2,sprintf("Writing to the screen with format(%s)\n", $Fmt));
-			$objherlogger->format($Fmt);
-			$objherlogger->device('STDOUT');
-			$objherlogger->dumper();
+			$kanadzuchilog->format($Fmt);
+			$kanadzuchilog->device('STDOUT');
+			$kanadzuchilog->dumper();
 		}
-	}
+
+
+	} # End of foreach(PARSE_CHUNKS_OF_EMAIL)
+
+	$Cmd->d(0,sprintf( "[This process] Parsed messages/emails in the mailbox = %d/%d\n", $msgsintheklog, $msgsinthembox ));
+	$kanadzuchilog->device->close() if( ref($kanadzuchilog->device()) eq q|IO::File| );
+	$kanadzuchilog->logfile->remove() if( defined($kanadzuchilog->logfile) && -f $kanadzuchilog->logfile && ! -s _ );
 
 }
 
@@ -392,6 +468,7 @@ sub parse_options
 		$_opt_outputdir,
 		$_opt_remove,
 		$_opt_truncate,
+		$_opt_backup,
 		$_opt_verbose,
 		$_opt_silent,
 		$_opt_safe,
@@ -408,6 +485,7 @@ sub parse_options
 	Getopt::Long::GetOptions(
 			'2'		=> \$_opt_2way,
 			'two-way'	=> \$_opt_2way,
+			'backup=s'	=> \$_opt_backup,
 			'conf=s'	=> \$_opt_conf,
 			'C=s'		=> \$_opt_conf,
 			'format=s'	=> \$_opt_format,
@@ -487,8 +565,17 @@ sub parse_options
 		map { $_->cleanup(); } @{ $Mail->{'files'} };
 		map { $_->cleanup(); } @{ $Mail->{'dirs'} };
 
-		$_operation |= $Cmd->option->{'truncate'} if( $_opt_truncate );
-		$_operation |= $Cmd->option->{'remove'} if( $_opt_remove );
+		if( $_opt_truncate || $_opt_remove )
+		{
+			$_operation |= $Cmd->option->{'truncate'} if( $_opt_truncate );
+			$_operation |= $Cmd->option->{'remove'} if( $_opt_remove );
+		}
+		elsif( defined($_opt_backup) && -d $_opt_backup && -r _ && -x _ && -w _ )
+		{
+			$_operation |= $Cmd->option->{'backup'};
+			$Bak = $_opt_backup;
+			require File::Copy;
+		}
 	}
 
 	# Output format options
@@ -565,6 +652,7 @@ sub help
 	printf( STDERR "                          created by -l(--log) option, uses with -l option\n");
 	printf( STDERR "    --truncate          : Truncate the mailbox after parsing.\n");
 	printf( STDERR "    --remove            : Remove the mailbox after parsing.\n");
+	printf( STDERR "    --backup <dir>      : Backup; move the mailbox to the directory after parsing.\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * OTHER OPTIONS\n" );
 	printf( STDERR "    -C, --conf <config> : Location of the configuration file used instead of \n");
