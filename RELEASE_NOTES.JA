@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES.JA (utf-8/LF)
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES.JA,v 1.19 2010/04/09 03:51:11 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.20 2010/04/09 06:38:35 ak Exp $
 -----------------------------------------------------------------------
  オープンソースのバウンスメール解析システム``BounceHammer''のリリース
  ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
@@ -11,7 +11,7 @@
 -----------------------------------------------------------------------
 
 -----------------------------------------------------------------------
-2.x.y/2.0.0	2010/0X/YY
+2.2.0/2.0.0	2010/xx/yy
   新しいファイル:
     * etc/httpd.conf-example
     * lib/Kanadzuchi/API/Dispatch.pm
@@ -35,7 +35,6 @@
 
   細かな改善点:
     * mailboxparserの解析精度が向上しました。
-    * 変数宣言の効率化。
     * HTMLテンプレートとスタイルシートの改善。
     * 新しいmakeターゲット:check-implement, apply-patch, reverse-patch
     * WebUIのDispatch設定(CGI)はDispatch.pmに移動しました。
@@ -46,6 +45,7 @@
     * WebUIでマスターテーブルの内容をページ分割して表示します。
 
   修正されたバグ:
+    * t_bouncelogs.recipientカラムから一意制約(UNIQUE)を削除しました。
     * WebUI のページフッタ内リンクテキストの色が薄すぎる点を修正しまし
       た: share/template/standard/stylesheet/bouncehammer.cf
     * WebUIのURLテキストをクリックしても選択されない問題を修正。

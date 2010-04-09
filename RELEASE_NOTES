@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.39 2010/04/09 03:51:11 ak Exp $
+ $Id: RELEASE_NOTES,v 1.40 2010/04/09 06:38:35 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -14,7 +14,7 @@
 -----------------------------------------------------------------------
 
 -----------------------------------------------------------------------
-2.x.y/2.0.0	2010/0X/YY
+2.2.0/2.0.0	2010/xx/yy
   New files:
     * etc/httpd.conf-example
     * lib/Kanadzuchi/API/Dispatch.pm
@@ -38,7 +38,6 @@
 
   Assorted improvements and code cleanup:
     * Analytical accuracy of mailboxparser improvement.
-    * Variable declaration improvement.
     * HTML Templates and stylesheets improvement.
     * New make targets: check-implement, apply-patch, and reverse-patch.
     * WebUI Dispatcher settings(CGI) are moved to Dispatch.pm .
@@ -49,6 +48,7 @@
     * Pagination of mastertable contents in WebUI.
 
   Fixed bugs:
+    * REMOVE UNIQUE CONSTRAINT FROM t_bouncelogs.recipient COLUMN.
     * Fixed an issue that hyperlink text color in the WebUI page footer
       is light; share/template/standard/stylesheet/bouncehammer.cf .
     * Fixed an issue that the URL text is not selected  by clicking the
