@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.16 2010/04/09 03:51:51 ak Exp $
+# $Id: mailboxparser.PL,v 1.17 2010/04/09 06:39:30 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -135,6 +135,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		my $filedigest;		# (String) MD5 digest of each file
 		my $stageofdir = 0;	# (Integer) Stage number
 		my $first5char = q();	# (String) First 5 characters
+		my $md5digests = [];	# (Ref->Array) MD5 Digest hash values of each file
 
 		$Cmd->d( 2, sprintf( "[This process] Max size of each chunk = %d bytes\n", $chunkmboxsize ));
 
@@ -152,10 +153,13 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			{
 				next() if( -z $mf || ! -r _ || ! -f _ || ! -T _ );
 
+				$filedigest = Digest::MD5->new()->addfile($mf->openr())->hexdigest();
+				next() if( grep( m{\A$filedigest\z}, @$md5digests ) );
+				push( @$md5digests, $filedigest );
+
 				unless( $mboxhandle )
 				{
 					$stageofdir++;
-					$filedigest = Digest::MD5->new()->addfile($mf->openr())->hexdigest();
 					$tmpmailbox = new Path::Class::File(
 							$Cmd->tmpdir->stringify().q{/tempmailbox.}.$filedigest.q{.mbox});
 
@@ -224,9 +228,12 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			#                      
 			next() if( -z $mf || ! -r _ || ! -f _ || ! -T _ );
 
+			$filedigest = Digest::MD5->new()->addfile($mf->openr())->hexdigest();
+			next() if( grep( m{\A$filedigest\z}, @$md5digests ) );
+			push( @$md5digests, $filedigest );
+
 			unless( $mboxhandle )
 			{
-				$filedigest = Digest::MD5->new()->addfile($mf->openr())->hexdigest();
 				$tmpmailbox = new Path::Class::File(
 						$Cmd->tmpdir->stringify().q{/tempmailbox.}.$filedigest.q{.mbox});
 
