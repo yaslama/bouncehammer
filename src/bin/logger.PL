@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.7 2010/03/21 09:55:49 ak Exp $
+# $Id: logger.PL,v 1.8 2010/04/09 03:51:51 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -140,7 +140,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 		if( -z $__f->stringify() )
 		{
 			# Is empty file
-			eval{ $__f->remove() if( $Cmd->operation & $Cmd->option->{'remove'} ); };
+			eval { $__f->remove() if( $Cmd->operation & $Cmd->option->{'remove'} ); };
 			next();
 		}
 
@@ -153,35 +153,35 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 			# Temporary log file is now locked
 			next() if( $__tmppcflock->locked() );
 
-			# If the file has same digest, remove it and skip.
-			eval{ truncate($$__tmplf4find,0) } if( $Cmd->operation & $Cmd->option->{truncate} );
+			# If the file has same digest, remove it and skip to the next.
+			eval { truncate($$__tmplf4find,0) } if( $Cmd->operation & $Cmd->option->{truncate} );
 			if( $Cmd->operation & $Cmd->option->{'remove'} )
 			{
-				eval{ $__f->remove(); };
-				$Cmd->d(6,sprintf("Remove log file(has same digest) = %s\n", $$__tmplf4find )) unless($@);
+				eval { $__f->remove(); };
+				$Cmd->d(6,sprintf("Remove the log file(has same digest) = %s\n", $$__tmplf4find )) unless($@);
 			}
 			next();
 		}
 
 		# Record the file name using MD5 Digest as a hash key
 		$_tmploghashes->{$__md5digestv} = $$__tmplf4find;
-		push( @{$_arrangedlogs}, $__tmppcflock );
-		$Cmd->d(5, sprintf("Temporary log file(#%d) = %s (%s)\n", scalar(@{$_arrangedlogs}), $$__tmplf4find, $__md5digestv ));
+		push( @$_arrangedlogs, $__tmppcflock );
+		$Cmd->d(5, sprintf("Temporary log file(#%d) = %s (%s)\n", scalar(@$_arrangedlogs), $$__tmplf4find, $__md5digestv ));
 
 		# Put temporary log file name in Verbosed List mode.
 		if( $Cmd->operation & $Cmd->option->{'list'} && $Cmd->debuglevel > -1 )
 		{
-			printf( STDOUT "%s\n", $$__tmplf4find ) 
+			print( STDOUT $$__tmplf4find.qq(\n) ) 
 		}
 
 	} # End of the loop(while())
 
-	$Cmd->d(3,sprintf("The number of temporary logs = %d\n", scalar(@{$_arrangedlogs})));
+	$Cmd->d( 3,sprintf("The number of temporary logs = %d\n", scalar(@$_arrangedlogs) ) );
 
 
 
 	# There is no temporary log file.
-	if( scalar(@{$_arrangedlogs}) == 0 )
+	if( scalar(@$_arrangedlogs) == 0 )
 	{
 		$Cmd->d(1,q{There is no temporary log file}.qq{\n} );
 		$Cmd->finish();
@@ -190,9 +190,10 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 	# File List Only: Print the number of temporary log files and exit(0).
 	if( $Cmd->operation & $Cmd->option->{'list'} )
 	{
-		printf( STDOUT "%s\n", scalar(@{$_arrangedlogs}) );
+		print( STDOUT scalar(@$_arrangedlogs).qq(\n) );
 		$Cmd->finish();
 	}
+
 
 	# Read temporary log files
 	require Kanadzuchi::Mail::Stored::YAML;
@@ -210,11 +211,11 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 					'fh' => \*STDERR,
 					'ETA' => q(linear),
 					'name' => q(Parse Temp Logs),
-					'count' => scalar(@{$_arrangedlogs}),
+					'count' => scalar(@$_arrangedlogs),
 				});
 	}
 
-	LOAD_TEMPLOG_FILES: foreach my $__f ( @{$_arrangedlogs} )
+	LOAD_TEMPLOG_FILES: foreach my $__f ( @$_arrangedlogs )
 	{
 		#  _     ___    _    ____    _____ __  __ ____  _     ___   ____ 
 		# | |   / _ \  / \  |  _ \  |_   _|  \/  |  _ \| |   / _ \ / ___|
@@ -246,31 +247,32 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 			$Cmd->abort();
 		};
 
-		LOAD_RECORDS_IN_TEMPLOG:foreach my $__o ( @$__arref )
+		LOAD_RECORDS_IN_TEMPLOG: foreach my $__o ( @$__arref )
 		{
 			my $__md5digestv = sprintf("%s:%s", $__o->token(), $__o->bounced->epoch() );
 			my $__datestring = $__o->bounced->ymd('-');
 
-			# Skip if there is same token 
+			# Skip if it have same token and same timestamp
 			next() if( exists($_recordhashes->{$__md5digestv}) );
 			$_recordhashes->{$__md5digestv} = 1;
 
 			unless( exists($_bmesgsbydate->{$__datestring}) )
 			{
-				$_bmesgsbydate->{$__datestring} = [];		# Insert array reference
+				# Insert array reference
+				$_bmesgsbydate->{$__datestring} = [];
 			}
-			push( @{$_bmesgsbydate->{$__datestring}}, $__o );
+			push( @{ $_bmesgsbydate->{$__datestring} }, $__o );
 
 		} # End of the loop(while())
 
-		push( @{$_templogfiles}, $__f );
+		push( @$_templogfiles, $__f );
 		$_tprogressbar->update() if( defined($_tprogressbar) );
 
 	} # End of the loop(for())
 
 
 	# There is no valid record
-	unless( @{$_templogfiles} )
+	unless( @$_templogfiles )
 	{
 		$Cmd->d(1,q{There is no valid record}.qq{\n} );
 		$Cmd->finish(); 
@@ -279,7 +281,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 	my $_rprogressbar = undef();	# Term::ProgressBar object for regular logs
 	if( $Cmd->debuglevel > -1 )
 	{
-		eval{ require Term::ProgressBar; };
+		eval { require Term::ProgressBar; };
 		$_rprogressbar = new Term::ProgressBar( {
 					'fh' => \*STDERR, 
 					'ETA' => q(linear),
@@ -314,7 +316,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 		if( $Cmd->operation & $Cmd->option->{'strict'} )
 		{
 			# Strict mode: check duplicated records in the regular log file
-			LOAD_RECORDS_IN_REGULARLOG:foreach my $__o ( @$__arref )
+			LOAD_RECORDS_IN_REGULARLOG: foreach my $__o ( @$__arref )
 			{
 				#  _     ___    _    ____    ____  _____ _   _  ____ _        _    ____    _     ___   ____ 
 				# | |   / _ \  / \  |  _ \  |  _ \| ____| | | |/ ___| |      / \  |  _ \  | |   / _ \ / ___|
