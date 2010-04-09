@@ -1,5 +1,5 @@
 # bouncehammer.cf
-# $Id: bouncehammer.cf-example,v 1.9 2010/03/19 04:22:15 ak Exp $
+# $Id: bouncehammer.cf-example,v 1.10 2010/04/09 03:52:16 ak Exp $
 # This config file is YAML format. bin/* scripts read this file by
 # using (YAML|JSON)::Syck/ Perl module.
 #  ______   ______ _____ _____ __  __ 
@@ -107,7 +107,7 @@ database:
 # Environment configurations
 environment:
   # Timeout while read from STDIN(second)
-  timeout: 180
+  timeout: 180 
 
   # Run As ...(Not implemented)
   runas:
