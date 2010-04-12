@@ -1,4 +1,4 @@
-# $Id: Metadata.pm,v 1.9 2010/03/19 04:03:05 ak Exp $
+# $Id: Metadata.pm,v 1.10 2010/04/12 05:46:40 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                         
@@ -55,8 +55,7 @@ sub to_string
 	my $objref = ref($object) || return($object);
 
 	eval {
-		local $JSON::Syck::SortKeys = 1;
-
+		# local $JSON::Syck::SortKeys = 1;
 		if( $objref eq q|ARRAY| )
 		{
 			$arrayr = $object;
@@ -151,6 +150,50 @@ sub to_object
 	return([$object]) if( $objref eq q|HASH| );
 	return( $object ) if( $objref eq q|ARRAY| );
 	return([]);
+}
+
+sub mergesort
+{
+	# +-+-+-+-+-+-+-+-+-+
+	# |m|e|r|g|g|s|o|r|t|
+	# +-+-+-+-+-+-+-+-+-+
+	#
+	# @Description	Merge sort
+	# @Param	(Ref->Array) Unsorted list
+	# @Return	(Ref->Array) Sorted list
+	my $class = shift();
+	my $array = shift() || return([]);
+	my( $lhsln, $rhsln, $wshed );
+	my $lhsar = [];
+	my $rhsar = [];
+
+	return($array) if( scalar(@$array) < 2 );
+	$wshed = int( scalar(@$array)/2 );
+
+	@$lhsar = map { $array->[$_] } ( 0 .. $wshed - 1 );
+	@$rhsar = map { $array->[$_] } ( $wshed .. scalar(@$array) - 1 );
+	$lhsln = scalar(@$lhsar);
+	$rhsln = scalar(@$rhsar);
+
+	$lhsar = $class->mergesort($lhsar);
+	$rhsar = $class->mergesort($rhsar);
+
+	my $newar = [];
+	my $x = 0;
+	my $y = 0;
+
+	while( $x < $lhsln || $y < $rhsln )
+	{
+		if( $y >= $rhsln || ( $x < $lhsln && $lhsar->[$x]->{'bounced'} < $rhsar->[$y]->{'bounced'} ) )
+		{
+			push( @$newar, $lhsar->[$x++] );
+		}
+		else
+		{
+			push( @$newar, $rhsar->[$y++] );
+		}
+	}
+	return($newar);
 }
 
 1;
