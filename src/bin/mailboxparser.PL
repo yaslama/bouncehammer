@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.17 2010/04/09 06:39:30 ak Exp $
+# $Id: mailboxparser.PL,v 1.18 2010/04/12 05:45:56 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -110,6 +110,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	# |  __/ ___ \|  _ < ___) | |___ 
 	# |_| /_/   \_\_| \_\____/|_____|
 	#
+	require Path::Class::File::Lockable;
 	require Kanadzuchi::Mail::Bounced;
 	require Kanadzuchi::Mbox;
 	require Kanadzuchi::Log;
@@ -149,70 +150,10 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			#                                                  
 			$Cmd->d( 1, sprintf( "[This process] Seek the directory = %s\n", $d->stringify() ));
 
-			READ_THE_DIRECTORY: while( my $mf = $d->next() )
+			READ_FILES_IN_THE_DIRECTORY: while( my $mf = $d->next() )
 			{
 				next() if( -z $mf || ! -r _ || ! -f _ || ! -T _ );
-
-				$filedigest = Digest::MD5->new()->addfile($mf->openr())->hexdigest();
-				next() if( grep( m{\A$filedigest\z}, @$md5digests ) );
-				push( @$md5digests, $filedigest );
-
-				unless( $mboxhandle )
-				{
-					$stageofdir++;
-					$tmpmailbox = new Path::Class::File(
-							$Cmd->tmpdir->stringify().q{/tempmailbox.}.$filedigest.q{.mbox});
-
-					$tmpmailbox->touch();
-					$mboxhandle = $tmpmailbox->openw();
-					$Cmd->d( 3, sprintf( "[Stage: #%04d] Seek the mailbox file in the directory = %s\n",
-								$stageofdir, $d->stringify() ) );
-				}
-
-				# Read and write
-				$Cmd->d( 5, sprintf( "[Stage: #%04d] Seek the mailbox file in the directory = %s\n",
-							$stageofdir, $mf->stringify() ));
-				open( my $_eachmboxfh, q{<}, $mf ) || next();
-
-				read( $_eachmboxfh, $first5char, 5 );
-				seek( $_eachmboxfh, 0, 0 );
-				unless( $first5char =~ m{\A[A-Za-z]} )
-				{
-					# Skip to the next loop if the file not like email.
-					$Cmd->d( 2, sprintf( "[Stage: #%04d] The file %s not like email\n", 
-								$stageofdir, $mf->stringify() ) );
-					next();
-				}
-
-				# Does first 5 bytes of the message is 'From_' ?
-				read( $_eachmboxfh, $mfcontents, -s $mf );
-				print( $mboxhandle $pseudofrom ) if( $first5char ne 'From ' );
-				print( $mboxhandle $mfcontents ) if( $mfcontents );
-				$_eachmboxfh->close() if( ref($_eachmboxfh) eq q|IO::Handle| );
-				alarm(0);
-
-				# Cleanup or Backup
-				$mf->remove() if( $Cmd->operation & $Cmd->option->{'remove'} );
-				truncate($mf->stringify(),0) if( $Cmd->operation & $Cmd->option->{'truncate'} );
-				File::Copy::move( $mf->stringify(), $Bak ) if( $Cmd->operation & $Cmd->option->{'backup'} );
-
-				if( $tmpmailbox->stat->size > $chunkmboxsize )
-				{
-					# The size of temporary mailbox file is bigger than the limit
-					push( @$chunksofemail, $tmpmailbox );
-					$mboxhandle->close() if( ref($mboxhandle) eq q|IO::Handle| );
-					$mboxhandle = undef();
-					$tmpmailbox = undef();
-				}
-
-			} # End of while(READ_THE_DIRECTORY)
-
-			if( defined($tmpmailbox) && defined($mboxhandle) )
-			{
-				push( @$chunksofemail, $tmpmailbox );
-				$mboxhandle->close();
-				$mboxhandle = undef();
-				$tmpmailbox = undef();
+				push( @{ $Mail->{'files'} }, $mf );
 			}
 
 		} # End of foreach(SEEK_EACH_DIRECTORY) 
@@ -286,18 +227,20 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			$tmpmailbox = undef();
 		}
 
+		# Flush the variables
+		$Mail = undef();
+		$filedigest = undef();
+		$md5digests = [];
 	}
 
 
 	my $kanadzuchilog = new Kanadzuchi::Log();
-	my $templogdevice = undef();	# (IO::File) Temporary log
-	my $mailboxparser;		# Kanadzuchi::Mbox object
-	my $returnedmesgs = [];		# (Ref->Array) K::M::Bounced objects
+	my $templogdevice;		# (IO::File) Temporary log
+	my $mailboxparser;		# (Kanadzuchi::Mbox) Parser object
+	my $returnedmesgs = [];		# (Ref->Array) Kanadzuchi::Mail::Bounced objects
 	my $stageofparser = 0;		# (Integer) Present state number
 	my $msgsintheklog = 0;		# (Integer) The number of parsed messages
 	my $msgsinthembox = 0;		# (Integer) The number of emails in the mbox
-
-	$Mail = undef();	# Flush the variable
 
 	if( $Cmd->operation & $Cmd->option->{'log'} )
 	{
@@ -323,13 +266,14 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		$_tmplf = sprintf("%s/%s.%s.%08x.%06x.%s", $_tmpld, $_conff->{'templog'}->{'prefix'},
 				$_objdt->ymd('-'), $_objdt->epoch(), $$, $_conff->{'templog'}->{'suffix'} );
 		$_tmplf = uc($_tmplf) if( -e $_tmplf );		# If it already exists
-		$templogdevice = new IO::File( qq{>> $_tmplf} );
 
 		# Set directory name and log fle name, and format
+		$templogdevice = new IO::File( qq{>> $_tmplf} );
 		$kanadzuchilog->directory(new Path::Class::Dir($_tmpld));
 		$kanadzuchilog->format('yaml');
-		$kanadzuchilog->logfile( new Path::Class::File($_tmplf) );
+		$kanadzuchilog->logfile( new Path::Class::File::Lockable($_tmplf) );
 		$kanadzuchilog->logfile->touch();
+		$kanadzuchilog->logfile->lock();
 		$kanadzuchilog->device( $templogdevice );
 
 		$Cmd->d(1,sprintf( "[This process] Log directory = %s\n", $Out ));
@@ -370,7 +314,9 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		# Slurp the mailbox
 		$mailboxparser->greed( $Cmd->operation & $Cmd->option->{'greed'} ? 1 : 0 );
 		$mailboxparser->slurpit();
-		alarm(0);	# Reset alarm(Read from STDIN)
+
+		# Reset alarm(Read from STDIN)
+		alarm(0);
 
 		# Put decided configuration values as debug message
 		$Cmd->d(1,sprintf( "[Stage: #%04d] Mailbox file = %s(%d Bytes)\n", $stageofparser, (
@@ -439,8 +385,12 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	} # End of foreach(PARSE_CHUNKS_OF_EMAIL)
 
 	$Cmd->d(0,sprintf( "[This process] Parsed messages/emails in the mailbox = %d/%d\n", $msgsintheklog, $msgsinthembox ));
-	$kanadzuchilog->device->close() if( ref($kanadzuchilog->device()) eq q|IO::File| );
-	$kanadzuchilog->logfile->remove() if( defined($kanadzuchilog->logfile) && -f $kanadzuchilog->logfile && ! -s _ );
+	if( ref($kanadzuchilog->device()) eq q|IO::File| && $kanadzuchilog->logfile() )
+	{
+		$kanadzuchilog->device->close();
+		$kanadzuchilog->logfile->unlock() if( $kanadzuchilog->logfile->locked() );
+		$kanadzuchilog->logfile->remove() if( -f $kanadzuchilog->logfile && ! -s _ );
+	}
 
 }
 
