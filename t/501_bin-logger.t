@@ -1,4 +1,4 @@
-# $Id: 501_bin-logger.t,v 1.5 2010/03/01 21:32:07 ak Exp $
+# $Id: 501_bin-logger.t,v 1.6 2010/04/12 05:47:06 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 297 );
+use Test::More ( tests => 239 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',297) if($@);
+	skip('Because no IPC::Cmd for testing',239) if($@);
 
 	use Kanadzuchi::Test::CLI;
 	use Kanadzuchi;
@@ -44,23 +44,19 @@ SKIP: {
 		},
 		{
 			'name' => 'Specify a file',
-			'option' => $O.q( -cf ).$E->output(),
-		},
-		{
-			'name' => 'Specify a file strictly',
-			'option' => $O.q( --strict -cf ).$E->output(),
+			'option' => $O.q( -c ).$E->output(),
 		},
 		{
 			'name' => 'Specify a directory',
-			'option' => $O.q( -cd ).$E->tempdir(),
+			'option' => $O.q( -c ).$E->tempdir(),
 		},
 		{
 			'name' => 'Specify a directory and remove temp logs',
-			'option' => $O.q( -cd ).$E->tempdir().q( --remove ),
+			'option' => $O.q( -c ).$E->tempdir().q( --remove ),
 		},
 		{
 			'name' => 'Specify a directory and truncate temp logs',
-			'option' => $O.q( -cd ).$E->tempdir().q( --truncate ),
+			'option' => $O.q( -c ).$E->tempdir().q( --truncate ),
 		},
 	];
 
