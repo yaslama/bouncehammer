@@ -1,4 +1,4 @@
-# $Id: Metadata.pm,v 1.10 2010/04/12 05:46:40 ak Exp $
+# $Id: Metadata.pm,v 1.11 2010/04/14 00:44:24 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                         
@@ -78,6 +78,9 @@ sub to_string
 			$string .= JSON::Syck::Dump($e);
 			$string =~ s{":(["\d])}{": $1}g;
 			$string =~ s{,"}{, "}g;
+			$string =~ s/{"/{ "/g;
+			$string =~ s/"}/" }/g;
+			$string =~ s/:{/: {/g;
 			$string .= ',' if( $isjson && ( $arrayc > 1 || $retaar ) );
 			$string .= qq(\n) if( $isjson == 0 && ( $arrayc > 1 || $retaar ) );
 		}
