@@ -1,4 +1,4 @@
-# $Id: 015_metadata.t,v 1.5 2010/03/19 04:05:46 ak Exp $
+# $Id: 015_metadata.t,v 1.6 2010/04/14 00:44:55 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -22,7 +22,7 @@ my $J = <DATA>;
 my $Y = undef();
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::Metadata|,
-	'methods' => [ 'to_string','to_object' ],
+	'methods' => [ 'to_string','to_object', 'mergesort' ],
 	'instance' => undef(), );
 my $F = new Path::Class::File($T->tempdir->stringify().q{/sample-json-datum.tmp});
 
