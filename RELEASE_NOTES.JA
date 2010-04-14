@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES.JA (utf-8/LF)
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES.JA,v 1.20 2010/04/09 06:38:35 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.21 2010/04/14 00:43:11 ak Exp $
 -----------------------------------------------------------------------
  オープンソースのバウンスメール解析システム``BounceHammer''のリリース
  ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
@@ -32,6 +32,8 @@
     * WebUIでJSONフォーマットでのダウンロードが可能になりました。
     * bin/mailboxparserコマンドの新しいオプション: --skip-temperror
     * bin/mailboxparserコマンドの新しいオプション: --backup
+    * bin/logger から次のオプションが削除されました:  -f, --file, -d, 
+      --directory, --strict.
 
   細かな改善点:
     * mailboxparserの解析精度が向上しました。
