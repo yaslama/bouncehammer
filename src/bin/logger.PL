@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.9 2010/04/12 05:45:56 ak Exp $
+# $Id: logger.PL,v 1.10 2010/04/14 00:43:37 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -37,16 +37,18 @@ use Path::Class::File::Lockable;
 #
 my $Zci;		# (Kanadzuchi) System object
 my $Cmd;		# (Kanadzuchi::UI::CLI) Commandline object
+my $Bak;		# (String) Backup directory for the temp log.
 my $Arg = { 'stdin' => 0, 'files' => [], 'dirs' => [], };
 
 my $CLIOPTION = {
 	'conf'		=> ( 1 << 0 ),
 	'test'		=> ( 1 << 1 ),
 	'concatenate'	=> ( 1 << 2 ),
-	'list'		=> ( 1 << 3 ),
-	'truncate'	=> ( 1 << 4 ),
-	'remove'	=> ( 1 << 5 ),
-	'strict'	=> ( 1 << 6 ),
+	'merge'		=> ( 1 << 3 ),
+	'list'		=> ( 1 << 4 ),
+	'truncate'	=> ( 1 << 5 ),
+	'remove'	=> ( 1 << 6 ),
+	'backup'	=> ( 1 << 7 ),
 };
 
 #  __  __    _    ___ _   _ 
@@ -89,14 +91,8 @@ foreach my $__sig qw( INT QUIT TERM KILL )
 	$SIG{$__sig} = sub { $Cmd->catch_signal($__sig); };
 }
 
-if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} ) )
+if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} + $Cmd->option->{'list'} ) )
 {
-	#   ____ ___  _   _  ____    _  _____ _____ _   _    _  _____ _____ 
-	#  / ___/ _ \| \ | |/ ___|  / \|_   _| ____| \ | |  / \|_   _| ____|
-	# | |  | | | |  \| | |     / _ \ | | |  _| |  \| | / _ \ | | |  _|  
-	# | |__| |_| | |\  | |___ / ___ \| | | |___| |\  |/ ___ \| | | |___ 
-	#  \____\___/|_| \_|\____/_/   \_\_| |_____|_| \_/_/   \_\_| |_____|
-	# 
 	my $logthreshold = 5242880;	# (Integer) 5MB, About 10,000 records
 	my $sizeoftmplog = 0;		# (Integer) File size of all of temporary logs.
 	my $tmplogsinhdd = [];		# (Ref->Array) Each temporary logs(Path::Class::File::Lockable)
@@ -119,17 +115,18 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 		# | |_| | | | |  __/ (__| || (_) | |  | |  __/\__ \
 		# |____/|_|_|  \___|\___|\__\___/|_|  |_|\___||___/
 		#                                                  
-		while( my $_f = $_d->next() )
+		opendir( my $directoryh, $_d );
+		while( my $_f = readdir($directoryh) )
 		{
-			next() if( $_f->is_dir || ! -f $_f || ! -T _ || ! -s _ );
-			push( @{ $Arg->{'files'} }, Path::Class::File::Lockable->new($_f) );
+			next() if( ! -f $_d.'/'.$_f || ! -T _ || ! -s _ );
+			push( @{ $Arg->{'files'} }, Path::Class::File::Lockable->new($_d.'/'.$_f) );
 		}
+		closedir($directoryh);
 
 	} # End of the loop foreach(SEEK_TEMPLOG_DIRS)
 	$Arg->{'dirs'} = [];
 
 
-	my( $_tmploghash, $_md5digestv, $_tmploglock, $_eachtmplog );
 	FIND_TEMPLOG_FILES: foreach my $_f ( @{ $Arg->{'files'} } )
 	{
 		#  _____ ___ _   _ ____    _____ __  __ ____  _     ___   ____ 
@@ -138,9 +135,10 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 		# |  _|  | || |\  | |_| |   | | | |  | |  __/| |__| |_| | |_| |
 		# |_|   |___|_| \_|____/    |_| |_|  |_|_|   |_____\___/ \____|
 		#
-		$_md5digestv = undef();	# (Digest::MD5) object
-		$_tmploglock = undef();	# (Path::Class::File::Lockable)
-		$_eachtmplog = $_f->stringify();
+		my $_tmploghash = undef();
+		my $_md5digestv = undef();	# (Digest::MD5) object
+		my $_tmploglock = undef();	# (Path::Class::File::Lockable)
+		my $_eachtmplog = $_f->stringify();
 
 		# Does not match with regular expression
 		next() unless( $_eachtmplog =~ $regexp_tlogs );
@@ -186,6 +184,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 
 	} # End of the loop while(FIND_TEMPLOG_FILES)
 
+	$Arg->{'files'} = [];
 	$Cmd->d( 3,sprintf("The number of temporary logs = %d, size = %d\n", scalar(@$tmplogsinhdd), $sizeoftmplog ) );
 
 
@@ -209,28 +208,19 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 	require File::Copy;
 
 	my $sizeofloaded = 0;		# (Integer) File size of loaded temporary logs.
-	my $templogfiles = [];		# (Ref->Array) Path::Class::File object of Temp log
-	my $dataoftheday = [];
-	my $objectbydate = {};		# (Ref->Hash) key is '2009-01-03', value is pointer to array
-	my $recordhashes = {};		# (Ref->Hash) Record digest
-	my $tprogressbar = undef();	# (Term::ProgressBar)
-	my( $_tempstored, $_tokenthing, $_datestring );
-
-	# Prepare progress bar
-	if( $Cmd->debuglevel > -1 )
-	{
-		eval { require Term::ProgressBar; };
-		$tprogressbar = new Term::ProgressBar( { 
-					'fh' => \*STDERR,
-					'ETA' => q(linear),
-					'name' => q(Parse Temp Logs),
-					'count' => scalar(@$tmplogsinhdd),
-				});
-	}
+	my $countofchunk = int($sizeoftmplog/$logthreshold) + 1;
 
 
 	while( scalar(@$tmplogsinhdd) > 0 )
 	{
+		#my $recordbydate = {};		# (Ref->Hash) The number of records/each day
+		my $objectbydate = {};		# (Ref->Hash) key is '2009-01-03', value is pointer to array
+		my $recordhashes = {};		# (Ref->Hash) Record digest
+		my $templogfiles = [];		# (Ref->Array) Path::Class::File object of Temp log
+		my $dataoftheday = undef();	# (Ref->Array) data of the day
+		my $pprogressbar = undef();	# (Term::ProgressBar)
+		my $recsofloaded = 0;		# (Integer) The number of loaded records
+
 		# Read temporary log files
 		LOAD_TEMPLOG_FILES: while( my $_f = shift(@$tmplogsinhdd) )
 		{
@@ -240,19 +230,15 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 			# | |__| |_| / ___ \| |_| |   | | | |  | |  __/| |__| |_| | |_| |
 			# |_____\___/_/   \_\____/    |_| |_|  |_|_|   |_____\___/ \____|
 			# 
-			$_tempstored = Kanadzuchi::Metadata->to_object($_f);
+			my $_tempstored = Kanadzuchi::Metadata->to_object($_f);
 			$sizeofloaded += -s $_f;
 
-			unless( scalar(@$_tempstored) )
-			{
-				$tprogressbar->update() if( defined($tprogressbar) );
-				next();
-			}
+			next() unless( scalar(@$_tempstored) );
 
 			LOAD_RECORDS_IN_TEMPLOG: foreach my $_o ( @$_tempstored )
 			{
-				$_tokenthing = $_o->{'token'}.q(.).$_o->{'bounced'};
-				$_datestring = Time::Piece->new($_o->{'bounced'})->ymd('-');
+				my $_tokenthing = $_o->{'token'}.q(.).$_o->{'bounced'};
+				my $_datestring = Time::Piece->new($_o->{'bounced'})->ymd('-');
 
 				# Skip if it have same token and same timestamp
 				next() if( exists($recordhashes->{ $_tokenthing }) );
@@ -262,14 +248,16 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 				{
 					# Insert array reference
 					$objectbydate->{$_datestring} = [];
+					#$recordbydate->{$_datestring} = 0;
 				}
 				push( @{ $objectbydate->{$_datestring} }, $_o );
+				$recsofloaded++;
+				#$recordbydate->{$_datestring}++;
 
 			} # End of the loop foreach(LOAD_RECORDS_IN_TEMPLOG)
 
 			$sizeofloaded += -s $_f;
 			push( @$templogfiles, $_f );
-			$tprogressbar->update() if( defined($tprogressbar) );
 			last(LOAD_TEMPLOG_FILES) if( $sizeofloaded > $logthreshold );
 
 		} # End of the loop foreach(LOAD_TEMPLOG_FILES)
@@ -277,20 +265,19 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 		# There is no valid record
 		next() unless( @$templogfiles );
 
-		my $rprogressbar = undef();	# Term::ProgressBar object for regular logs
+		# progress bar
 		if( $Cmd->debuglevel > -1 )
 		{
 			eval { require Term::ProgressBar; };
-			$rprogressbar = new Term::ProgressBar( {
-						'fh' => \*STDERR, 
-						'ETA' => q(linear),
-						'name' => q(Merge Regular Logs),
-						'count' => (my $__c = keys(%$objectbydate)),
-					});
+			$pprogressbar = new Term::ProgressBar( { 
+							'fh' => \*STDERR,
+							'ETA' => q(linear),
+							'name' => q{Concatenate Logs(}.$countofchunk.q{)},
+							'count' => $recsofloaded,
+				});
 		}
 
-		my( $_eachregrlog, $_eachregrtmp, $_handleoflog, $_handleoftmp, $_duplicatedc );
-		my( $_eachlogline, $_eachlogjson, $_eachlogbuff, $_indexofdata, $_cacheofdata );
+
 		WRITE_TO_REGULAR_LOG: foreach my $_key ( sort(keys(%$objectbydate)) )
 		{
 			# __        ______  ___ _____ _____   ____  _____ _   _  ____ _        _    ____    _     ___   ____ 
@@ -299,95 +286,192 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 			#   \ V  V / |  _ < | |  | | | |___  |  _ <| |___| |_| | |_| | |___ / ___ \|  _ <  | |__| |_| | |_| |
 			#    \_/\_/  |_| \_\___| |_| |_____| |_| \_\_____|\___/ \____|_____/_/   \_\_| \_\ |_____\___/ \____|
 			#
-			$dataoftheday = Kanadzuchi::Metadata->mergesort($objectbydate->{$_key});
-			$_handleoflog = undef();
-			$_handleoftmp = undef();
-			$_duplicatedc = 0;
-			$_indexofdata = 0;
-			$_cacheofdata = q();
-			$_eachlogbuff = q();
-			$_eachregrlog = new Path::Class::File::Lockable( sprintf("%s/%s.%s.%s", 
-							$Zci->config->{'directory'}->{'log'}, 
-							$Zci->config->{'file'}->{'storage'}->{'prefix'},
-							$_key, $Zci->config->{'file'}->{'storage'}->{'suffix'} ) );
-			$_eachregrtmp = new Path::Class::File::Lockable($_eachregrlog->stringify().q(.TMP));
+			my $_handleoflog = undef();	# (IO::File) Saved regular log's file handle of the day
+			my $_eachregrlog = new Path::Class::File::Lockable( 
+							sprintf("%s/%s.%s.%s", 
+								$Zci->config->{'directory'}->{'log'}, 
+								$Zci->config->{'file'}->{'storage'}->{'prefix'},
+								$_key, $Zci->config->{'file'}->{'storage'}->{'suffix'} ) );
 
-			$rprogressbar->update() if( $rprogressbar );
 			next() if( -e $_eachregrlog && ( ! -w _ || ! -T _ || $_eachregrlog->locked() ) );
-			next() if( -e $_eachregrtmp && $_eachregrtmp->locked() );
 
-			$_eachregrlog->lock() || do { $Cmd->d(1,'Cannot create the lock file'.qq(\n)); next() };
-			$_handleoflog = $_eachregrlog->openr() if( -s $_eachregrlog && -r _ );
-			$_eachregrtmp->lock();
-			$_handleoftmp = $_eachregrtmp->openw();
-
-			if( $_handleoflog )
+			if( $Cmd->operation & $Cmd->option->{'merge'} )
 			{
-				while( $_eachlogline = <$_handleoflog> )
+				#  __  __ _____ ____   ____ _____ 
+				# |  \/  | ____|  _ \ / ___| ____|
+				# | |\/| |  _| | |_) | |  _|  _|  
+				# | |  | | |___|  _ <| |_| | |___ 
+				# |_|  |_|_____|_| \_\\____|_____|
+				#                                 
+				my $_cacheofdata = q();		# (String) Buffer of 'data of the day'
+				my $_duplicatedc = 0;		# (Integer) The number of duplicated records
+				my $_eachlogbuff = q();		# (String) Buffer of each line contents
+				my $_handleoftmp = undef();	# (IO::File) Working reglar logs's file handle of the day
+				my $_eachregrtmp = undef();	# (Path::Class::File) Working regular log's object
+
+				# Merge progress bar
+				#if( $Cmd->debuglevel > -1 )
+				#{
+				#	eval { require Term::ProgressBar; };
+				#	$pprogressbar = new Term::ProgressBar( { 
+				#				'fh' => \*STDERR,
+				#				'ETA' => q(linear),
+				#				'name' => q{Merge Logs (}.(scalar(@$tmplogsinhdd)+1).q{) }.$_key,
+				#				'count' => scalar( @{ $objectbydate->{$_key} } ),
+				#			});
+				#}
+
+				$dataoftheday = Kanadzuchi::Metadata->mergesort($objectbydate->{$_key});
+
+				# Lock the regular log and set file handle
+				$_eachregrlog->lock() || do { $Cmd->d(1,'Cannot create the lock file'.qq(\n)); next() };
+				$_handleoflog = $_eachregrlog->openr() if( -s $_eachregrlog && -r _ );
+
+				# Set the temporary regular log's object and file handle
+				$_eachregrtmp = new Path::Class::File( 
+							$_eachregrlog->stringify().q(.).$$.time().( rand(12) * 1000 ).q(.tmp-merged) );
+				$_handleoftmp = new IO::File( qq{>> }.$_eachregrtmp->stringify() );
+				$_eachregrtmp->touch();
+
+
+				if( $_handleoflog )
 				{
-					$_eachlogjson = Kanadzuchi::Metadata->to_object($_eachlogline)->[0];
-					next() unless( $_eachlogjson );
-
-					if( $_eachlogjson->{'bounced'} == $dataoftheday->[$_indexofdata]->{'bounced'} 
-						&& $_eachlogjson->{'token'} eq $dataoftheday->[$_indexofdata]->{'token'} ){
-
-						$_duplicatedc++;
-						next();
-					}
-
-
-					if( $dataoftheday->[$_indexofdata]->{'bounced'} < $_eachlogjson->{'bounced'} 
-						|| ( length($_eachlogbuff) + length($_cacheofdata) > $logthreshold ) ){
-
-						# Write buffer
-						print( $_handleoftmp $_cacheofdata );
-						print( $_handleoftmp $_eachlogbuff );
-						$_eachlogbuff = q();
-						$_cacheofdata = q();
-					}
-					else
+					READ_REGULAR_LOG: while( my $_eachlogline = <$_handleoflog> )
 					{
+						my $_bounceddate = -1;
+						my $_tokenstring = q();
+						my $_theheaddata = {};
+
+						if( $_eachlogline =~ m{["]bounced["]:\s?(\d+).+["]token["]:\s?["](\w+)["]} )
+						{
+							# Regular expression is faster than JSON::Syck, Kanadzuchi::Metadata
+							#  $x = shift( @{ Kanadzuchi::Metadata->to_object(\$y) });
+							#  $x = shift( @{ JSON::Syck::Load($y) } );
+							$_bounceddate = $1;
+							$_tokenstring = $2;
+						}
+						else
+						{
+							# Broken data in the regular log?
+							next();
+						}
+
+						if( scalar(@$dataoftheday) == 0 )
+						{
+							# Temporary log data is empty
+							$_eachlogbuff .= $_eachlogline;
+							if( length($_eachlogbuff) + length($_cacheofdata) > $logthreshold )
+							{
+								# Write buffer
+								print( $_handleoftmp $_cacheofdata );
+								print( $_handleoftmp $_eachlogbuff );
+								$_eachlogbuff = q();
+								$_cacheofdata = q();
+							}
+							next();
+						}
+						$_theheaddata = $dataoftheday->[0];
+
+						if( $_bounceddate == $_theheaddata->{'bounced'} && $_tokenstring eq $_theheaddata->{'token'} )
+						{
+							# There are same records in the tmporary log and the regular log.
+							$_eachlogbuff .= $_eachlogline;
+							$_duplicatedc++;
+
+							shift(@$dataoftheday);
+							$pprogressbar->update() if( defined($pprogressbar) );
+							next();
+						}
+
 						$_eachlogbuff .= $_eachlogline;
-						$_cacheofdata .= ${ Kanadzuchi::Metadata->to_string($dataoftheday->[$_indexofdata]) };
+						$_cacheofdata .= ${ Kanadzuchi::Metadata->to_string([$_theheaddata]) };
+
+						if( $_theheaddata->{'bounced'} < $_bounceddate
+							|| ( length($_eachlogbuff) + length($_cacheofdata) > $logthreshold ) ){
+
+							# The record in the temporary log is older than the record in the 
+							# regurlar log OR Buffer size exceeds limit.
+							print( $_handleoftmp $_cacheofdata );
+							print( $_handleoftmp $_eachlogbuff );
+							$_eachlogbuff = q();
+							$_cacheofdata = q();
+
+							shift(@$dataoftheday);
+							$pprogressbar->update() if( defined($pprogressbar) );
+						}
+
+					} # End of while(READ_REGULAR_LOG)
+
+				}
+
+				$_cacheofdata .= ${ Kanadzuchi::Metadata->to_string($dataoftheday) };
+
+				if( length($_eachlogbuff) + length($_cacheofdata) )
+				{
+					print( $_handleoftmp $_cacheofdata );
+					print( $_handleoftmp $_eachlogbuff );
+					$_eachlogbuff = q();
+					$_cacheofdata = q();
+				}
+
+				$_handleoftmp->close() if( $_handleoftmp );
+				$_handleoflog->close() if( $_handleoflog );
+				$pprogressbar->update($recsofloaded) if( defined($pprogressbar) && ! $_handleoflog );
+
+				unless( -s $_eachregrtmp )
+				{
+					$_eachregrlog->unlock();
+					$_eachregrtmp->remove;
+					next();
+				}
+
+				$_eachregrtmp->remove() if( File::Copy::copy( $_eachregrtmp->stringify(), $_eachregrlog->stringify() ));
+				$_eachregrlog->unlock();
+
+			}
+			elsif( $Cmd->operation & $Cmd->option->{'concatenate'} )
+			{
+				#   ____ ___  _   _  ____    _  _____ _____ _   _    _  _____ _____ 
+				#  / ___/ _ \| \ | |/ ___|  / \|_   _| ____| \ | |  / \|_   _| ____|
+				# | |  | | | |  \| | |     / _ \ | | |  _| |  \| | / _ \ | | |  _|  
+				# | |__| |_| | |\  | |___ / ___ \| | | |___| |\  |/ ___ \| | | |___ 
+				#  \____\___/|_| \_|\____/_/   \_\_| |_____|_| \_/_/   \_\_| |_____|
+				# 
+				my $_arrayofdata = [];
+
+				$dataoftheday = $objectbydate->{$_key};
+
+				# Lock the regular log and set file handle
+				$_eachregrlog->lock() || do { $Cmd->d(1,'Cannot create the lock file'.qq(\n)); next() };
+				$_handleoflog = new IO::File( qq{>> }.$_eachregrlog->stringify() );
+
+				foreach my $_eachtmpdata ( @$dataoftheday )
+				{
+					push( @$_arrayofdata, $_eachtmpdata );
+
+					if( scalar(@$_arrayofdata) > 10000 )
+					{
+						print( $_handleoflog ${ Kanadzuchi::Metadata->to_string($_arrayofdata) } );
+						$pprogressbar->update() if( $pprogressbar );
+						$_arrayofdata = [];
 					}
 				}
-				continue
+
+				if( scalar(@$_arrayofdata) )
 				{
-					$_indexofdata++;
+					print( $_handleoflog ${ Kanadzuchi::Metadata->to_string($_arrayofdata) } );
+					$pprogressbar->update($recsofloaded) if( $pprogressbar );
+					$_arrayofdata = [];
 				}
-			}
-			else
-			{
-				$_cacheofdata = ${ Kanadzuchi::Metadata->to_string($dataoftheday) }
-			}
-
-			if( length($_eachlogbuff) + length($_cacheofdata) )
-			{
-				print( $_handleoftmp $_cacheofdata );
-				print( $_handleoftmp $_eachlogbuff );
-				$_eachlogbuff = q();
-				$_cacheofdata = q();
-			}
-
-			$_handleoftmp->close() if( $_handleoftmp );
-			$_handleoflog->close() if( $_handleoflog );
-
-			unless( -s $_eachregrtmp )
-			{
+				$_handleoflog->close() if( $_handleoflog );
 				$_eachregrlog->unlock();
-				$_eachregrtmp->unlock();
-				$_eachregrtmp->remove;
-				next();
 			}
 
-			$_eachregrtmp->remove() if( File::Copy::copy( $_eachregrtmp->stringify(), $_eachregrlog->stringify() ));
-			$_eachregrtmp->unlock();
-			$_eachregrlog->unlock();
 
 		} # End of the loop foreach(WRITE_TO_REGULAR_LOG)
 		continue
 		{
-			$objectbydate->{$_key} = [];
+			$objectbydate->{$_key} = undef();
 		}
 
 
@@ -400,7 +484,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 			# |  _ <| |___| |  | | |_| |\ V / | |___    | | | |  | |  __/| |__| |_| | |_| |
 			# |_| \_\_____|_|  |_|\___/  \_/  |_____|   |_| |_|  |_|_|   |_____\___/ \____|
 			#
-			foreach my $_t ( @{$templogfiles} )
+			foreach my $_t ( @$templogfiles )
 			{
 				# Truncate the temp log
 				if( $Cmd->operation & $Cmd->option->{'truncate'} )
@@ -418,6 +502,24 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'list'} )
 
 			} # End of the loop(for())
 		}
+		elsif( $Cmd->operation & $Cmd->option->{'backup'} )
+		{
+			#  ____    _    ____ _  ___   _ ____    _____ __  __ ____  _     ___   ____ 
+			# | __ )  / \  / ___| |/ / | | |  _ \  |_   _|  \/  |  _ \| |   / _ \ / ___|
+			# |  _ \ / _ \| |   | ' /| | | | |_) |   | | | |\/| | |_) | |  | | | | |  _ 
+			# | |_) / ___ \ |___| . \| |_| |  __/    | | | |  | |  __/| |__| |_| | |_| |
+			# |____/_/   \_\____|_|\_\\___/|_|       |_| |_|  |_|_|   |_____\___/ \____|
+			#                                                                           
+			foreach my $_t ( @$templogfiles )
+			{
+				File::Copy::move( $_t->stringify(), $Bak ) 
+			}
+		}
+
+	} # End of while()
+	continue
+	{
+		$countofchunk--;
 	}
 
 }
@@ -445,9 +547,11 @@ sub parse_options
 
 	# Variables for decide operation
 	my (
+		$_opt_backup,
 		$_opt_conf,
 		$_opt_list,
 		$_opt_concatenate,
+		$_opt_merge,
 		$_opt_remove,
 		$_opt_test,
 		$_opt_truncate,
@@ -458,12 +562,15 @@ sub parse_options
 	# Relations of the option name and the option value
 	Getopt::Long::Configure( 'bundling', 'no_ignore_case' ); 
 	Getopt::Long::GetOptions(
+			'backup=s'	=> \$_opt_backup,
 			'conf=s'	=> \$_opt_conf,
 			'C=s'		=> \$_opt_conf,
 			'concatenate'	=> \$_opt_concatenate,
 			'c'		=> \$_opt_concatenate,
 			'list'		=> \$_opt_list,
 			'l'		=> \$_opt_list,
+			'merge'		=> \$_opt_merge,
+			'm'		=> \$_opt_merge,
 			'remove'	=> \$_opt_remove,
 			'test'		=> \$_opt_test,
 			'T'		=> \$_opt_test,
@@ -520,18 +627,27 @@ sub parse_options
 		map { $_ =~ s{\A[ ]}{}g; $_ =~ s{[ ]\z}{}g; } @_logds;
 
 		@{ $Arg->{'files'} } = map { Path::Class::File::Lockable->new($_) } @_logfs;
-		@{ $Arg->{'dirs'}  } = map { Path::Class::Dir->new($_)  } @_logds;
-
 		map { $_->cleanup(); } @{ $Arg->{'files'} };
-		map { $_->cleanup(); } @{ $Arg->{'dirs'} };
+		push( @{ $Arg->{'dirs'}  }, @_logds );
 	}
 
-	$_operation |= $Cmd->option->{'truncate'} if( $_opt_truncate );
-	$_operation |= $Cmd->option->{'remove'} if( $_opt_remove );
+	if( $_opt_truncate || $_opt_remove )
+	{
+		$_operation |= $Cmd->option->{'truncate'} if( $_opt_truncate );
+		$_operation |= $Cmd->option->{'remove'} if( $_opt_remove );
+	}
+	elsif( defined($_opt_backup) && -d $_opt_backup && -r _ && -x _ && -w _ )
+	{
+		$_operation |= $Cmd->option->{'backup'};
+		$Bak = $_opt_backup;
+	}
+
+	# List
 	$_operation |= $Cmd->option->{'list'} if( $_opt_list );
 
-	# Enable Concatenating
+	# Concatenate or Merge
 	if( $_opt_concatenate ){ $_operation |= $Cmd->option->{'concatenate'}; }
+	elsif( $_opt_merge ){ $_operation |= $Cmd->option->{'merge'}; }
 
 	# Check whether or not Required options are specified.
 	return($_operation);
@@ -551,13 +667,16 @@ sub help
 	printf( STDERR "Usage: %s [OPTIONS] [FILE|DIRECTORY [FILE2|DIR2 [FILE3|DIR3...]]]\n", $Cmd->calledfrom() );
 	printf( STDERR "\n" );
 	printf( STDERR " * WORKING OPTIONS\n" );
-	printf( STDERR "    -c, --concatenate   : Concatenate temporary log files which are created by\n");
+	printf( STDERR "    -c, --concatenate   : CONCATENATE temporary log files which are created by\n");
 	printf( STDERR "                          bin/mailboxparser -l and write to regular logs.\n");
 	printf( STDERR "    -l, --list          : Find and list existing temporary log files in the directory.\n");
+	printf( STDERR "    -m, --merge         : CONCATENATE temporary log files which are created by\n");
+	printf( STDERR "                          bin/mailboxparser -l and write to regular logs.\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * LOGFILE OPTIONS\n" );
 	printf( STDERR "    --truncate          : Truncate temporary log files after concatenating.\n");
 	printf( STDERR "    --remove            : Remove temporary log files after concatenating.\n");
+	printf( STDERR "    --backup <dir>      : Backup; move the temp logs to the directory after mergence.\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * OTHER OPTIONS\n" );
 	printf( STDERR "    -C, --conf <config> : Location of the configuration file used instead of \n");

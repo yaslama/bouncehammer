@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.18 2010/04/12 05:45:56 ak Exp $
+# $Id: mailboxparser.PL,v 1.19 2010/04/14 00:43:37 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -115,9 +115,11 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	require Kanadzuchi::Mbox;
 	require Kanadzuchi::Log;
 	require Digest::MD5;
+	require IO::File;
 
 	my $chunksofemail = [];		# (Ref->Array) Path::Class::File objects
 	my $chunkmboxsize = ($Zci->config->{'file'}->{'maxsize'} * 0.20787 ) || 33554432;
+	my $seekprogressx = undef();
 
 	$chunkmboxsize = 102400 if( $chunkmboxsize < 102400 );		# 100 KB
 	$chunkmboxsize = 33554432 if( $chunkmboxsize > 33554432 );	# 32 MB
@@ -132,13 +134,14 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		my $pseudofrom = q(From MAILER-DAEMON Sun Dec 31 23:59:59 2000).qq(\n);
 		my $tmpmailbox;		# (Path::Class::File) Temporary mailbox
 		my $mboxhandle;		# (IO::File) object for a temporary mailbox
+		my $directoryh;		#
 		my $mfcontents;		# (String) Contents of the mailbox
 		my $filedigest;		# (String) MD5 digest of each file
-		my $stageofdir = 0;	# (Integer) Stage number
+		my $filesindir = 0;	# (Integer) The number of files in the directory
 		my $first5char = q();	# (String) First 5 characters
 		my $md5digests = [];	# (Ref->Array) MD5 Digest hash values of each file
 
-		$Cmd->d( 2, sprintf( "[This process] Max size of each chunk = %d bytes\n", $chunkmboxsize ));
+		$Cmd->d( 2, sprintf( "Max size of each chunk = %d bytes\n", $chunkmboxsize ));
 
 		SEEK_EACH_DIRECTORY: foreach my $d ( @{$Mail->{'dirs'}} )
 		{
@@ -148,15 +151,31 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			# | |_| | | | |  __/ (__| || (_) | |  | |  __/\__ \
 			# |____/|_|_|  \___|\___|\__\___/|_|  |_|\___||___/
 			#                                                  
-			$Cmd->d( 1, sprintf( "[This process] Seek the directory = %s\n", $d->stringify() ));
+			$Cmd->d( 1, sprintf( "Seek the directory = %s\n", $d ));
 
-			READ_FILES_IN_THE_DIRECTORY: while( my $mf = $d->next() )
+			opendir( $directoryh, $d );
+			READ_FILES_IN_THE_DIRECTORY: while( my $mf = readdir($directoryh) )
 			{
-				next() if( -z $mf || ! -r _ || ! -f _ || ! -T _ );
-				push( @{ $Mail->{'files'} }, $mf );
+				next() if( -z $d.'/'.$mf || ! -r _ || ! -f _ || ! -T _ );
+				push( @{ $Mail->{'files'} }, $d.'/'.$mf );
+				$filesindir++;
+				alarm(0);
 			}
+			closedir( $directoryh );
 
 		} # End of foreach(SEEK_EACH_DIRECTORY) 
+		$Cmd->d( 1, sprintf( "The number of files in the directories = %d\n", $filesindir ));
+
+		if( scalar(@{$Mail->{'files'}}) && $Cmd->debuglevel > -1 )
+		{
+			eval { require Term::ProgressBar; };
+			$seekprogressx = new Term::ProgressBar( { 
+						'fh' => \*STDERR,
+						'ETA' => q(linear),
+						'name' => q(Seek mailboxes),
+						'count' => scalar(@{$Mail->{'files'}}),
+					});
+		}
 
 
 		SEEK_EACH_FILE: foreach my $mf ( @{$Mail->{'files'}} )
@@ -167,9 +186,10 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			# |  _| | | |  __/\__ \
 			# |_|   |_|_|\___||___/
 			#                      
+			$seekprogressx->update() if( defined($seekprogressx) );
 			next() if( -z $mf || ! -r _ || ! -f _ || ! -T _ );
 
-			$filedigest = Digest::MD5->new()->addfile($mf->openr())->hexdigest();
+			$filedigest = Digest::MD5->new->addfile(new IO::File(q{< }.$mf))->hexdigest();
 			next() if( grep( m{\A$filedigest\z}, @$md5digests ) );
 			push( @$md5digests, $filedigest );
 
@@ -183,18 +203,14 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			}
 
 			# Read and write
-			$Cmd->d( 1, sprintf( "[This process] Seek the mailbox file = %s\n", $mf->stringify() ));
 			open( my $_eachmailfh, q{<}, $mf ) || next();
 
 			# Skip to the next loop if the file does not seem to email.
 			read( $_eachmailfh, $first5char, 5 );
 			seek( $_eachmailfh, 0, 0 );
-			unless( $first5char =~ m{\A[A-Za-z]} )
-			{
-				# Skip to the next loop if the file not like email.
-				$Cmd->d( 2, sprintf( "[This process] The file %s not like email\n", $mf->stringify() ) );
-				next();
-			}
+
+			# Skip to the next loop if the file not like email.
+			next() unless( $first5char =~ m{\A[A-Za-z]} );
 
 			# Does first 5 bytes of the message is 'From_' ?
 			read( $_eachmailfh, $mfcontents, -s $mf );
@@ -204,9 +220,9 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			alarm(0);
 
 			# Cleanup
-			$mf->remove() if( $Cmd->operation & $Cmd->option->{'remove'} );
-			truncate($mf->stringify(),0) if( $Cmd->operation & $Cmd->option->{'truncate'} );
-			File::Copy::move( $mf->stringify(), $Bak ) if( $Cmd->operation & $Cmd->option->{'backup'} );
+			unlink($mf) if( $Cmd->operation & $Cmd->option->{'remove'} );
+			truncate($mf,0) if( $Cmd->operation & $Cmd->option->{'truncate'} );
+			File::Copy::move( $mf, $Bak ) if( $Cmd->operation & $Cmd->option->{'backup'} );
 
 			if( $tmpmailbox->stat->size > $chunkmboxsize )
 			{
@@ -506,21 +522,13 @@ sub parse_options
 		}
 
 		my @_argvs = @ARGV;
-		my @_mailfs = ();
-		my @_mailds = ();
 
 		map { $_ =~ y{[ ]}{}d; } @_argvs;
-		@_mailfs = grep { -f $_ && -T _ && -r _ } @_argvs;
-		@_mailds = grep { -d $_ && -x _ && -r _ } @_argvs;
+		@{ $Mail->{'files'} } = grep { -f $_ && -T _ && -r _ } @_argvs;
+		@{ $Mail->{'dirs'}  } = grep { -d $_ && -x _ && -r _ } @_argvs;
 
-		map { $_ =~ s{\A[ ]}{}g; $_ =~ s{[ ]\z}{}g; } @_mailfs;
-		map { $_ =~ s{\A[ ]}{}g; $_ =~ s{[ ]\z}{}g; } @_mailds;
-
-		@{ $Mail->{'files'} } = map { Path::Class::File->new($_) } @_mailfs;
-		@{ $Mail->{'dirs'} } = map { Path::Class::Dir->new($_) } @_mailds;
-
-		map { $_->cleanup(); } @{ $Mail->{'files'} };
-		map { $_->cleanup(); } @{ $Mail->{'dirs'} };
+		map { $_ =~ s{\A[ ]}{}g; $_ =~ s{[ ]\z}{}g; } @{ $Mail->{'files'} };
+		map { $_ =~ s{\A[ ]}{}g; $_ =~ s{[ ]\z}{}g; } @{ $Mail->{'dirs'}  };
 
 		if( $_opt_truncate || $_opt_remove )
 		{
