@@ -1,4 +1,4 @@
-# $Id: Kanadzuchi.pm,v 1.15 2010/03/26 07:20:56 ak Exp $
+# $Id: Kanadzuchi.pm,v 1.16 2010/04/15 08:39:40 ak Exp $
 # -Id: TheHammer.pm,v 1.4 2009/09/01 23:19:41 ak Exp -
 # -Id: Herculaneum.pm,v 1.13 2009/08/27 05:09:23 ak Exp -
 # -Id: Version.pm,v 1.35 2009/08/27 05:09:29 ak Exp -
@@ -21,6 +21,7 @@ use 5.008001;
 use warnings;
 use base 'Class::Accessor::Fast::XS';
 use Kanadzuchi::Exceptions;
+use Time::Piece;
 use Error ':try';
 use Errno;
 
@@ -206,7 +207,7 @@ sub is_logfile
 	#		(Integer) 0 = Is not
 	my $self = shift();
 	my $file = shift() || return(0);
-	my $logf = ref($file) eq q|Path::Class::File| ? $file->stringify() : $file;
+	my $logf = ref($file) =~ m{\APath::Class::File} ? $file->stringify() : $file;
 	my( $conf, $tstr, $trex, $rstr, $rrex );
 
 	# Check file name
@@ -223,6 +224,80 @@ sub is_logfile
 	return(2) if( $logf =~ $rrex );
 	return(1) if( $logf =~ $trex );
 	return(0);
+}
+
+sub get_logfile
+{
+	my $self = shift();
+	my $type = shift() || q(temp);
+	my $lopt = shift() || { 'date' => q(), 'output' => q() };
+
+	my $char = substr(lc($type),0,1) || q(t);
+	my $conf = $self->{'config'};
+	my $time = bless(localtime(),'Time::Piece');
+	my $logf = $conf->{'file'}->{'storage'};
+	my $file = q();
+
+	$lopt->{'date'} = $time->ymd('-') unless( defined($lopt->{'date'}) );
+	$lopt->{'date'} = $time->ymd('-') unless( $lopt->{'date'} =~ m{\A\d{4}[-]\d{2}[-]\d{2}\z} );
+
+	if( $char eq 'r' )
+	{
+		# Regular log file name
+		$lopt->{'output'} = $conf->{'directory'}->{'log'} if( ! defined($lopt->{'output'}) || -d $lopt->{'output'} );
+		$lopt->{'output'} =~ s{/\z}{}g;
+		$file = sprintf("%s/%s.%s.%s",
+				$lopt->{'output'}, $logf->{'prefix'}, $lopt->{'date'}, $logf->{'suffix'} );
+	}
+	else
+	{
+		my( $_rand, $_time );
+		$lopt->{'output'} = $conf->{'directory'}->{'spool'} unless( -d $lopt->{'output'} );
+		$lopt->{'output'} =~ s{/\z}{}g;
+		$logf = $conf->{'file'}->{'templog'};
+
+		if( $char eq 't' )
+		{
+			# Temporary Log file name
+			while(1)
+			{
+				$_rand = $$ + int(rand() * 1000);
+				$_time = $time->epoch();
+				$file = sprintf("%s/%s.%s.%08x.%06x.%s", 
+						$lopt->{'output'}, $logf->{'prefix'}, $lopt->{'date'},
+						$_time, $_rand, $logf->{'suffix'} );
+				last() unless( -e $file );
+			}
+		}
+		elsif( $char eq 'f' )
+		{
+			# Log file name for the fallback
+			while(1)
+			{
+				$_rand = ( 2 ** 24 - 1 ) ^ $$ - int(rand() * 1000);
+				$_time = ~$time->epoch();
+				$file = sprintf("%s/%s.%s.%08x.%06x.%s", 
+						$lopt->{'output'}, $logf->{'prefix'}, $lopt->{'date'},
+						$_time, $_rand, $logf->{'suffix'} );
+				last() unless( -e $file );
+			}
+		}
+		elsif( $char eq 'm' )
+		{
+			# Log file name for mergence
+			while(1)
+			{
+				$_rand = ( 2 ** 24 - 1 ) ^ $$ / 2;
+				$_time = $time->epoch() / 100;
+				$file = sprintf("%s/%s.%s.%08x.%06x.%s", 
+						$lopt->{'output'}, $logf->{'prefix'}, $lopt->{'date'},
+						$_time, $_rand, $logf->{'suffix'} );
+				last() unless( -e $file );
+			}
+		}
+	}
+
+	return($file);
 }
 
 1;
