@@ -1,4 +1,4 @@
-# $Id: 501_bin-logger.t,v 1.6 2010/04/12 05:47:06 ak Exp $
+# $Id: 501_bin-logger.t,v 1.7 2010/04/15 10:57:56 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 239 );
+use Test::More ( tests => 345 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',239) if($@);
+	skip('Because no IPC::Cmd for testing',345) if($@);
 
 	use Kanadzuchi::Test::CLI;
 	use Kanadzuchi;
@@ -34,6 +34,8 @@ SKIP: {
 
 	my $O = q| -C|.$E->config();
 	my $LogFiles = Kanadzuchi::Test::CLI->logfiles();
+	my $X = q(./.test/hammer.1970-01-01.11111111.111111.tmp);
+	my $Y = q(./.test/hammer.2008-09-18.log);
 
 	my $Suite = [
 		{
@@ -43,20 +45,40 @@ SKIP: {
 			'wantresult' => 1,
 		},
 		{
-			'name' => 'Specify a file',
+			'name' => 'Specify a file/Concatenate',
 			'option' => $O.q( -c ).$E->output(),
 		},
 		{
-			'name' => 'Specify a directory',
+			'name' => 'Specify a directory/Concatenate',
 			'option' => $O.q( -c ).$E->tempdir(),
 		},
 		{
-			'name' => 'Specify a directory and remove temp logs',
+			'name' => 'Specify a directory and remove temp logs/Concatenate',
 			'option' => $O.q( -c ).$E->tempdir().q( --remove ),
 		},
 		{
-			'name' => 'Specify a directory and truncate temp logs',
+			'name' => 'Specify a directory and truncate temp logs/Concatenate',
 			'option' => $O.q( -c ).$E->tempdir().q( --truncate ),
+		},
+		{
+			'name' => 'Specify a directory and backup temp logs/Concatenate',
+			'option' => $O.q( -c ).$E->tempdir().q( --backup /tmp ),
+		},
+		{
+			'name' => 'Specify a file/Merge',
+			'option' => $O.q( -m ).$X,
+		},
+		{
+			'name' => 'Specify a file and remove temp logs/Merge',
+			'option' => $O.q( -m ).$X.q( --remove ),
+		},
+		{
+			'name' => 'Specify a file and truncate temp logs/Merge',
+			'option' => $O.q( -m ).$X.q( --truncate ),
+		},
+		{
+			'name' => 'Specify a file and backup temp logs/Merge',
+			'option' => $O.q( -m ).$X.q( --backup /tmp ),
 		},
 	];
 
@@ -104,24 +126,52 @@ SKIP: {
 		else
 		{
 			File::Copy::copy( $E->output().q{.bak}, $E->output() ) if( -s $E->output().q{.bak} );
+			my $yaml = undef();
+			my $file = undef();
 
-			$xresult = scalar(IPC::Cmd::run( 'command' => $command ));
-			ok( $xresult, $s->{'name'}.q{: }.$command );
-
-			LOGFILE: foreach my $f ( @$LogFiles )
+			if( $s->{'name'} =~ m{Concatenate\z} )
 			{
-				my $yaml = undef();
-				my $file = $E->tempdir().q(/).$f->{'file'};
+				$xresult = scalar(IPC::Cmd::run( 'command' => $command ));
+				ok( $xresult, $s->{'name'}.q{: }.$command );
 
-				SKIP: {
-					skip( 'No log file', 3 ) unless( -e $file );
+				LOGFILE: foreach my $f ( @$LogFiles )
+				{
+					$yaml = undef();
+					$file = $E->tempdir().q(/).$f->{'file'};
 
-					$yaml = JSON::Syck::LoadFile( $file );
-					isa_ok( $yaml, q|ARRAY|, $f->{'file'}.q{ is Array(JSON)} );
-					ok( scalar(@$yaml) > 0, $f->{'file'}.q{ has }.$f->{'entity'}.q{ records} );
-					is( $K->is_logfile($f->{'file'}), 2, $f->{'file'}.q{ is regular log file} );
+					SKIP: {
+						skip( 'No log file', 3 ) unless( -e $file );
 
-					unlink( $file ) if( -e $file );
+						$yaml = JSON::Syck::LoadFile( $file );
+						isa_ok( $yaml, q|ARRAY|, $f->{'file'}.q{ is Array(JSON)} );
+						ok( scalar(@$yaml) > 0, $f->{'file'}.q{ has }.$f->{'entity'}.q{ records} );
+						is( $K->is_logfile($f->{'file'}), 2, $f->{'file'}.q{ is regular log file} );
+
+						unlink( $file ) if( -e $file );
+					}
+				}
+			}
+			elsif( $s->{'name'} =~ m{Merge\z} )
+			{
+				open( my $_tmplogx, q{<}, $E->output );
+				open( my $_tmplog1, q{>}, $X );
+				while( my $__line = <$_tmplogx> )
+				{
+					print($_tmplog1 $__line );
+					last();
+				}
+				close($_tmplogx);
+				close($_tmplog1);
+
+				foreach my $c ( 1 .. 3 )
+				{
+					$xresult = scalar(IPC::Cmd::run( 'command' => $command ));
+					ok( $xresult, qq([$c] ).$s->{'name'}.q{: }.$command );
+
+					$yaml = JSON::Syck::LoadFile($Y); 
+					isa_ok( $yaml, q|ARRAY|, qq([$c] ).$Y.q{ is Array(JSON)} );
+					is( scalar(@$yaml), 1, qq([$c] ).$Y.q{ has 1 record} );
+					is( $K->is_logfile($Y), 2, qq([$c] ).$Y.q{ is regular log file} );
 				}
 			}
 		}
@@ -129,6 +179,7 @@ SKIP: {
 
 	POSTPROCESS: {
 		File::Copy::copy( $E->output().q{.bak}, $E->output() ) if( -s $E->output().q{.bak} );
+		unlink('/tmp/'.File::Basename::basename($E->output())) if( -w '/tmp/'.File::Basename::basename($E->output) );
 	}
 
 }
