@@ -1,4 +1,4 @@
-# $Id: 500_bin-mailboxparser.t,v 1.18 2010/04/09 06:40:40 ak Exp $
+# $Id: 500_bin-mailboxparser.t,v 1.19 2010/04/15 10:17:55 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,7 +7,7 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 70 );
+use Test::More ( tests => 75 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
@@ -170,17 +170,28 @@ SKIP: {
 		my $copiedf = $E->tempdir().q(/).$inputfn;
 		my $command = $E->perl().$E->command().q( -C).$E->config().q( ).$copiedf;
 		my $xstatus = 0;
+		my $cmdexec = q();
 
-		foreach my $o ( '--truncate', '--remove' )
+		foreach my $o ( '--truncate', '--remove', '--backup' )
 		{
-			my $cmd = $command.qq| $o > /dev/null|;
-
 			ok( scalar(IPC::Cmd::run('command' => q|/bin/cp |.$E->input().q| |.$E->tempdir())), q|Copying...| );
 			ok( -f $copiedf, q(Copied) );
 
-			TRUNCATE_OR_REMOVE: {
-				$xstatus = scalar(IPC::Cmd::run('command' => $cmd));
-				ok( $xstatus, $cmd );
+			if( $o eq '--backup' )
+			{
+				$cmdexec = $command.qq| $o /tmp > /dev/null|;
+				$xstatus = scalar(IPC::Cmd::run('command' => $cmdexec));
+				ok( $xstatus, $cmdexec );
+				is( ! -f $copiedf, 1, $copiedf.q( is moved) );
+				is( -f '/tmp/'.$inputfn, 1, q(Backup: /tmp/).$inputfn );
+				unlink($copiedf) if( -w $copiedf );
+				unlink('/tmp/'.$inputfn) if( -w '/tmp/'.$inputfn);
+			}
+			else
+			{
+				$cmdexec = $command.qq| $o > /dev/null|;
+				$xstatus = scalar(IPC::Cmd::run('command' => $cmdexec));
+				ok( $xstatus, $cmdexec );
 				is( -s $copiedf, 0, $copiedf.q( size = 0) ) if( $o eq '--truncate' );
 				is( ! -f $copiedf, 1, $copiedf.q( is removed) ) if( $o eq '--remove' );
 				unlink($copiedf) if( -w $copiedf );
