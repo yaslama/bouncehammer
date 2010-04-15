@@ -1,4 +1,4 @@
-# $Id: 010_kanadzuchi.t,v 1.3 2009/12/23 07:32:07 ak Exp $
+# $Id: 010_kanadzuchi.t,v 1.4 2010/04/15 08:40:41 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Kanadzuchi::Test;
 use Kanadzuchi;
 use File::Basename qw(basename);
 use Path::Class::File;
-use Test::More ( tests => 89 );
+use Test::More ( tests => 117 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -20,7 +20,7 @@ use Test::More ( tests => 89 );
 #
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi|,
-	'methods' => [ 'new', 'is_exception', 'load', 'is_logfile' ],
+	'methods' => [ 'new', 'is_exception', 'load', 'is_logfile', 'get_logfile' ],
 	'instance' => new Kanadzuchi(),
 );
 
@@ -106,6 +106,24 @@ METHODS: {
 			my $argv = defined($c) ? sprintf("%#x",ord($c)) : 'undef()';
 			is( $object->is_logfile( $c ), 0, '->is_logfile('.$argv.')' );
 		}
+	}
+
+	GET_LOGFILE: {
+		my( $tlog, $rlog, $flog, $mlog );
+
+		foreach my $d ( '', '1970-01-01', 'a', 0, ' ', undef(), {} )
+		{
+			$tlog = $object->get_logfile('t',{ 'output' => '/var/tmp', 'date' => $d } );
+			$rlog = $object->get_logfile('r',{ 'output' => './.test', 'date' => $d } );
+			$flog = $object->get_logfile('f',{ 'output' => './examples', 'date' => $d } );
+			$mlog = $object->get_logfile('m',{ 'output' => '/', 'date' => $d } );
+
+			ok( $object->is_logfile($tlog), $classx.q|->get_logfile = |.$tlog );
+			ok( $object->is_logfile($rlog), $classx.q|->get_logfile = |.$rlog );
+			ok( $object->is_logfile($flog), $classx.q|->get_logfile = |.$flog );
+			ok( $object->is_logfile($mlog), $classx.q|->get_logfile = |.$mlog );
+		}
+
 	}
 }
 __END__
