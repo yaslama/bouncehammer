@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.19 2010/04/14 00:43:37 ak Exp $
+# $Id: mailboxparser.PL,v 1.20 2010/04/15 08:39:11 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -273,15 +273,15 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		my $_tmpld = q(/tmp);				# Temporary directory
 		my $_tmplf = q();				# Temporary file name
 		my $_conff = $Zci->config->{'file'};		# File name configurations in YAML
-		my $_objdt = bless(localtime(),'Time::Piece');	# Time::Piece object
+		#my $_objdt = bless(localtime(),'Time::Piece');	# Time::Piece object
 
-		# Set temporary log directory
+		# Set temporary log directory and create temporary log file name.
+		#  ex) her.2009-02-11.49b7c9e2.0011c5.tmp
 		$_tmpld = $Out if( -d $Out && -w _ && -r _ );
-
-		# Create temporary log file name, ex) her.2009-02-11.49b7c9e2.0011c5.tmp
-		$_tmplf = sprintf("%s/%s.%s.%08x.%06x.%s", $_tmpld, $_conff->{'templog'}->{'prefix'},
-				$_objdt->ymd('-'), $_objdt->epoch(), $$, $_conff->{'templog'}->{'suffix'} );
-		$_tmplf = uc($_tmplf) if( -e $_tmplf );		# If it already exists
+		$_tmplf = $Zci->get_logfile( 't', { 'output' => $_tmpld } );
+		# $_tmplf = sprintf("%s/%s.%s.%08x.%06x.%s", $_tmpld, $_conff->{'templog'}->{'prefix'},
+		#		$_objdt->ymd('-'), $_objdt->epoch(), $$, $_conff->{'templog'}->{'suffix'} );
+		#$_tmplf = uc($_tmplf) if( -e $_tmplf );		# If it already exists
 
 		# Set directory name and log fle name, and format
 		$templogdevice = new IO::File( qq{>> $_tmplf} );
