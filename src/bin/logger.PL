@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.11 2010/04/15 08:39:10 ak Exp $
+# $Id: logger.PL,v 1.12 2010/04/16 06:53:23 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -667,19 +667,18 @@ sub parse_options
 
 	CHECK_TEMPLOG_FILES_AND_DIRS:
 	{
-		if( scalar(@ARGV) == 0 || $ARGV[0] eq '-' )
-		{
-			$Arg->{'stdin'} = 1;
-			last();
-		}
-
 		my @_argvs = @ARGV;
-		my @_logfs = ();
-		my @_logds = ();
 
+		last() unless( scalar(@_argvs) );
 		map { $_ =~ y{[ ]}{}d; } @_argvs;
-		@_logfs = grep { -f $_ && -T _ && -r _ } @_argvs;
-		@_logds = grep { -d $_ && -x _ && -r _ } @_argvs;
+		my @_logfs = grep { -f $_ && -T _ && -r _ } @_argvs;
+		my @_logds = grep { -d $_ && -x _ && -r _ } @_argvs;
+
+		if( scalar(@_logfs) == 0 && scalar(@_logds) == 0 )
+		{
+			$Cmd->e( 'Neither the temporary log file nor the temporary '
+				.'log directory exists nor it is not valid: '.join(', ',@_argvs) );
+		}
 
 		map { $_ =~ s{\A[ ]}{}g; $_ =~ s{[ ]\z}{}g; } @_logfs;
 		map { $_ =~ s{\A[ ]}{}g; $_ =~ s{[ ]\z}{}g; } @_logds;

@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.20 2010/04/15 08:39:11 ak Exp $
+# $Id: mailboxparser.PL,v 1.21 2010/04/16 06:53:23 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -156,15 +156,16 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			opendir( $directoryh, $d );
 			READ_FILES_IN_THE_DIRECTORY: while( my $mf = readdir($directoryh) )
 			{
-				next() if( -z $d.'/'.$mf || ! -r _ || ! -f _ || ! -T _ );
+				next() if( -z $d.'/'.$mf || ! -r _ || ! -f _ || ! -T _ || ! -s _ );
 				push( @{ $Mail->{'files'} }, $d.'/'.$mf );
 				$filesindir++;
-				alarm(0);
 			}
 			closedir( $directoryh );
 
 		} # End of foreach(SEEK_EACH_DIRECTORY) 
+
 		$Cmd->d( 1, sprintf( "The number of files in the directories = %d\n", $filesindir ));
+		$Cmd->e('There is no valid email in the directories') unless( scalar(@{$Mail->{'files'}}) );
 
 		if( scalar(@{$Mail->{'files'}}) && $Cmd->debuglevel > -1 )
 		{
@@ -187,7 +188,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			# |_|   |_|_|\___||___/
 			#                      
 			$seekprogressx->update() if( defined($seekprogressx) );
-			next() if( -z $mf || ! -r _ || ! -f _ || ! -T _ );
+			next() if( -z $mf || ! -s _ );
 
 			$filedigest = Digest::MD5->new->addfile(new IO::File(q{< }.$mf))->hexdigest();
 			next() if( grep( m{\A$filedigest\z}, @$md5digests ) );
@@ -210,13 +211,13 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			seek( $_eachmailfh, 0, 0 );
 
 			# Skip to the next loop if the file not like email.
-			next() unless( $first5char =~ m{\A[A-Za-z]} );
+			do { $_eachmailfh->close(); next() } unless( $first5char =~ m{\A[A-Za-z]} );
 
 			# Does first 5 bytes of the message is 'From_' ?
 			read( $_eachmailfh, $mfcontents, -s $mf );
 			print( $mboxhandle $pseudofrom ) if( $first5char ne 'From ' );
 			print( $mboxhandle $mfcontents ) if( $mfcontents );
-			$_eachmailfh->close() if( ref($_eachmailfh) eq q|IO::Handle| );
+			$_eachmailfh->close() if( $_eachmailfh );
 			alarm(0);
 
 			# Cleanup
@@ -228,7 +229,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			{
 				# The size of temporary mailbox file is bigger than the limit
 				push( @$chunksofemail, $tmpmailbox );
-				$mboxhandle->close() if( ref($mboxhandle) eq q|IO::Handle| );
+				$mboxhandle->close() if( $mboxhandle );
 				$mboxhandle = undef();
 				$tmpmailbox = undef();
 			}
@@ -238,7 +239,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		if( defined($tmpmailbox) && defined($mboxhandle) )
 		{
 			push( @$chunksofemail, $tmpmailbox );
-			$mboxhandle->close() if( ref($mboxhandle) eq q|IO::File| );
+			$mboxhandle->close() if( $mboxhandle );
 			$mboxhandle = undef();
 			$tmpmailbox = undef();
 		}
@@ -273,15 +274,11 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		my $_tmpld = q(/tmp);				# Temporary directory
 		my $_tmplf = q();				# Temporary file name
 		my $_conff = $Zci->config->{'file'};		# File name configurations in YAML
-		#my $_objdt = bless(localtime(),'Time::Piece');	# Time::Piece object
 
 		# Set temporary log directory and create temporary log file name.
 		#  ex) her.2009-02-11.49b7c9e2.0011c5.tmp
 		$_tmpld = $Out if( -d $Out && -w _ && -r _ );
 		$_tmplf = $Zci->get_logfile( 't', { 'output' => $_tmpld } );
-		# $_tmplf = sprintf("%s/%s.%s.%08x.%06x.%s", $_tmpld, $_conff->{'templog'}->{'prefix'},
-		#		$_objdt->ymd('-'), $_objdt->epoch(), $$, $_conff->{'templog'}->{'suffix'} );
-		#$_tmplf = uc($_tmplf) if( -e $_tmplf );		# If it already exists
 
 		# Set directory name and log fle name, and format
 		$templogdevice = new IO::File( qq{>> $_tmplf} );
@@ -526,6 +523,12 @@ sub parse_options
 		map { $_ =~ y{[ ]}{}d; } @_argvs;
 		@{ $Mail->{'files'} } = grep { -f $_ && -T _ && -r _ } @_argvs;
 		@{ $Mail->{'dirs'}  } = grep { -d $_ && -x _ && -r _ } @_argvs;
+
+		if( scalar(@{$Mail->{'files'}}) == 0 && scalar(@{$Mail->{'dirs'}}) == 0 )
+		{
+			$Cmd->e( 'Neither the mailbox nor the maildir exists '
+				.'nor it is not valid: '.join(', ',@_argvs) );
+		}
 
 		map { $_ =~ s{\A[ ]}{}g; $_ =~ s{[ ]\z}{}g; } @{ $Mail->{'files'} };
 		map { $_ =~ s{\A[ ]}{}g; $_ =~ s{[ ]\z}{}g; } @{ $Mail->{'dirs'}  };
