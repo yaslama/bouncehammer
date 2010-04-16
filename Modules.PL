@@ -1,4 +1,4 @@
-# $Id: Modules.PL,v 1.15 2010/03/04 21:24:27 ak Exp $
+# $Id: Modules.PL,v 1.16 2010/04/16 06:52:52 ak Exp $
 # -Id: PERL-MODULES.PL,v 1.1 2009/08/29 07:32:08 ak Exp -
 # -Id: PERL-MODULES,v 1.6 2009/08/12 01:57:35 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -16,7 +16,9 @@ my $Dependencies = {
 		'Email::AddressParser'	=> [ 0.04, 0, 'Apache' ],
 		'Errno'			=> [ 1.0, 5.00504, 'Perl' ],
 		'Error'			=> [ 0.17015, 0, 'Perl' ],
+		'File::Copy'		=> [ 2.06, 5.002, 'Perl' ],
 		'File::Spec'		=> [ 0.86, 5.00405, 'Unknown' ],
+		'IO::File'		=> [ 1.20, 5.00307, 'Perl' ],
 		'JSON::Syck'		=> [ 0.30, 0, 'MIT' ],
 		'List::Util'		=> [ 1.13, 5.007003, 'Perl' ],
 		'MIME::Parser'		=> [ 5.420, 0, 'Perl' ],
@@ -29,6 +31,7 @@ my $Dependencies = {
 	'UI::CLI' => {
 		'Carp'			=> [ 1.01, 5.000000, 'Perl' ],
 		'File::Basename'	=> [ 2.72, 5.000000, 'Perl' ],
+		'File::stat'		=> [ 0.01, 5.004000, 'Unknown' ],
 		'Getopt::Long'		=> [ 2.34, 5.000000, 'Unknown' ],
 		'Path::Class::File::Lockable'	=> [ 0.01, 0, 'Unknown' ],
 	},
@@ -41,7 +44,6 @@ my $Dependencies = {
 		'Compress::Zlib'	=> [ 2.023, 5.009003, 'Perl' ],
 		'Crypt::CBC'		=> [ 2.30, 0, 'Unknown' ],
 		'Crypt::DES'		=> [ 1.00, 0, 'Unknown' ],
-		'File::Copy'		=> [ 2.06, 5.002, 'Perl' ],
 		'IO::Compress::Bzip2'	=> [ 2.023, 5.010001, 'Perl' ],
 		'IO::Compress::Gzip'	=> [ 2.023, 5.009004, 'Perl' ],
 		'IO::Compress::Zip'	=> [ 2.023, 5.009004, 'Perl' ],
