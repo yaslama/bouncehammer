@@ -1,4 +1,4 @@
-# $Id: 501_bin-logger.t,v 1.7 2010/04/15 10:57:56 ak Exp $
+# $Id: 501_bin-logger.t,v 1.8 2010/04/16 06:53:44 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -153,18 +153,19 @@ SKIP: {
 			}
 			elsif( $s->{'name'} =~ m{Merge\z} )
 			{
-				open( my $_tmplogx, q{<}, $E->output );
-				open( my $_tmplog1, q{>}, $X );
-				while( my $__line = <$_tmplogx> )
-				{
-					print($_tmplog1 $__line );
-					last();
-				}
-				close($_tmplogx);
-				close($_tmplog1);
 
 				foreach my $c ( 1 .. 3 )
 				{
+					open( my $_tmplogx, q{<}, $E->output );
+					open( my $_tmplog1, q{>}, $X );
+					while( my $__line = <$_tmplogx> )
+					{
+						print($_tmplog1 $__line );
+						last();
+					}
+					close($_tmplogx);
+					close($_tmplog1);
+
 					$xresult = scalar(IPC::Cmd::run( 'command' => $command ));
 					ok( $xresult, qq([$c] ).$s->{'name'}.q{: }.$command );
 
