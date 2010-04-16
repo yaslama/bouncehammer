@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES.JA (utf-8/LF)
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES.JA,v 1.22 2010/04/15 08:38:37 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.23 2010/04/16 06:52:52 ak Exp $
 -----------------------------------------------------------------------
  オープンソースのバウンスメール解析システム``BounceHammer''のリリース
  ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
@@ -11,29 +11,17 @@
 -----------------------------------------------------------------------
 
 -----------------------------------------------------------------------
-2.2.0/2.0.0	2010/xx/yy
-  新しいファイル:
-    * etc/httpd.conf-example
-    * lib/Kanadzuchi/API/Dispatch.pm
-    * lib/Kanadzuchi/Mail/qmail.pm
-    * lib/Kanadzuchi/Mbox/Bounced/Yahoo.pm
-    * lib/Kanadzuchi/RFC1893.pm
-    * lib/Kanadzuchi/UI/Web/Dispatch.pm
-    * libexec/mp-startup.pl
-    * share/script/more-example-senderdomains.sql
-    * share/template/standard/stylesheet/reason.css
-    * share/template/standard/stylesheet/search.css
-    * share/template/standard/stylesheet/testparse.css
-    * Implement.PL
-    
+2.2.0/2.0.0	2010/04/16
+
   新機能:
     * BounceHammerがApache2.2上のmod_perl2で動作するようになりました。
     * qmailのバウンスメール(QSBMF)も解析できるようになりました。
     * WebUIでJSONフォーマットでのダウンロードが可能になりました。
-    * bin/mailboxparserコマンドの新しいオプション: --skip-temperror
-    * bin/mailboxparser,bin/loggerコマンドの新しいオプション: --backup
-    * bin/logger から次のオプションが削除されました:  -f, --file, -d, 
-      --directory, --strict.
+    * bin/mailboxparser コマンドの新しいオプション: --skip-temperrorと
+      --backup
+    * bin/logger コマンドの新しいオプション: --merge と --backup
+    * bin/logger から次のオプションが削除されました:  -f,(--file), -d,
+      (--directory), --strict.
 
   細かな改善点:
     * mailboxparserの解析精度が向上しました。
@@ -47,21 +35,35 @@
     * WebUIでマスターテーブルの内容をページ分割して表示します。
 
   修正されたバグ:
-    * t_bouncelogs.recipientカラムから一意制約(UNIQUE)を削除しました。
     * WebUI のページフッタ内リンクテキストの色が薄すぎる点を修正しまし
       た: share/template/standard/stylesheet/bouncehammer.cf
     * WebUIのURLテキストをクリックしても選択されない問題を修正。
     * (patch:001) datadumperとWebUI検索フォームで、addresserによる並べ
       替え指定時に結果が得られない問題を修正。
     * (patch:002) Makefileが不完全であった問題を修正しました。
+    * (patch:003) share/script/{SQLite,MySQL,PostgreSQL}.sql内において
+      t_bouncelogs.recipientから一意制約を削除しました。
+    * bin/mailboxparser がファイル名にカンマを含むファイルを読出せない
+      問題を修正しました。
+
+  新しいファイル:
+    * etc/httpd.conf-example
+    * lib/Kanadzuchi/API/Dispatch.pm
+    * lib/Kanadzuchi/Mail/qmail.pm
+    * lib/Kanadzuchi/Mbox/Bounced/Yahoo.pm
+    * lib/Kanadzuchi/RFC1893.pm
+    * lib/Kanadzuchi/UI/Web/Dispatch.pm
+    * libexec/mp-startup.pl
+    * share/script/more-example-senderdomains.sql
+    * share/template/standard/stylesheet/reason.css
+    * share/template/standard/stylesheet/search.css
+    * share/template/standard/stylesheet/testparse.css
+    * t/018_rfc1893.t
+    * Implement.PL
 
 
 -----------------------------------------------------------------------
 2.1.0/2.0.0	2010/03/19
-  新しいファイル:
-    * RELEASE_NOTES.JA (RELEASE_NOTESの日本語版)
-    * examples/request-to-api.(pl|py|php|rb): BounceHammer APIへの接続
-      用サンプルスクリプトを追加しました。
 
   新機能:
     * bin/mailboxparser, bin/datadumper の出力形式にJSONが使用できるよ
@@ -84,6 +86,11 @@
       違った値になっていたのを修正しました。
     * Makefileのターゲット名が不正であった件を修正しました。
     * src/lib/Kanadzuchi/Mail/Group/Makefileが不完全であった件を修正。
+
+  新しいファイル:
+    * RELEASE_NOTES.JA (RELEASE_NOTESの日本語版)
+    * examples/request-to-api.(pl|py|php|rb): BounceHammer APIへの接続
+      用サンプルスクリプトを追加しました。
 
 
 -----------------------------------------------------------------------

@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.42 2010/04/15 08:38:37 ak Exp $
+ $Id: RELEASE_NOTES,v 1.43 2010/04/16 06:52:52 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -14,29 +14,16 @@
 -----------------------------------------------------------------------
 
 -----------------------------------------------------------------------
-2.2.0/2.0.0	2010/xx/yy
-  New files:
-    * etc/httpd.conf-example
-    * lib/Kanadzuchi/API/Dispatch.pm
-    * lib/Kanadzuchi/Mail/qmail.pm
-    * lib/Kanadzuchi/Mbox/Bounced/Yahoo.pm
-    * lib/Kanadzuchi/RFC1893.pm
-    * lib/Kanadzuchi/UI/Web/Dispatch.pm
-    * libexec/mp-startup.pl
-    * share/script/more-example-senderdomains.sql
-    * share/template/standard/stylesheet/reason.css
-    * share/template/standard/stylesheet/search.css
-    * share/template/standard/stylesheet/testparse.css
-    * Implement.PL
+2.2.0/2.0.0	2010/04/16
 
   New functionality:
     * BounceHammer now works on mod_perl2 with Apache 2.2.
     * BounceHammer can also analyze the qmail bounce message(QSBMF).
     * JSON format avaiable as a download format from WebUI.
-    * New option of bin/mailboxparser: --skip-temperror
-    * New option of bin/mailboxparser and bin/logger: --backup
-    * Remove the following options from bin/logger command:  -f, --file,
-      -d, --directory, and --strict.
+    * New options of bin/mailboxparser: --skip-temperror, and --backup.
+    * New options of bin/logger: --merge, and --backup
+    * Remove the following options from bin/logger command:-f,(--file),
+      -d,(--directory), and --strict.
 
   Assorted improvements and code cleanup:
     * Analytical accuracy of mailboxparser improvement.
@@ -50,21 +37,36 @@
     * Pagination of mastertable contents in WebUI.
 
   Fixed bugs:
-    * REMOVE UNIQUE CONSTRAINT FROM t_bouncelogs.recipient COLUMN.
     * Fixed an issue that hyperlink text color in the WebUI page footer
       is light; share/template/standard/stylesheet/bouncehammer.cf .
     * Fixed an issue that the URL text is not selected  by clicking the
       text(WebUI).
-    * Fixed an issue that datadumper and WebUI search form  cannnot get
-      the results order by 'addresser'. (patch:001)
-    * Fixed an issue that Makefile does not work completely.(patch:002)
+    * (patch:001) Fixed an issue that datadumper and  WebUI search form
+      cannnot get the results order by 'addresser'.
+    * (patch:002) Fixed an issue that Makefile doesn't work completely.
+    * (patch:003) Remove UNIQUE constraint from  t_bouncelogs.recipient
+      in share/script/{SQLite,MySQL,PostgreSQL}.sql .
+    * Fixed an issue that  bin/mailboxparser can not read  a file which
+      contains a comma in its name.
+
+  New files:
+    * etc/httpd.conf-example
+    * lib/Kanadzuchi/API/Dispatch.pm
+    * lib/Kanadzuchi/Mail/qmail.pm
+    * lib/Kanadzuchi/Mbox/Bounced/Yahoo.pm
+    * lib/Kanadzuchi/RFC1893.pm
+    * lib/Kanadzuchi/UI/Web/Dispatch.pm
+    * libexec/mp-startup.pl
+    * share/script/more-example-senderdomains.sql
+    * share/template/standard/stylesheet/reason.css
+    * share/template/standard/stylesheet/search.css
+    * share/template/standard/stylesheet/testparse.css
+    * t/018_rfc1893.t
+    * Implement.PL
+
 
 -----------------------------------------------------------------------
 2.1.0/2.0.0	2010/03/19
-  New files:
-    * RELEASE_NOTES.JA (Japanese version of RELEASE_NOTES)
-    * examples/request-to-api.(pl|py|php|rb): Sample  scripts  for con-
-      necting to the BounceHammer API.
 
   New functionality:
     * JSON format is now available at 2 commands: bin/mailboxparser and
@@ -87,6 +89,12 @@
     * Fixed an issue that wrong target name in ./Makefile
     * Fixed an issue that ./src/lib/Kanadzuchi/Mail/Group/Makefile does
       not work completely.
+
+  New files:
+    * RELEASE_NOTES.JA (Japanese version of RELEASE_NOTES)
+    * examples/request-to-api.(pl|py|php|rb): Sample  scripts  for con-
+      necting to the BounceHammer API.
+
 
 
 -----------------------------------------------------------------------
