@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.11 2010/04/15 08:40:16 ak Exp $
+# $Id: Bounced.pm,v 1.12 2010/04/20 20:36:36 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -202,6 +202,7 @@ sub eatit
 					}
 
 					$tempheader->{'addresser'} = $_e;
+					last();
 				}
 			}
 
