@@ -1,4 +1,4 @@
-# $Id: 100_rdb.t,v 1.4 2010/02/17 10:09:21 ak Exp $
+# $Id: 100_rdb.t,v 1.5 2010/04/20 20:37:15 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Kanadzuchi::Test;
 use Kanadzuchi::RDB;
 use Kanadzuchi::RDB::Schema;
 use JSON::Syck;
-use Test::More ( tests => 345 );
+use Test::More ( tests => 259 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -37,12 +37,11 @@ PREPROCESS: {
 METHODS: {
 	my $object = undef();
 	my $config = JSON::Syck::LoadFile( q{./src/etc/prove.cf} );
-	my $therdb = $T->tempdir().q{/test.db};
+	my $therdb = q(:memory');
 	my $datasn = q();
 	my $rdbset = {
 		'PostgreSQL' => { 'driver' => 'Pg', 'port' => 5432, 'short' => 'p', },
 		'MySQL' => { 'driver' => 'mysql', 'port' => 3306, 'short' => 'm', },
-		'Sybase' => { 'driver' => 'Sybase', 'port' => 4100, 'short' => 'y', },
 		'SQLite' => { 'driver' => 'SQLite', 'port' => undef(), 'short' => 's', 'dbname' => $therdb },
 	};
 

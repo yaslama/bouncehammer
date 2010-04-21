@@ -1,4 +1,4 @@
-# $Id: 502_bin-tablectl.t,v 1.10 2010/04/01 08:05:21 ak Exp $
+# $Id: 502_bin-tablectl.t,v 1.11 2010/04/20 20:37:15 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 365 );
+use Test::More ( tests => 397 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',365) if($@);
+	skip('Because no IPC::Cmd for testing',397) if($@);
 
 	use Kanadzuchi::Test::CLI;
 	use Kanadzuchi;
@@ -52,7 +52,7 @@ SKIP: {
 	# |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 	#
 	SKIP: {
-		my $S = 365;	# Skip
+		my $S = 397;	# Skip
 		eval { require DBI; }; skip( 'Because no DBI for testing', $S ) if( $@ );
 		eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $S ) if( $@ );
 		eval { $E->environment(2); }; 

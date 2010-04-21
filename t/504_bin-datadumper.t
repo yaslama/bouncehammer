@@ -1,4 +1,4 @@
-# $Id: 504_bin-datadumper.t,v 1.10 2010/03/25 15:50:37 ak Exp $
+# $Id: 504_bin-datadumper.t,v 1.11 2010/04/20 20:37:15 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -71,7 +71,7 @@ SKIP: {
 		},
 		{
 			'name' => 'Dump by message token',
-			'option' => ' --token c7215ac1d049fa2dfbbb57114fdf9c92',
+			'option' => ' --token 0f9085b0dce9bf7d107eb36cd5c65195',
 			'count' => 1,
 		},
 		{

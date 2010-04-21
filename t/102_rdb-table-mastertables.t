@@ -1,4 +1,4 @@
-# $Id: 102_rdb-table-mastertables.t,v 1.8 2010/03/26 07:16:31 ak Exp $
+# $Id: 102_rdb-table-mastertables.t,v 1.9 2010/04/20 20:37:15 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -15,7 +15,7 @@ use Kanadzuchi::RDB::Table::Destinations;
 use Kanadzuchi::RDB::Table::HostGroups;
 use Kanadzuchi::RDB::Table::Providers;
 use Kanadzuchi::RDB::Table::Reasons;
-use Test::More ( tests => 10579 );
+use Test::More ( tests => 11139 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -112,7 +112,7 @@ EACH_TABLE: {
 
 	SKIP: {
 		my $D = new Kanadzuchi::RDB( 'dbtype' => q|SQLite| );
-		my $S = 10578;	# Skip
+		my $S = 11139;	# Skip
 
 		eval { require DBI; }; skip( 'Because no DBI for testing', $S ) if( $@ );
 		eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $S ) if( $@ );
