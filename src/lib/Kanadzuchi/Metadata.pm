@@ -1,4 +1,4 @@
-# $Id: Metadata.pm,v 1.11 2010/04/14 00:44:24 ak Exp $
+# $Id: Metadata.pm,v 1.12 2010/04/20 20:35:51 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                         
@@ -55,7 +55,7 @@ sub to_string
 	my $objref = ref($object) || return($object);
 
 	eval {
-		# local $JSON::Syck::SortKeys = 1;
+		local $JSON::Syck::SortKeys = 1;
 		if( $objref eq q|ARRAY| )
 		{
 			$arrayr = $object;
