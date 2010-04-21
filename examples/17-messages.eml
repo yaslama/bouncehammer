@@ -50,7 +50,7 @@ Received: from USER-PC97 ([192.0.2.97])
  for <domain-does-not-exist@example.gov>; 
  Thu, 18 Sep 2008 17:54:04 +0900 (JST)
 Message-ID: <AA406E7E18714AB2927DAACC24B47C4A@USER-PC97>
-From: "User, For Example" <user@example.jp>
+From: "User1, For Example" <user1@example.jp>
 To: <domain-does-not-exist@example.gov>
 Subject: TEST
 Date: Thu, 18 Sep 2008 17:53:55 +0900
@@ -75,7 +75,7 @@ Received: from localhost (localhost)
 Date: Tue, 28 Apr 2009 08:17:48 +0900 (JST)
 From: Mail Delivery Subsystem <MAILER-DAEMON>
 Message-Id: <200904272317.n3RNHmqg024671@smtp-out-34.example.jp>
-To: <user@example.jp>
+To: <user1@example.jp>
 MIME-Version: 1.0
 Content-Type: multipart/report; report-type=delivery-status;
 	boundary="n3RNHmqg024671.1240874268/smtp-out-34.example.jp"
@@ -118,7 +118,7 @@ Last-Attempt-Date: Tue, 28 Apr 2009 08:17:48 +0900 (JST)
 --n3RNHmqg024671.1240874268/smtp-out-34.example.jp
 Content-Type: text/rfc822-headers
 
-Return-Path: <user@example.jp>
+Return-Path: <user2@example.jp>
 Received: from [192.0.2.31] ([192.0.2.31])
 	(authenticated bits=0)
 	by smtp-out-34.example.jp (8.14.3/8.14.3) with ESMTP id n3RNHkqg008345
@@ -128,7 +128,7 @@ Content-Transfer-Encoding: 7bit
 Message-Id: <E9E9449A-4918-4B8B-8589-435230D67AC7@example.jp>
 Content-Type: text/plain; charset=US-ASCII; format=flowed
 To: recipient-address-does-not-exist@docomo.ne.jp
-From: "User, For Example" <user@example.jp>
+From: "User2, For Example" <user2@example.jp>
 Subject: TEST
 Date: Tue, 28 Apr 2009 08:17:45 +0900
 X-Mailer: Apple Mail (2.753.1)
@@ -145,7 +145,7 @@ Received: from localhost (localhost)
 Date: Thu, 5 Mar 2009 06:28:13 +0900 (JST)
 From: Mail Delivery Subsystem <MAILER-DAEMON>
 Message-Id: <200903042128.n24LSDot026083@mx.example.jp>
-To: <user@example.jp>
+To: <user3@example.jp>
 MIME-Version: 1.0
 Content-Type: multipart/report; report-type=delivery-status;
         boundary="n24LSDot026083.1236202093/mx.example.jp"
@@ -186,13 +186,13 @@ Last-Attempt-Date: Thu, 5 Mar 2009 06:28:13 +0900 (JST)
 --n24LSDot026083.1236202093/mx.example.jp
 Content-Type: text/rfc822-headers
 
-Return-Path: <user@example.jp>
+Return-Path: <user3@example.jp>
 Mime-Version: 1.0 (Apple Message framework v753.1)
 Content-Transfer-Encoding: 7bit
 Message-Id: <18726744-DE21-43A8-92B6-91B47AE35DC7@example.jp>
 Content-Type: text/plain; charset=US-ASCII; format=flowed
 To: recipient-mailbox-is-full@docomo.ne.jp
-From: "User, For Example" <user@example.jp>
+From: "User3, For Example" <user3@example.jp>
 Subject: TEST
 Date: Thu, 5 Mar 2009 06:28:14 +0900
 X-Mailer: Apple Mail (2.753.1)
@@ -251,13 +251,13 @@ Last-Attempt-Date: Wed, 17 Sep 2008 22:25:40 +0900
 --m8HDPeKU007223.1221657940/smtp-out-78.example.jp
 Content-Type: text/rfc822-headers
 
-Return-Path: <user@example.jp>
+Return-Path: <user4@example.jp>
 Received: from smtp-out-78.example.jp (localhost.example.jp [127.0.0.1])
         by smtp-out-78.example.jp (8.14.3/8.13.3) with ESMTP id m8HDPeKT007221
         for <rimu-.-ossa@docomo.ne.jp>; Wed, 17 Sep 2008 22:25:40 +0900
 Date: Wed, 17 Sep 2008 22:25:40 +0900
 Message-Id: <200809171325.m8HDPeKT007221@smtp-out-78.example.jp>
-From: user@example.jp
+From: user4@example.jp
 To: message-is-rejected-by-the-domain-fileters@docomo.ne.jp
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-2022-JP
@@ -273,7 +273,7 @@ Received: from localhost (localhost)
 Date: Tue, 28 Apr 2009 08:38:58 +0900 (JST)
 From: Mail Delivery Subsystem <MAILER-DAEMON>
 Message-Id: <200904272338.n3RNcwAR019967@smtp-out-45.example.jp>
-To: <user@example.jp>
+To: <user5@example.jp>
 MIME-Version: 1.0
 Content-Type: multipart/report; report-type=delivery-status;
 	boundary="n3RNcwAR019967.1240875538/smtp-out-45.example.jp"
@@ -293,7 +293,7 @@ from [192.0.2.34]
 
    ----- Transcript of session follows -----
 ... while talking to mfsmax.docomo.ne.jp.:
->>> MAIL From:<user@example.jp> SIZE=6917278
+>>> MAIL From:<user5@example.jp> SIZE=6917278
 <<< 552 Message size exceeds maximum value
 554 5.0.0 Service unavailable
 
@@ -313,7 +313,7 @@ Last-Attempt-Date: Tue, 28 Apr 2009 08:38:58 +0900 (JST)
 --n3RNcwAR019967.1240875538/smtp-out-45.example.jp
 Content-Type: text/rfc822-headers
 
-Return-Path: <user@example.jp>
+Return-Path: <user5@example.jp>
 Received: from [192.0.2.34] ([192.0.2.34])
 	(authenticated bits=0)
 	by smtp-out-45.example.jp (8.14.3/8.14.3) with ESMTP id n3RNcnAR002829
@@ -323,7 +323,7 @@ Mime-Version: 1.0 (Apple Message framework v753.1)
 To: this-message-excees-limit-5000kb@docomo.ne.jp
 Message-Id: <BF90A7AB-3564-4624-B9CD-F9C0416EBD28@example.jp>
 Content-Type: multipart/mixed; boundary=Apple-Mail-1-575321817
-From: "user, For example" <user@example.jp>
+From: "User5, For Example" <user5@example.jp>
 Subject: TEST
 Date: Tue, 28 Apr 2009 08:38:45 +0900
 X-Mailer: Apple Mail (2.753.1)
@@ -443,7 +443,7 @@ Received: from localhost (localhost)
 Date: Mon, 27 Apr 2009 19:07:12 +0900 (JST)
 From: Mail Delivery Subsystem <MAILER-DAEMON>
 Message-Id: <200904271007.n3RA7CQU024741@mx9.example.jp>
-To: <user@example.jp>
+To: <user6@example.jp>
 MIME-Version: 1.0
 Content-Type: multipart/report; report-type=delivery-status;
 	boundary="n3RA7CQU024741.1240826832/mx9.example.jp"
@@ -463,7 +463,7 @@ from [192.0.2.31]
 
    ----- Transcript of session follows -----
 ... while talking to lsean.ezweb.ne.jp.:
->>> MAIL From:<user@example.jp> SIZE=11067049
+>>> MAIL From:<user6@example.jp> SIZE=11067049
 <<< 552 Message size exceeds fixed limit
 554 5.0.0 Service unavailable
 
@@ -483,7 +483,7 @@ Last-Attempt-Date: Mon, 27 Apr 2009 19:07:12 +0900 (JST)
 --n3RA7CQU024741.1240826832/mx9.example.jp
 Content-Type: text/rfc822-headers
 
-Return-Path: <user@example.jp>
+Return-Path: <user6@example.jp>
 Received: from [192.0.2.31] ([192.0.2.31])
 	(authenticated bits=0)
 	by mx9.example.jp (8.14.3/8.14.3) with ESMTP id n3RA6uQU026739
@@ -492,7 +492,7 @@ Mime-Version: 1.0 (Apple Message framework v753.1)
 To: this-message-is-too-big-for-the-host@ezweb.ne.jp
 Message-Id: <2AC9955F-BF73-42A2-AD69-31A5D4DCC2FE@example.jp>
 Content-Type: multipart/mixed; boundary=Apple-Mail-1-526612466
-From: "user, for example" <user@example.jp>
+From: "User6, For Example" <user6@example.jp>
 Subject: TEST
 Date: Mon, 27 Apr 2009 19:06:56 +0900
 X-Mailer: Apple Mail (2.753.1)
@@ -1009,7 +1009,7 @@ Last-Attempt-Date: Mon, 27 Apr 2009 17:34:03 +0900 (JST)
 --n3R8Y4U2026025.1240821244/mta-55.example.gr.jp
 Content-Type: text/rfc822-headers
 
-Return-Path: <leader@example.gr.jp>
+Return-Path: <leader1@example.gr.jp>
 Received: from [192.0.2.31] ([192.0.2.31])
 	(authenticated bits=0)
 	by mta-55.example.gr.jp (8.14.3/8.14.3) with ESMTP id n3R8Y2U1005712
@@ -1019,7 +1019,7 @@ Content-Transfer-Encoding: 7bit
 Message-Id: <EBF6DB9C-F176-4C0B-913D-7ACC1078F822@example.gr.jp>
 Content-Type: text/plain; charset=US-ASCII; format=flowed
 To: this-air-edge-user-does-not-exist-wm1@wm.pdx.ne.jp
-From: "Leader of the group" <leader@example.gr.jp>
+From: "Leader1 of the group" <leader1@example.gr.jp>
 Subject: TEST
 Date: Mon, 27 Apr 2009 17:34:06 +0900
 X-Mailer: Apple Mail (2.753.1)
@@ -1035,7 +1035,7 @@ Received: from localhost (localhost)
 Date: Mon, 27 Apr 2009 17:34:04 +0900 (JST)
 From: Mail Delivery Subsystem <MAILER-DAEMON>
 Message-Id: <200904270834.n3R8Y4U1026025@mta-55.example.gr.jp>
-To: <leader@example.gr.jp>
+To: <leader2@example.gr.jp>
 MIME-Version: 1.0
 Content-Type: multipart/report; report-type=delivery-status;
 	boundary="n3R8Y4U1026025.1240821244/mta-55.example.gr.jp"
@@ -1077,7 +1077,7 @@ Last-Attempt-Date: Mon, 27 Apr 2009 17:34:03 +0900 (JST)
 --n3R8Y4U1026025.1240821244/mta-55.example.gr.jp
 Content-Type: text/rfc822-headers
 
-Return-Path: <leader@example.gr.jp>
+Return-Path: <leader2@example.gr.jp>
 Received: from [192.0.2.31] ([192.0.2.31])
 	(authenticated bits=0)
 	by mta-55.example.gr.jp (8.14.3/8.14.3) with ESMTP id n3R8Y2U1005712
@@ -1087,7 +1087,7 @@ Content-Transfer-Encoding: 7bit
 Message-Id: <EBF6DB9C-F176-4C0B-913D-7ACC1078F822@example.gr.jp>
 Content-Type: text/plain; charset=US-ASCII; format=flowed
 To: this-air-edge-user-does-not-exist-wm2@wm.pdx.ne.jp
-From: "Leader of the group" <leader@example.gr.jp>
+From: "Leader2 of the group" <leader2@example.gr.jp>
 Subject: TEST
 Date: Mon, 27 Apr 2009 17:34:06 +0900
 X-Mailer: Apple Mail (2.753.1)
@@ -1103,7 +1103,7 @@ Received: from localhost (localhost)
 Date: Mon, 27 Apr 2009 17:34:26 +0900 (JST)
 From: Mail Delivery Subsystem <MAILER-DAEMON>
 Message-Id: <200904270834.n3R8YQU1005971@mta-55.example.gr.jp>
-To: <leader@example.gr.jp>
+To: <leader3@example.gr.jp>
 MIME-Version: 1.0
 Content-Type: multipart/report; report-type=delivery-status;
 	boundary="n3R8YQU1005971.1240821266/mta-55.example.gr.jp"
@@ -1145,7 +1145,7 @@ Last-Attempt-Date: Mon, 27 Apr 2009 17:34:26 +0900 (JST)
 --n3R8YQU1005971.1240821266/mta-55.example.gr.jp
 Content-Type: text/rfc822-headers
 
-Return-Path: <leader@example.gr.jp>
+Return-Path: <leader3@example.gr.jp>
 Received: from [192.0.2.31] ([192.0.2.31])
 	(authenticated bits=0)
 	by mta-55.example.gr.jp (8.14.3/8.14.3) with ESMTP id n3R8Y2U2005712
@@ -1155,7 +1155,7 @@ Content-Transfer-Encoding: 7bit
 Message-Id: <93A983C4-F84C-4442-86AD-08A1E56DCC0B@example.gr.jp>
 Content-Type: text/plain; charset=US-ASCII; format=flowed
 To: this-air-edge-user-does-not-exist-wc1@willcom.com
-From: "Leader of the group" <leader@example.gr.jp>
+From: "Leader3 of the group" <leader3@example.gr.jp>
 Subject: Test
 Date: Mon, 27 Apr 2009 17:34:29 +0900
 X-Mailer: Apple Mail (2.753.1)
@@ -1213,7 +1213,7 @@ Last-Attempt-Date: Mon, 27 Apr 2009 17:34:26 +0900 (JST)
 --n3R8YQU2005971.1240821266/mta-55.example.gr.jp
 Content-Type: text/rfc822-headers
 
-Return-Path: <leader@example.gr.jp>
+Return-Path: <leader4@example.gr.jp>
 Received: from [192.0.2.31] ([192.0.2.31])
 	(authenticated bits=0)
 	by mta-55.example.gr.jp (8.14.3/8.14.3) with ESMTP id n3R8Y2U2005712
@@ -1223,7 +1223,7 @@ Content-Transfer-Encoding: 7bit
 Message-Id: <93A983C4-F84C-4442-86AD-08A1E56DCC0B@example.gr.jp>
 Content-Type: text/plain; charset=US-ASCII; format=flowed
 To: this-air-edge-user-does-not-exist-wc2@willcom.com
-From: "Leader of the group" <leader@example.gr.jp>
+From: "Leader4 of the group" <leader4@example.gr.jp>
 Subject: Test
 Date: Mon, 27 Apr 2009 17:34:29 +0900
 X-Mailer: Apple Mail (2.753.1)
@@ -1717,7 +1717,7 @@ Received: from localhost (localhost)
 Date: Tue, 28 Apr 2009 11:10:38 +0900 (JST)
 From: Mail Delivery Subsystem <MAILER-DAEMON>
 Message-Id: <200904280210.n3S2AcIG006316@mx.example.jp>
-To: <whois@example.jp>
+To: <whois-this@example.jp>
 MIME-Version: 1.0
 Content-Type: multipart/report; report-type=delivery-status;
 	boundary="n3S2AcIG006316.1240884638/mx.example.jp"
@@ -1759,7 +1759,7 @@ Last-Attempt-Date: Tue, 28 Apr 2009 11:10:38 +0900 (JST)
 --n3S2AcIG006316.1240884638/mx.example.jp
 Content-Type: text/rfc822-headers
 
-Return-Path: <whois@example.jp>
+Return-Path: <whois-this@example.jp>
 Received: from [192.0.2.31] ([192.0.2.31])
 	(authenticated bits=0)
 	by mx.example.jp (8.14.3/8.14.3) with ESMTP id n3S2AbIG029209
@@ -1769,7 +1769,7 @@ Content-Transfer-Encoding: 7bit
 Message-Id: <6D736808-04A1-47D3-92BD-44388ABFCCE4@example.jp>
 Content-Type: text/plain; charset=US-ASCII; format=flowed
 To: this-address-does-not-exist@example.dyndns.org
-From: "whois, this" <whois@example.jp>
+From: "whois, this" <whois-this@example.jp>
 Subject: TEST
 Date: Tue, 28 Apr 2009 11:10:35 +0900
 X-Mailer: Apple Mail (2.753.1)
@@ -1786,7 +1786,7 @@ Received: from localhost (localhost)
 Date: Tue, 28 Apr 2009 10:58:43 +0900 (JST)
 From: Mail Delivery Subsystem <MAILER-DAEMON>
 Message-Id: <200904280158.n3S1whtO014878@mx.example.jp>
-To: <whois@example.jp>
+To: <whoru@example.jp>
 MIME-Version: 1.0
 Content-Type: multipart/report; report-type=delivery-status;
 	boundary="n3S1whtO014878.1240883923/mx.example.jp"
@@ -1806,7 +1806,7 @@ from [192.0.2.31]
 
    ----- Transcript of session follows -----
 ... while talking to mx.example.dyndns.org.:
->>> MAIL From:<whois@example.jp> SIZE=16600348
+>>> MAIL From:<whoru@example.jp> SIZE=16600348
 <<< 552 5.2.3 Message size exceeds fixed maximum message size (10485760)
 554 5.0.0 Service unavailable
 
@@ -1826,7 +1826,7 @@ Last-Attempt-Date: Tue, 28 Apr 2009 10:58:43 +0900 (JST)
 --n3S1whtO014878.1240883923/mx.example.jp
 Content-Type: text/rfc822-headers
 
-Return-Path: <whois@example.jp>
+Return-Path: <whoru@example.jp>
 Received: from [192.0.2.31] ([192.0.2.31])
 	(authenticated bits=0)
 	by mx.example.jp (8.14.3/8.14.3) with ESMTP id n3S1wNtO005301
@@ -1835,7 +1835,7 @@ Mime-Version: 1.0 (Apple Message framework v753.1)
 To: too-big-message-to-your@example.dyndns.org
 Message-Id: <43C90EB2-6A17-471D-8DA9-1BF560DC0356@example.jp>
 Content-Type: multipart/mixed; boundary=Apple-Mail-8-583695011
-From: "whois, this" <whois@example.jp>
+From: "who are you" <whoru@example.jp>
 Subject: TEST
 Date: Tue, 28 Apr 2009 10:58:18 +0900
 X-Mailer: Apple Mail (2.753.1)
@@ -2068,7 +2068,7 @@ Received: from localhost (localhost)
 Date: Tue, 28 Apr 2009 11:51:58 +0900 (JST)
 From: Mail Delivery Subsystem <MAILER-DAEMON>
 Message-Id: <200904280251.n3S2pwhW005501@mx.sp.example.jp>
-To: <admin@sp.example.jp>
+To: <administrator@sp.example.jp>
 MIME-Version: 1.0
 Content-Type: multipart/report; report-type=delivery-status;
 	boundary="n3S2pwhW005501.1240887118/mx.sp.example.jp"
@@ -2088,7 +2088,7 @@ from [192.0.2.31]
 
    ----- Transcript of session follows -----
 ... while talking to exmta.mopera.net.:
->>> MAIL From:<admin@sp.example.jp> SIZE=16600374
+>>> MAIL From:<administrator@sp.example.jp> SIZE=16600374
 <<< 552 Message size exceeds fixed maximum message size: 5242880 bytes
 554 5.0.0 Service unavailable
 
@@ -2108,7 +2108,7 @@ Last-Attempt-Date: Tue, 28 Apr 2009 11:51:58 +0900 (JST)
 --n3S2pwhW005501.1240887118/mx.sp.example.jp
 Content-Type: text/rfc822-headers
 
-Return-Path: <admin@sp.example.jp>
+Return-Path: <administrator@sp.example.jp>
 Received: from [192.0.2.31] ([192.0.2.31])
 	(authenticated bits=0)
 	by mx.sp.example.jp (8.14.3/8.14.3) with ESMTP id n3S2p1hX022695
@@ -2117,7 +2117,7 @@ Mime-Version: 1.0 (Apple Message framework v753.1)
 To: very-very-big-message-to-you@mopera.ne.jp
 Message-Id: <1019AE39-59A7-4283-A4C4-38238266DA2E@sp.example.jp>
 Content-Type: multipart/mixed; boundary=Apple-Mail-10-586889508
-From: "admin of the site" <admin@sp.example.jp>
+From: "administrator of the site" <administrator@sp.example.jp>
 Subject: TEST
 Date: Tue, 28 Apr 2009 11:51:32 +0900
 X-Mailer: Apple Mail (2.753.1)
