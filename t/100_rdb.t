@@ -1,4 +1,4 @@
-# $Id: 100_rdb.t,v 1.5 2010/04/20 20:37:15 ak Exp $
+# $Id: 100_rdb.t,v 1.6 2010/04/23 19:45:04 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -37,7 +37,7 @@ PREPROCESS: {
 METHODS: {
 	my $object = undef();
 	my $config = JSON::Syck::LoadFile( q{./src/etc/prove.cf} );
-	my $therdb = q(:memory');
+	my $therdb = q(:memory:);
 	my $datasn = q();
 	my $rdbset = {
 		'PostgreSQL' => { 'driver' => 'Pg', 'port' => 5432, 'short' => 'p', },
