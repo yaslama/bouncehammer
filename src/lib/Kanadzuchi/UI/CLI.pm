@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.11 2010/04/09 03:54:01 ak Exp $
+# $Id: CLI.pm,v 1.12 2010/04/24 06:13:47 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                       
@@ -74,6 +74,7 @@ sub new
 		$argvs->{'debuglevel'} = 0 unless( defined($argvs->{'debuglevel'}) );
 		$argvs->{'calledfrom'} = File::Basename::basename([caller()]->[1]);
 		$argvs->{'option'} = {} unless( defined($argvs->{'option'}) );
+		$argvs->{'silent'} = 0 unless( defined($argvs->{'silent'}) );
 
 		last() unless( defined($argvs->{'cf'}) );
 		last() if( ref($argvs->{'cf'}) eq q|Path::Class::File| );
