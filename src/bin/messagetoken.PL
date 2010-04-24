@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: messagetoken.PL,v 1.5 2010/03/21 09:55:50 ak Exp $
+# $Id: messagetoken.PL,v 1.6 2010/04/24 06:13:33 ak Exp $
 # -Id: messagetoken.PL,v 1.3 2010/02/21 20:09:01 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi:Command::
@@ -141,7 +141,6 @@ sub parse_options
 		$_opt_test,
 		$_opt_addresser,
 		$_opt_recipient,
-		$_opt_silent,
 		$_opt_verbose,
 	);
 
@@ -157,16 +156,15 @@ sub parse_options
 			'help'		=> sub { help(); exit(0); },
 			'T'		=> \$_opt_test,
 			'test'		=> \$_opt_test,
-			'silent'	=> \$_opt_silent,
+			'silent'	=> sub { $Cmd->silent(1); },
 			'verbose'	=> \$_opt_verbose,
 			'v+'		=> \$_opt_verbose,
 			'version'	=> sub { printf(STDERR "%s\n", $Zci->version()); exit(0); },
 		);
 
 
-	# (verbose|debug|silent) mode
+	# (verbose|debug) mode
 	$Cmd->debuglevel( ( $_opt_verbose ? $_opt_verbose : 0 ) - 1 );
-	$Cmd->silent( $_opt_silent ? 1 : 0 );
 
 	# Specify Config File(YAML)	
 	if( defined($_opt_conf) )

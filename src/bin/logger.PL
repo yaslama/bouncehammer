@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.12 2010/04/16 06:53:23 ak Exp $
+# $Id: logger.PL,v 1.13 2010/04/24 06:13:33 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -613,7 +613,6 @@ sub parse_options
 		$_opt_remove,
 		$_opt_test,
 		$_opt_truncate,
-		$_opt_silent,
 		$_opt_verbose,
 	);
 
@@ -634,16 +633,15 @@ sub parse_options
 			'T'		=> \$_opt_test,
 			'truncate'	=> \$_opt_truncate,
 			'help'		=> sub { help(); exit(0); },
-			'silent'	=> \$_opt_silent,
+			'silent'	=> sub { $Cmd->silent(1); },
 			'verbose'	=> \$_opt_verbose,
 			'v+'		=> \$_opt_verbose,
 			'version'	=> sub { printf(STDERR "%s\n", $Zci->version()); exit(0); },
 		);
 
 
-	# (verbose|debug|silent) mode
+	# (verbose|debug) mode
 	$Cmd->debuglevel( ( $_opt_verbose ? $_opt_verbose : 0 ) - 1 );
-	$Cmd->silent( $_opt_silent ? 1 : 0 );
 
 	# Specify Config File(YAML)
 	if( defined($_opt_conf) )

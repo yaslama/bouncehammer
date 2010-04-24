@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.7 2010/04/02 11:40:03 ak Exp $
+# $Id: databasectl.PL,v 1.8 2010/04/24 06:13:33 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -430,7 +430,6 @@ sub parse_options
 		$_opt_yesterday,
 		$_opt_before,
 		$_opt_test,
-		$_opt_silent,
 		$_opt_verbose,
 	);
 
@@ -447,7 +446,7 @@ sub parse_options
 			'test'		=> \$_opt_test,
 			'T'		=> \$_opt_test,
 			'help'		=> sub { help(); exit(0); },
-			'silent'	=> \$_opt_silent,
+			'silent'	=> sub { $Cmd->silent(1); },
 			'verbose'	=> \$_opt_verbose,
 			'v+'		=> \$_opt_verbose,
 			'version'	=> sub { printf(STDERR "%s\n", $Zci->version()); exit(0); },
@@ -472,9 +471,8 @@ sub parse_options
 		);
 
 
-	# (verbose|debug|silent) mode
+	# (verbose|debug) mode
 	$Cmd->debuglevel( ( $_opt_verbose ? $_opt_verbose : 0 ) - 1 );
-	$Cmd->silent( $_opt_silent ? 1 : 0 );
 
 	# Specify Config File(YAML)	
 	if( defined($_opt_conf) )

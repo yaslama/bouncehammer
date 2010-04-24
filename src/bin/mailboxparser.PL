@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.22 2010/04/20 07:14:34 ak Exp $
+# $Id: mailboxparser.PL,v 1.23 2010/04/24 06:13:33 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -440,7 +440,6 @@ sub parse_options
 		$_opt_truncate,
 		$_opt_backup,
 		$_opt_verbose,
-		$_opt_silent,
 		$_opt_safe,
 		$_opt_skip,
 		$_opt_skip_temperror,
@@ -479,16 +478,15 @@ sub parse_options
 			'T'		=> \$_opt_test,
 			'truncate'	=> \$_opt_truncate,
 			'help'		=> sub { help(); exit(0); },
-			'silent'	=> \$_opt_silent,
+			'silent'	=> sub { $Cmd->silent(1); },
 			'verbose'	=> \$_opt_verbose,
 			'v+'		=> \$_opt_verbose,
 			'version'	=> sub { printf(STDERR "%s\n", $Zci->version()); exit(0); },
 		);
 
 
-	# (verbose|debug|silent) mode
+	# (verbose|debug) mode
 	$Cmd->debuglevel( ( $_opt_verbose ? $_opt_verbose : 0 ) - 1 );
-	$Cmd->silent( $_opt_silent ? 1 : 0 );
 
 	# Specify Config File(YAML)
 	if( defined($_opt_conf) )
