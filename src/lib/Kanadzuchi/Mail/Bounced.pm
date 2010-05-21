@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.12 2010/04/20 20:36:36 ak Exp $
+# $Id: Bounced.pm,v 1.14 2010/05/19 18:25:03 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -25,6 +25,7 @@ use Kanadzuchi::Address;
 use Kanadzuchi::RFC1893;
 use Kanadzuchi::RFC2822;
 use Kanadzuchi::Time;
+use Kanadzuchi::Iterator;
 use Time::Piece;
 use MIME::Parser;
 
@@ -58,7 +59,7 @@ sub eatit
 	# @Return	(Ref->Array) K::M::Bounced::* objects
 	my $class = shift();
 	my $mailx = shift() || return([]);
-	my $confx = shift();
+	my $confx = shift() || { 'verbose' => 0, 'cache' => '/tmp', 'fast' => 1 };
 	my $count = 0;
 
 	my $mimeparser;			# (MIME::Parser) Parser object
@@ -344,7 +345,7 @@ sub eatit
 
 	} # End of foreach() BUILD 
 
-	return($mesgpieces);
+	return( Kanadzuchi::Iterator->new($mesgpieces) );
 }
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
