@@ -14,9 +14,9 @@
 
 @SET_MAKE@
 
-# $Id: Makefile.am,v 1.4 2010/05/18 08:16:54 ak Exp $
-# Copyright (C) 2009,2010 Cubicroot Co. Ltd.
-# This is the auto-Makefile for BounceHammer/template/standard/stylesheet,
+# $Id: Makefile.am,v 1.2 2010/05/16 23:58:23 ak Exp $
+# Copyright (C) 2010 Cubicroot Co. Ltd.
+# This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/BdDR/BounceLogs,
 # is processed by automake to create Makefile.in.
 
 VPATH = @srcdir@
@@ -36,7 +36,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = template/standard/stylesheet
+subdir = src/lib/Kanadzuchi/BdDR/BounceLogs
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
@@ -57,7 +57,7 @@ am__installdirs = "$(DESTDIR)$(pkgdatadir)"
 pkgdataDATA_INSTALL = $(INSTALL_DATA)
 DATA = $(pkgdata_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-pkgdatadir = @datarootdir@/template/standard/stylesheet
+pkgdatadir = @libdir@/Kanadzuchi/BdDR/BounceLogs
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AUTOCONF = @AUTOCONF@
@@ -154,17 +154,8 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-pkgdata_DATA = bouncehammer.css \
-	mastertable.css \
-	messagetoken.css \
-	pagination.css \
-	profile.css \
-	reason.css \
-	record.css \
-	search.css \
-	summary.css \
-	testparse.css
-
+distdir = $(BUILDROOT)/dist/lib/Kanadzuchi/BdDR/BounceLogs
+pkgdata_DATA = Masters.pm
 all: all-am
 
 .SUFFIXES:
@@ -177,9 +168,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  template/standard/stylesheet/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/lib/Kanadzuchi/BdDR/BounceLogs/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  template/standard/stylesheet/Makefile
+	  $(AUTOMAKE) --foreign  src/lib/Kanadzuchi/BdDR/BounceLogs/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -278,8 +269,6 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean: clean-am
-
 clean-am: clean-generic mostlyclean-am
 
 distclean: distclean-am
@@ -345,6 +334,14 @@ uninstall-am: uninstall-pkgdataDATA
 	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
 	uninstall-am uninstall-pkgdataDATA
 
+
+all-am:
+	test -d $(distdir) || mkdir -p $(distdir)
+	cp -Rp $(pkgdata_DATA) $(distdir)/
+
+.PHONY: clean
+clean:
+	rm -f $(distdir)/*.pm
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

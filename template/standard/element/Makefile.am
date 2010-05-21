@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.1 2010/03/01 05:45:35 ak Exp $
+# $Id: Makefile.am,v 1.2 2010/05/18 07:28:56 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/template/standard/element,
 # is processed by automake to create Makefile.in.
@@ -21,8 +21,8 @@ pkgdata_DATA = div-create-a-new-mastertable-record.en.html \
 	div-new-message-token.en.html \
 	div-new-message-token.ja.html \
 	div-pagefooter.html \
-	div-pager.en.html \
-	div-pager.ja.html \
+	div-pagination.en.html \
+	div-pagination.ja.html \
 	div-result.en.html \
 	div-result.ja.html \
 	dtd-xhtml.html \
