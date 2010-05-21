@@ -1,4 +1,4 @@
-# $Id: 151_ui-cli.t,v 1.4 2009/12/24 03:40:28 ak Exp $
+# $Id: 151_ui-cli.t,v 1.5 2010/05/17 00:00:56 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,6 +10,7 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::UI::CLI;
 use Path::Class::File;
+use JSON::Syck;
 use File::Basename qw(basename);
 use Test::More ( tests => 700 );
 
@@ -21,7 +22,7 @@ use Test::More ( tests => 700 );
 my $K = new Kanadzuchi();
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::UI::CLI|,
-	'methods' => [ 'new', 'init', 'd', 'e', 'catch_signal',
+	'methods' => [ 'new', 'init', 'batchstatus', 'd', 'e', 'catch_signal',
 			'DESTROY', 'abort', 'exception', 'finish' ],
 	'instance' => new Kanadzuchi::UI::CLI(
 		'commandline' => join(q{ }, $0, @ARGV ),
