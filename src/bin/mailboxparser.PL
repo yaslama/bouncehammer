@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.23 2010/04/24 06:13:33 ak Exp $
+# $Id: mailboxparser.PL,v 1.26 2010/05/19 18:24:51 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -122,7 +122,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	my $seekprogressx = undef();
 
 	$chunkmboxsize = 102400 if( $chunkmboxsize < 102400 );		# 100 KB
-	$chunkmboxsize = 33554432 if( $chunkmboxsize > 33554432 );	# 32 MB
+	$chunkmboxsize = 8388608 if( $chunkmboxsize > 8388608 );	# 8 MB
 
 	# Set timeout(ALRM) for reading from STDIN
 	eval { alarm( ( $Zci->config->{'environment'}->{'timeout'} || 180 ) ) };
@@ -159,6 +159,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 				next() if( -z $d.'/'.$mf || ! -r _ || ! -f _ || ! -T _ || ! -s _ );
 				push( @{ $Mail->{'files'} }, $d.'/'.$mf );
 				$filesindir++;
+				alarm(0);
 			}
 			closedir( $directoryh );
 
@@ -338,6 +339,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 						: ( '<STDIN>', -1 ) )
 					));
 		next() unless( $mailboxparser->nmails() );
+		$mailboxparser->parseit();
 
 		#  _____    _  _____   ___ _____ 
 		# | ____|  / \|_   _| |_ _|_   _|
@@ -345,9 +347,6 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		# | |___ / ___ \| |    | |  | |  
 		# |_____/_/   \_\_|   |___| |_|  
 		# 
-		# Parse the mailbox 
-		$mailboxparser->parseit();
-
 		# Call Kanadzuchi::Mail::Bounced->eatit()
 		$returnedmesgs = Kanadzuchi::Mail::Bounced->eatit( 
 					\$mailboxparser, {
@@ -357,15 +356,15 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 						'fast' => ( $Cmd->operation() & $Cmd->option->{'safe'} ? 0 : 1 ), } );
 
 		$Cmd->d( 1, sprintf( "[Stage: #%04d] Parsed Messages/emails in the mailbox = %d/%d\n", 
-					$stageofparser, scalar(@$returnedmesgs), $mailboxparser->nmails() )); 
+					$stageofparser, $returnedmesgs->count(), $mailboxparser->nmails() )); 
 		$msgsinthembox += $mailboxparser->nmails();
-		$msgsintheklog += scalar(@$returnedmesgs);
+		$msgsintheklog += $returnedmesgs->count();
 
 		# There is no parsed messages
-		next() unless( scalar(@{$returnedmesgs}) );
+		next() unless( $returnedmesgs->count() );
 
-		$kanadzuchilog->entities( $returnedmesgs );
-		$kanadzuchilog->count( scalar( @$returnedmesgs ) );
+		$kanadzuchilog->entities( $returnedmesgs->all() );
+		$kanadzuchilog->count( $returnedmesgs->count() );
 
 		if( $Cmd->operation & $Cmd->option->{'log'} )
 		{
