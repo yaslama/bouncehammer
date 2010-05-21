@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.9 2010/03/29 08:25:40 ak Exp $
+# $Id: Mail.pm,v 1.11 2010/05/19 18:25:17 ak Exp $
 package Kanadzuchi::Test::Mail;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -20,6 +20,7 @@ our $MethodList = {
 		'id2rname',
 		'gname2id',
 		'rname2id',
+		'damn',
 	],
 	'Bounced' => [
 		'eatit',
@@ -38,16 +39,17 @@ our $MethodList = {
 		'is_permerror',
 		'is_temperror',
 	],
-	'Stored::YAML' => [
-		'loadandnew',
+	'Stored' => [
 		'insert',
 		'update',
 		'findbytoken',
 	],
-	'Stored::RDB' => [
+	'Stored::YAML' => [
+		'load',
+		'loadandnew',
+	],
+	'Stored::BdDR' => [
 		'searchandnew',
-		'serialize',
-		'modify',
 	],
 };
 
