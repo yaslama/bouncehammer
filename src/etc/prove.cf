@@ -1,4 +1,4 @@
-# $Id: prove.cf,v 1.8 2010/03/19 04:22:15 ak Exp $
+# $Id: prove.cf,v 1.10 2010/05/21 03:29:54 ak Exp $
 # This config file is YAML/JSON format. bin/* scripts read this file by
 # using (YAML|JSON)::Syck Perl module.
 #  ______   ______ _____ _____ __  __ 
@@ -83,7 +83,7 @@ database:
   # dbtype: 'SQLite'
   # dbname: '__KANADZUCHIVAR__/db/bouncehammer.db'
   dbtype: 'SQLite'
-  dbname: './.test/test.db'
+  dbname: '/tmp/bouncehammer-test.db'
 
   # Database name, username and password of the db-user
   username: 'bouncehammer'
