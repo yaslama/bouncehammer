@@ -1,4 +1,4 @@
-# $Id: 503_bin-databasectl.t,v 1.5 2010/03/01 21:32:07 ak Exp $
+# $Id: 503_bin-databasectl.t,v 1.6 2010/05/17 00:00:56 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,14 +7,25 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 33 );
+use Test::More ( tests => 450 );
+
+my $Skip = 450;	# How many skips
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',33) if($@);
+	skip('Because no IPC::Cmd for testing',$Skip) if($@);
+
+	eval { require DBI; }; skip( 'Because no DBI for testing', $Skip ) if( $@ );
+	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $Skip ) if( $@ );
 
 	use Kanadzuchi::Test::CLI;
+	use Kanadzuchi::Test::DBI;
 	use Kanadzuchi;
+	use Kanadzuchi::Mail;
+	use Kanadzuchi::BdDR;
+	use Kanadzuchi::BdDR::Page;
+	use Kanadzuchi::BdDR::BounceLogs;
+	use Kanadzuchi::BdDR::BounceLogs::Masters;
 	use JSON::Syck;
 	use File::Copy;
 
@@ -23,99 +34,290 @@ SKIP: {
 	# ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 	# |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 	#
-	my $K = new Kanadzuchi();
-	my $E = new Kanadzuchi::Test::CLI(
+	my $Kana = new Kanadzuchi();
+	my $BdDR = new Kanadzuchi::BdDR();
+	my $Btab = undef();
+	my $Page = new Kanadzuchi::BdDR::Page();
+	my $Test = new Kanadzuchi::Test::CLI(
 			'command' => -x q(./dist/bin/databasectl) ? q(./dist/bin/databasectl) : q(./src/bin/databasectl.PL),
 			'config' => q(./src/etc/prove.cf),
 			'input' => q(./examples/17-messages.eml),
 			'output' => q(./.test/hammer.1970-01-01.ffffffff.000000.tmp),
-			'database' => q(./.test/test.db),
+			'database' => q(/tmp/bouncehammer-test.db),
 			'tempdir' => q(./.test),
 	);
-	my $O = q| -C|.$E->config();
+	my $Yaml = undef();
+	my $Recs = 37;
+	my $Opts = q| -C|.$Test->config();
 
 	#  ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ 
 	# ||T |||e |||s |||t |||       |||c |||o |||d |||e |||s ||
 	# ||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__||
 	# |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 	#
-	SKIP: {
-		my $S = 33;	# Skip
-		eval { require DBI; }; skip( 'Because no DBI for testing', $S ) if( $@ );
-		eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $S ) if( $@ );
-		eval { $E->environment(2); }; 
-		skip( 'Because no sqlite3 command', $S ) if( ! -x $E->sqlite3() );
+	CONNECT: {
+		$BdDR = Kanadzuchi::BdDR->new();
+		$BdDR->setup( { 'dbname' => $Test->database(), 'dbtype' => 'SQLite' } );
+		$BdDR->printerror(1);
+		$BdDR->connect();
 
-		PREPROCESS: {
-			ok( $E->environment(), q{->environment()} );
-			ok( $E->syntax(), q{->syntax()} );
-			ok( $E->version(), q{->version()} );
-			ok( $E->help(), q{->help()} );
-			ok( $E->error(), q{->error()} );
-			ok( $E->mailboxparser(), q{(mailboxparser) ->mailboxparser()} );
-			ok( $E->initdb(), q{->initdb()} );
-			ok( -s $E->database(), q{Create database: }.$E->database() );
+		isa_ok( $BdDR, q|Kanadzuchi::BdDR| );
+		isa_ok( $BdDR->handle(), q|DBI::db| );
+	}
 
-			File::Copy::copy( q{./examples/}.File::Basename::basename($E->output()),
-						$E->tempdir().q{/}.File::Basename::basename($E->output()) );
+	BUILD_DATABASE: {
+		truncate($Test->database(),0) if( -f $Test->database() );
+		ok( Kanadzuchi::Test::DBI->buildtable($BdDR->handle()), '->DBI->buildtable()' );
+	}
+
+	TABLEOBJECTS: {
+		$Btab = Kanadzuchi::BdDR::BounceLogs::Table->new('handle'=>$BdDR->handle());
+		$Page->resultsperpage(100);
+	}
+
+	LOAD_THE_LOG: {
+		$Yaml = JSON::Syck::LoadFile($Test->output());
+
+		isa_ok( $Yaml, q|ARRAY|, $Test->output.q{: load ok} );
+		is( scalar(@$Yaml), $Recs , $Test->output.q{ have }.$Recs.q{ records} );
+	}
+
+	PREPROCESS: {
+		ok( $Test->environment(), q{->environment()} );
+		ok( $Test->syntax(), q{->syntax()} );
+		ok( $Test->version(), q{->version()} );
+		ok( $Test->help(), q{->help()} );
+		ok( $Test->error(), q{->error()} );
+
+		REMOVE_RECORDS: {
+			my $xstatus = 0;
+			$xstatus = $Btab->object->delete( 't_bouncelogs', {} );
+			ok( $xstatus, '->delete() = '.$xstatus.' records' );
+
+			$xstatus = $Btab->object->delete( 't_destinations', {} );
+			ok( $xstatus, '->delete() = '.$xstatus.' records' );
+
+			$xstatus = $Btab->object->delete( 't_providers', {} );
+			ok( $xstatus, '->delete() = '.$xstatus.' records' );
 		}
+	}
 
-		ERROR_MESSAGES: {
-			my $command = q();
-			my $xresult = [];
+	EXEC_COMMAND: {
+		my $command = q();
+		my $xstatus = 0;
+		my $xresult = [];
+		my $dresult = undef();
+		my $thisent = {};
+		my $yamlobj = undef();
+
+		NON_EXISTENT_LOG_DATE: {
 
 			DATE_OPTIONS: foreach my $d ( '--today', '--yesterday', '--before 2'  )
 			{
-				$command = $E->perl().$E->command().$O.q{ --update }.$d;
+				$command = $Test->perl().$Test->command().$Opts.' --update '.$d;
 				$xresult = [ IPC::Cmd::run( 'command' => $command ) ];
 				like( $xresult->[4]->[0], qr|There is no log file|, q{No log file of the option }.$d );
 			}
 		}
 
 		UPDATE_FROM_CONSOLE: {
-			my $command = $E->perl().$E->command().$O.q{ --update }.$E->output();
-			my $xstatus = scalar(IPC::Cmd::run( 'command' => $command ));
+			$command = $Test->perl().$Test->command().$Opts.q{ --update }.$Test->output();
+			$xstatus = scalar(IPC::Cmd::run( 'command' => $command ));
 			ok( $xstatus, q{UPDATE: }.$command );
-			ok( $E->initdb(), q{->initdb() Again} );
 		}
 
-		UPDATE_WITH_BATCH_MODE: {
-			# { insert: 15, update: 0, error: 0, skip: 22, asitis: { nosender: 22, older: 0, whitelist: 0, exceedlimit: 0 } }
-			my $command = $E->perl().$E->command().$O.q{ --batch --update }.$E->output();
-			my $xresult = qx($command);
-			my $yamlret = JSON::Syck::Load($xresult);
+		SELECT_AND_VERIFY: {
+			foreach my $y ( @$Yaml )
+			{
+				$xstatus = $Btab->count( { 'token' => $y->{'token'} }, $Page );
+				if( $y->{'senderdomain'} ne 'example.org' )
+				{
+					ok( $xstatus, '->count() = 1 by the token '.$y->{'token'} );
 
-			isa_ok( $yamlret, q|HASH| );
-			is( $yamlret->{'insert'}, 15, q{update/insert: 15} );
-			is( $yamlret->{'update'}, 0, q{update/update: 0} );
-			is( $yamlret->{'error'}, 0, q{update/error: 0} );
-			is( $yamlret->{'skip'}, 22, q{update/skip/all: 0} );
-			is( $yamlret->{'asitis'}->{'nosender'}, 22, q{update/skip/nosender: 0} );
-			is( $yamlret->{'asitis'}->{'older'}, 0, q{update/skip/older: 0} );
-			is( $yamlret->{'asitis'}->{'whitelist'}, 0, q{update/skip/whitelist: 0} );
-			is( $yamlret->{'asitis'}->{'exceedlimit'}, 0, q{update/skip/exceedlimit: 0} );
-			ok( $E->initdb(), q{->initdb() Again} );
+					$dresult = $Btab->search( { 'token' => $y->{'token'} }, $Page );
+					ok( scalar(@$dresult), '->search() = '.scalar(@$dresult).' records' );
+
+					$thisent = shift(@$dresult);
+					foreach my $_key ( qw|addresser recipient senderdomain destination token
+								hostgroup reason provider| ){
+
+						is( $thisent->{$_key}, $y->{$_key}, '->'.$_key.' = '.$y->{$_key} );
+					}
+				}
+				else
+				{
+					is( $xstatus, 0, '->count() = 0 by senderdomain = example.org' );
+				}
+			}
 		}
 
-		UPDATE_FROM_STDIN: {
-			# { insert: 15, update: 0, error: 0, skip: 22, asitis: { nosender: 22, older: 0, whitelist: 0, exceedlimit: 0 } }
-			# { "insert": 0, "update": 0, "error": 0, "skip": 37, "asitis": { "nosender": 0, "older": 37, "whitelist": 0, "exceedlimit": 0 } }
-			my $command = q{/bin/cat }.$E->output().q{ | }.$E->perl().$E->command().$O.q{ --batch --update };
-			my $xresult = qx($command);
-			my $yamlret = JSON::Syck::Load($xresult);
+		REMOVE_FOR_NEXT_TEST: {
+			$xstatus = $Btab->object->delete( 't_bouncelogs', {} );
+			ok( $xstatus, '->delete() = '.$xstatus.' records' );
 
-			isa_ok( $yamlret, q|HASH| );
-			is( $yamlret->{'insert'}, 15, q{update/insert: 15} );
-			is( $yamlret->{'update'}, 0, q{update/update: 0} );
-			is( $yamlret->{'error'}, 0, q{update/error: 0} );
-			is( $yamlret->{'skip'}, 22, q{update/skip/all: 0} );
-			is( $yamlret->{'asitis'}->{'nosender'}, 22, q{update/skip/nosender: 0} );
-			is( $yamlret->{'asitis'}->{'older'}, 0, q{update/skip/older: 0} );
-			is( $yamlret->{'asitis'}->{'whitelist'}, 0, q{update/skip/whitelist: 0} );
-			is( $yamlret->{'asitis'}->{'exceedlimit'}, 0, q{update/skip/exceedlimit: 0} );
-			ok( $E->initdb(), q{->initdb() Again} );
+			$xstatus = $Btab->object->delete( 't_destinations', {} );
+			ok( $xstatus, '->delete() = '.$xstatus.' records' );
+
+			$xstatus = $Btab->object->delete( 't_providers', {} );
+			ok( $xstatus, '->delete() = '.$xstatus.' records' );
 		}
-	} # End of SKIP
+
+		UPDATE_FROM_CONSOLE_WITH_BATCHMODE1: {
+			$command = $Test->perl().$Test->command().$Opts.q{ --batch --update }.$Test->output();
+			$xresult = qx($command);
+			$yamlobj = JSON::Syck::Load($xresult);
+
+			isa_ok( $yamlobj, q|HASH|, '--batch returns YAML(HASH)' );
+
+			foreach my $_sk ( 'user', 'command', 'load' )
+			{
+				ok( $yamlobj->{$_sk}, $_sk.' = '.$yamlobj->{$_sk} );
+			}
+
+			ok( $yamlobj->{'time'}->{'started'}, 'time->started = '.$yamlobj->{'time'}->{'started'} );
+			ok( $yamlobj->{'time'}->{'ended'}, 'time->ended = '.$yamlobj->{'time'}->{'ended'} );
+			ok( $yamlobj->{'time'}->{'elapsed'} > -1, 'time->elapsed = '.$yamlobj->{'time'}->{'elapsed'} );
+
+			$thisent = $yamlobj->{'status'};
+			is( $thisent->{'record'}, $Recs, '(1) status->record = '.$Recs );
+			is( $thisent->{'insert'}, $Recs - 1, '(1) status->insert = '.($Recs-1) );
+			is( $thisent->{'update'}, 0, '(1) status->update = 0' );
+
+			$thisent = $yamlobj->{'status'}->{'skipped'};
+			is( $thisent->{'no-senderdomain'}, 1, '(1) skipped->no-senderdomain = 1' );
+			is( $thisent->{'too-old-or-same'}, 0, '(1) skipped->too-old-or-same = 0' );
+			is( $thisent->{'is-whitelisted'}, 0, '(1) skipped->is-whitelisted = 0' );
+			is( $thisent->{'exceeds-limit'}, 0, '(1) skipped->exceeds-limit = 0' );
+
+			$thisent = $yamlobj->{'status'}->{'cache'};
+			is( $thisent->{'bouncelogs'}, 0, '(1) cache->bouncelogs = 0' );
+
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'mastertables'};
+			is( $thisent->{'addressers'}, 2, '(1) cache->matertables->addressers = 2' );
+			is( $thisent->{'senderdomains'}, 19, '(1) cache->matertables->senderdomains = 19' );
+			is( $thisent->{'destinations'}, 14, '(1) cache->matertables->destinations = 14' );
+			is( $thisent->{'providers'}, 25, '(1) cache->matertables->providers = 25' );
+		}
+
+		UPDATE_FROM_CONSOLE_WITH_BATCHMODE2: {
+			$command = $Test->perl().$Test->command().$Opts.q{ --batch --update }.$Test->output();
+			$xresult = qx($command);
+			$yamlobj = JSON::Syck::Load($xresult);
+
+			$thisent = $yamlobj->{'status'};
+			is( $thisent->{'record'}, $Recs, '(2) status->record = '.$Recs );
+			is( $thisent->{'insert'}, 0, '(2) status->insert = 0' );
+			is( $thisent->{'update'}, 0, '(2) status->update = 0' );
+
+			$thisent = $yamlobj->{'status'}->{'skipped'};
+			is( $thisent->{'no-senderdomain'}, 1, '(2) skipped->no-senderdomain = 1' );
+			is( $thisent->{'too-old-or-same'}, 36, '(2) skipped->too-old-or-same = 36' );
+			is( $thisent->{'is-whitelisted'}, 0, '(2) skipped->is-whitelisted = 0' );
+			is( $thisent->{'exceeds-limit'}, 0, '(2) skipped->exceeds-limit = 0' );
+
+			$thisent = $yamlobj->{'status'}->{'cache'};
+			is( $thisent->{'bouncelogs'}, 36, '(2) cache->bouncelogs = 36' );
+
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'mastertables'};
+			is( $thisent->{'addressers'}, 0, '(2) cache->matertables->addressers = 0' );
+			is( $thisent->{'senderdomains'}, 0, '(2) cache->matertables->senderdomains = 0' );
+			is( $thisent->{'destinations'}, 0, '(2) cache->matertables->destinations = 0' );
+			is( $thisent->{'providers'}, 0, '(2) cache->matertables->providers = 0' );
+		}
+
+		UPDATE_FROM_CONSOLE_WITH_BATCHMODE3: {
+			$xstatus = $Btab->object->update( 't_bouncelogs', 
+					{ 'bounced' => Time::Piece->new(1) }, 
+					{ 'reason' => Kanadzuchi::Mail->rname2id('userunknown') } );
+			ok( $xstatus, '->update() = '.$xstatus );
+
+			$command = $Test->perl().$Test->command().$Opts.q{ --batch --update }.$Test->output();
+			$xresult = qx($command);
+			$yamlobj = JSON::Syck::Load($xresult);
+
+			$thisent = $yamlobj->{'status'};
+			is( $thisent->{'record'}, $Recs, '(3) status->record = '.$Recs );
+			is( $thisent->{'insert'}, 0, '(3) status->insert = 0' );
+			is( $thisent->{'update'}, 18, '(3) status->update = 18' );
+
+			$thisent = $yamlobj->{'status'}->{'skipped'};
+			is( $thisent->{'no-senderdomain'}, 1, '(3) skipped->no-senderdomain = 1' );
+			is( $thisent->{'too-old-or-same'}, 18, '(3) skipped->too-old-or-same = 18' );
+			is( $thisent->{'is-whitelisted'}, 0, '(3) skipped->is-whitelisted = 0' );
+			is( $thisent->{'exceeds-limit'}, 0, '(3) skipped->exceeds-limit = 0' );
+
+			$thisent = $yamlobj->{'status'}->{'cache'};
+			is( $thisent->{'bouncelogs'}, 54, '(3) cache->bouncelogs = 54' );
+
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'mastertables'};
+			is( $thisent->{'addressers'}, 0, '(3) cache->matertables->addressers = 0' );
+			is( $thisent->{'senderdomains'}, 0, '(3) cache->matertables->senderdomains = 0' );
+			is( $thisent->{'destinations'}, 0, '(3) cache->matertables->destinations = 0' );
+			is( $thisent->{'providers'}, 0, '(3) cache->matertables->providers = 0' );
+		}
+
+		UPDATE_FROM_CONSOLE_WITH_BATCHMODE4: {
+			$xstatus = $Btab->object->update( 't_bouncelogs', 
+					{ 'reason' => 'whitelisted', 'bounced' => Time::Piece->new(2), }, 
+					{ 'reason' => Kanadzuchi::Mail->rname2id('mailboxfull') } );
+			ok( $xstatus, '->update() = '.$xstatus );
+
+			$command = $Test->perl().$Test->command().$Opts.q{ --batch --update }.$Test->output();
+			$xresult = qx($command);
+			$yamlobj = JSON::Syck::Load($xresult);
+
+			$thisent = $yamlobj->{'status'};
+			is( $thisent->{'record'}, $Recs, '(4) status->record = '.$Recs );
+			is( $thisent->{'insert'}, 0, '(4) status->insert = 0' );
+			is( $thisent->{'update'}, 0, '(4) status->update = 0' );
+
+			$thisent = $yamlobj->{'status'}->{'skipped'};
+			is( $thisent->{'no-senderdomain'}, 1, '(4) skipped->no-senderdomain = 1' );
+			is( $thisent->{'too-old-or-same'}, 33, '(4) skipped->too-old-or-same = 33' );
+			is( $thisent->{'is-whitelisted'}, 3, '(4) skipped->is-whitelisted = 3' );
+			is( $thisent->{'exceeds-limit'}, 0, '(4) skipped->exceeds-limit = 0' );
+
+			$thisent = $yamlobj->{'status'}->{'cache'};
+			is( $thisent->{'bouncelogs'}, 36, '(4) cache->bouncelogs = 36' );
+
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'mastertables'};
+			is( $thisent->{'addressers'}, 0, '(4) cache->matertables->addressers = 0' );
+			is( $thisent->{'senderdomains'}, 0, '(4) cache->matertables->senderdomains = 0' );
+			is( $thisent->{'destinations'}, 0, '(4) cache->matertables->destinations = 0' );
+			is( $thisent->{'providers'}, 0, '(4) cache->matertables->providers = 0' );
+		}
+
+		UPDATE_FROM_CONSOLE_WITH_BATCHMODE5: {
+			$command = $Test->perl().$Test->command().$Opts.q{ --batch --force --update }.$Test->output();
+			$xresult = qx($command);
+			$yamlobj = JSON::Syck::Load($xresult);
+
+			$thisent = $yamlobj->{'status'};
+			is( $thisent->{'record'}, $Recs, '(5) status->record = '.$Recs );
+			is( $thisent->{'insert'}, 0, '(5) status->insert = 0' );
+			is( $thisent->{'update'}, 3, '(5) status->update = 3' );
+
+			$thisent = $yamlobj->{'status'}->{'skipped'};
+			is( $thisent->{'no-senderdomain'}, 1, '(5) skipped->no-senderdomain = 1' );
+			is( $thisent->{'too-old-or-same'}, 33, '(5) skipped->too-old-or-same = 33' );
+			is( $thisent->{'is-whitelisted'}, 0, '(5) skipped->is-whitelisted = 0' );
+			is( $thisent->{'exceeds-limit'}, 0, '(5) skipped->exceeds-limit = 0' );
+
+			$thisent = $yamlobj->{'status'}->{'cache'};
+			is( $thisent->{'bouncelogs'}, 39, '(5) cache->bouncelogs = 39' );
+
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'mastertables'};
+			is( $thisent->{'addressers'}, 0, '(5) cache->matertables->addressers = 0' );
+			is( $thisent->{'senderdomains'}, 0, '(5) cache->matertables->senderdomains = 0' );
+			is( $thisent->{'destinations'}, 0, '(5) cache->matertables->destinations = 0' );
+			is( $thisent->{'providers'}, 0, '(5) cache->matertables->providers = 0' );
+		}
+
+	} # End of EXEC_COMMAND
+
+	FLUSH_DATABASE: {
+		truncate($Test->database(),0) if( -f $Test->database() );
+	}
+
 }
-
 __END__
