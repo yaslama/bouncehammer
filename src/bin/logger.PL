@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.13 2010/04/24 06:13:33 ak Exp $
+# $Id: logger.PL,v 1.14 2010/05/11 06:31:24 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -96,6 +96,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 	my $logthreshold = 5242880;	# (Integer) 5MB, About 10,000 records
 	my $sizeoftmplog = 0;		# (Integer) File size of all of temporary logs.
 	my $tmplogsinhdd = [];		# (Ref->Array) Each temporary logs(Path::Class::File::Lockable)
+	my $hashoftmplog = {};		# (Ref->Hash) Key = MD5 Hash, Value = Temp log file name
 
 	if( scalar( @{$Arg->{'dirs'}} ) == 0 && scalar( @{$Arg->{'files'}} ) == 0 )
 	{
@@ -131,7 +132,6 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 		# |  _|  | || |\  | |_| |   | | | |  | |  __/| |__| |_| | |_| |
 		# |_|   |___|_| \_|____/    |_| |_|  |_|_|   |_____\___/ \____|
 		#
-		my $_tmploghash = undef();
 		my $_md5digestv = undef();	# (Digest::MD5) object
 		my $_tmploglock = undef();	# (Path::Class::File::Lockable)
 		my $_eachtmplog = $_f->stringify();
@@ -151,13 +151,13 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 		$_md5digestv = Digest::MD5->new()->addfile($_f->openr())->hexdigest();
 		$_tmploglock = new Path::Class::File::Lockable($_f);
 
-		if( defined($_tmploghash->{ $_md5digestv }) && -r $_tmploghash->{ $_md5digestv } )
+		if( defined($hashoftmplog->{ $_md5digestv }) && -r $hashoftmplog->{ $_md5digestv } )
 		{
 			# Temporary log file is now locked by mailboxparser?
 			next() if( $_tmploglock->locked() );
 
 			# If the file has same digest, remove it and skip to the next.
-			eval { truncate( $_eachtmplog, 0 ) } if( $Cmd->operation & $Cmd->option->{truncate} );
+			eval { truncate( $_eachtmplog, 0 ) } if( $Cmd->operation & $Cmd->option->{'truncate'} );
 			if( $Cmd->operation & $Cmd->option->{'remove'} )
 			{
 				eval { $_f->remove(); };
@@ -167,7 +167,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 		}
 
 		# Record the file name using MD5 Digest as a hash key
-		$_tmploghash->{ $_md5digestv } = $_eachtmplog;
+		$hashoftmplog->{ $_md5digestv } = $_eachtmplog;
 		push( @$tmplogsinhdd, $_tmploglock );
 		$sizeoftmplog += -s $_tmploglock;
 		$Cmd->d(5, sprintf("Temporary log file(#%d) = %s (%s)\n", scalar(@$tmplogsinhdd), $_eachtmplog, $_md5digestv ));
