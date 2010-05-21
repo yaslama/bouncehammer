@@ -63,6 +63,16 @@
 				</tr>
 
 				<tr>
+					<td class = 'key'>宛先所属(小分類)</td>
+					<td class = 'value'>
+						<input type = 'text' name = 'provider' style = 'width: 288px;' class = 'wide'
+							placeholder = '宛先所属(小分類)' autosave = '[% systemname %].provider' 
+							results = '16' onChange = "checkpn.innerHTML='&#9745; 使用';"/>
+					</td>
+					<td class = 'extra' id = 'checkpn'></td>
+				</tr>
+
+				<tr>
 					<td class = 'key'>トークン(MD5)</td>
 					<td class = 'value'>
 						<input type = 'text' name = 'token' results = '16' style = 'width: 288px;' class = 'wide'

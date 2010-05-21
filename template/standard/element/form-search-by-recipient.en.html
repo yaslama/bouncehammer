@@ -63,6 +63,16 @@
 				</tr>
 
 				<tr>
+					<td class = 'key'>Provider</td>
+					<td class = 'value'>
+						<input type = 'text' name = 'provider' style = 'width: 288px;' class = 'wide'
+							placeholder = 'Provider Name' autosave = '[% systemname %].provider' 
+							results = '16' onChange = "checkpn.innerHTML='&#9745; Use';"/>
+					</td>
+					<td class = 'extra' id = 'checkpn'></td>
+				</tr>
+
+				<tr>
 					<td class = 'key'>Message Token(MD5)</td>
 					<td class = 'value'>
 						<input type = 'text' name = 'token' results = '16' style = 'width: 288px;' class = 'wide'
