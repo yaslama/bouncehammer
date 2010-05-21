@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.12 2010/04/24 06:13:47 ak Exp $
+# $Id: CLI.pm,v 1.13 2010/05/16 23:58:40 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                       
@@ -39,6 +39,7 @@ __PACKAGE__->mk_ro_accessors(
 	'calledfrom',	# (String) Script name
 	'commandline',	# (String) Command line
 	'processid',	# (Integer) Process ID
+	'statedat',	# (Time::Piece) Start time
 );
 
 # Rewritable accessors
@@ -69,6 +70,7 @@ sub new
 	my $argvs = { @_ }; 
 
 	DEFAULT_VALUES: {
+		$argvs->{'startedat'} = new Time::Piece();
 		$argvs->{'processid'} = $$ unless( defined($argvs->{'processid'}) );
 		$argvs->{'operation'} = 0 unless( defined($argvs->{'operation'}) );
 		$argvs->{'debuglevel'} = 0 unless( defined($argvs->{'debuglevel'}) );
@@ -200,7 +202,7 @@ sub init
 	};
 
 	$self->d(1,sprintf( "%s/%s %s\n", $dzci->myname(), $self->{'calledfrom'}, $dzci->version() ));
-	$self->d(1,sprintf( "Command started at %s\n", Time::Piece->new->hms(':') ));
+	$self->d(1,sprintf( "Command started at %s\n", $self->{'startedat'}->cdate() ));
 	$self->d(1,sprintf( "Process ID = %d\n", $self->{'processid'} ));
 	$self->d(2,sprintf( "Pid file = %s\n", $self->{'pf'} ));
 	$self->d(2,sprintf( "Operation = %d [%024b]\n", $self->{'operation'}, $self->{'operation'} ));
@@ -210,6 +212,35 @@ sub init
 	return(1);
 }
 
+sub batchstatus
+{
+	# +-+-+-+-+-+-+-+-+-+-+-+
+	# |b|a|t|c|h|s|t|a|t|u|s|
+	# +-+-+-+-+-+-+-+-+-+-+-+
+	#
+	# @Description	Print batch job status to STDOUT
+	# @Param <ref>	(Ref->Scalar) Additional status information
+	# @Return	1
+	my $self = shift();
+	my $stat = shift();
+	my $time = Time::Piece->new();
+	my $load = qx(uptime); chomp($load);
+
+	# Block style YAML(is not JSON) format
+	printf( STDOUT qq|--- # %s %s update status\n|, $self->{'startedat'}->ymd('-'), $self->{'calledfrom'} );
+	printf( STDOUT qq|command: "%s"\n|, $self->{'calledfrom'} );
+	printf( STDOUT qq|user: "%s"\n|, $ENV{'USER'} || $ENV{'LOGNAME'} || q() );
+	printf( STDOUT qq|load: "%s"\n|, $load );
+	printf( STDOUT qq|time:\n| );
+	printf( STDOUT qq|  started: "%s"\n|, $self->{'startedat'}->cdate() );
+	printf( STDOUT qq|  ended:   "%s"\n|, $time->cdate() );
+	printf( STDOUT qq|  elapsed: %d\n|, $time->epoch() - $self->{'startedat'}->epoch() );
+
+	return(1) unless( length($$stat) );
+	printf( STDOUT qq|status:\n| );
+	printf( STDOUT $$stat );
+	return(1)
+}
 
 sub d
 {
