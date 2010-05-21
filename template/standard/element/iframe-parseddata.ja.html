@@ -3,7 +3,7 @@
 	[%- SET IFRAMEHEIGHT = ( IFRAMEHEIGHT + ( parsedmessages + 600 ) ) %]
 [%- END -%]
 [% IF onlineparse == 1 %]
-	<body style = 'margin: 0; padding: 0; width: 600px;' 
+	<body style = 'margin: 0; padding: 0; width: 585px;' 
 		onLoad = "parent.document.getElementById('parseddata').style.height = '[% IFRAMEHEIGHT %]';
 				parent.document.getElementById('doparse').value = '解析';"
 		onAbort = "parent.document.getElementById('doparse').disabled = false;">
@@ -56,28 +56,24 @@
 						[% IF onlineupdate == 1 %]
 							<tr>
 								<td class = 'key'>新規登録数</td>
-								<td class = 'value'>[% updateresult.insert %]</td>
+								<td class = 'value'>[% updateresult.insert %] 件</td>
 								<td class = 'extra'></td>
 							</tr>
 
 							<tr>
 								<td class = 'key'>既存更新数</td>
-								<td class = 'value'>[% updateresult.update %]</td>
+								<td class = 'value'>[% updateresult.update %] 件</td>
 								<td class = 'extra'></td>
 							</tr>
 
 							<tr>
-								<td class = 'key'>非登録/非更新数</td>
+								<td class = 'key'>非更新の理由</td>
 								<td class = 'value'>
-									[% updateresult.skip %]
-									[% IF updateresult.skip > 0 %]
-										(
-										発信者ドメインなし: [% updateresult.asitis.nosender %],
-										古いデータ: [% updateresult.asitis.older %],
-										ホワイトリスト: [% updateresult.asitis.whitelist %],
-										登録上限数超過: [% updateresult.asitis.exceedlimit %]
-										)
-									[% END %]
+									発信者ドメインなし: [% updateresult.nofrom %],
+									データが古い: [% updateresult.tooold %],
+									上書き禁止: [% updateresult.whited %],
+									登録上限数超過: [% updateresult.exceed %]
+									失敗: [% updateresult.failed %]
 								</td>
 								<td class = 'extra'></td>
 							</tr>

@@ -3,7 +3,7 @@
 	[%- SET IFRAMEHEIGHT = ( IFRAMEHEIGHT + ( parsedmessages + 600 ) ) %]
 [%- END -%]
 [% IF onlineparse == 1 %]
-	<body style = 'margin: 0; padding: 0; width: 600px;' 
+	<body style = 'margin: 0; padding: 0; width: 585px;' 
 		onLoad = "parent.document.getElementById('parseddata').style.height = '[% IFRAMEHEIGHT %]';
 				parent.document.getElementById('doparse').value = 'Parse';"
 		onAbort = "parent.document.getElementById('doparse').disabled = false;">
@@ -69,15 +69,11 @@
 							<tr>
 								<td class = 'key'>Skipped</td>
 								<td class = 'value'>
-									[% updateresult.skip %]
-									[% IF updateresult.skip > 0 %]
-										(
-										No SenderDomain: [% updateresult.asitis.nosender %],
-										Too Old: [% updateresult.asitis.older %],
-										Whitelist: [% updateresult.asitis.whitelist %],
-										Exceed Limit: [% updateresult.asitis.exceedlimit %]
-										)
-									[% END %]
+									No SenderDomain: [% updateresult.nofrom %],
+									Too Old or Same: [% updateresult.tooold %],
+									Is Whitelisted:  [% updateresult.whited %],
+									Exceeds Limit:   [% updateresult.exceed %]
+									Failed: [% updateresult.failed %]
 								</td>
 								<td class = 'extra'></td>
 							</tr>
