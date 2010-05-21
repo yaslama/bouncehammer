@@ -1,5 +1,5 @@
 # test-run.cf
-# $Id: test-run.cf,v 1.8 2010/03/19 04:22:15 ak Exp $
+# $Id: test-run.cf,v 1.9 2010/05/16 23:59:26 ak Exp $
 # This config file is YAML/JSON format. bin/* scripts read this file by
 # using (YAML|JSON)::Syck Perl module.
 #  ______   ______ _____ _____ __  __ 
@@ -81,10 +81,8 @@ smtp:
 database:
   # Database type(Available values are PostgreSQL, MySQL or SQLite)
   # If you use SQLite database, please specify a path into the dbname value.
-  # dbtype: 'SQLite'
-  # dbname: '__KANADZUCHIVAR__/db/bouncehammer.db'
-  dbtype: 'PostgreSQL'
-  dbname: 'bouncehammer'
+  dbtype: 'SQLite'
+  dbname: '/tmp/test.db'
 
   # Database name, username and password of the db-user
   username: 'bouncehammer'
