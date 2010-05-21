@@ -1,4 +1,4 @@
-# $Id: Kanadzuchi.pm,v 1.17 2010/04/20 20:35:25 ak Exp $
+# $Id: Kanadzuchi.pm,v 1.18 2010/05/16 23:59:49 ak Exp $
 # -Id: TheHammer.pm,v 1.4 2009/09/01 23:19:41 ak Exp -
 # -Id: Herculaneum.pm,v 1.13 2009/08/27 05:09:23 ak Exp -
 # -Id: Version.pm,v 1.35 2009/08/27 05:09:29 ak Exp -
@@ -228,6 +228,14 @@ sub is_logfile
 
 sub get_logfile
 {
+	# +-+-+-+-+-+-+-+-+-+-+-+
+	# |g|e|t|_|l|o|g|f|i|l|e|
+	# +-+-+-+-+-+-+-+-+-+-+-+
+	#
+	# @Description	Returns Kanadzuchi's log file name
+	# @Param <str>	(String) File type(regular,temp,fallback)
+	# @Param <opt>	(Ref->Hash) File name options
+	# @Return	(String) Log file name
 	my $self = shift();
 	my $type = shift() || q(temp);
 	my $lopt = shift() || { 'date' => q(), 'output' => q() };
