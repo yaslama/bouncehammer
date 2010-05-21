@@ -1,0 +1,51 @@
+/* $Id: pagination.css,v 1.1 2010/05/18 08:16:54 ak Exp $ */
+/* Copyright 2009,2010 Cubicroot Co. Ltd. */
+/* Pager Classes */
+div.pagination {
+	margin: 0;
+	padding: 1px 2px;
+	background: #383c3c; /* Youkan-iro */
+	color: #e5e4e6; /* Shiraumenezu */
+	font-size: 11px;
+	font-weight: bold;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+
+div.pagination a:link, a:hover, a:visited, a:visited:hover {
+	color: #e5e4e6; /* Shiraumenezu */
+	text-decoration: none;
+}
+
+div.pagination .lhs {
+	margin: 0;
+	padding: 2px;
+	text-align: left;
+	width: 5px;
+	float: left;
+}
+
+div.pagination .rhs {
+	margin: 0;
+	padding: 2px;
+	text-align: right;
+	width: 224px;
+	float: right;
+}
+
+div.pagination .mid {
+	margin: 0;
+	padding: 2px;
+}
+
+div.pagination .thispage {
+	padding: 1px;
+	font-size: 12px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #afafb0; /* Gin-nezu */
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	-opera-border-radius: 2px;
+}
