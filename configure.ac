@@ -1,6 +1,6 @@
 dnl #                                               -*- Autoconf -*-
 dnl # Process this file with autoconf to produce a configure script.
-dnl # $Id: configure.ac,v 1.25 2010/04/20 20:33:59 ak Exp $
+dnl # $Id: configure.ac,v 1.26 2010/05/18 07:38:53 ak Exp $
 dnl # -Id: configure.ac,v 1.8 2009/12/01 10:35:23 ak Exp -
 dnl # -Id: configure.ac,v 1.35 2009/08/27 05:09:04 ak Exp -
 dnl # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -132,7 +132,6 @@ dnl # Checks for header files.
 dnl # Checks for typedefs, structures, and compiler characteristics.
 
 dnl # Checks for library functions.
-
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  src/bin/Makefile
@@ -140,7 +139,10 @@ AC_CONFIG_FILES([Makefile
                  src/etc/Makefile
                  src/lib/Kanadzuchi/API/Makefile
                  src/lib/Kanadzuchi/Archive/Makefile
+                 src/lib/Kanadzuchi/BdDR/BounceLogs/Makefile
+                 src/lib/Kanadzuchi/BdDR/Makefile
                  src/lib/Kanadzuchi/Config/Makefile
+                 src/lib/Kanadzuchi/Log/Makefile
                  src/lib/Kanadzuchi/Mail/Bounced/Makefile
                  src/lib/Kanadzuchi/Mail/Group/JP/Makefile
                  src/lib/Kanadzuchi/Mail/Group/Makefile
@@ -149,9 +151,6 @@ AC_CONFIG_FILES([Makefile
                  src/lib/Kanadzuchi/Mail/Why/Makefile
                  src/lib/Kanadzuchi/Makefile
                  src/lib/Kanadzuchi/Mbox/Makefile
-                 src/lib/Kanadzuchi/RDB/Makefile
-                 src/lib/Kanadzuchi/RDB/Schema/Makefile
-                 src/lib/Kanadzuchi/RDB/Table/Makefile
                  src/lib/Kanadzuchi/UI/Makefile
                  src/lib/Kanadzuchi/UI/Web/Makefile
                  src/lib/Makefile
