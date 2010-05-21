@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.12 2010/04/24 06:13:33 ak Exp $
+# $Id: datadumper.PL,v 1.14 2010/05/19 18:24:51 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -25,8 +25,7 @@ use strict;
 use warnings;
 use Kanadzuchi;
 use Kanadzuchi::UI::CLI;
-use Kanadzuchi::RDB::Schema;
-use Kanadzuchi::RDB;
+use Kanadzuchi::BdDR;
 use Error ':try';
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
@@ -36,7 +35,7 @@ use Error ':try';
 #
 my $Zci;		# (Kanadzuchi) System object
 my $Cmd;		# (Kanadzuchi::UI::CLI) Commandline object
-my $Rdb;		# (Kanadzuchi::RDB) Database object
+my $Rdb;		# (Kanadzuchi::BdDR) Database object
 my $Fmt;		# (String) Output format
 
 my $CLIOPTION = {
@@ -50,9 +49,15 @@ my $CLIOPTION = {
 
 # WhereCond strings
 my $WhereCondition = {
-	'addresser' => q(), 'recipient' => q(), 'senderdomain' => q(),
-	'destination' => q(), 'reason' => q(), 'hostgroup' => q(),
-	'token' => q(), 'bounced' => 0,
+	'addresser' => q(),	# From:
+	'recipient' => q(),	# To:
+	'senderdomain' => q(),	# Sender's domain name
+	'destination' => q(),	# Recipient's domain name
+	'reason' => q(),	# Reason name
+	'hostgroup' => q(),	# Host Group name
+	'provider' => q(),	# Provider name
+	'token' => q(),		# Message token
+	'bounced' => 0,		# Bounced date
 };
 
 # ORDER BY
@@ -70,8 +75,8 @@ $Cmd = new Kanadzuchi::UI::CLI(
 		'option' => $CLIOPTION,
 		'commandline' => join(q{ }, $0, @ARGV ));
 
-# Create Kanadzuchi::RDB object
-$Rdb = new Kanadzuchi::RDB( 'count' => 0, 'cache' => {}, );
+# Create Kanadzuchi::BdDR object
+$Rdb = new Kanadzuchi::BdDR();
 
 # Parse options, initialize object
 try {
@@ -110,66 +115,48 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 	#  \___/|____/|_____| |____/|____/_/  |____/ \___/|_|  |_|_|    
 	#                                                               
 	# Use Database
-	# Set values to Kanadzuchi::RDB object, Create data source name
+	require Kanadzuchi::BdDR::BounceLogs;
+	require Kanadzuchi::BdDR::Page;
+	require Kanadzuchi::Mail::Stored::BdDR;
+	require Kanadzuchi::Log;
+	require Kanadzuchi::Time;
+	require Kanadzuchi::RFC2822;
+
+	my $xntableobj = undef();	# (Kanadzuchi::BdDR::BounceLogs::Table) Txn table object
+	my $pagination = undef();	# (Kanadzuchi::BdDR::Page) Pagination object
+	my $whereconds = {};		# (Ref->Hash) Where conditions
+	my $nrecordsin = 0;		# (Integer) The number of records in the database
+	my $linesapage = 500;		# (Integer) How many lines a page
+
+
+	# Set values to Kanadzuchi::BdDR object, Create data source name
 	try {
-		unless( $Rdb->setup($Zci->config->{'database'}) )
-		{
-			Kanadzuchi::Exception::Database->throw( '-text' => q{Failed to setup} );
-		}
-
-		if( length($Rdb->datasn()) == 0 )
-		{
-			# Unsupported database type
-			Kanadzuchi::Exception::Database->throw(
-				'-text' => q{Unsupported database type: }.$Rdb->dbtype );
-		}
-		elsif( length($Rdb->datasn()) < 5 )
-		{
-			# Datatabase name or database type is not defined
-			Kanadzuchi::Exception::Database->throw( 
-				'-text' => q{Failed to create data source name} );
-		}
-
-		# Connect and set database handle
-		$Rdb->handle( Kanadzuchi::RDB::Schema->connect(
-				$Rdb->datasn(), $Rdb->username(), $Rdb->password()) );
+		$Rdb->setup( $Zci->config->{'database'} );
+		Kanadzuchi::Exception::Database->throw( '-text' => q{Failed to connect DB} ) unless($Rdb->connect());
 		$Cmd->d(2,"Connecting to the database\n") if(defined($Rdb->handle()));
 
-		if( $Rdb->hostname() && $Rdb->port() )
-		{
-			$Cmd->d(2,sprintf("Database host = %s:%d\n", $Rdb->hostname(),$Rdb->port()));
-		}
-		else
-		{
-			$Cmd->d(2,qq{Database host = Socket\n});
-		}
+		# Create master table objects
+		$xntableobj = Kanadzuchi::BdDR::BounceLogs::Table->new( 'handle' => $Rdb->handle() );
+		Kanadzuchi::Exception::Database->throw( 
+			'-text' => 'Failed to create table objects' ) unless( $xntableobj );
+
+		( $Rdb->hostname() && $Rdb->port() )
+			? $Cmd->d(2,sprintf("Database host = %s:%d\n", $Rdb->hostname(),$Rdb->port()))
+			: $Cmd->d(2,qq{Database host = Socket\n});
 
 		$Cmd->d(2,sprintf("Database name = %s(%s)\n", $Rdb->dbname(), $Rdb->dbtype()));
 		$Cmd->d(2,sprintf("Database user = %s\n", $Rdb->username()));
+		$Cmd->d(2,sprintf("Using table = %s\n", $xntableobj->alias()));
+
 	}
 	catch Kanadzuchi::Exception::Database with {
 		$Cmd->exception(shift());
 		$Cmd->abort();
 	};
 
-
-	# Check given string as an argument of query
-	require Kanadzuchi::Log;
-	require Kanadzuchi::Time;
-	require Kanadzuchi::RFC2822;
-	require Kanadzuchi::Mail::Stored::RDB;
-	require Kanadzuchi::RDB::Schema::BounceLogs;
-
-	# Arguments of searchandnew() method
-	my $whereconds = {};		# (Ref->Hash) Where conditions
-	my $pageconfig = {};		# (Ref->Hash) Pager configuration
-	my $reqsobject = 0;		# (Integer) Flag; Requires object
-
 	# Check parameters: recipient, senderdomain, destination, hostgroup, and reason
 	foreach my $_key ( keys(%$WhereCondition) )
 	{
-		$whereconds->{$_key} = q();	# Initialize the value
-
 		next() unless( length($WhereCondition->{$_key}) );
 		$whereconds->{$_key} =  lc($WhereCondition->{$_key});
 		$whereconds->{$_key} =~ y{[;=&`'"%*()[]|~$]}{}d;
@@ -180,37 +167,44 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		if( $_key eq 'bounced' )
 		{
 			my $__tbounced = Kanadzuchi::Time->to_second($whereconds->{'bounced'});
+			my $__timepobj = 0;
 
 			if( $__tbounced <= 0 || $__tbounced >= time() )
 			{
-				$whereconds->{'bounced'} = 0;
+				$whereconds->{'bounced'} = { '>=' => 0 };
 			}
 			else
 			{
-				$whereconds->{'bounced'} = int( time() - $__tbounced );
+				$__timepobj = Time::Piece->new(int( time() - $__tbounced ));
+				$whereconds->{'bounced'} = { '>=' => $__timepobj->epoch() };
 			}
+			$Cmd->d( 1, sprintf( "WHERE->%s >= '%s'\n", $_key, $__timepobj->cdate() ) );
 		}
-
-		$Cmd->d( 1, sprintf( "WHERE->%s = '%s'\n", $_key, $whereconds->{$_key} ) );
+		else
+		{
+			$Cmd->d( 1, sprintf( "WHERE->%s = '%s'\n", $_key, $whereconds->{$_key} ) );
+		}
 	}
 
 	# Check the host group and the reason
 	try{
-		my $_cid = Kanadzuchi::Mail->gname2id($whereconds->{'hostgroup'});
-		my $_rid = Kanadzuchi::Mail->rname2id($whereconds->{'reason'});
-
-		if( $whereconds->{'hostgroup'} ne q() && ! $_cid )
+		my( $_str, $_xid, $_err );
+		if( exists($whereconds->{'hostgroup'}) && length($whereconds->{'hostgroup'}) )
 		{
 			# Invalid host group 
-			Kanadzuchi::Exception::Command->throw( 
-				'-text' => q{Unknown host group: }.qq|$whereconds->{'hostgroup'}| );
+			$_str = $whereconds->{'hostgroup'};
+			$_xid = Kanadzuchi::Mail->gname2id($_str);
+			$_err = 'Unknown host group: '.$whereconds->{'hostgroup'}.'; try tablectl --list -tg';
+			Kanadzuchi::Exception::Command->throw( '-text' => $_err ) unless( $_xid );
 		}
 
-		if( $whereconds->{'reason'} ne q() && ! $_rid )
+		if( exists($whereconds->{'reason'}) && length($whereconds->{'reason'}) )
 		{
 			# Invalid reason
-			Kanadzuchi::Exception::Command->throw( 
-				'-text' => q{Unknown reason: }.qq|$whereconds->{'reason'}| );
+			$_str = $whereconds->{'reason'};
+			$_xid = Kanadzuchi::Mail->rname2id($_str);
+			$_err = 'Unknown reason: '.$whereconds->{'reason'}.'; try tablectl --list -tw';
+			Kanadzuchi::Exception::Command->throw( '-text' => $_err ) unless( $_xid );
 		}
 	}
 	catch Kanadzuchi::Exception::Command with {
@@ -218,15 +212,13 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		$Cmd->abort();
 	};
 
-	# Check column name
-	$OrderBy->{'column'} = q(ID) unless(Kanadzuchi::RDB::Schema::BounceLogs->is_validcolumn($OrderBy->{'column'}) );
+	# ORDER BY
+	$OrderBy->{'column'} = q(id) unless( $xntableobj->is_validcolumn($OrderBy->{'column'}) );
 	$Cmd->d(1, sprintf( "ORDER BY '%s' %s\n", $OrderBy->{'column'}, $OrderBy->{'descend'} ? q{DESCENDING} : q{} ) );
 
-	# Receive 1 result for counting
-	$pageconfig->{'currentpagenum'} = 1;
-	$pageconfig->{'resultsperpage'} = 1;
-	$pageconfig->{'colnameorderby'} = q{id};
-	Kanadzuchi::Mail::Stored::RDB->searchandnew( $Rdb, $whereconds, \$pageconfig, $reqsobject );
+	# Pagination
+	$pagination = new Kanadzuchi::BdDR::Page();
+	$nrecordsin = $xntableobj->count( $whereconds, $pagination );
 
 	if( $Cmd->operation & $Cmd->option->{'count'} )
 	{
@@ -236,7 +228,8 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		# | |__| |_| | |_| | |\  | | |  
 		#  \____\___/ \___/|_| \_| |_|  
 		#                               
-		printf( STDOUT "%d\n", $pageconfig->{'totalentries'} );
+		# Receive 1 result for counting
+		print( STDOUT $nrecordsin.qq{\n} );
 	}
 	else
 	{
@@ -246,55 +239,58 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		# | |_| | |_| | |  | |  __/ 
 		# |____/ \___/|_|  |_|_|    
 		#                           
-		my $dumpeddata = [];		# (Ref->Array) Dumped results
-		my $objhlogger = undef();	# (Kanadzuchi::Log) Log object
-		my $linesapage = 500;		# (Integer) How many lines a page
+		# 0 records in the database
+		$Cmd->finish() unless( $nrecordsin );
 
-		$reqsobject = 1;
-		$pageconfig->{'resultsperpage'} = int($pageconfig->{'totalentries'}/10) || $linesapage;
-		$pageconfig->{'resultsperpage'} = $linesapage if( $pageconfig->{'totalentries'} < $linesapage );
-		$pageconfig->{'colnameorderby'} = lc( $OrderBy->{'column'} ) || q(id);
-		$pageconfig->{'descendorderby'} = $OrderBy->{'descend'} || 0;
+		$pagination->resultsperpage( $nrecordsin < $linesapage ? $linesapage : int($nrecordsin/10) );
+		$pagination->set($nrecordsin);
+		$pagination->colnameorderby( $OrderBy->{'column'} );
+		$pagination->descendorderby( $OrderBy->{'descend'} ? 1 : 0 );
+
+		$Cmd->d( 1, sprintf("Total entries = %d\n", $pagination->count() ));
 
 		# Search and Print
-		while(1)
+		SEARCH_AND_NEW: while(1)
 		{
-			last() unless( $pageconfig->{'totalentries'} );	# reocrd == 0, exit
+			my $dumpeddata = [];		# (Ref->Array) Dumped results
+			my $xniterator = Kanadzuchi::Mail::Stored::BdDR->searchandnew( 
+						$Rdb->handle(), $whereconds, $pagination );
 
-			# Receive results in a array reference
-			$dumpeddata = Kanadzuchi::Mail::Stored::RDB->searchandnew( 
-						$Rdb, $whereconds, \$pageconfig, $reqsobject );
-
-			# Create H::Log object for using ->dumper() method
-			$objhlogger = new Kanadzuchi::Log( 
-						'count'	=> scalar(@{$dumpeddata}),
-						'entities' => $dumpeddata,
-						'device' => q{STDOUT},
-						'format' => $Fmt, );
-
-			if( $pageconfig->{'currentpagenum'} == 1 )
+			DUMP_EACH_OBJECT: while( my $obj = $xniterator->next() )
 			{
-				$Cmd->d( 1, sprintf("Total entries = %d\n", $pageconfig->{'totalentries'} ));
+				push( @$dumpeddata, $obj );
+			} # End of while(DUMP_EACH_OBJECT)
 
+			# Create K::Log object and dump
+			my $kanazcilog = new Kanadzuchi::Log(
+						'count' => scalar(@$dumpeddata),
+						'entities' => $dumpeddata,
+						'device' => q|STDOUT|,
+						'format' => $Fmt );
+
+			if( $pagination->currentpagenum == 1 )
+			{
 				# Print comment block
-				if( $Cmd->operation & $Cmd->option->{'comment'} && $pageconfig->{'totalentries'} > 0 )
+				if( $Cmd->operation & $Cmd->option->{'comment'} )
 				{
-					$objhlogger->header(1);
-					$objhlogger->comment( sprintf( qq{Dumped by %s/%s %s},
+					$kanazcilog->header(1);
+					$kanazcilog->comment( sprintf( qq{Dumped by %s/%s %s},
 							$Zci->myname(), $Cmd->calledfrom(), $Zci->version() ));
 				}
-				$objhlogger->dumper();
-				$objhlogger->header(0);
-				$objhlogger->comment(q{});
+				$kanazcilog->dumper();
+				$kanazcilog->header(0);
+				$kanazcilog->comment(q{});
 			}
 			else
 			{
-				$objhlogger->dumper();
+				$kanazcilog->dumper();
 			}
 
-			last() if( $pageconfig->{'currentpagenum'} >= $pageconfig->{'lastpagenumber'} );
-			$pageconfig->{'currentpagenum'}++;
-		} # End of the loop/while(1)
+			last() unless($pagination->hasnext());
+			$pagination->next();
+
+		} # End of while(SEACH_AND_NEW)
+
 	}
 }
 

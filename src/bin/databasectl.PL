@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.8 2010/04/24 06:13:33 ak Exp $
+# $Id: databasectl.PL,v 1.11 2010/05/20 13:11:14 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -24,8 +24,7 @@ use strict;
 use warnings;
 use Kanadzuchi;
 use Kanadzuchi::UI::CLI;
-use Kanadzuchi::RDB::Schema;
-use Kanadzuchi::RDB;
+use Kanadzuchi::BdDR;
 use Error ':try';
 use Time::Piece;
 
@@ -36,7 +35,7 @@ use Time::Piece;
 #
 my $Zci;		# (Kanadzuchi) System object
 my $Cmd;		# (Kanadzuchi::UI::CLI) Commadline object
-my $Rdb;		# (Kanadzuchi::RDB) Database object
+my $Rdb;		# (Kanadzuchi::BdDR) Database object
 my $Day;		# (Integer) The day (before|after), 0 = today, -1 = yesterday
 my $Lfs = [];		# (Ref->Array) Log files for INSERT or UPDATE
 
@@ -44,8 +43,8 @@ my $CLIOPTION = {
 	'conf'		=> ( 1 << 0 ),
 	'test'		=> ( 1 << 1 ),
 	'usedb'		=> ( 1 << 2 ),
-	'UPDATE'	=> ( 1 << 3 ),
-	'REMOVE'	=> ( 1 << 4 ),
+	'update'	=> ( 1 << 3 ),
+	'remove'	=> ( 1 << 4 ),
 	'force'		=> ( 1 << 5 ),
 	'disabled'	=> ( 1 << 6 ),
 	'cleanup'	=> ( 1 << 7 ),
@@ -64,8 +63,8 @@ $Cmd = new Kanadzuchi::UI::CLI(
 		'option' => $CLIOPTION,
 		'commandline' => join(q{ }, $0, @ARGV ));
 
-# Create Kanadzuchi::RDB object
-$Rdb = new Kanadzuchi::RDB( 'count' => 0, 'cache' => {}, );
+# Create Kanadzuchi::BdDR object
+$Rdb = new Kanadzuchi::BdDR();
 
 # Parse options, initialize object
 try {
@@ -104,44 +103,38 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 	#  \___/|____/|_____| |____/|____/ 
 	#
 	# Use Database
+	require Kanadzuchi::BdDR::BounceLogs;
+	require Kanadzuchi::BdDR::BounceLogs::Masters;
+	require Kanadzuchi::BdDR::Cache;
 	require Kanadzuchi::Mail::Stored::YAML;
-	require Kanadzuchi::Mail::Stored::RDB;
+	require Kanadzuchi::Mail::Stored::BdDR;
 
-	# Set values to Kanadzuchi::RDB object, Create data source name
+	my $xntableobj = undef();	# (Kanadzuchi::BdDR::BounceLogs::Table) Txn table object
+	my $mastertabs = {};		# (Ref->Hash) Kanadzuchi::BdDR::BounceLogs::Masters::Table objects
+
+	# Set timeout(ALRM) for reading from STDIN
+	eval { alarm( ( $Zci->config->{'environment'}->{'timeout'} || 180 ) ) };
+
+	# Set values to Kanadzuchi::BdDR object, Create data source name
 	try {
-		unless( $Rdb->setup($Zci->config->{'database'}) )
-		{
-			Kanadzuchi::Exception::Database->throw( '-text' => q{Failed to setup} );
-		}
+		$Rdb->setup( $Zci->config->{'database'} );
+		Kanadzuchi::Exception::Database->throw( '-text' => q{Failed to connect DB} ) unless($Rdb->connect());
+		$Cmd->d(2,"Connecting to the database\n") if(defined($Rdb->handle()));
 
-		if( length($Rdb->datasn()) == 0 )
-		{
-			# Unsupported database type
-			Kanadzuchi::Exception::Database->throw(
-				'-text' => q{Unsupported database type: }.$Rdb->dbtype );
-		}
-		elsif( length($Rdb->datasn()) < 5 )
-		{
-			# Datatabase name or database type is not defined
-			Kanadzuchi::Exception::Database->throw( 
-				'-text' => q{Failed to create data source name} );
-		}
+		# Create master table objects
+		$xntableobj = Kanadzuchi::BdDR::BounceLogs::Table->new( 'handle' => $Rdb->handle() );
+		$mastertabs = Kanadzuchi::BdDR::BounceLogs::Masters::Table->mastertables($Rdb->handle());
+		Kanadzuchi::Exception::Database->throw( 
+			'-text' => 'Failed to create table objects' ) if( ! $xntableobj || ! $mastertabs );
 
-		# Connect and set database handle
-		$Rdb->handle( Kanadzuchi::RDB::Schema->connect(
-				$Rdb->datasn(), $Rdb->username(), $Rdb->password()) );
-		$Cmd->d(2,q{Connecting to the database}.qq{\n}) if(defined($Rdb->handle()));
+		( $Rdb->hostname() && $Rdb->port() )
+			? $Cmd->d(2,sprintf("Database host = %s:%d\n", $Rdb->hostname(),$Rdb->port()))
+			: $Cmd->d(2,qq{Database host = Socket\n});
 
-		if( $Rdb->hostname() && $Rdb->port() )
-		{
-			$Cmd->d(2,sprintf("Database host = %s:%d\n", $Rdb->hostname(),$Rdb->port()));
-		}
-		else
-		{
-			$Cmd->d(2,qq{Database host = Socket\n});
-		}
 		$Cmd->d(2,sprintf("Database name = %s(%s)\n", $Rdb->dbname(), $Rdb->dbtype()));
 		$Cmd->d(2,sprintf("Database user = %s\n", $Rdb->username()));
+		$Cmd->d(2,sprintf("Using table = %s\n", $xntableobj->alias()));
+
 	}
 	catch Kanadzuchi::Exception::Database with {
 		$Cmd->exception(shift());
@@ -150,221 +143,285 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 
 
 	# Read log file for UPDATE or DELETE
-	if( $Cmd->operation & ( $Cmd->option->{'UPDATE'} + $Cmd->option->{'REMOVE'} + $Cmd->option->{'disabled'} ) )
+	if( $Cmd->operation & ( $Cmd->option->{'update'} + $Cmd->option->{'remove'} + $Cmd->option->{'disabled'} ) )
 	{
-		#  _   _ ____  ____    _  _____ _____     ____  _____ _     _____ _____ _____ 
-		# | | | |  _ \|  _ \  / \|_   _| ____|   |  _ \| ____| |   | ____|_   _| ____|
-		# | | | | |_) | | | |/ _ \ | | |  _|     | | | |  _| | |   |  _|   | | |  _|  
-		# | |_| |  __/| |_| / ___ \| | | |___ _  | |_| | |___| |___| |___  | | | |___ 
-		#  \___/|_|   |____/_/   \_\_| |_____( ) |____/|_____|_____|_____| |_| |_____|
-		#                                    |/        
-		# Create the log file name by the day(-t, -y, or -b option )
-		if( scalar(@$Lfs) == 0 && defined($Day) )
+		my $sizeoflogs = 0;		# (Integer) File size of all of the logs
+
+		if( $Cmd->operation & $Cmd->option->{'update'} )
 		{
-			# Set the log file name
-			my $_theday = bless( (localtime() - ( $Day * 86400 )), q|Time::Piece| );
-			my $_thelog = new Path::Class::File( sprintf("%s/%s.%s.%s", 
-							$Zci->config->{'directory'}->{'log'},
-							$Zci->config->{'file'}->{'storage'}->{'prefix'},
-							$_theday->ymd('-'),
-							$Zci->config->{'file'}->{'storage'}->{'suffix'} ));
-			push( @$Lfs, $_thelog );
-			$Cmd->d( 1, sprintf("Log file(date) = %s\n", $_thelog->stringify() ));
-		}
+			#  _   _ ____  ____    _  _____ _____   _   ___ _   _ ____  _____ ____ _____ 
+			# | | | |  _ \|  _ \  / \|_   _| ____| | | |_ _| \ | / ___|| ____|  _ \_   _|
+			# | | | | |_) | | | |/ _ \ | | |  _|   | |  | ||  \| \___ \|  _| | |_) || |  
+			# | |_| |  __/| |_| / ___ \| | | |___  | |  | || |\  |___) | |___|  _ < | |  
+			#  \___/|_|   |____/_/   \_\_| |_____| | | |___|_| \_|____/|_____|_| \_\|_|  
+			#                                      |_|                                   
+			my $rthreshold = 10000;		# (Integer) About 10,000 records
+			my $thelinesof = 0;		# (Integer) The number of records in the logs
+			my $sizeoflogs = 0;		# (Integer) File size of all of the logs
 
-		if( scalar(@$Lfs) )
-		{
-			try {
-				unless( grep({ -e $_ && -f _ } @$Lfs) )
-				{
-					Kanadzuchi::Exception::IO->throw( '-text' => 'There is no log file' );
-				}
-
-				unless( grep({ -r $_ && -T _ } @$Lfs) )
-				{
-					Kanadzuchi::Exception::File->throw( '-text' => 'log is not readable or text file' );
-				}
-			}
-			otherwise {
-				$Cmd->exception(shift());
-				$Cmd->abort();
-			};
-		}
-		else
-		{
-			push( @$Lfs, \*STDIN );
-		}
-
-
-		try {
-			LOAD_AND_NEW: foreach my $_lf ( @$Lfs )
+			# Create the log file name by the day(-t, -y, or -b option )
+			if( scalar(@$Lfs) == 0 && defined($Day) )
 			{
-				push( @{$Rdb->records}, @{ Kanadzuchi::Mail::Stored::YAML->loadandnew( $_lf, 1 ) } );
-				$Cmd->d( 2, sprintf( "Load log file = %s\n", 
-						ref($_lf) eq q|Path::Class::File| ? $_lf->stringify() : q{<STDIN>} ));
+				# Set the log file name
+				my $_theday = bless( (localtime() - ( $Day * 86400 )), q|Time::Piece| );
+				my $_thelog = new Path::Class::File( $Zci->get_logfile('r',{ 'data' => $_theday->ymd('-') }) );
+				push( @$Lfs, $_thelog );
+				$Cmd->d( 1, sprintf("Log file(date) = %s\n", $_thelog->stringify() ));
 			}
 
-			Kanadzuchi::Exception::Data->throw(
-				'-text' => 'No data in the log files' ) unless( scalar(@{$Rdb->records}) );
-		}
-		catch Kanadzuchi::Exception::Data with {
-			$Cmd->exception(shift());
-			$Cmd->abort();
-		};
-
-
-		my $_pgconfig = { 'currentpagenum' => 1, 'resultperpage' => 1, 'columnorderby' => 'id' };
-		my $_wherecnd = { 'disabled' => 0 };
-		Kanadzuchi::Mail::Stored::RDB->searchandnew( $Rdb, $_wherecnd, \$_pgconfig, 0 );
-
-		my $_prbar = undef();	# Term::ProgressBar object
-		my $_white = Kanadzuchi::Mail::Stored::YAML->rname2id('whitelisted');
-		my $_curis = $_pgconfig->{'totalentries'} || 0;
-		my $_maxis = $Zci->config->{'database'}->{'table'}->{'bouncelogs'}->{'maxrecords'} || 0;
-		my $_times = { 'insert' => 0, 'update' => 0, 'nosender' => 0, 'exceedlimit' => 0,
-				'older' => 0, 'error' => 0, 'whitelist' => 0, };
-		my $_theid = { 'insert' => 0, 'update' => 0, };
-
-		$Cmd->d(1,sprintf("Bounce messages in the log files = %d\n",scalar(@{$Rdb->records})));
-		$Cmd->d(1,sprintf("Bounce messages in the db = %d\n",$_pgconfig->{'totalentries'}));
-		$Cmd->d(1,sprintf("Record limit of the db = %d\n", $_maxis ) );
-
-
-		if( $Cmd->debuglevel > -1 )
-		{
-			my $_pname = q(UPDATE|INSERT);
-			eval{ require Term::ProgressBar; };
-
-			$_pname = q(REMOVE) if( $Cmd->operation & $Cmd->option->{'REMOVE'} );
-			$_pname = q(To disable) if( $Cmd->operation & $Cmd->option->{'disabled'} );
-
-			$_prbar = new Term::ProgressBar( { 'fh' => \*STDERR, 'ETA' => q{linear},
-					'name' => $_pname, 'count' => scalar(@{$Rdb->records}), });
-		}
-
-		if( $Cmd->operation & $Cmd->option->{'UPDATE'} )
-		{
-			#  _   _ ____  ____    _  _____ _____     ___ _   _ ____  _____ ____ _____ 
-			# | | | |  _ \|  _ \  / \|_   _| ____|   |_ _| \ | / ___|| ____|  _ \_   _|
-			# | | | | |_) | | | |/ _ \ | | |  _|      | ||  \| \___ \|  _| | |_) || |  
-			# | |_| |  __/| |_| / ___ \| | | |___ _   | || |\  |___) | |___|  _ < | |  
-			#  \___/|_|   |____/_/   \_\_| |_____( ) |___|_| \_|____/|_____|_| \_\|_|  
-			#                                    |/ 
-			# Make 'SenderDomain','HostGroups' table cache
-			$Rdb->makecache('SenderDomains','domainname'); 
-			$Rdb->cache->{'Providers'} = {};
-			$Rdb->cache->{'Addressers'} = {};
-			$Rdb->cache->{'MesgTokens'} = {};
-			$Rdb->cache->{'Destinations'} = {};
-
-			my $_rindex = 0;
-			my $_dcache = {};
-
-			foreach my $_rr ( @{$Rdb->records} )
+			# Check the log files
+			if( scalar(@$Lfs) )
 			{
-				$_dcache = {};
+				try {
+					Kanadzuchi::Exception::File->throw(
+						'-text' => 'There is no log file' ) unless( grep { -s $_ && -r _ && -T _ } @$Lfs );
+					alarm(0);
 
-				unless( exists($Rdb->cache->{'SenderDomains'}->{$_rr->senderdomain()}) )
-				{
-					# There is no sender domain in the database and the cache
-					$_prbar->update() if( defined($_prbar) );
-					$_times->{'nosender'}++;
-					next();
-				}
-
-				if( $_rr->findbytoken($Rdb) )
-				{
-					$_dcache = $Rdb->cache->{'MesgTokens'}->{$_rr->token()};
-
-					# The record that has same message token already exists
-					if( $_rr->bounced->epoch <= $_dcache->{'bounced'} )
+					# Check the number of records in the log files
+					foreach my $f ( @$Lfs )
 					{
-						# The record is too older than the record in the database, Skip
-						$_times->{'older'}++;
-						$_prbar->update() if(defined($_prbar));
+						open( my $loghandle, q{<}, $f );
+						$sizeoflogs += -s $f;
+						$thelinesof++ while( <$loghandle> );
+						close($loghandle);
+					}
+				}
+				otherwise {
+					$Cmd->exception(shift());
+					$Cmd->abort();
+				};
+			}
+			else
+			{
+				# Read parsed data from STDIN
+				push( @$Lfs, \*STDIN );
+			}
+
+
+			my $tablecache = new Kanadzuchi::BdDR::Cache();	# (K::B::Cache) Table cache
+			my $snegativec = {};				# (Ref->Hash) Negative cache for senderdomain
+			my $xntabalias = lc $xntableobj->alias();	# (String) lower cased txn table alias
+			my $sddomtable = $mastertabs->{'senderdomains'};# (K::Bd::B::Masters::Table) senderdomains table
+
+			my $theprogbar = undef();			# (Term::ProgressBar) Progress bar
+			my $loadedsize = 0;				# (Integer) Loaded data size
+			my $loadedline = 0;				# (Integer) Loaded line
+
+			my $recinthedb = $xntableobj->count();		# (Integer) The number of records in the db
+			my $xsoftlimit = $Zci->config->{'database'}->{'table'}->{'bouncelogs'}->{'maxrecords'} || 0;
+			my $execstatus = {
+				'update' => 0, 'insert' => 0, 'tooold' => 0, 'exceed' => 0,
+				'failed' => 0, 'nofrom' => 0, 'whited' => 0, };
+
+			# Verbose message
+			$Cmd->d(1,sprintf("Total size of log files = %d\n", $sizeoflogs));
+			$Cmd->d(1,sprintf("Bounce messages in the log file = %d\n", $thelinesof));
+			$Cmd->d(1,sprintf("Bounce messages in the database = %d\n", $recinthedb));
+			$Cmd->d(1,sprintf("Limit the number of records(db) = %d\n", $xsoftlimit));
+
+			# Prepare the progress bar
+			if( -t STDIN && $Cmd->debuglevel > -1 )
+			{
+				eval{ require Term::ProgressBar; };
+				$theprogbar = new Term::ProgressBar( { 
+							'fh' => \*STDERR,
+							'ETA' => q{linear},
+							'name' => '(UPDATE|INSERT)',
+							'count' => -t STDIN ? $thelinesof : $sizeoflogs } );
+			}
+
+			LOAD_EACH_FILE: while( my $logfileobj = shift(@$Lfs) )
+			{
+				my $filehandle = undef();	# (GLOB) File handle of each log file
+				my $kanazciitr = undef();	# (Kanadzuchi::Iterator)
+				my $jsonstring = q();		# (String) Loaded JSON/YAML string
+				my $thiscached = {};		# (Ref->Hash) Cached data of each table
+				my $thismtoken = q();		# (String) This record's message token
+				my $thismepoch = 0;		# (Integer) Bounced time
+				my $thisstatus = 0;		# (Integer) Returned status value
+				my $execinsert = 0;		# (Integer) Flag; Exec INSERT
+
+				ref($logfileobj) eq q|GLOB|
+					? $filehandle = $logfileobj
+					: open( $filehandle, q{<}, $logfileobj );
+
+				READ_EACH_LINE: while( <$filehandle> )
+				{
+					# Incremant loaded data size, loaded lines
+					$loadedline++;
+					$loadedsize += length($_);
+
+					# Check limit the number of records
+					if( $xsoftlimit > 0 && ($execstatus->{'insert'} + $recinthedb) >= $xsoftlimit )
+					{
+						# Exceeds limit!
+						$execstatus->{'exceed'}++;
 						next();
 					}
+					
+					# Read JSON string from the log
+					$jsonstring = $_; chomp($jsonstring);
+					$kanazciitr = Kanadzuchi::Mail::Stored::YAML->loadandnew(\$jsonstring);
 
-					# The record in the db is whitelisted ?
-					if( ! ( $Cmd->operation & $Cmd->option->{'force'} ) && ( $_dcache->{'reason'} == $_white ) )
+					READ_AND_UPDATE: while( my $parseddata = $kanazciitr->next() )
 					{
-						# with no --force option, no whitelisted records are updated
-						$_times->{'whitelist'}++;
-						$_prbar->update() if(defined($_prbar));
-						next();
-					}
+						# Check cached data
+						$thismtoken = $parseddata->token();
+						$thismepoch = $parseddata->bounced->epoch();
+						$thiscached = $tablecache->getit( $xntabalias, $thismtoken );
 
-					# The bounced machine time of the record is newer than the record 
-					# in the database, do UPDATE
-					$_theid->{'update'} = $_rr->update( $Rdb, $_dcache->{'id'} );
-					$_times->{'update'}++ if( $_theid->{'update'} == 1 );
-					$_times->{'error'}++ if( $_theid->{'update'} == 0 );	# 0e0
-					$_prbar->update() if(defined($_prbar));
-				}
-				else
-				{
-					# If 'maxrecords < ( current_record + inserted )' go to the next loop
-					if( $_maxis && $_maxis <= ( $_curis + $_times->{'insert'} ) )
-					{
-						$_times->{'exceedlimit'}++;
-					}
-					else
-					{
-						# There is no record that has same message token, do INSERT
-						$_theid->{'insert'} = $_rr->insert($Rdb);
-						if( $_theid->{'insert'} )
+						if( exists($thiscached->{'bounced'}) )
 						{
-							$_times->{'insert'}++
+							# Cache hit!
+							# This record's bounced date is OLDER THAN the record in the cache.
+							if( $thiscached->{'bounced'} >= $thismepoch )
+							{
+								$execstatus->{'tooold'}++;
+								next();
+							}
 						}
 						else
 						{
-							$_times->{'error'}++;
-						}
-					}
-					$_prbar->update() if(defined($_prbar));
-				}
-			}
-			continue
-			{
-				# Flush the checked record
-				$Rdb->records->[$_rindex++] = undef();
-			} # End of the loop(for())
+							# No cache data of this entity
+							if( $parseddata->findbytoken($xntableobj,$tablecache) )
+							{
+								# The record that has same token exists in the database
+								$thiscached = $tablecache->getit( $xntabalias, $thismtoken );
 
+								if( $thiscached->{'bounced'} >= $thismepoch )
+								{
+									# Bounced date of this record is older than the record in the database.
+									$execstatus->{'tooold'}++;
+									next();
+								}
+								elsif( ! ($Cmd->operation & $Cmd->option->{'force'}) && $thiscached->{'reason'} eq 'whitelisted' )
+								{
+									# The whitelisted record is not updated without --force option.
+									$execstatus->{'whited'}++;
+									next();
+								}
+							}
+							else
+							{
+								# Record that have same token DOES NOT EXIST in the database
+								# Does the senderdomain exist in the mastertable?
+								if( $sddomtable->getidbyname($parseddata->senderdomain()) )
+								{
+									$execinsert = 1;
+								}
+								else
+								{
+									# The senderdomain DOES NOT EXIST in the mastertable
+									# Set this senderdomain into negative cache
+									$execstatus->{'nofrom'}++;
+									$snegativec->{ $parseddata->senderdomain }++;
+									next();
+								}
+							}
+
+						}
+
+						# Check negative cache
+						if( $snegativec->{ $parseddata->senderdomain } )
+						{
+							# The senderdomain exists in the negative cache
+							$execstatus->{'nofrom'}++;
+							$snegativec->{ $parseddata->senderdomain }++;
+							next();
+						}
+
+						# UPDATE OR INSERT
+						if( $execinsert )
+						{
+							# INSERT this record INTO the database
+							$thisstatus = $parseddata->insert($xntableobj,$mastertabs,$tablecache);
+							$thisstatus ? $execstatus->{'insert'}++ : $execstatus->{'failed'}++;
+						}
+						else
+						{
+							$thisstatus = $parseddata->update($xntableobj,$tablecache);
+							$thisstatus ? $execstatus->{'update'}++ : $execstatus->{'failed'}++;
+						}
+
+					} # End of while(READ_AND_UPDATE)
+
+				}
+				continue
+				{
+					$theprogbar->update( $loadedline ) if( defined($theprogbar) );
+				} # End of while(READ_EACH_FILE)
+
+				close($filehandle);
+
+			} # End of while(LOAD_EACH_FILE)
+
+			# Verbose messages of update status and cache information
 			if( $Cmd->debuglevel > 1 || ( $Cmd->operation & $Cmd->option->{'batch'} ) )
 			{
-				$Cmd->d(2,sprintf("%5d records are inserted\n", $_times->{'insert'} ));
-				$Cmd->d(2,sprintf("%5d records are updated\n", $_times->{'update'} ));
-				$Cmd->d(2,sprintf("%5d records are skipped(no sender domain)\n", $_times->{'nosender'} ));
-				$Cmd->d(2,sprintf("%5d records are skipped(older or same record)\n", $_times->{'older'} ));
-				$Cmd->d(2,sprintf("%5d records are skipped(is whitelist)\n", $_times->{'whitelist'} ));
-				$Cmd->d(2,sprintf("%5d records are skipped(exceed limit:%d)\n", $_times->{'exceedlimit'}, $_maxis ));
-				$Cmd->d(2,sprintf("%5d errors are occurred\n", $_times->{'error'} ));
+				$Cmd->d(2,sprintf("%5d Records are successfully inserted\n", $execstatus->{'insert'} ));
+				$Cmd->d(2,sprintf("%5d Records are successfully updated\n",  $execstatus->{'update'} ));
+				$Cmd->d(2,sprintf("%5d Records are skipped|no senderdomain\n", $execstatus->{'nofrom'} ));
+				$Cmd->d(2,sprintf("%5d Records are skipped|older or same time stmap\n", $execstatus->{'tooold'} ));
+				$Cmd->d(2,sprintf("%5d Records are skipped|reason is whitelisted\n", $execstatus->{'whited'} ));
+				$Cmd->d(2,sprintf("%5d Records are skipped|exceeds limit:%d\n", $execstatus->{'exceed'}, $xsoftlimit ));
+				$Cmd->d(2,sprintf("%5d Records are failed to insert or update\n", $execstatus->{'failed'} ));
 
 				if( $Cmd->operation & $Cmd->option->{'batch'} )
 				{
-					# Batch mode, output as a (YAML|JSON) format(flow style)
-					printf( STDOUT 
-						qq|{ "insert": %d, "update": %d, "error": %d, "skip": %d, |.
-						qq|"asitis": { "nosender": %d, "older": %d, "whitelist": %d, "exceedlimit": %d } }\n|,
-						$_times->{'insert'}, $_times->{'update'}, $_times->{'error'}, 
-						( $_times->{'nosender'}
-							+ $_times->{'older'}
-							+ $_times->{'whitelist'}
-							+ $_times->{'exceedlimit'}
-						),
-						$_times->{'nosender'}, $_times->{'older'}, $_times->{'whitelist'},
-						$_times->{'exceedlimit'}
-					);
-				}
+					# Batch mode, output as a block style YAML format
+					my $batchinfo = q();
+					my $skippedis = 0;
+					map { $skippedis += $execstatus->{$_} } ( qw{nofrom tooold whited exceed} );
 
-				foreach my $_x ('Providers','Addressers','SenderDomains','Destinations','MesgTokens' )
-				{
-					$Cmd->d( 3, sprintf("%5d cached records in the %s\n", 
-							my $_k = keys( %{ $Rdb->cache->{$_x} } ), $_x ));
+					$batchinfo .= sprintf( qq|  record: %d\n|, $thelinesof );
+					$batchinfo .= sprintf( qq|  insert: %d\n|, $execstatus->{'insert'} );
+					$batchinfo .= sprintf( qq|  update: %d\n|, $execstatus->{'update'} );
+
+					$batchinfo .= sprintf( qq|  skipped:\n| );
+					$batchinfo .= sprintf( qq|    no-senderdomain: %d\n|, $execstatus->{'nofrom'} );
+					$batchinfo .= sprintf( qq|    too-old-or-same: %d\n|, $execstatus->{'tooold'} );
+					$batchinfo .= sprintf( qq|    is-whitelisted: %d\n|, $execstatus->{'whited'} );
+					$batchinfo .= sprintf( qq|    exceeds-limit: %d\n|, $execstatus->{'exceed'} );
+
+					if( $xntableobj->error->{'count'} || grep { $mastertabs->{$_}->error->{'count'} > 0 } keys(%$mastertabs) )
+					{
+						$batchinfo .= sprintf( qq|  failed:\n| );
+						$batchinfo .= sprintf( qq|    bouncelogs: %d\n|, $xntableobj->error->{'count'} );
+						$batchinfo .= sprintf( qq|    mastertables:\n| );
+						$batchinfo .= sprintf( qq|      addressers: %d\n|, $mastertabs->{'addressers'}->error->{'count'} );
+						$batchinfo .= sprintf( qq|      senderdomains: %d\n|, $mastertabs->{'senderdomains'}->error->{'count'} );
+						$batchinfo .= sprintf( qq|      destinations: %d\n|, $mastertabs->{'destinations'}->error->{'count'} );
+						$batchinfo .= sprintf( qq|      providers: %d\n|, $mastertabs->{'providers'}->error->{'count'} );
+					}
+
+					if( scalar values( %{ $tablecache->count } ) )
+					{
+						$batchinfo .= sprintf( qq|  cache:\n| );
+						$batchinfo .= sprintf( qq|    positive:\n| );
+						$batchinfo .= sprintf( qq|      bouncelogs: %d\n|, $tablecache->count->{'bouncelogs'} || 0 );
+						$batchinfo .= sprintf( qq|      mastertables:\n| );
+						$batchinfo .= sprintf( qq|        addressers: %d\n|, $tablecache->count->{'addressers'} || 0 );
+						$batchinfo .= sprintf( qq|        senderdomains: %d\n|, $tablecache->count->{'senderdomains'} || 0 );
+						$batchinfo .= sprintf( qq|        destinations: %d\n|, $tablecache->count->{'destinations'} || 0 );
+						$batchinfo .= sprintf( qq|        providers: %d\n|, $tablecache->count->{'providers'} || 0 );
+					}
+
+					if( scalar values(%$snegativec) )
+					{
+						$batchinfo .= sprintf( qq|    negative:\n| );
+						$batchinfo .= sprintf( qq|      mastertables:\n| );
+						$batchinfo .= sprintf( qq|        senderdomains:\n| );
+						map { $batchinfo .= 
+								sprintf( qq|          %s: %d\n|, $_, $snegativec->{$_} )
+							} keys( %$snegativec );
+					}
+
+					$Cmd->batchstatus(\$batchinfo);
 				}
 			}
-		}
-		elsif( $Cmd->operation & $Cmd->option->{'REMOVE'} )
+
+		} # End of if(UPDATE)
+		elsif( $Cmd->operation & $Cmd->option->{'remove'} )
 		{
 			#  ____  _____ _     _____ _____ _____ 
 			# |  _ \| ____| |   | ____|_   _| ____|
@@ -497,13 +554,13 @@ sub parse_options
 	if( $_opt_update )
 	{
 		$_operation |= $Cmd->option->{'usedb'}; 
-		$_operation |= $Cmd->option->{'UPDATE'};
+		$_operation |= $Cmd->option->{'update'};
 		$_operation |= $Cmd->option->{'force'} if( $_opt_force );
 	}
 	elsif( $_opt_remove )
 	{
 		$_operation |= $Cmd->option->{'usedb'}; 
-		$_operation |= $Cmd->option->{'REMOVE'};
+		$_operation |= $Cmd->option->{'remove'};
 	}
 	elsif( $_opt_disabled )
 	{

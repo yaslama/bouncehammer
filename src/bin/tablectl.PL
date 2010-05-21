@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: tablectl.PL,v 1.9 2010/04/24 06:13:34 ak Exp $
+# $Id: tablectl.PL,v 1.11 2010/05/18 07:29:44 ak Exp $
 # -Id: tablectl.PL,v 1.12 2010/02/21 20:09:01 ak Exp -
 # -Id: tablectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: tablectl.PL,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -12,7 +12,6 @@
    ##   ##### ##  ## ##  ###### ##      ##    ##    
    ##  ##  ## ##  ## ##  ##     ##      ##    ##    
     ### ##### ##### ####  ####   ####    ### ####   
-                                                    
 package Kanadzuchi::Command::Tablectl;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -21,13 +20,14 @@ package Kanadzuchi::Command::Tablectl;
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 use lib '__KANADZUCHIROOT__/lib';
+use utf8;
 use strict;
 use warnings;
 use Kanadzuchi;
 use Kanadzuchi::UI::CLI;
-use Kanadzuchi::RDB::Schema;
-use Kanadzuchi::RDB;
-use Kanadzuchi::RDB::MasterTable;
+use Kanadzuchi::BdDR;
+use Kanadzuchi::BdDR::Page;
+use Kanadzuchi::BdDR::BounceLogs::Masters;
 use Error ':try';
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
@@ -37,10 +37,11 @@ use Error ':try';
 #
 my $Zci;		# (Kanadzuchi) System object
 my $Cmd;		# (Kanadzuchi::UI::CLI) Commandline object
-my $Rdb;		# (Kanadzuchi::RDB) Database object
-my $Tab;		# (Kanadzuchi::RDB::Table::*) Master table object
+my $Rdb;		# (Kanadzuchi::BdDR) Database object
+my $Tab;		# (Kanadzuchi::BdDR::BounceLogs::Masters::Table)
 my $Fmt;		# (String) Output fotmat
-my $Given = {};		# (Ref->Hash) $Tab
+my $Alias = q();	# (String) Table alias
+my $Wcond = {};		# (Ref->Hash) Where condition
 
 my $CLIOPTION = {
 	'conf'		=> ( 1 << 0 ),
@@ -66,8 +67,8 @@ $Cmd = new Kanadzuchi::UI::CLI(
 		'option' => $CLIOPTION,
 		'commandline' => join(q{ }, $0, @ARGV ));
 
-# Create Kanadzuchi::RDB object
-$Rdb = new Kanadzuchi::RDB( 'count' => 0, 'cache' => {}, );
+# Create Kanadzuchi::BdDR object
+$Rdb = new Kanadzuchi::BdDR();
 
 # Parse options, initialize object
 try {
@@ -105,64 +106,24 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 	# | |_| |___) | |___  | |_| | |_) |
 	#  \___/|____/|_____| |____/|____/ 
 	#
-	# Use Database
-
 	try {
-		if( defined($Rdb->table()) )
-		{
-			# Create master table object(Tab)
-			$Tab = Kanadzuchi::RDB::MasterTable->newtable( $Rdb->table() );
-			Kanadzuchi::Exception::Database->throw( '-text' => 'No such table' ) unless( defined($Tab) );
-		}
-		else
-		{
-			Kanadzuchi::Exception::Command->throw( '-text' => q{No table name} );
-		}
+		Kanadzuchi::Exception::Command->throw( '-text' => q{No table name} ) unless( $Alias );
 
-		# Set values to Kanadzuchi::Database object, Create data source name
-		unless( $Rdb->setup($Zci->config->{'database'}) )
-		{
-			Kanadzuchi::Exception::Database->throw( '-text' => q{Failed to setup} );
-		}
-
-		if( length($Rdb->datasn()) == 0 )
-		{
-			# Unsupported database type
-			Kanadzuchi::Exception::Database->throw(
-				'-text' => q{Unsupported database type: }.$Rdb->dbtype );
-		}
-		elsif( length($Rdb->datasn()) < 5 )
-		{
-			# Datatabase name or database type is not defined
-			Kanadzuchi::Exception::Database->throw( 
-				'-text' => q{Failed to create data source name} );
-		}
-
-		# Set values($Given) to object($Tab)
-		$Tab->id($Given->{'id'});
-		$Tab->name($Given->{'name'});
-		$Tab->description($Given->{'description'});
-		$Tab->disabled($Given->{'disabled'} || 0);
-
-		undef($Given);
-
-		# Connect and set database handle
-		$Rdb->handle( Kanadzuchi::RDB::Schema->connect(
-				$Rdb->datasn(), $Rdb->username(), $Rdb->password()) );
+		$Rdb->setup( $Zci->config->{'database'} );
+		Kanadzuchi::Exception::Database->throw( '-text' => q{Failed to connect DB} ) unless($Rdb->connect());
 		$Cmd->d(2,"Connecting to the database\n") if(defined($Rdb->handle()));
 
-		if( $Rdb->hostname() && $Rdb->port() )
-		{
-			$Cmd->d(2,sprintf("Database host = %s:%d\n", $Rdb->hostname(),$Rdb->port()));
-		}
-		else
-		{
-			$Cmd->d(2,qq{Database host = Socket\n});
-		}
+		# Create master table object(Tab)
+		$Tab = new Kanadzuchi::BdDR::BounceLogs::Masters::Table( 'alias' => $Alias, 'handle' => $Rdb->handle() );
+		Kanadzuchi::Exception::Database->throw( '-text' => 'No such table' ) unless( defined($Tab) );
+
+		( $Rdb->hostname() && $Rdb->port() )
+			? $Cmd->d(2,sprintf("Database host = %s:%d\n", $Rdb->hostname(),$Rdb->port()))
+			: $Cmd->d(2,qq{Database host = Socket\n});
 
 		$Cmd->d(2,sprintf("Database name = %s(%s)\n", $Rdb->dbname(), $Rdb->dbtype()));
 		$Cmd->d(2,sprintf("Database user = %s\n", $Rdb->username()));
-		$Cmd->d(2,sprintf("Using table = %s\n", $Tab->table()));
+		$Cmd->d(2,sprintf("Using table = %s\n", $Tab->alias()));
 	}
 	otherwise {
 		$Cmd->exception(shift());
@@ -178,67 +139,62 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		#  ___) | |___| |___| |__| |___  | |_  | |___ | | ___) || |  
 		# |____/|_____|_____|_____\____| |_( ) |_____|___|____/ |_|  
 		#                                  |/
-		my $_resultset;				# (DBIx::Class::ResultSet) Resultset object
-		my $_objasctab;				# (Text::ASCIITable) ASCII Table object
-		my $_fieldname = \$Tab->field();	# Fieldname in the table
+		my $pagination;				# (Kanadzuchi::Page) Pagination object
+		my $selectedrs;				# (Ref->Hash) Searched entries
+		my $asciitable;				# (Text::ASCIITable) ASCII Table object
+		my $columnname = $Tab->field();		# (String) Fieldname in the table
 
-		$Cmd->d(2,sprintf("Execute 'SELECT', Print the list\n"));
+		# Avoid the error ``character in print at..''
+		binmode(STDOUT, ':utf8');
 
 		# Check output format
 		if( $Fmt eq 'asciitable' )
 		{
 			# Human readable ASCII table
 			require Text::ASCIITable;
-			$_objasctab = new Text::ASCIITable( { 'headingText' => $Tab->table() } );
-			$_objasctab->setOptions( 'outputWidth', 80 );
-			$_objasctab->setCols( '#ID', $$_fieldname, 'description', 'disabled' );
+			$asciitable = new Text::ASCIITable( { 'headingText' => $Tab->alias() } );
+			$asciitable->setOptions( 'outputWidth', 80 );
+			$asciitable->setCols( '#ID', $columnname, 'description', 'disabled' );
 		}
 
-		# Make 'ResultSet' object of the table
-		if( defined($Tab->id()) && $Tab->id > 0 )
-		{
-			$Cmd->d(2,sprintf("Find by ID = %d\n", $Tab->id()));
-			$_resultset = $Rdb->handle->resultset($Tab->table())->search({ id => $Tab->id() });
-		}
-		elsif( defined($Tab->name()) && length($Tab->name()) > 0 )
-		{
-			$Cmd->d(2,sprintf("Find by name = %s\n", $Tab->name()));
-			$_resultset = $Rdb->handle->resultset($Tab->table())->search(
-						{ $$_fieldname => $Tab->name() },
-						{ 'order_by' => 'id' } );
-		}
-		else
-		{
-			$Cmd->d(3,sprintf("SELECT * FROM %s;\n", $Tab->table()));
-			$_resultset = $Rdb->handle->resultset($Tab->table())->search({},{ 'order_by' => 'id' });
+		# Make Pagination object
+		$pagination = new Kanadzuchi::BdDR::Page();
+		$pagination->set( $Tab->count($Wcond) );
+
+		MESSAGE_IN_VERBOSE_MODE: {
+			last() unless( $Cmd->debuglevel() );
+			map { $Cmd->d(2,sprintf("Find by %s = %s\n", $_, $Wcond->{$_})) } keys(%$Wcond);
+			$Cmd->d(3,sprintf("SELECT * FROM %s;\n", $Tab->alias())) unless keys(%$Wcond);
 		}
 
-		PRINT_THE_LIST: while( my $__rr = $_resultset->next() )
+		$Cmd->d(2,'SELECT'."\n");
+		RETRIEVE_THE_RESULTS: while(1)
 		{
-			if( defined($_objasctab) )
+			$selectedrs = $Tab->search( $Wcond, $pagination );
+
+			PRINT_THE_LIST: while( my $r = shift(@$selectedrs) )
 			{
-				$_objasctab->addRow( $__rr->id, $__rr->$$_fieldname, $__rr->description, $__rr->disabled );
-			}
-			else
-			{
-				if( $Fmt eq 'yaml' )
+				if( defined($asciitable) )
 				{
-					printf( STDOUT qq|- { "id": %d, "%s": "%s", "description": "%s", "disabled": %d }\n|,
-						$__rr->id, $$_fieldname, $__rr->$$_fieldname, 
-						( $__rr->description || q() ), $__rr->disabled );
+					$asciitable->addRow( $r->{'id'}, $r->{$columnname}, $r->{'description'}, $r->{'disabled'} );
 				}
 				else
 				{
-					printf( STDOUT "ID = %d, Value = %s, Description = %s, Disabled = %d\n",
-						$__rr->id, $__rr->$$_fieldname, ( $__rr->description || q() ), $__rr->disabled );
+					# YAML
+					printf( STDOUT qq|- { "id": %d, "%s": "%s", "description": "%s", "disabled": %d }\n|,
+						$r->{'id'}, $columnname, $r->{'name'}, $r->{'description'}, $r->{'disabled'} );
 				}
-			}
-		}
+			} # End of while(PRINT_THE_LIST)
 
-		if( defined($_objasctab) && scalar(@{$_objasctab->{'tbl_rows'}}) )
+			last() unless( $pagination->hasnext() );
+			$pagination->next();
+
+		} # End of while(RETRIEVE_THE_RESULTS)
+
+		if( defined($asciitable) && scalar @{ $asciitable->{'tbl_rows'} } )
 		{
-			$_objasctab->addRowLine();
-			printf( STDOUT "%s", $_objasctab->draw() );
+			$asciitable->addRowLine();
+			printf( STDOUT "%s", $asciitable->draw() );
 		}
 
 	}
@@ -250,8 +206,8 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		# | |  | | |_| | |_| | ||  _|   | |  
 		# |_|  |_|\___/|____/___|_|     |_|  
 		#
-		my $_ismodified = 0;	# Flag, 1 = modified, 0 = failed
-		my $_tableentry = {};	# Hash reference of the entry
+		my $ismodified = 0;	# Flag, 1 = modified, 0 = failed
+		my $newelement = {};	# (Ref->Hash) New data
 
 		if( $Cmd->operation & $Cmd->option->{'update'} )
 		{
@@ -261,61 +217,35 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			# | |_| |  __/| |_| / ___ \| | | |___ 
 			#  \___/|_|   |____/_/   \_\_| |_____|
 			# 
-			$Cmd->d(2,sprintf("Execute 'UPDATE'\n"));
 			try {
 				# ID is not given , ID:0 is not valid
-				Kanadzuchi::Exception::Command->throw( 
-					'-text' => q{No or invalid ID} ) unless($Tab->id());
+				Kanadzuchi::Exception::Command->throw( '-text' => q{No or invalid ID} ) unless($Wcond->{'id'});
 
-				if( ! defined($Tab->name) && ! defined($Tab->description) && ! defined($Tab->disabled) )
+				if( ! exists($Wcond->{'name'}) && ! exists($Wcond->{'description'}) && ! exists($Wcond->{'disabled'}) )
 				{
 					Kanadzuchi::Exception::Command->throw( '-text' =>
 						q{There are neither --name, --discription nor --disabled} );
 				}
-				elsif( defined($Tab->name) && length($Tab->name) == 0 )
+				elsif( exists($Wcond->{'name'}) && length($Wcond->{'name'}) == 0 )
 				{
 					Kanadzuchi::Exception::Command->throw( '-text' =>
 						q{The argument of --name is empty!} );
 				}
 
-				if( ! defined($Tab->name) && ! defined($Tab->validation) )
-				{
-					Kanadzuchi::Exception::Database->throw(
-						'-text' => q{Invalid argument of --name} );
-				}
+				map { $newelement->{$_} = $Wcond->{$_} if( exists($Wcond->{$_}) ) } ( qw{name description disabled} )
 			}
 			catch Kanadzuchi::Exception::Command with {
 				$Cmd->exception(shift());
 				$Cmd->abort();
 			};
-			
-			# Get and check the current record
-			$_tableentry = $Tab->getentbyid($Rdb);
 
-			if( defined($_tableentry->{'id'}) && defined($_tableentry->{'name'}) )
+			# UPDATE
+			$Cmd->d(2, 'UPDATE'."\n" );
+			$ismodified = $Tab->update( $newelement, { 'id' => $Wcond->{'id'} } );
+
+			if( $ismodified )
 			{
-				# Set current value to the object
-				if( ! defined($Tab->name) || $Tab->name eq q() )
-				{
-					$Tab->name($_tableentry->{'name'});
-				}
-
-				if( ! defined($Tab->description) || $Tab->description eq q() )
-				{
-					$Tab->description($_tableentry->{'description'});
-				}
-
-				if( ! defined($Tab->disabled) || $Tab->disabled eq q() )
-				{
-					$Tab->disabled($_tableentry->{'disabled'});
-				}
-
-				$_ismodified = $Tab->update($Rdb);
-			}
-
-			if( $_ismodified )
-			{
-				$Cmd->d(2,"Successfully updated(ID=".$Tab->id().")\n");
+				$Cmd->d(2,'Successfully updated ( ID = '.$Wcond->{'id'}." )\n");
 			}
 			else
 			{
@@ -331,21 +261,23 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			# | |_| | |___| |___| |___  | | | |___ 
 			# |____/|_____|_____|_____| |_| |_____|
 			#
-			$Cmd->d(2,sprintf("Execute 'DELETE'\n"));
 			try {
 				# ID is not given , ID:0 is not valid
 				Kanadzuchi::Exception::Command->throw( 
-					'-text' => q{No or invalid ID} ) unless($Tab->id());
+					'-text' => q{No or invalid ID} ) unless($Wcond->{'id'});
 			}
 			catch Kanadzuchi::Exception::Command with {
 				$Cmd->exception(shift());
 				$Cmd->abort();
 			};
 
-			$_ismodified = $Tab->remove($Rdb);
-			if( $_ismodified )
+			# DELETE FROM...
+			$Cmd->d(2, 'DELETE'."\n" );
+			$ismodified = $Tab->remove( { 'id' => $Wcond->{'id'} } );
+
+			if( $ismodified )
 			{
-				$Cmd->d(2,"Successfully removed(ID=".$Tab->id().")\n");
+				$Cmd->d(2,'Successfully deleted ( ID = '.$Wcond->{'id'}." )\n");
 			}
 			else
 			{
@@ -361,30 +293,31 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			#  | || |\  |___) | |___|  _ < | |  
 			# |___|_| \_|____/|_____|_| \_\|_|  
 			#
-			$Cmd->d(2,sprintf("Execute 'INSERT'\n"));
 			try {
-				if( ! defined($Tab->name) && ! defined($Tab->description) && ! defined($Tab->disabled) )
+				if( ! exists($Wcond->{'name'}) )
 				{
 					Kanadzuchi::Exception::Command->throw( '-text' =>
-						q{There are neither --name, --discription nor --disabled} );
+							q{There are no name with --name option} );
 				}
 
-				Kanadzuchi::Exception::Database->throw(
-					'-text' => q{Invalid argument of --name} ) unless($Tab->validation());
+				map { $newelement->{$_} = $Wcond->{$_} if( exists($Wcond->{$_}) ) } ( qw{name description disabled} )
 			}
 			catch Kanadzuchi::Exception::Command with {
 				$Cmd->exception(shift());
 				$Cmd->abort();
 			};
 
-			$_ismodified = $Tab->insert($Rdb);
-			if( $_ismodified )
+			# INSERT INTO...
+			$Cmd->d(2, 'INSERT'."\n" );
+			$ismodified = $Tab->insert( $newelement );
+
+			if( $ismodified )
 			{
-				$Cmd->d(2,"Successfully inserted(ID=$_ismodified)\n");
+				$Cmd->d(2,'Successfully inserted ( ID = '.$ismodified." )\n");
 			}
 			else
 			{
-				$Cmd->d(2,"Failed to INSERT\n");
+				$Cmd->d(2,'Failed to INSERT'."\n");
 			}
 		}
 	}
@@ -514,13 +447,13 @@ sub parse_options
 	}
 
 	# Select a table
-	$Rdb->table(lc(substr($_opt_table,0,1))) if( $_opt_table );
+	$Alias = lc(substr($_opt_table,0,1)) if( $_opt_table );
 
 	# Field, Column options
-	if( $_opt_id ){ $Given->{'id'} = int($_opt_id); }
-	if( $_opt_name ){ $Given->{'name'} = $_opt_name; }
-	if( $_opt_description ){ $Given->{'description'} = $_opt_description; }
-	if( defined($_opt_disabled) ){ $Given->{'disabled'} = $_opt_disabled ; }
+	if( $_opt_id ){ $Wcond->{'id'} = int($_opt_id); }
+	if( $_opt_name ){ $Wcond->{'name'} = $_opt_name; }
+	if( $_opt_description ){ $Wcond->{'description'} = $_opt_description; }
+	if( defined($_opt_disabled) ){ $Wcond->{'disabled'} = $_opt_disabled ; }
 
 	# Database spec option, Override values in the config file
 	if( $_opt_host ){ $Rdb->hostname($_opt_host); }
