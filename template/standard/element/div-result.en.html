@@ -14,20 +14,31 @@
 	<div id = 'record-of-[% B.id %]' class = 'record'>
 		<div class = 'recordsummary' id = 'summary-of-[% B.id %]'>
 			<div class = 'number-in-summary'>
-				<span class = 'reason [% B.reason %]'>&nbsp; &nbsp; &nbsp;</span>&nbsp;
-				# [% B.id %]
+				<div class = 'id'># [% B.id %]</div>
+				<div class = 'reason [% B.reason %]'>[% B.reason %]</div>
 			</div>
 			<div class = 'status-in-summary'>
+				<div class = 'frequency'>[% B.frequency %]</div>
 				<span class = 'flatbutton'>
 				<a href = "javascript:void(0)" 
 					onClick = "toggleIt('details-of-[% B.id %]');">Details</a>
 				</span>
 			</div>
 			<div class = 'fields-in-summary'>
-				From: <strong>[% B.addresser %]</strong> ([% B.frequency %])<br />
-				To: <strong>&lt;[% B.recipient %]&gt;</strong><br />
-				Returned for the reason <strong>[[% B.reason %]]</strong> at [% B.bounced %]
-				[%- IF tzoffset != B.tzoffset -%] [% tzoffset %][%- END -%]
+				<table><tbody>
+					<tr>
+						<td class = 'key-in-summary'>From:</td>
+						<td class = 'value-in-summary'>[% B.addresser %]</td>
+					</tr>
+					<tr>
+						<td class = 'key-in-summary'>To:</td>
+						<td class = 'value-in-summary'>[% B.recipient %]</td>
+					</tr>
+					<tr>
+						<td class = 'key-in-summary'>Date:</td>
+						<td class = 'value-in-summary'>[% B.bounced %]</td>
+					</tr>
+				</tbody></table>
 			</div>
 
 			<div class = 'recorddetails' id = 'details-of-[% B.id %]' style = 'display: [% displayproperty %];'>
@@ -51,13 +62,13 @@
 
 					<tr>
 						<td class = 'key'>Sender Address(From:)</td>
-						<td class = 'value'>[% B.addresser %] / [% B.senderdomain %]</td>
+						<td class = 'value'>[% B.addresser %]</td>
 						<td class = 'extra'></td>
 					</tr>
 
 					<tr>
 						<td class = 'key'>Recipient Address(To:)</td>
-						<td class = 'value'> [% B.recipient %] / [% B.destination %] </td>
+						<td class = 'value'> [% B.recipient %]</td>
 						<td class = 'extra'></td>
 					</tr>
 
@@ -76,6 +87,12 @@
 					<tr>
 						<td class = 'key'>Host Group</td>
 						<td class = 'value'>[% INCLUDE "select-hostgroup.${mylanguage}.html" %]</td>
+						<td class = 'extra'></td>
+					</tr>
+
+					<tr>
+						<td class = 'key'>Provider</td>
+						<td class = 'value'> [% B.provider %]</td>
 						<td class = 'extra'></td>
 					</tr>
 
@@ -115,17 +132,10 @@
 						</td>
 						<td class = 'extra'></td>
 					</tr>
-
-					<tr>
-						<td class = 'key'>
-							<input type = 'submit' id = 'do-update-[% B.id %]' style = 'display: [% DisplayProp %];' 
-								class = 'flatbutton' value = 'Update' disabled onClick = "this.value = 'Updating...';" />
-						</td >
-						<td class = 'value'> </td>
-						<td class = 'extra'> </td>
-					</tr>
 				</tbody>
 				</table>
+				<input type = 'submit' id = 'do-update-[% B.id %]' style = 'display: [% DisplayProp %]; font-size: 12px;' 
+					class = 'flatbutton' value = 'Update' disabled onClick = "this.value = 'Updating...';" />
 				</form>
 			</div>
 		</div>

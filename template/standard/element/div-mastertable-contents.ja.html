@@ -22,7 +22,7 @@
 						value = '[% R.description %]' onKeyUp = "enableIt('do_update_[% R.id %]');" />
 				</td>
 				<td class = 'theMethod'>
-					<input type = 'submit' id = 'do_update_[% R.id %]' value = '更新する' 
+					<input type = 'submit' id = 'do_update_[% R.id %]' value = '更新する'
 						class = 'flatbutton' onClick = "this.value = '更新中...';" disabled />
 				</td>
 			</tr>
@@ -33,16 +33,19 @@
 			<tbody class = 'mastertable'>
 			<tr>
 				<td class = 'theID'>[% R.id %] &nbsp;</td>
-				<td class = 'shortName' id = 'name_of_[% R.id %]'>[% R.name %]</td>
-				<td class = 'longDescription'>
+				<td class = 'shortName' id = 'name_of_[% R.id %]'>
 					[%- IF tablename == 'reasons' -%]
-						<span class = 'reason [% R.name %]'>&nbsp;&nbsp; &nbsp;</span>
+						<div class = 'reason [% R.name %]'>[% R.name %]</div>
+					[%- ELSE -%]
+						[% R.name %]
 					[%- END -%]
+				</td>
+				<td class = 'longDescription'>
 					<input type = 'text' id = 'desc_of_[% R.id %]' class = 'readonlytext' name = 'desc'
 						value = '[% R.description %]' readonly = 'readonly' />
 				</td>
 				<td class = 'theMethod'>
-					&nbsp;<input type = 'submit' id = 'do_update_[% R.id %]' value = '読出専用' 
+					&nbsp;<input type = 'submit' id = 'do_update_[% R.id %]' value = '読出専用'
 						class = 'flatbutton' disabled />
 				</td>
 			</tr>

@@ -33,11 +33,14 @@
 			<tbody class = 'mastertable'>
 			<tr>
 				<td class = 'theID'>[% R.id %] &nbsp;</td>
-				<td class = 'shortName' id = 'name_of_[% R.id %]'>[% R.name %]</td>
-				<td class = 'longDescription'>
+				<td class = 'shortName' id = 'name_of_[% R.id %]'>
 					[%- IF tablename == 'reasons' -%]
-						<span class = 'reason [% R.name %]'>&nbsp;&nbsp; &nbsp;</span>
+						<div class = 'reason [% R.name %]'>[% R.name %]</div>
+					[%- ELSE -%]
+						[% R.name %]
 					[%- END -%]
+				</td>
+				<td class = 'longDescription'>
 					<input type = 'text' id = 'desc_of_[% R.id %]' class = 'readonlytext' name = 'desc'
 						value = '[% R.description %]' readonly = 'readonly' />
 				</td>

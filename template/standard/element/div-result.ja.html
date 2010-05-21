@@ -14,20 +14,31 @@
 	<div id = 'record-of-[% B.id %]' class = 'record'>
 		<div class = 'recordsummary' id = 'summary-of-[% B.id %]'>
 			<div class = 'number-in-summary'>
-				<span class = 'reason [% B.reason %]'>&nbsp; &nbsp; &nbsp;</span>&nbsp;
-				# [% B.id %]
+				<div class = 'id'># [% B.id %]</div>
+				<div class = 'reason [% B.reason %]'>[% B.reason %]</div>
 			</div>
 			<div class = 'status-in-summary'>
+				<div class = 'frequency'>[% B.frequency %]</div>
 				<span class = 'flatbutton'>
 				<a href = "javascript:void(0)" 
 					onClick = "toggleIt('details-of-[% B.id %]');">詳細</a>
 				</span>
 			</div>
 			<div class = 'fields-in-summary'>
-				発信: <strong>[% B.addresser %]</strong> ([% B.frequency %]回)<br />
-				宛先: <strong>&lt;[% B.recipient %]&gt;</strong><br />
-				差戻理由: <strong>[[% B.reason %]]</strong> 差戻日時: [% B.bounced %]
-				[%- IF tzoffset != B.tzoffset -%] [% tzoffset %][%- END -%]
+				<table><tbody>
+					<tr>
+						<td class = 'key-in-summary'>発信:</td>
+						<td class = 'value-in-summary'>[% B.addresser %]</td>
+					</tr>
+					<tr>
+						<td class = 'key-in-summary'>宛先:</td>
+						<td class = 'value-in-summary'>[% B.recipient %]</td>
+					</tr>
+					<tr>
+						<td class = 'key-in-summary'>日時:</td>
+						<td class = 'value-in-summary'>[% B.bounced %]</td>
+					</tr>
+				</tbody></table>
 			</div>
 
 			<div class = 'recorddetails' id = 'details-of-[% B.id %]' style = 'display: [% displayproperty %];'>
@@ -51,13 +62,13 @@
 
 					<tr>
 						<td class = 'key'>発信者アドレス(From:)</td>
-						<td class = 'value'>[% B.addresser %] / [% B.senderdomain %]</td>
+						<td class = 'value'>[% B.addresser %]</td>
 						<td class = 'extra'></td>
 					</tr>
 
 					<tr>
 						<td class = 'key'>宛先アドレス(To:)</td>
-						<td class = 'value'>[% B.recipient %] / [% B.destination %]</td>
+						<td class = 'value'>[% B.recipient %]</td>
 						<td class = 'extra'></td>
 					</tr>
 
@@ -76,6 +87,12 @@
 					<tr>
 						<td class = 'key'>宛先分類</td>
 						<td class = 'value'>[% INCLUDE "select-hostgroup.${mylanguage}.html" %]</td>
+						<td class = 'extra'></td>
+					</tr>
+
+					<tr>
+						<td class = 'key'>宛先所属(小分類)</td>
+						<td class = 'value'>[% B.provider %]</td>
 						<td class = 'extra'></td>
 					</tr>
 
@@ -115,17 +132,10 @@
 						</td>
 						<td class = 'extra'></td>
 					</tr>
-
-					<tr>
-						<td class = 'key'>
-							<input type = 'submit' id = 'do-update-[% B.id %]' style = 'display: [% DisplayProp %];' 
-								class = 'flatbutton' value = '更新' disabled onClick = "this.value = '更新中...';" />
-						</td >
-						<td class = 'value'> </td>
-						<td class = 'extra'> </td>
-					</tr>
 				</tbody>
 				</table>
+				<input type = 'submit' id = 'do-update-[% B.id %]' style = 'display: [% DisplayProp %]; font-size: 12px;'
+					class = 'flatbutton' value = '更新' disabled onClick = "this.value = '更新中...';" />
 				</form>
 			</div>
 		</div>
