@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.45 2010/04/21 07:15:49 ak Exp $
+ $Id: RELEASE_NOTES,v 1.48 2010/05/21 04:49:44 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -14,12 +14,73 @@
 -----------------------------------------------------------------------
 
 -----------------------------------------------------------------------
-2.3.0/2.0.0	2010/XX/YY
+2.3.0/2.0.0	2010/05/YY
+
+  New functionality:
+    * Avaiable for search by provider name on the WebUI.
+
+  Assorted improvements and code cleanup:
+    * BounceHammer uses the new O/R Mapper DBIx::Skinny to improve per-
+      formance on database connetion at Kanadzuchi::BdDR module.
+    * BounceHammer no longer uses DBIx::Class.
+    * Improved performance of bin/databasectl, quickened by about 145%.
+    * Improved performance of bin/datadumper, quickened by about 295%.
 
   Fixed bugs:
+    * Fixed an issue that logger did not check the MD5 digest of file.
+    * Fixed an issue that mailboxparser times out while seeking the di-
+      rectory which hold too many email files.
     * (patch:001) Fixed an issue that mailboxparser (Kanadzuchi::Mail::
       Bounced) set the E-mail address it is found in the end to the val-
       ue of Addresser.
+
+  New files:
+    * examples/make-dummy-data.pl
+    * lib/Kanadzuchi/Iterator.pm
+    * lib/Kanadzuchi/BdDR.pm
+    * lib/Kanadzuchi/BdDR/Cache.pm
+    * lib/Kanadzuchi/BdDR/Page.pm
+    * lib/Kanadzuchi/BdDR/BounceLogs.pm
+    * lib/Kanadzuchi/BdDR/BounceLogs/Masters.pm
+    * lib/Kanadzuchi/Stored.pm
+    * lib/Kanadzuchi/Stored/Mail/BdDR.pm
+    * t/063_mail-stored-bddr.t
+    * t/110_bddr.t
+    * t/111_bddr-cache.t
+    * t/112_bddr-page.t
+    * t/115_bddr-bouncelogs-masters.t
+    * t/116_bddr-bouncelogs.t
+    * t/lib/Kanadzuchi/Test/DBI.pm
+    * share/template/standard/element/div-pagination.en.html
+    * share/template/standard/element/div-pagination.ja.html
+    * share/template/standard/stylesheet/pagination.css
+
+  Removed files:
+    * lib/Kanadzuchi/RDB.pm
+    * lib/Kanadzuchi/RDB/MasterTable.pm
+    * lib/Kanadzuchi/RDB/Schema.pm
+    * lib/Kanadzuchi/RDB/Schema/Addressers.pm
+    * lib/Kanadzuchi/RDB/Schema/BounceLogs.pm
+    * lib/Kanadzuchi/RDB/Schema/Destinations.pm
+    * lib/Kanadzuchi/RDB/Schema/HostGroups.pm
+    * lib/Kanadzuchi/RDB/Schema/Providers.pm
+    * lib/Kanadzuchi/RDB/Schema/Reasons.pm
+    * lib/Kanadzuchi/RDB/Schema/SenderDomains.pm
+    * lib/Kanadzuchi/RDB/Table.pm
+    * lib/Kanadzuchi/RDB/Table/Addressers.pm
+    * lib/Kanadzuchi/RDB/Table/Destinations.pm
+    * lib/Kanadzuchi/RDB/Table/HostGroups.pm
+    * lib/Kanadzuchi/RDB/Table/Providers.pm
+    * lib/Kanadzuchi/RDB/Table/Reasons.pm
+    * lib/Kanadzuchi/RDB/Table/SenderDomains.pm
+    * lib/Kanadzuchi/Mail/Stored/RDB.pm
+    * t/062_mail-stored-rdb.t
+    * t/100_rdb.t
+    * t/101_rdb-table.t
+    * t/102_rdb-table-mastertables.t
+    * share/template/standard/element/div-pager.en.html
+    * share/template/standard/element/div-pager.ja.html
+    * share/template/standard/stylesheet/pager.css
 
 -----------------------------------------------------------------------
 2.2.0/2.0.0	2010/04/16
