@@ -11,7 +11,7 @@
 	[% INCLUDE bouncehammer.css %]
 	[% INCLUDE mastertable.css %]
 	[% INCLUDE reason.css %]
-	[% INCLUDE pager.css %]
+	[% INCLUDE pagination.css %]
 	-->
 	</style>
 	[%- SET showmastertables = 1 -%]
@@ -47,8 +47,8 @@
 			[%- END -%]
 			
 			<h2>Master Table([% titlename %])</h2>
-			<div class = 'pager'>
-				[% INCLUDE "div-pager.${mylanguage}.html" %]
+			<div class = 'pagination'>
+				[% INCLUDE "div-pagination.${mylanguage}.html" %]
 			</div>
 			<div class = 'result'>
 				<table class = 'tableheadings'>
@@ -94,9 +94,9 @@
 					[% INCLUDE "div-delete-a-mastertable-record.${mylanguage}.html" %]
 				[%- END -%]
 			</div>
-			[%- IF pagersinthequery.resultsperpage > 10 AND pagersinthequery.totalentries > 10 AND hascondition > 0 -%]
-				<div class = 'pager'>
-					[% INCLUDE "div-pager.${mylanguage}.html" %]
+			[%- IF pagination.resultsperpage > 10 AND pagination.count > 10 AND hascondition > 0 -%]
+				<div class = 'pagination'>
+					[% INCLUDE "div-pagination.${mylanguage}.html" %]
 				</div>
 			[%- END -%]
 		</div>
