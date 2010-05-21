@@ -1,4 +1,4 @@
-# $Id: 050_mail.t,v 1.9 2010/02/25 08:37:03 ak Exp $
+# $Id: 050_mail.t,v 1.10 2010/05/19 18:25:14 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Kanadzuchi::Test;
 use Kanadzuchi::Test::Mail;
 use Kanadzuchi::Mail;
 use Kanadzuchi::String;
-use Test::More ( tests => 726 );
+use Test::More ( tests => 727 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -181,6 +181,7 @@ INSTANCE_METHODS: {
 	my $mtoken = q();
 	my $sender = q(POSTMASTER@CUBICROOT.JP);
 	my $prefix = q(.MIL);
+	my $damned = {};
 
 	SUCCESS: foreach my $c ( @{$Suite->{'hostgroups'}} )
 	{
@@ -220,10 +221,14 @@ INSTANCE_METHODS: {
 		is( $object->token(), $mtoken, q{->token() == }.$mtoken );
 	}
 
-}
+	OTHER_PROPERTIES: {
+		is( $T->instance->frequency(), 1, $T->class.q{->frequency()} );
+	}
 
-OTHER_PROPERTIES: {
-	is( $T->instance->frequency(), 1, $T->class.q{->frequency()} );
+	DAMNED: {
+		$damned = $object->damn();
+		isa_ok( $damned, q|HASH|, $T->class.'->damn()' );
+	}
 }
 
 
