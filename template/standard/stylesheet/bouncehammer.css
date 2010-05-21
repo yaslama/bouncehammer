@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.9 2010/03/29 04:37:01 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.10 2010/05/19 18:25:28 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -118,7 +118,7 @@ div,span,form,input {
 body {
 	font-family: 'Trebuchet MS', sans-serif;
 	font-size: 11px;
-	color: #383c3c; /* Youkan-iro */
+	color: #474a4d; /* Aisumicha */
 	text-align: center;
 	vertical-align: middle;
 	margin: 2px;
