@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.11 2010/03/19 07:41:23 ak Exp $
+# $Id: CLI.pm,v 1.12 2010/05/17 00:01:01 ak Exp $
 # Kanadzuchi::Test::
                       
   ####  ##     ####   
@@ -58,9 +58,7 @@ sub new
 
 	$argvs->{'tempdir'} = q(./.test) unless(defined($argvs->{'tempdir'}));
 	$argvs->{'perl'} = IPC::Cmd::can_run('perl') || q(/usr/bin/perl);
-	$argvs->{'sqlite3'} = IPC::Cmd::can_run('sqlite3') || q(/usr/bin/sqlite3);
 	chomp($argvs->{'perl'});
-	chomp($argvs->{'sqlite3'});
 
 	IPC::Cmd::run( command => qq(mkdir -p $argvs->{'tempdir'}) ) unless( -d $argvs->{'tempdir'} );
 	return( $class->SUPER::new($argvs) );
@@ -119,7 +117,7 @@ sub environment
 	my $test = shift() || 0;
 	my $eerr = 0;
 
-	EXECUTABLE: foreach my $x ( 'perl', 'sqlite3', 'tempdir' )
+	EXECUTABLE: foreach my $x ( 'perl', 'tempdir' )
 	{
 		next() if( -x $self->{$x} );
 		next() if( $test > 0 );
@@ -248,28 +246,6 @@ sub mailboxparser
 	return($stat);
 }
 
-sub initdb
-{
-	# +-+-+-+-+-+-+
-	# |i|n|i|t|d|b|
-	# +-+-+-+-+-+-+
-	#
-	# @Description	Initialize the database for testing
-	# @Param	<None>
-	# @Return	1 or 0
-	my $self = shift() || return(0);
-	my $init = 0;
-	my $sql3 = $self->{'sqlite3'};
-	my $dbfn = $self->{'database'};
-
-	$init += scalar(IPC::Cmd::run( command => '/bin/cp /dev/null '.$dbfn )) || 0;
-	$init += scalar(IPC::Cmd::run( command => 'cat ./src/sql/SQLite.sql | '.$sql3.q{ }.$dbfn )) || 0;
-	$init += scalar(IPC::Cmd::run( command => 'cat ./src/sql/mastertable-*.sql | '.$sql3.q{ }.$dbfn )) || 0;
-	$init += scalar(IPC::Cmd::run( command => 'cat ./src/sql/records-example.sql | '.$sql3.q{ }.$dbfn )) || 0;
-
-	return(1) if( $init == 4 );
-	return(0);
-}
 
 sub senderdomain
 {
