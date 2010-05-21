@@ -1,4 +1,4 @@
-# $Id: Summary.pm,v 1.8 2010/03/26 07:20:08 ak Exp $
+# $Id: Summary.pm,v 1.10 2010/05/19 18:25:10 ak Exp $
 # -Id: Summary.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Summary.pm,v 1.1 2009/08/18 02:37:53 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -21,6 +21,8 @@ package Kanadzuchi::UI::Web::Summary;
 use strict;
 use warnings;
 use base 'Kanadzuchi::UI::Web';
+use Kanadzuchi::BdDR::BounceLogs;
+use Kanadzuchi::BdDR::BounceLogs::Masters;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||I |||n |||s |||t |||a |||n |||c |||e |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -35,57 +37,36 @@ sub summary_ontheweb
 	#
 	# @Description	Draw summary in HTML
 	my $self = shift();
-	my $file = q(summary.).$self->{'language'}.q(.html);
+	my $file = 'summary.'.$self->{'language'}.'.html';
+	my $bddr = $self->{'database'};
 
-	my $robj = 0;	# Require object as a return value
-	my $pgcf = {
-		'currentpagenum' => 1,
-		'resultsperpage' => 1,
-		'colnameorderby' => q(id),
-	};
-
+	my $bouncelog = new Kanadzuchi::BdDR::BounceLogs::Table( 'handle' => $bddr->handle() );
+	my $numofrecs = $bouncelog->count();
 	my $tableconf = $self->{'webconfig'}->{'database'}->{'table'};
+	my $maxrecord = $tableconf->{'bouncelogs'}->{'maxrecords'};
 	my $tablesumm = {};
 
-	# Count the number of records in BounceLogs table
-	# Receive 1 result for counting
-	require Kanadzuchi::Mail::Stored::RDB;
-	Kanadzuchi::Mail::Stored::RDB->searchandnew( $self->{'database'}, {}, \$pgcf, $robj );
-
 	$tablesumm->{'bouncelogs'} = {
-		'screenname'	=> q(BounceLogs),
-		'totalentries'	=> $pgcf->{'totalentries'},
-		'capacity'	=> $tableconf->{'bouncelogs'}->{'maxrecords'}
-			? sprintf("%0.4f", $pgcf->{'totalentries'} / $tableconf->{'bouncelogs'}->{'maxrecords'})
-			: 0,
+		'screenname'	=> 'BounceLogs',
+		'totalentries'	=> $numofrecs,
+		'capacity'	=> $maxrecord ? sprintf("%0.4f", $numofrecs / $maxrecord ) : 0,
 	};
 
 	# Count the number of records in SenderDoamins table
-	require Kanadzuchi::RDB::Table::SenderDomains;
-	my $tabsd = {};
-	$tabsd->{'myname'} = q(senderdomains);
-	$tabsd->{'screen'} = q(SenderDomains);
-	$tabsd->{'object'} = new Kanadzuchi::RDB::Table::SenderDomains();
-	$tabsd->{'arrayr'} = $tabsd->{'object'}->select( $self->{'database'} );
-
-	# Count the number of records in Destinations table
-	require Kanadzuchi::RDB::Table::Destinations;
-	my $tabde = {};
-	$tabde->{'myname'} = q(destinations);
-	$tabde->{'screen'} = ucfirst($tabde->{'myname'});
-	$tabde->{'object'} = new Kanadzuchi::RDB::Table::Destinations();
-	$tabde->{'arrayr'} = $tabde->{'object'}->select( $self->{'database'} );
-
-	foreach my $_tab ( $tabsd, $tabde )
+	foreach my $mt ( 's', 'd' )
 	{
-		my $__cnt = scalar(@{ $_tab->{'arrayr'} });
-		$tablesumm->{ $_tab->{'myname'} } = {
-			'screenname'	=> $_tab->{'screen'},
-			'totalentries'	=> $__cnt,
-			'capacity'	=> $tableconf->{ $_tab->{'myname'} }->{'maxrecords'}
-				? sprintf( "%0.4f", $__cnt / $tableconf->{ $_tab->{'myname'} }->{'maxrecords'} )
-				: 0,
-		}
+		my $mtobj = new Kanadzuchi::BdDR::BounceLogs::Masters::Table( 
+					'alias' => $mt, 'handle' => $bddr->handle() );
+		my $tname = lc $mtobj->alias();
+		my $count = $mtobj->count();
+		my $maxrr = $tableconf->{$tname}->{'maxrecords'};
+		my $ratio = $maxrr ? sprintf( "0.4f", $count / $maxrr ) : 0;
+
+		$tablesumm->{ $tname } = {
+				'capacity' => $ratio,
+				'screenname' => $mtobj->alias(),
+				'totalentries' => $count };
+
 	}
 
 	$self->tt_params(

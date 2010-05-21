@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.20 2010/03/26 07:20:08 ak Exp $
+# $Id: Search.pm,v 1.23 2010/05/19 18:25:10 ak Exp $
 # -Id: Search.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Search.pm,v 1.11 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -20,6 +20,12 @@ package Kanadzuchi::UI::Web::Search;
 use strict;
 use warnings;
 use base 'Kanadzuchi::UI::Web';
+use Kanadzuchi::Mail::Stored::BdDR;
+use Kanadzuchi::BdDR::Page;
+use Kanadzuchi::BdDR::BounceLogs;
+use Kanadzuchi::RFC2822;
+use Kanadzuchi::Time;
+use Kanadzuchi::Metadata;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||I |||n |||s |||t |||a |||n |||c |||e |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -35,25 +41,25 @@ sub search_ontheweb
 	# @Description	Send query and receive results
 	# @Param	<None>
 	# @Return
-	require Kanadzuchi::Mail::Stored::RDB;
-
 	my $self = shift();
-	my $aref = [];			# Array reference of '$href's
-	my $file = q(search.).$self->{'language'}.q(.html);
+	my $bddr = $self->{'database'};
+	my $tmpl = q(search.).$self->{'language'}.q(.html);
 
-	my $paramsinthequery = {};	# Parameters in the query
-	my $errorsinthequery = {};	# Parameter errors in the query
-	my $pagersinthequery = {};	# Pager settings in the query
-	my $hassearchcondition = 0;	# Does advanced search use?
-	my $encryptedcondition = q();	# Encrypted condition in PAHT_INFO
-	my $decryptedcondition = q();	# Decrypted condition(YAML)
+	my $wherecond = {};	# (Ref->Hash) WHERE Condition for sending query
+	my $errorsinq = {};	# (Ref->Hash) Parameter errors in the query
+	my $encrypted = q();	# (String) Encrypted condition in PAHT_INFO
+	my $decrypted = q();	# (String) Decrypted condition(YAML)
+	my $datformat = q();	# (String) File fotmat for downloading
+	my $downloadx = 0;	# (Boolean) Flag; Download 
+	my $advancedx = 0;	# (Boolean) Flag; Does advanced search use?
+	my $dbrecords = 0;	# (Integer) The number of records in the db
+	my $paginated = new Kanadzuchi::BdDR::Page();
+	my $bouncelog = new Kanadzuchi::BdDR::BounceLogs::Table('handle' => $bddr->handle());
+	my $cgiqueryp = $self->query();
 
-	my $enabledownload = 0;		# Download flag
-	my $requiresobject = 0;		# searchandnew() Requires object
-	my $downloadformat = q();	# File fotmat for downloading
 
 	# Do not include a record that is disabled(=1)
-	$paramsinthequery->{'disabled'} = 0;
+	$wherecond->{'disabled'} = 0;
 
 	if( $self->param('pi_condition') || $self->param('pi_recipient') )
 	{
@@ -64,29 +70,18 @@ sub search_ontheweb
 		# |_____|_| \_|\____|_| \_\|_| |_|    |_| |_____|____/ 
 		# 
 		# Check and decrypt the encrypted condition
-		require Kanadzuchi::Mail::Stored::YAML;
-
 		if( $self->param('pi_condition') )
 		{
-			$encryptedcondition = $self->param('pi_condition');
-			$hassearchcondition++;
+			$encrypted = $self->param('pi_condition');
+			$advancedx++;
 		}
 		else
 		{
-			$encryptedcondition = $self->param('pi_recipient');
+			$encrypted = $self->param('pi_recipient');
 		}
 
-		$decryptedcondition = $self->decryptit($encryptedcondition);
-		my $_ar = Kanadzuchi::Mail::Stored::YAML->loadandnew($decryptedcondition);
-
-		foreach my $__s ( @{$_ar} )
-		{
-			last() if( ref($__s) ne q|HASH| );
-			$paramsinthequery = $__s;
-
-			# Multi-plex condition is not implemented yet.
-			last();	
-		}
+		$decrypted = $self->decryptit($encrypted);
+		$wherecond = shift @{ Kanadzuchi::Metadata->to_object(\$decrypted) } || { 'disabled' => 0 };
 
 		#   ___  ____  ____  _____ ____    ______   __
 		#  / _ \|  _ \|  _ \| ____|  _ \  | __ ) \ / /
@@ -96,28 +91,28 @@ sub search_ontheweb
 		#                                             
 		if( $self->param('pi_orderby') )
 		{
-			my $_name = q(); my $_desc = 0;
+			my $_name = q();
+			my $_desc = 0;
 
 			if( $self->param('pi_orderby') =~ m{\A(.+)[,]([01])\z} )
 			{
 				$_name = $1;
 				$_desc = $2;
 			}
-			$pagersinthequery->{'colnameorderby'} = lc($_name) || q(id);
-			$pagersinthequery->{'descendorderby'} = $_desc || 0;
+			$paginated->colnameorderby( lc($_name) || 'id' );
+			$paginated->descendorderby( $_desc ? 1 : 0 );
 		}
-		
 
-		# Pager
-		$pagersinthequery->{'currentpagenum'} = $self->param('pi_page') || 1;
-		$pagersinthequery->{'resultsperpage'} = $self->param('pi_rpp') || 10;
+		# Pagination
+		$paginated->set( $bouncelog->count( $wherecond ) );
+		$paginated->skip( $self->param('pi_page') || 1 );
+		$paginated->resultsperpage( $self->param('pi_rpp') || 10 );
 
 		# Downloading
 		if( $ENV{'PATH_INFO'} =~ m{/download} )
 		{
-			$enabledownload = 1;
-			$downloadformat = lc($self->param('pi_format')) || q(yaml);
-			$requiresobject = 1;
+			$downloadx = 1;
+			$datformat = lc($self->param('pi_format')) || 'yaml';
 		}
 	}
 	else
@@ -128,91 +123,88 @@ sub search_ontheweb
 		# |  __/| |_| |___) || | | |___| |_| | | |_| | |_| | |___|  _ < | |  
 		# |_|    \___/|____/ |_| |_____|____/   \__\_\\___/|_____|_| \_\|_|  
 		#
-		# Make 'paramsinthequery' hash reference
-		require Kanadzuchi::RFC2822;
-		my $_r2822 = q|Kanadzuchi::RFC2822|;
-		my $_query = $self->query;
-		my $_wcond = { 'recipient' => q(), };
 
-		if( length($_query->param('recipient')) )
+		my $rfc2822c = q|Kanadzuchi::RFC2822|;	# (String) RFC2822 Class name
+		my $wcparams = {};			# (Ref->Hash) WHERE Condition
+		my $validcnd = 0;			# (Boolean) Validation for WHERE Cond.
+
+		# Make 'wherecond' hash reference
+		if( length($cgiqueryp->param('recipient')) )
 		{
 			# Pre-Process Recipient address
-			$_wcond->{'recipient'} =  lc($_query->param('recipient'));
-			$_wcond->{'recipient'} =~ y{[;'" ]}{}d;
-			$_wcond->{'recipient'} =  $_r2822->cleanup($_wcond->{'recipient'});
+			$wcparams->{'recipient'} =  lc $cgiqueryp->param('recipient');
+			$wcparams->{'recipient'} =~ y{[;'" ]}{}d;
+			$wcparams->{'recipient'} =  $rfc2822c->cleanup($wcparams->{'recipient'});
 		}
-		$paramsinthequery->{'recipient'} = $_wcond->{'recipient'};
 
-		foreach my $_w ( 'addresser', 'senderdomain', 'destination', 'token' )
+		foreach my $w ( 'addresser', 'senderdomain', 'destination', 'token', 'provider' )
 		{
-			my $_valid = 0;
-			next() unless( defined($_query->param($_w)) );
-			($_wcond->{$_w} = lc($_query->param($_w))) =~ y{[;'" ]}{}d;
+			next() unless( defined($cgiqueryp->param($w)) );
+			( $wcparams->{$w} = lc($cgiqueryp->param($w)) ) =~ y{[;'" ]}{}d;
 
-			$_valid = $_r2822->is_emailaddress($_wcond->{$_w}) if( $_w eq 'addresser' );
-			$_valid = $_r2822->is_domainpart($_wcond->{$_w}) if( $_w eq 'senderdomain' || $_w eq 'destination' );
-			$_valid = 1 if( $_w eq 'token' && $_wcond->{$_w} =~ m{\A[0-9a-f]{32}\z} );
+			$validcnd = $rfc2822c->is_emailaddress($wcparams->{$w}) if( $w eq 'addresser' );
+			$validcnd = $rfc2822c->is_domainpart($wcparams->{$w}) if( $w eq 'senderdomain' || $w eq 'destination' );
+			$validcnd = 1 if( $w eq 'token' && $wcparams->{$w} =~ m{\A[0-9a-f]{32}\z} );
+			$validcnd = 1 if( $w eq 'provider' && $wcparams->{$w} =~ m{\A\w+\z} );
 
-			if( $_valid )
+			if( $validcnd )
 			{
-				$paramsinthequery->{$_w} = $_wcond->{$_w};
-				$hassearchcondition++;
+				$wherecond->{$w} = $wcparams->{$w};
+				$advancedx++;
 			}
 			else
 			{
-				$errorsinthequery->{$_w} = $_wcond->{$_w};
+				$errorsinq->{$w} = $wcparams->{$w};
 			}
 		}
 
-		foreach my $_w ( 'hostgroup', 'reason' )
+		foreach my $w ( 'hostgroup', 'reason' )
 		{
-			if( $_query->param($_w) ne '_' )
+			if( $cgiqueryp->param($w) ne '_' )
 			{
-				$paramsinthequery->{$_w} = $_query->param($_w);
-				$hassearchcondition++;
+				$wherecond->{$w} = $cgiqueryp->param($w);
+				$advancedx++;
 			}
 			else
 			{
-				$errorsinthequery->{$_w} = q{Unselectable value};
+				$errorsinq->{$w} = 'Unselectable value';
 			}
 		}
 
 		# How recent the record has been bounced
-		if( $_query->param('howrecent') )
+		if( $cgiqueryp->param('howrecent') )
 		{
 			require Kanadzuchi::Time;
-			$paramsinthequery->{'bounced'} = Kanadzuchi::Time->to_second($_query->param('howrecent'));
+			$wherecond->{'bounced'} = Kanadzuchi::Time->to_second($cgiqueryp->param('howrecent'));
 
-			if( $paramsinthequery->{'bounced'} > 0 && $paramsinthequery->{'bounced'} < time() )
+			if( $wherecond->{'bounced'} > 0 && $wherecond->{'bounced'} < time() )
 			{
-				$paramsinthequery->{'bounced'} = int( time() - $paramsinthequery->{'bounced'} );
+				$wherecond->{'bounced'} = { '>=' => int( time() - $wherecond->{'bounced'} ) };
 			}
 			else
 			{
-				$paramsinthequery->{'bounced'} = 0;
+				$wherecond->{'bounced'} = { '>=' => 0 };
 			}
 		}
 
-		# Pager
-		$pagersinthequery->{'currentpagenum'} = $_query->param('thenextpagenum') || 1;
-		$pagersinthequery->{'resultsperpage'} = $_query->param('resultsperpage') || 10;
-
-		# Order
-		$pagersinthequery->{'colnameorderby'} = lc($_query->param('orderby')) || q(id);
-		$pagersinthequery->{'descendorderby'} = $_query->param('descend') ? 1 : 0;
+		# Pagination, ORDER BY
+		$paginated->set( $bouncelog->count( $wherecond ) );
+		$paginated->skip( $cgiqueryp->param('thenextpagenum') || 1 );
+		$paginated->resultsperpage( $cgiqueryp->param('resultsperpage') || 10 );
+		$paginated->colnameorderby( lc($cgiqueryp->param('orderby')) || 'id' );
+		$paginated->descendorderby( $cgiqueryp->param('descend') ? 1 : 0 );
 
 		# Crypt
-		$decryptedcondition = Kanadzuchi::Mail::Stored::RDB->serialize([$paramsinthequery]);
-		$encryptedcondition = $self->encryptit($decryptedcondition);
+		$decrypted = Kanadzuchi::Metadata->to_string($wherecond);
+		$encrypted = $self->encryptit($decrypted);
 
 		# Downloading
-		$enabledownload = $_query->param('enabledownload') ? 1 : 0;
-		$requiresobject = $_query->param('enabledownload') ? 1 : 0;
-		$downloadformat = $_query->param('downloadformat') || q(yaml);
+		$downloadx = $cgiqueryp->param('downloadx') ? 1 : 0;
+		$datformat = $cgiqueryp->param('datformat') || 'yaml';
 	}
 
 
-	if( $enabledownload )
+	if( $downloadx )
 	{
 		#      __    _____ ___ _     _____ 
 		#      \ \  |  ___|_ _| |   | ____|
@@ -226,11 +218,10 @@ sub search_ontheweb
 		require Digest::MD5;
 		require Perl6::Slurp;
 
-
-		my $_queryp = $self->query;
-		my $_config = $self->{'sysconfig'};
-		my $_uiconf = $self->{'webconfig'};
-		my $_dbconf = $self->{'sysconfig'}->{'database'};
+		my $cgiqueryp = $self->query();
+		my $sysconfig = $self->{'sysconfig'};
+		my $webconfig = $self->{'webconfig'};
+		my $rdbconfig = $self->{'sysconfig'}->{'database'};
 
 		#  _____ ___  ____  __  __    _  _____ 
 		# |  ___/ _ \|  _ \|  \/  |  / \|_   _|
@@ -239,25 +230,25 @@ sub search_ontheweb
 		# |_|   \___/|_| \_\_|  |_/_/   \_\_|  
 		#                                      
 		use Kanadzuchi::Archive;
-		my $_aclass = q|Kanadzuchi::Archive::|;
-		my $_format = $_queryp->param('compress')
-				|| $_uiconf->{'archive'}->{'compress'}->{'type'}
+		my $archivecn = q|Kanadzuchi::Archive::|;
+		my $zipformat = $cgiqueryp->param('compress')
+				|| $webconfig->{'archive'}->{'compress'}->{'type'}
 				|| Kanadzuchi::Archive->ARCHIVEFORMAT();
 
-		if( $_format eq 'gzip' )
+		if( $zipformat eq 'gzip' )
 		{
 			require Kanadzuchi::Archive::Gzip;
-			$_aclass = q|Kanadzuchi::Archive::Gzip|;
+			$archivecn = q|Kanadzuchi::Archive::Gzip|;
 		}
-		elsif( $_format eq 'bzip2' )
+		elsif( $zipformat eq 'bzip2' )
 		{
 			require Kanadzuchi::Archive::Bzip2;
-			$_aclass = q|Kanadzuchi::Archive::Bzip2|;
+			$archivecn = q|Kanadzuchi::Archive::Bzip2|;
 		}
-		elsif( $_format eq 'zip' )
+		elsif( $zipformat eq 'zip' )
 		{
 			require Kanadzuchi::Archive::Zip;
-			$_aclass = q|Kanadzuchi::Archive::Zip|;
+			$archivecn = q|Kanadzuchi::Archive::Zip|;
 		}
 
 		#  ___ _   _ ____  _   _ _____ 
@@ -267,21 +258,22 @@ sub search_ontheweb
 		# |___|_| \_|_|    \___/  |_|  
 		#                              
 		# Decide cache directory
-		my $_ifname = undef();		# Input file name
-		my $_digest = undef();		# Digest::MD5 Object
-		my $_prefix = undef();		# Prefix of the text file
-		my $_cached = ( -w $_config->{'directory'}->{'cache'} )
-					? $_config->{'directory'}->{'cache'}
+		my $inputfile = undef();		# Input file name
+		my $md5digest = undef();		# Digest::MD5 Object
+		my $txtprefix = undef();		# Prefix of the text file
+		my $cacheddir = -w $sysconfig->{'directory'}->{'cache'}
+					? $sysconfig->{'directory'}->{'cache'}
 					: File::Spec::tmpdir();
 
 		# Prepare empty file(Prefix)
-		$_prefix = $downloadformat eq 'asciitable' ? 'txt' : $downloadformat;
+		$txtprefix = $datformat eq 'asciitable' ? 'txt' : $datformat;
 
 		# Decide source file name
-		$_digest = Digest::MD5->new();
-		$_digest->add( $_dbconf->{'hostname'}, $_dbconf->{'port'}, $_dbconf->{'dbtype'}, $_dbconf->{'dbname'} );
-		$_digest->add( $_prefix, $decryptedcondition );
-		$_ifname = $_digest->hexdigest().q{.}.$_prefix;
+		$md5digest = Digest::MD5->new();
+		$md5digest->add( $rdbconfig->{'hostname'}, $rdbconfig->{'port'}, 
+				 $rdbconfig->{'dbtype'}, $rdbconfig->{'dbname'} );
+		$md5digest->add( $txtprefix, $decrypted );
+		$inputfile = $md5digest->hexdigest().'.'.$txtprefix;
 
 		#   ___  _   _ _____ ____  _   _ _____ 
 		#  / _ \| | | |_   _|  _ \| | | |_   _|
@@ -289,19 +281,18 @@ sub search_ontheweb
 		# | |_| | |_| | | | |  __/| |_| | | |  
 		#  \___/ \___/  |_| |_|    \___/  |_|  
 		#                                      
-		my $_efname = lc($_config->{'system'}).q(.).$self->{'datetime'}->ymd('-');
-		my $_ofname = $_cached.q{/}.$_ifname;
-		my $_zipped = $_aclass->new( 
-					'input' => $_cached.q{/}.$_ifname, 
-					'output' => $_ofname,
-					'filename' => $_efname.q{.}.$_prefix,
+		my $basefname = lc($sysconfig->{'system'}).'.'.$self->{'datetime'}->ymd('-');
+		my $cachename = $cacheddir.'/'.$inputfile;
+		my $zippedobj = $archivecn->new( 
+					'input' => $cachename,
+					'output' => $cachename,
+					'filename' => $basefname.q{.}.$txtprefix,
 					'override' => 1 );
-
-		undef($_digest);
-		undef($_cached);
-		undef($_ifname);
-		undef($_efname);
-		undef($_ofname);
+		undef($md5digest);
+		undef($cacheddir);
+		undef($inputfile);
+		undef($basefname);
+		undef($cachename);
 
 		CREATE_FILE: {
 			#  ____  _   _ __  __ ____        __  
@@ -312,60 +303,70 @@ sub search_ontheweb
 			#                                     
 			require File::Copy;
 
-			if( -e $_zipped->output() )
+			if( -e $zippedobj->output() )
 			{
 				# Is there a cache file?
-				my $_exp = Kanadzuchi::Time->to_second($_uiconf->{'archive'}->{'expires'}) || 3600;
-				my $_zsz = $_zipped->output->stat->size();
-				my $_zmt = $_zipped->output->stat->mtime();
-				my $_dzf = q();
+				my $expires = Kanadzuchi::Time->to_second($webconfig->{'archive'}->{'expires'}) || 3600;
+				my $zipsize = $zippedobj->output->stat->size();
+				my $ziptime = $zippedobj->output->stat->mtime();
+				my $zipdist = q();
 
 				# Use and download the cache file
-				if( $_zsz && ( $self->{'datetime'}->epoch() < ( $_zmt + $_exp ) ))
+				if( $zipsize && ( $self->{'datetime'}->epoch() < ( $ziptime + $expires ) ))
 				{
-					$_dzf = $_zipped->output->dir().q{/}.$_zipped->filename();
-					File::Copy::copy( $_zipped->output(), $_dzf );
-					$_zipped->output( new Path::Class::File($_dzf) );
+					$zipdist = $zippedobj->output->dir().'/'.$zippedobj->filename();
+					File::Copy::copy( $zippedobj->output(), $zipdist );
+					$zippedobj->output( new Path::Class::File($zipdist) );
 					last();
 				}
 
 				# Remove old cache file
-				eval { $_zipped->output->remove(); };
+				eval { $zippedobj->output->remove(); };
 			}
 
 			SEARCH_AND_NEW: {
 
-				my( $_tempar, $_templg );
+				my $iteratorr = undef;	# (Kanadzuchi::Iterator) Iterator object
+				my $kanazcilg = undef;	# (Kanadzuchi::Log) Logger object
+				my $tempstack = [];	# (Ref->Array) Retrieved objects
 
-				# Pager and order, and description
-				$pagersinthequery->{'currentpagenum'} = 1;
-				$pagersinthequery->{'resultsperpage'} = 1000;
-				$pagersinthequery->{'colnameorderby'} = lc($_queryp->param('orderby')) || q(id);
-				$pagersinthequery->{'descendorderby'} = $_queryp->param('descend') ? 1 : 0; 
+				# Pagination, ORDER BY, Create archive file
+				$paginated->skip(1);
+				$paginated->resultsperpage(1000);
+				$paginated->colnameorderby( lc($cgiqueryp->param('orderby')) || 'id' );
+				$paginated->descendorderby( $cgiqueryp->param('descend') ? 1 : 0 );
+				$zippedobj->input->touch();
 
-				# Search and Print
-				$_zipped->input->touch();
+				while(1)
+				{
+					# Send query and receive results
+					$iteratorr = Kanadzuchi::Mail::Stored::BdDR->searchandnew(
+								$bddr->handle(), $wherecond, $paginated );
+					last() unless( $iteratorr->hasnext() );
 
-				# Send query and receive results
-				$_tempar = Kanadzuchi::Mail::Stored::RDB->searchandnew(
-						$self->{'database'}, $paramsinthequery, \$pagersinthequery, $requiresobject );
-				last() unless( scalar(@$_tempar) );
+					while( my $obj = $iteratorr->next() )
+					{
+						push( @$tempstack, $obj );
+					}
 
-				$_templg = new Kanadzuchi::Log( 
-							'count'	=> scalar(@$_tempar),
-							'entities' => $_tempar,
-							'device' => $_zipped->input->openw(),
-							'format' => $downloadformat, );
+					$kanazcilg = new Kanadzuchi::Log( 
+								'count'	=> scalar(@$tempstack),
+								'entities' => $tempstack,
+								'device' => $zippedobj->input->openw(),
+								'format' => $datformat, );
 
-				$_templg->header(0);
-				$_templg->header(1) if( $pagersinthequery->{'currentpagenum'} == 1 );
-				$_templg->dumper();
+					$kanazcilg->header(0);
+					$kanazcilg->header(1) if( $paginated->currentpagenum == 1 );
+					$kanazcilg->dumper();
 
-				last() if( $pagersinthequery->{'currentpagenum'} >= $pagersinthequery->{'lastpagenumber'} );
-				$pagersinthequery->{'currentpagenum'}++;
+					last() unless($paginated->hasnext());
+					$paginated->next();
 
-			} # End of the loop
-			return(q{No data}) unless( $_zipped->input->stat->size() );
+				} # End of while(1)
+
+			} # End of the block(SEARCH_AND_NEW)
+
+			return('No data') unless( $zippedobj->input->stat->size() );
 
 			#   ____ ___  __  __ ____  ____  _____ ____ ____        __  
 			#  / ___/ _ \|  \/  |  _ \|  _ \| ____/ ___/ ___|       \ \ 
@@ -374,24 +375,23 @@ sub search_ontheweb
 			#  \____\___/|_|  |_|_|   |_| \_\_____|____/____/       /_/ 
 			#                                                           
 			# Compress, and create archive file
-			my $_dfname = $_zipped->output->dir().q{/}.$_zipped->filename();
-			my $_dzname = $_dfname.q{.}.$_zipped->prefix();
+			my $txtfilename = $zippedobj->output->dir().q{/}.$zippedobj->filename();
+			my $zipfilename = $txtfilename.q{.}.$zippedobj->prefix();
 
-			File::Copy::copy( $_zipped->input(), $_dfname );
-			File::Copy::copy( $_zipped->output(), $_dzname );
+			File::Copy::copy( $zippedobj->input(), $txtfilename );
+			File::Copy::copy( $zippedobj->output(), $zipfilename );
 
-			$_zipped->input( new Path::Class::File($_dfname) );
-			$_zipped->output( new Path::Class::File($_dzname) );
-			$_zipped->cleanup(1);
-			$_zipped->override(1);
-			$_zipped->compress();
-
+			$zippedobj->input( new Path::Class::File($txtfilename) );
+			$zippedobj->output( new Path::Class::File($zipfilename) );
+			$zippedobj->cleanup(1);
+			$zippedobj->override(1);
+			$zippedobj->compress();
 			last();
 
-		} # End of the block 'CREATE_FILE'
+		} # End of the block(CREATE_FILE)
 
 		# Set size of the archive file
-		return(q{Failed to create zip file}) unless( $_zipped->output->stat->size() );
+		return('Failed to create zip file') unless( $zippedobj->output->stat->size() );
 
 		#  ____   _____        ___   _ _     ___    _    ____        __  
 		# |  _ \ / _ \ \      / / \ | | |   / _ \  / \  |  _ \       \ \ 
@@ -402,10 +402,10 @@ sub search_ontheweb
 		# eval { $_textfile->path->remove(); };
 		$self->header_props(
 			'-type' => q(application/octet-stream),
-			'-content-disposition' => q(attachment;filename=).$_zipped->output->basename(),
-			'-content-length' => $_zipped->output->stat->size(),
+			'-content-disposition' => q(attachment;filename=).$zippedobj->output->basename(),
+			'-content-length' => $zippedobj->output->stat->size(),
 		);
-		return( Perl6::Slurp::slurp( $_zipped->output->stringify() ) );
+		return( Perl6::Slurp::slurp( $zippedobj->output->stringify() ) );
 	}
 	else
 	{
@@ -416,17 +416,27 @@ sub search_ontheweb
 		#      /_/  |_| |_| |_| |_|  |_|_____|
 		#                                     
 		# Send query and receive results
-		$aref = Kanadzuchi::Mail::Stored::RDB->searchandnew(
-				$self->{'database'}, $paramsinthequery, \$pagersinthequery, $requiresobject );
+		my $logrecord = [];
+		my $iteratorr = Kanadzuchi::Mail::Stored::BdDR->searchandnew(
+					$bddr->handle(), $wherecond, $paginated );
+		while( my $o = $iteratorr->next() )
+		{
+			my $damnedobj = $o->damn();
+			$damnedobj->{'updated'}  = $o->updated->ymd().'('.$o->updated->wdayname().') '.$o->updated->hms();
+			$damnedobj->{'bounced'}  = $o->bounced->ymd().'('.$o->bounced->wdayname().') '.$o->bounced->hms();
+			$damnedobj->{'bounced'} .= ' '.$o->timezoneoffset() if( $o->timezoneoffset() );
+			push( @$logrecord, $damnedobj );
+		}
+
 		$self->tt_params( 
-			'bouncemessages' => $aref,
+			'bouncemessages' => $logrecord,
 			'contentsname' => 'search',
-			'hascondition' => $hassearchcondition,
-			'searchcondition' => $paramsinthequery,
-			'encryptedforuri' => $encryptedcondition,
-			'pagersinthequery' => $pagersinthequery,
-			'errorsinthequery' => $errorsinthequery, );
-		$self->tt_process($file);
+			'hascondition' => $advancedx,
+			'searchcondition' => $wherecond,
+			'encryptedforuri' => $encrypted,
+			'pagination' => $paginated,
+			'errorsinq' => $errorsinq, );
+		$self->tt_process($tmpl);
 	}
 }
 

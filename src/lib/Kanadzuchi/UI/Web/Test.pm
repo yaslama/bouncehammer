@@ -1,4 +1,4 @@
-# $Id: Test.pm,v 1.17 2010/03/29 04:36:03 ak Exp $
+# $Id: Test.pm,v 1.18 2010/05/19 18:25:10 ak Exp $
 # -Id: Test.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Test.pm,v 1.10 2009/08/17 12:39:31 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -20,6 +20,7 @@ package Kanadzuchi::UI::Web::Test;
 use strict;
 use warnings;
 use base 'Kanadzuchi::UI::Web';
+use Kanadzuchi::Mail::Stored::YAML;
 use Kanadzuchi::Metadata;
 use Time::Piece;
 
@@ -38,7 +39,7 @@ sub test_ontheweb
 	# @Param	<None>
 	# @Return
 	my $self = shift();
-	my $file = q(test.).$self->{'language'}.q(.html);
+	my $file = 'test.'.$self->{'language'}.'.html';
 	$self->tt_params( 'maxsize' => $self->{'webconfig'}->{'upload'}->{'maxsize'} );
 	$self->tt_process($file);
 }
@@ -53,211 +54,290 @@ sub parse_ontheweb
 	# @Param	<None>
 	# @Return
 	my $self = shift();
-	my $file = q(iframe-parseddata.).$self->{'language'}.q(.html);
+	my $file = 'iframe-parseddata.'.$self->{'language'}.'.html';
 	my $cgiq = $self->query();
-	my $aref = [];
+	my $data = [];
 
 	if( defined($cgiq->param('emailfile')) ||
 		( defined($cgiq->param('emailtext')) && length($cgiq->param('emailtext'))) ){
 
+		require Kanadzuchi::Mail::Bounced;
+		require Kanadzuchi::Mbox;
 		require Path::Class;
 		require File::Spec;
 
-		# Mailbox parser executable and config file
-		my $configfile = $self->param('cf');
-		my $mboxparser = $self->param('px') || q(mailboxparser);
-		my $databasectl = $self->param('cx') || q(databasectl);
+		my $objzcimbox = undef();	# (Kanadzuchi::Mbox) Mailbox object
+		my $mpiterator = undef();	# (Kanadzuchi::Iterator) Iterator for mailbox parser
+		my $damnedobjs = [];		# (Ref->Array) Damned hash references 
+		my $datasource = q();		# (String) Email text as data source
+		my $errortitle = q();		# (String) Error string
+		my $sizeofmail = 0;		# (Integer) Size of email file and text
+		my $first5byte = q();		# (String) First 5bytes data of mail
+		my $serialized = q();		# (String) Serialized data text(YAML|JSON)
 
-		# Temporary mail box file in '/tmp'
-		my $temporaryd = ( -w q{/tmp} ? q{/tmp} : File::Spec->tmpdir() );
-		my $temporaryf = q();
-		my $tmpmailbox = undef();
+		my $pseudofrom = q(From MAILER-DAEMON Sun Dec 31 23:59:59 2000).qq(\n);
+		my $fileconfig = $self->{'sysconfig'}->{'file'}->{'templog'};
+		my $maxtxtsize = $self->{'webconfig'}->{'upload'}->{'maxsize'};
+		my $dataformat = $cgiq->param('format') || 'html';
+		my $parseuntil = $cgiq->param('parsenmessages') || 10;
 
-		$temporaryf .= $self->{'sysconfig'}->{'file'}->{'templog'}->{'prefix'}.q(-webui.);
-		$temporaryf .= time().q(.).$ENV{'REMOTE_ADDR'}.q(.).sprintf("%4x",$ENV{'REMOTE_PORT'}).$$.q(.);
-		$temporaryf .= (rand(8) * 1000).q(.).$self->{'sysconfig'}->{'file'}->{'templog'}->{'suffix'};
-		$tmpmailbox = new Path::Class::File( qq{$temporaryd/$temporaryf} );
-
-		my $givenemail = q();	# Email file name
-		my $pastedmail = q();	# Pasted email text
-		my $datasource = q();	# Filename or string as data source
-		my $fileformat = $cgiq->param('format') || q(html);
-		my $pnmessages = $cgiq->param('parsenmessages') || 5;
 		my $registerit = ( defined($cgiq->param('register')) && $cgiq->param('register') eq 'on' ? 1 : 0 );
-		my $parseddata = q();	# String, contents of given file
-		my $parsedline = q();	# String, for calculate data size
-		my $parseerror = q();	# Error string
-		my $pseudofrom = q();	# Pseudo 'From' Line
-		my $serialized = undef();
-		my $dctlreturn = q();	# The result of 'databasectl' if it is executed
-		my $dcresulthr = {};	# Serialized 'dctlreturn'
+		my $execstatus = {
+			'update' => 0, 'insert' => 0, 'tooold' => 0, 'exceed' => 0,
+			'failed' => 0, 'nofrom' => 0, 'whited' => 0, };
 
-		PARSE: while( 1 )
+		my $sourcelist = [];		# (Ref->Array) Data source names
+		my $givenctype = q();		# (String) Content-Type of the email file
+		my $givenemail = $cgiq->param('emailfile') || undef();
+		my $pastedmail = $cgiq->param('emailtext') || q();
+
+		# Read email from uploaded file
+		if( ref($givenemail) && -s $givenemail )
 		{
-			$tmpmailbox->touch();
-			last(PARSE) unless( -w $tmpmailbox->stringify() );	# Should be writable
-			last(PARSE) unless( -T $tmpmailbox->stringify() );	# Should be text file
-			
-			# Write temporary mailbox.
-			my $_tmpmf = $tmpmailbox->openw();
-			my $_maxfs = $self->{'webconfig'}->{'upload'}->{'maxsize'};
-			my $_ctype = q();
-
-			if( defined($cgiq->param('emailfile')) && length($cgiq->param('emailfile')) )
+			READ_EMAIL_FILE: while(1)
 			{
-				$givenemail = $cgiq->param('emailfile');
-				$datasource = sprintf("%s",$givenemail);
-				$_ctype = lc($cgiq->uploadInfo($givenemail)->{'Content-Type'}) || q{text/plain};
+				$sizeofmail = -s $givenemail;
+				$givenctype = lc $cgiq->uploadInfo( $givenemail )->{'Content-Type'} || 'text/plain';
+				$errortitle = 'toobig' if( $maxtxtsize > 0 && length($sizeofmail) > $maxtxtsize );
+				$errortitle = 'nottext' if( $givenctype =~ m{\A(audio|application|image|video)/}m );
+				last() if( $errortitle );
 
-				if( $_ctype =~ m{\A(audio|application|image|video)/}m )
+				# Check first 5bytes of the email
+				read( $givenemail, $first5byte, 5 );
+				seek( $givenemail, 0, 0 );
+				$datasource .= $pseudofrom unless( $first5byte eq 'From ' );
+
+				READ: while( my $__thisline = <$givenemail> )
 				{
-					$parseerror = q(nottext);
-				} 
-				else
-				{
-					WRITE: while( <$givenemail> )
-					{ 
-						( my $_thisline = $_ ) =~ s{(\x0d\x0a|\x0d|\x0a)}{\n}gm;	# CRLF, CR -> LF
-						$parsedline .= $_thisline;
+					$__thisline =~ s{(\x0d\x0a|\x0d|\x0a)}{\n}gm;		# CRLF, CR -> LF
+					next() if( $__thisline =~ m{\A[a-zA-Z0-9+/=]+\z}gm );	# Skip if it is Base64 encoded text
+					$datasource .= $__thisline;
 
-						if( $_maxfs != 0 && length($parsedline) > $_maxfs )
-						{
-							$parseerror = q(toobig);
-							last(PARSE);
-						}
+				} # End of while(READ)
 
-						# Skip if it is Base64 encoded text
-						next(WRITE) if( $_thisline =~ m{\A[a-zA-Z0-9+/=]+\z}gm );
-						printf( $_tmpmf "%s", $_thisline );
+				$datasource .= qq(\n);
+				push( @$sourcelist, $givenemail );
+				last();
 
-					} # End of while(), Write temporary mbox
-				}
-				$datasource .= q|(|.length($parsedline).q| Bytes)|;
+			} # Enf of while(READ_EMAIL_FILE)
+		}
+
+		# Read email from pasted text
+		if( length($pastedmail) )
+		{
+			$sizeofmail += length($pastedmail);
+			$first5byte  = substr( $pastedmail, 0, 5 );
+			$datasource .= $pseudofrom unless( $first5byte eq 'From ' );
+			$datasource .= $pastedmail;
+			push( @$sourcelist, 'Pasted email test' );
+		}
+
+		# Check the size of email text
+		$errortitle = 'nosize' if( $sizeofmail == 0 );
+		$errortitle = 'toobig' if( $maxtxtsize > 0 && length($datasource) > $maxtxtsize );
+
+
+		SLURP_AND_EAT: while(1)
+		{
+			last() if( $errortitle );
+
+			my $temporaryd = ( -w '/tmp' ? '/tmp' : File::Spec->tmpdir() );
+			my $counter4id = 0;
+
+			# Slurp
+			$objzcimbox = new Kanadzuchi::Mbox( 'file' => \$datasource );
+			$objzcimbox->greed(1);
+			$objzcimbox->slurpit();
+			last() unless( $objzcimbox->nmails() );
+			$objzcimbox->parseit();
+			last() unless( $objzcimbox->nmesgs() );
+
+			# Eat
+			$mpiterator = Kanadzuchi::Mail::Bounced->eatit( 
+					\$objzcimbox, { 'cache' => $temporaryd, 'verbose' => 0, 'fast' => 1, } );
+			last() unless( $mpiterator->count() );
+
+			if( $mpiterator->count > $parseuntil )
+			{
+				splice( @{ $mpiterator->data }, $parseuntil );
+				$mpiterator->count( scalar @{ $mpiterator->data } );
 			}
 
-			# Append e-Mail text(textarea) to the temporary mailbox file
-			if( defined($cgiq->param('emailtext')) && length($cgiq->param('emailtext')) )
+			# Convert from object to hash reference
+			if( $dataformat eq 'html' )
 			{
-				if( length($datasource) )
+				#      __    _   _ _____ __  __ _     
+				#      \ \  | | | |_   _|  \/  | |    
+				#  _____\ \ | |_| | | | | |\/| | |    
+				# |_____/ / |  _  | | | | |  | | |___ 
+				#      /_/  |_| |_| |_| |_|  |_|_____|
+				#                                     
+				LOAD_AND_DAMN: while( my $o = $mpiterator->next() )
 				{
-					# Content of e-mail file that is already loaded
-					$datasource .= q{, };
-					$parsedline .= qq{\n\n};
-				}
+					my $eachdamned = $o->damn();
+					my $tmpupdated = new Time::Piece();
 
-				$pseudofrom = q();
-				$pastedmail = $cgiq->param('emailtext');
-				$pastedmail =~ s{(\x0d\x0a|\x0d|\x0a)}{\n}gm;	# CRLF, CR -> LF
+					# Human readable date string
+					$eachdamned->{'id'} = sprintf( "TEMP-%03d", ++$counter4id );
+					$eachdamned->{'updated'}  = $tmpupdated->ymd().'('.$tmpupdated->wdayname().') '.$tmpupdated->hms();
+					$eachdamned->{'bounced'}  = $o->bounced->ymd().'('.$o->bounced->wdayname().') '.$o->bounced->hms();
+					$eachdamned->{'bounced'} .= ' '.$o->timezoneoffset() if( $o->timezoneoffset() );
+					push( @$damnedobjs, $eachdamned );
 
-				# Add Pseudo 'From' line
-				if( $pastedmail =~ m{\AFrom: .+ [@]ezweb[.]ne[.]jp[>]?\z}m )
-				{
-					# For mailboxparser command
-					$pseudofrom = q(From Postmaster@ezweb.ne.jp Sun Dec 31 23:59:59 2000).qq(\n);
-				}
-				else
-				{
-					$pseudofrom = q(From MAILER-DAEMON Sun Dec 31 23:59:59 2000).qq(\n);
-				}
+					# last(LOAD_AND_DAMN) if( $counter4id >= $parseuntil );
 
-				$pastedmail = $pseudofrom.$pastedmail;
-				$parsedline .= $pastedmail;
-
-				if( length($parsedline) > $_maxfs )
-				{
-					$parseerror = q(toobig);
-					last(PARSE);
-				}
-
-
-				printf( $_tmpmf "%s", $pastedmail );
-				$datasource .= q|Pasted text(|.length($pastedmail).q| Bytes)|;
+				} # End of while(LOAD_AND_DAMN)
 			}
+			else
+			{
+				#      __   __   __ _    __  __ _       _       _ ____   ___  _   _ 
+				#      \ \  \ \ / // \  |  \/  | |     | |     | / ___| / _ \| \ | |
+				#  _____\ \  \ V // _ \ | |\/| | |     | |  _  | \___ \| | | |  \| |
+				# |_____/ /   | |/ ___ \| |  | | |___  | | | |_| |___) | |_| | |\  |
+				#      /_/    |_/_/   \_\_|  |_|_____| | |  \___/|____/ \___/|_| \_|
+				#                                      |_|                          
+				# Create serialized data for the format YAML or JSON
+				require Kanadzuchi::Log;
+				my $kanazcilog = Kanadzuchi::Log->new();
 
-			# Parse mailbox
-			my $_outputformat = ( $fileformat eq 'html' ? q{y} : substr($fileformat,0,1) );
-			my $_pcommandline = qq{$mboxparser -g $tmpmailbox --conf $configfile -F$_outputformat --remove};
-			my $_nparsedmesgs = 0;
-
-			$parseddata = qx{$_pcommandline};
-			last() unless($parseddata);
+				$kanazcilog->count( $mpiterator->count() );
+				$kanazcilog->format( $dataformat );
+				$kanazcilog->entities( $mpiterator->all() );
+				$serialized = $kanazcilog->dumper();
+			}
 
 			if( $registerit )
 			{
-				# Online registration
-				my $_temporaryy = $temporaryf.q(.rr.yaml);
-				my $_tempbyyaml = new Path::Class::File( qq{$temporaryd/$_temporaryy} );
-				my $_tempresult = $_tempbyyaml->openw();
-				my $_dbccommand = qq{$databasectl -UB --conf $configfile }.$_tempbyyaml->stringify();
+				#      __    ____    _  _____  _    ____    _    ____  _____ 
+				#      \ \  |  _ \  / \|_   _|/ \  | __ )  / \  / ___|| ____|
+				#  _____\ \ | | | |/ _ \ | | / _ \ |  _ \ / _ \ \___ \|  _|  
+				# |_____/ / | |_| / ___ \| |/ ___ \| |_) / ___ \ ___) | |___ 
+				#      /_/  |____/_/   \_\_/_/   \_\____/_/   \_\____/|_____|
+				#                                                            
+				require Kanadzuchi::BdDR::BounceLogs;
+				require Kanadzuchi::BdDR::BounceLogs::Masters;
+				require Kanadzuchi::BdDR::Cache;
+				require Kanadzuchi::Mail::Stored::YAML;
+				require Kanadzuchi::Mail::Stored::BdDR;
 
-				# Write the result into the temprary YAML|JSON file
-				printf( $_tempresult "%s", $parseddata );
+				my $tablecache = undef();	# (Kanadzuchi::BdDR::Cache) Table cache object
+				my $xntableobj = undef();	# (Kanadzuchi::BdDR::BounceLogs::Table) Txn table object
+				my $mastertabs = {};		# (Ref->Hash) Kanadzuchi::BdDR::BounceLogs::Masters::Table objects
+				my $xntabalias = q();		# (String) lower cased txn table alias
+				my $recinthedb = 0;		# (Integer) The number of records in the db
+				my $bddrobject = $self->{'database'};
+				my $xsoftlimit = $self->{'sysconfig'}->{'database'}->{'table'}->{'bouncelogs'}->{'maxrecords'} || 0;
 
-				# Insert the results by databasectl command
-				$dctlreturn = qx{$_dbccommand};
-				$_tempbyyaml->remove();
-			}
+				$mpiterator->reset();
+				$tablecache = Kanadzuchi::BdDR::Cache->new();
+				$xntableobj = Kanadzuchi::BdDR::BounceLogs::Table->new( 'handle' => $bddrobject->handle() );
+				$mastertabs = Kanadzuchi::BdDR::BounceLogs::Masters::Table->mastertables( $bddrobject->handle() );
+				$xntabalias = lc $xntableobj->alias();
+				$recinthedb = $xntableobj->count();		# (Integer) The number of records in the db
 
-			$serialized = Kanadzuchi::Metadata->to_object( \$parseddata );
-			$dcresulthr = shift @{ Kanadzuchi::Metadata->to_object( \$dctlreturn ) };
+				DATABASECTL: while( my $o = $mpiterator->next() )
+				{
+					my $thiscached = {};		# (Ref->Hash) Cached data of each table
+					my $thismtoken = q();		# (String) This record's message token
+					my $thismepoch = 0;		# (Integer) Bounced time
+					my $thisstatus = 0;		# (Integer) Returned status value
+					my $execinsert = 0;		# (Integer) Flag; Exec INSERT
 
-			# last() if the format is 'asciitable'
-			last() if( ref($serialized) ne q|ARRAY| );
-			last() if( $registerit && ref($dcresulthr) ne q|HASH| );
+					bless( $o, q|Kanadzuchi::Mail::Stored::YAML| );
 
-			foreach my $__y ( @$serialized )
-			{
-				(my $__s = $__y->{'addresser'}) =~ s{\A.+[@]}{}gm;
-				(my $__d = $__y->{'recipient'}) =~ s{\A.+[@]}{}gm;
-
-				my $__dateobject = {
-					'b' => bless( localtime($__y->{'bounced'}), 'Time::Piece' ),
-					'u' => bless( localtime(), 'Time::Piece' ), };
-				my $__datestring = {
-					'b' => $__dateobject->{'b'}->ymd('/')
-						.q|(|.$__dateobject->{'b'}->wdayname().q|) |.$__dateobject->{'b'}->hms(':'),
-					'u' => $__dateobject->{'u'}->ymd('/')
-						.q|(|.$__dateobject->{'u'}->wdayname().q|) |.$__dateobject->{'u'}->hms(':'), };
-
-				push( @$aref,
+					# Check limit the number of records
+					if( $xsoftlimit > 0 && ($execstatus->{'insert'} + $recinthedb) >= $xsoftlimit )
 					{
-						'id' => sprintf("TEMP-%03d",++$_nparsedmesgs),
-						'token' => $__y->{'token'},
-						'reason' => $__y->{'reason'},
-						'bounced' => $__datestring->{'b'},
-						'updated' => $__datestring->{'u'},
-						'addresser' => $__y->{'addresser'},
-						'recipient' => $__y->{'recipient'},
-						'frequency' => 1,
-						'destination' => $__d,
-						'description' => $__y->{'description'},
-						'senderdomain' => $__s,
-						'hostgroup' => $__y->{'hostgroup'},
-						'deliverystatus' => $__y->{'status'},
-						'timezoneoffset' => $__y->{'description'}->{'timezoneoffset'},
-						'diagnosticcode' => $__y->{'description'}->{'diagnosticcode'},
+						# Exceeds limit!
+						$execstatus->{'exceed'}++;
+						next();
 					}
-				);
 
-				last() if( $_nparsedmesgs >= $pnmessages );
+					# Check cached data
+					$thismtoken = $o->token();
+					$thismepoch = $o->bounced->epoch();
+					$thiscached = $tablecache->getit( $xntabalias, $thismtoken );
 
-			} # End of foreach(), read serialized string
+					if( exists($thiscached->{'bounced'}) )
+					{
+						# Cache hit!
+						# This record's bounced date is OLDER THAN the record in the cache.
+						if( $thiscached->{'bounced'} >= $thismepoch )
+						{
+							$execstatus->{'tooold'}++;
+							next();
+						}
+					}
+					else
+					{
+						# No cache data of this entity
+						if( $o->findbytoken($xntableobj,$tablecache) )
+						{
+							# The record that has same token exists in the database
+							$thiscached = $tablecache->getit( $xntabalias, $thismtoken );
 
-			eval{ $tmpmailbox->remove(); };
-			last();
-		} # End of while(1)
+							if( $thiscached->{'bounced'} >= $thismepoch )
+							{
+								# This record's bounced date is older than the record in the database.
+								$execstatus->{'tooold'}++;
+								next();
+							}
+							elsif( $thiscached->{'reason'} eq 'whitelisted' )
+							{
+								# The whitelisted record is not updated without --force option.
+								$execstatus->{'whited'}++;
+								next();
+							}
+						}
+						else
+						{
+							# Record that have same token DOES NOT EXIST in the database
+							# Does the senderdomain exist in the mastertable?
+							if( $mastertabs->{'senderdomains'}->getidbyname($o->senderdomain()) )
+							{
+								$execinsert = 1;
+							}
+							else
+							{
+								# The senderdomain DOES NOT EXIST in the mastertable
+								$execstatus->{'nofrom'}++;
+								next();
+							}
+						}
+					}
+
+					# UPDATE OR INSERT
+					if( $execinsert )
+					{
+						# INSERT this record INTO the database
+						$thisstatus = $o->insert($xntableobj,$mastertabs,$tablecache);
+						$thisstatus ? $execstatus->{'insert'}++ : $execstatus->{'failed'}++;
+					}
+					else
+					{
+						$thisstatus = $o->update($xntableobj,$tablecache);
+						$thisstatus ? $execstatus->{'update'}++ : $execstatus->{'failed'}++;
+					}
+
+				} # End of while(DATABASECTL)
+
+			} # End of if(REGISTERIT)
+
+			last(SLURP_AND_EAT);
+
+		} # End of while(SLURP_AND_EAT)
 
 		$self->tt_params( 
-			'bouncemessages' => $aref,
-			'parseddatatext' => $parseddata,
-			'parsedfilename' => $datasource,
-			'parsedfilesize' => length($parsedline),
-			'parsedmessages' => ( $fileformat eq q{asciitable} ? 1 : scalar(@$aref) ),
-			'outputformat' => $fileformat,
+			'bouncemessages' => $damnedobjs,
+			'parseddatatext' => $serialized,
+			'parsedfilename' => join( ',', @$sourcelist ),
+			'parsedfilesize' => length($datasource),
+			'parsedmessages' => $mpiterator->count(),
+			'outputformat' => $dataformat,
 			'onlineparse' => 1,
 			'onlineupdate' => $registerit,
-			'updateresult' => $dcresulthr,
-			'parseerror' => $parseerror, );
+			'updateresult' => $execstatus,
+			'errortitle' => $errortitle, );
 	}
 
 	$self->tt_process($file);

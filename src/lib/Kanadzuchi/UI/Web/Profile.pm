@@ -1,4 +1,4 @@
-# $Id: Profile.pm,v 1.7 2010/03/26 07:20:08 ak Exp $
+# $Id: Profile.pm,v 1.8 2010/05/18 07:30:03 ak Exp $
 # -Id: Profile.pm,v 1.2 2009/08/31 06:58:25 ak Exp -
 # -Id: Profile.pm,v 1.3 2009/08/17 06:54:30 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -34,7 +34,7 @@ sub profile_ontheweb
 	#
 	# @Description	Draw profile in HTML
 	my $self = shift();
-	my $file = q(profile.).$self->{'language'}.q(.html);
+	my $file = 'profile.'.$self->{'language'}.'.html';
 
 	$self->tt_params(
 		'sysconfig' => $self->{'sysconfig'},

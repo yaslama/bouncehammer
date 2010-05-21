@@ -1,4 +1,4 @@
-# $Id: MasterTables.pm,v 1.11 2010/03/29 00:34:38 ak Exp $
+# $Id: MasterTables.pm,v 1.14 2010/05/19 18:25:10 ak Exp $
 # -Id: MasterTables.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: MasterTables.pm,v 1.7 2009/08/15 15:06:56 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -20,7 +20,8 @@ package Kanadzuchi::UI::Web::MasterTables;
 use strict;
 use warnings;
 use base 'Kanadzuchi::UI::Web';
-use Kanadzuchi::RDB::MasterTable;
+use Kanadzuchi::BdDR;
+use Kanadzuchi::BdDR::BounceLogs::Masters;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||I |||n |||s |||t |||a |||n |||c |||e |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -35,40 +36,38 @@ sub tablelist_ontheweb
 	#
 	# @Description	Get list of the table
 	# @Param	<None>
+	require Kanadzuchi::BdDR::Page;
 	my $self = shift();
-	my $aref = [];
-	my $tobj = undef();
-	my $tmpl = q(mastertable.).$self->{'language'}.q(.html);
-	my $tabc = $self->{'webconfig'}->{'database'}->{'table'};
-	my $cond = {};	# WHERE Conditioin, For Future Release
-	my $page = { 
-		'colnameorderby' => lc($self->param('pi_orderby')) || q(),
-		'currentpagenum' => $self->param('pi_page') || 1,
-		'resultsperpage' => $self->param('pi_rpp') || 10,
-	};
+	my $bddr = $self->{'database'};
+	my $list = [];
 
-	$self->{'tablename'} = lc($self->param('pi_tablename'));
+	my $templatef = 'mastertable.'.$self->{'language'}.'.html';
+	my $tableconf = $self->{'webconfig'}->{'database'}->{'table'};
+	my $tablename = lc $self->param('pi_tablename');
+	my $tableisro = $tableconf->{$tablename}->{'readonly'};
+	my $wherecond = {};
+	my $mastertab = new Kanadzuchi::BdDR::BounceLogs::Masters::Table( 
+				'alias' => $tablename, 'handle' => $bddr->handle() );
+	my $paginated = Kanadzuchi::BdDR::Page->new(
+				'colnameorderby' => lc($self->param('pi_orderby')) || 'id',
+				'resultsperpage' => $self->param('pi_rpp') || 10 );
 
-	# Host Groups and Reasons does not use pager
-	if( $self->{'tablename'} eq 'hostgroups' || $self->{'tablename'} eq 'reasons' )
-	{
-		$page->{'resultsperpage'} = 25;
-	}
-
-	$tobj = Kanadzuchi::RDB::MasterTable->newtable( $self->{'tablename'} );
-	$aref = $tobj->select( $self->{'database'}, $cond, \$page );
+	$paginated->resultsperpage(25) if( $tablename eq 'hostgroups' || $tablename eq 'reasons' );
+	$paginated->set( $mastertab->count( $wherecond ) );
+	$paginated->skip( $self->param('pi_page') || 1 );
+	$list = $mastertab->search( $wherecond, $paginated );
 
 	$self->tt_params( 
-		'titlename' => ucfirst($self->{'tablename'}),
-		'tablename' => $self->{'tablename'},
-		'fieldname' => $tobj->field(),
-		'sortby' => $page->{'colnameorderby'},
-		'isreadonly' => $tabc->{ $self->{'tablename'} }->{'readonly'},
+		'sortby' => $paginated->colnameorderby(),
+		'titlename' => ucfirst $tablename,
+		'tablename' => $tablename,
+		'fieldname' => $mastertab->field(),
+		'isreadonly' => $tableconf->{$tablename}->{'readonly'},
+		'pagination' => $paginated,
 		'contentsname' => 'table',
 		'hascondition' => 0,
-		'pagersinthequery' => $page,
-		'tablecontents' => $aref );
-	$self->tt_process($tmpl);
+		'tablecontents' => $list );
+	$self->tt_process($templatef);
 }
 
 sub tablectl_ontheweb
@@ -80,222 +79,245 @@ sub tablectl_ontheweb
 	# @Description	Update, Delete, Create record in the table
 	# @Param	<None>
 	my $self = shift();
-	my $href = {};
-	my $aref = [];
-	my $tmpl = q(div-mastertable-contents.).$self->{'language'}.q(.html);
-	my $errt = q(div-mastertable-error.).$self->{'language'}.q(.html);
-	my $table = undef();
-	my $query = $self->query;
-	my $tabcf = $self->{'webconfig'}->{'database'}->{'table'};
-	my $rdonly = 1;
-	my $action = $query->param('action') || $ENV{'PATH_INFO'};
+	my $bddr = $self->{'database'};
 
-	$self->{'tablename'} = lc($self->param('pi_tablename'));
-	$table = Kanadzuchi::RDB::MasterTable->newtable( $self->{'tablename'} );
-	$rdonly = $tabcf->{ $self->{'tablename'} }->{'readonly'};
+	my $templatef = 'div-mastertable-contents.'.$self->{'language'}.'.html';
+	my $templatee = 'div-mastertable-error.'.$self->{'language'}.'.html';
+	my $tablename = lc $self->param('pi_tablename');
+	my $tableconf = $self->{'webconfig'}->{'database'}->{'table'};
+	my $tableisro = $tableconf->{$tablename}->{'readonly'};
+	my $mastertab = new Kanadzuchi::BdDR::BounceLogs::Masters::Table(
+				'alias' => $tablename, 'handle' => $bddr->handle() );
 
-	if( $table )
+	if( $mastertab )
 	{
 		# Pick up the string from PATH_INFO
-		$action =~ s{\A.+/([a-zA-Z]+)\z}{$1};
+		my $paginated = undef();		# (Kanadzuchi::BdDR::Page) Pagination object
+		my $tabrecord = [];			# (Ref->Array) Record in the mastertable
+		my $cgidquery = $self->query();		# Query Strings
+		my $curmtdata = {};			# (Ref->Hash) Current data on the mastertable
+		my $newmtdata = {};			# (Ref->Hash) New data for mastertable
+		my $wherecond = {};			# (Ref->Hash) WHERE Condition
+		my $currentid = 0;			# (Integer) Current ID of the record
+		my $tabaction = $cgidquery->param('action') || $ENV{'PATH_INFO'};
 
-		if( $action eq 'create' )
+		$tabaction =~ s{\A.+/([a-zA-Z]+)\z}{$1};
+
+		if( $tabaction eq 'create' )
 		{
+			#  ___ _   _ ____  _____ ____ _____   ___ _   _ _____ ___  
+			# |_ _| \ | / ___|| ____|  _ \_   _| |_ _| \ | |_   _/ _ \ 
+			#  | ||  \| \___ \|  _| | |_) || |    | ||  \| | | || | | |
+			#  | || |\  |___) | |___|  _ < | |    | || |\  | | || |_| |
+			# |___|_| \_|____/|_____|_| \_\|_|   |___|_| \_| |_| \___/ 
+			#                                                          
 			require Kanadzuchi::RFC2822;
+			$newmtdata->{'name'} = lc $cgidquery->param('newname');
+			$newmtdata->{'description'} = $cgidquery->param('newdesc');
+			$newmtdata->{'disabled'} = 0;
 
-			$table->name( lc($query->param('newname')) );
-			$table->description( $query->param('newdesc') );
-			$table->disabled(0);
-
-			if( $tabcf->{ $self->{'tablename'} }->{'readonly'} )
+			if( $tableisro )
 			{
-				# Read only table
-				$aref = [ { 
-					'name' => $table->name(),
+				# The table is read only table, Set error template
+				$tabrecord = [ { 
+					'name' => $newmtdata->{'name'},
 					'description' => q(Permission denied, The table is read only.), } ];
-				$tmpl = $errt;
+				$templatef = $templatee;
 			}
 			else
 			{
-				if( Kanadzuchi::RFC2822->is_domainpart($table->name()) && $table->name =~ m{[.]} )
+				# The table is writable
+				if( Kanadzuchi::RFC2822->is_domainpart($newmtdata->{'name'}) && $newmtdata->{'name'} =~ m{[.]} )
 				{
-					my $_curid = $table->getidbyname( $self->{'database'} );
-
-					if( $_curid == 0 )
+					$currentid = $mastertab->getidbyname( $newmtdata->{'name'} );
+					if( $currentid )
 					{
-						my $_newid = $table->insert( $self->{'database'} );
+						# The record already exists, CANNOT INSERT
+						$tabrecord = [ { 
+							'id' => $currentid,
+							'name' => $newmtdata->{'name'},
+							'description' => q(Already exists), } ];
+						$templatef = $templatee;
+					}
+					else
+					{
+						# The record does not exist in the mastertable
+						$newmtdata->{'id'} = $mastertab->insert( $newmtdata );
 
-						if( $_newid )
+						if( $newmtdata->{'id'} )
 						{
-							$aref = [ {
-								'id' => $_newid,
-								'name' => $table->name(),
-								'description' => $table->description(),
-								'disabled' => $table->disabled() } ];
+							$tabrecord = [ $newmtdata ];
 						}
 						else
 						{
 							# Failed to create
-							$aref = [ { 
-								'name' => $table->name(),
+							$tabrecord = [ { 
+								'name' => $newmtdata->{'name'},
 								'description' => q(Failed to create a new record), } ];
-							$tmpl = $errt;
+							$templatef = $templatee;
 						}
-					}
-					else
-					{
-						# Already exists
-						$aref = [ { 
-							'id' => $_curid,
-							'name' => $table->name(),
-							'description' => q(Already exists), } ];
-						$tmpl = $errt;
 					}
 				}
 				else
 				{
-					# Invalid name
-					$tmpl = $errt;
-					$aref = [ { 
-						'name' => $table->name(), 
-						'description' => q(Invalid name or not FQDN: [).$table->name().q(]), } ];
+					# Invalid key name
+					$tabrecord = [ { 
+						'name' => $newmtdata->{'name'},
+						'description' => 'Invalid name or not FQDN: ['.$newmtdata->{'name'}.']', } ];
+					$templatef = $templatee;
 				}
 			}
 
 			$self->tt_params(
-				'titlename' => ucfirst($self->{'tablename'}),
-				'tablename' => $self->{'tablename'},
-				'fieldname' => $table->field(),
-				'isreadonly' => $rdonly,
+				'titlename' => ucfirst $tablename,
+				'tablename' => $tablename,
+				'fieldname' => $mastertab->field(),
+				'isreadonly' => $tableisro,
 				'contentsname' => 'table',
-				'tablecontents' => $aref );
+				'tablecontents' => $tabrecord );
 		}
-		elsif( $action eq 'update' )
+		elsif( $tabaction eq 'update' )
 		{
-			$table->id( $query->param('id') );
-			$href = $table->getentbyid( $self->{'database'} );
+			#  _   _ ____  ____    _  _____ _____ 
+			# | | | |  _ \|  _ \  / \|_   _| ____|
+			# | | | | |_) | | | |/ _ \ | | |  _|  
+			# | |_| |  __/| |_| / ___ \| | | |___ 
+			#  \___/|_|   |____/_/   \_\_| |_____|
+			#                                     
+			$wherecond->{'id'} = $cgidquery->param('id');
+			$curmtdata = $mastertab->getentbyid($wherecond->{'id'});
 
-			if( defined($href->{'id'}) )
+			if( exists($curmtdata->{'id'}) && $curmtdata->{'id'} )
 			{
-				$table->name( $href->{'name'} );
-				$table->disabled( $href->{'disabled'} );
-				$table->description( $query->param('desc') );
+				$newmtdata->{'name'} = $curmtdata->{'name'};
+				$newmtdata->{'description'} = $cgidquery->param('desc');
+				$newmtdata->{'disabled'} = $curmtdata->{'disabled'};
 
-				if( $table->update($self->{'database'}) )
+				if( $mastertab->update( $newmtdata, $wherecond ) )
 				{
-					$aref = [ {
-						'id' => $table->id(),
-						'name' => $table->name(),
-						'description' => $table->description(),
-						'disabled' => $table->disabled() } ];
+					# Successfully UPDATEd
+					$tabrecord = [ {
+						'id' => $curmtdata->{'id'},
+						'name' => $newmtdata->{'name'},
+						'disabled' => $newmtdata->{'disabled'},
+						'description' => $newmtdata->{'description'}, } ];
 				}
 				else
 				{
 					# Failed to UPDATE
-					$tmpl = $errt;
-					$aref = [ { 'name' => $table->name(), 'description' => q(Failed to update), } ];
+					$templatef = $templatee;
+					$tabrecord = [ { 'name' => $curmtdata->{'name'}, 'description' => q(Failed to update), } ];
 				}
 			}
 			else
 			{
 				# ID is empty
-				$tmpl = $errt;
-				$aref = [ { 'name' => $table->name(), 'description' => q(No ID in the query string, Failed), } ];
+				$templatef = $templatee;
+				$tabrecord = [ { 
+					'name' => $cgidquery->param('name'),
+					'description' => q(No ID in the query string, Failed), } ];
 			}
 
 			$self->tt_params(
-				'titlename' => ucfirst($self->{'tablename'}),
-				'tablename' => $self->{'tablename'},
-				'fieldname' => $table->field(),
-				'isreadonly' => $rdonly,
+				'titlename' => ucfirst $tablename,
+				'tablename' => $tablename,
+				'fieldname' => $mastertab->field(),
+				'isreadonly' => $tableisro,
 				'contentsname' => 'table',
-				'tablecontents' => $aref );
-
+				'tablecontents' => $tabrecord );
 		}
-		elsif( $action eq 'delete' )
+		elsif( $tabaction eq 'delete' )
 		{
-			$tmpl = q(mastertable.).$self->{'language'}.q(.html);
+			#  ____  _____ _     _____ _____ _____   _____ ____   ___  __  __ 
+			# |  _ \| ____| |   | ____|_   _| ____| |  ___|  _ \ / _ \|  \/  |
+			# | | | |  _| | |   |  _|   | | |  _|   | |_  | |_) | | | | |\/| |
+			# | |_| | |___| |___| |___  | | | |___  |  _| |  _ <| |_| | |  | |
+			# |____/|_____|_____|_____| |_| |_____| |_|   |_| \_\\___/|_|  |_|
+			#                                                                 
+			require Kanadzuchi::BdDR::Page;
+			my $theidwillberm = $cgidquery->param('record_will_be_delete');
+			my $errormessages = q();
+			my $willberemoved = {};
+			my $removedrecord = [];
 
-			my $_err = q();	# Error message
-			my $_old = [];	# Array reference of Removed record
-			my $_wbr = {};	# Hash reference of the record(will be removed)
-			my $_pgn = {
-					'colnameorderby' => $query->param('colnameorderby') || q(),
-					'currentpagenum' => $query->param('currentpagenum') || 1,
-					'resultsperpage' => $query->param('resultsperpage') || 10,
-				};
+			$templatef = 'mastertable.'.$self->{'language'}.'.html';
+			$paginated = Kanadzuchi::BdDR::Page->new(
+					'colnameorderby' => $cgidquery->param('colnameorderby') || 'id',
+					'resultsperpage' => $cgidquery->param('resultsperpage') || 10 );
+			$paginated->set( $mastertab->count( $wherecond ) );
+			$paginated->skip( $cgidquery->param('currentpagenum') || 1 );
 
-			if( defined($query->param('record_will_be_delete')) )
+			if( $theidwillberm )
 			{
-				$table->id( $query->param('record_will_be_delete') );
+				$wherecond->{'id'} = $theidwillberm;
 
-				if( defined($query->param('do_delete')) )
+				if( defined($cgidquery->param('do_delete')) )
 				{
-					$_wbr = $table->getentbyid($self->{'database'});
+					$willberemoved = $mastertab->getentbyid($theidwillberm);
 
-					if( exists($_wbr->{'name'}) )
+					if( exists($willberemoved->{'name'}) )
 					{
-						if( $tabcf->{ $self->{'tablename'} }->{'readonly'} )
+						if( $tableisro )
 						{
-							# Read only table
-							$_err  = q(Permission denied, The table is read only.);
-							$_err .= qq|(ID=|.$table->id().q|)|;
+							# The table is read only
+							$errormessages .= 'Permission denied, The table is read only.';
+							$errormessages .= '(ID='.$theidwillberm.')';
 						}
 						else
 						{
-							if( $table->remove($self->{'database'}) )
+							if( $mastertab->remove($wherecond) )
 							{
 								# Successfully removed
-								$_old = [ $_wbr ];
+								$removedrecord = [ $willberemoved ];
 							}
 							else
 							{
 								# Failed to remove
-								$_err  = q(Failed to remove the reocrd);
-								$_err .= qq|(ID=|.$table->id().q|)|;
+								$errormessages .= 'Failed to remove the reocrd';
+								$errormessages .= '(ID='.$theidwillberm.')';
 							}
 						}
 					}
 					else
 					{
 						# No such record
-						$_err  = q(No such record);
-						$_err .= qq|(ID=|.$table->id().q|)|;
+						$errormessages .= 'No such record';
+						$errormessages .= '(ID='.$theidwillberm.')';
 					}
 				}
 				else
 				{
 					# Checkbox is not checked
-					$_err = q(Checkbox is not checked);
+					$errormessages .= 'Checkbox is not checked';
 				}
 			}
 
-			$aref = $table->select( $self->{'database'}, {}, \$_pgn );
+			$tabrecord = $mastertab->search( {}, $paginated );
 			$self->tt_params( 
-				'titlename' => ucfirst($self->{'tablename'}),
-				'tablename' => $self->{'tablename'},
-				'fieldname' => $table->field(),
-				'isreadonly' => $rdonly,
+				'titlename' => ucfirst $tablename,
+				'tablename' => $tablename,
+				'fieldname' => $mastertab->field(),
+				'isreadonly' => $tableisro,
+				'pagination' => $paginated,
 				'contentsname' => 'table',
 				'hascondition' => 0,
-				'errormessage' => $_err,
-				'tablecontents' => $aref,
-				'removedrecord' => $_old,
-				'pagersinthequery' => $_pgn );
+				'errormessage' => $errormessages,
+				'tablecontents' => $tabrecord,
+				'removedrecord' => $removedrecord );
 		}
 		else
 		{
 			# Unknown or empty action
-			$tmpl = $errt;
+			$templatef = $templatee;
 			$self->tt_params(
-				'titlename' => ucfirst($self->{'tablename'}),
-				'tablename' => $self->{'tablename'},
-				'fieldname' => $table->field(),
-				'isreadonly' => $rdonly,
+				'titlename' => ucfirst $tablename,
+				'tablename' => $tablename,
+				'fieldname' => $mastertab->field(),
+				'isreadonly' => $tableisro,
 				'contentsname' => 'table',
 				'tablecontents' => [ {
-					'name' => $self->{'tablename'},
-					'description' => q(Unknown or empty action.), } ],
+					'name' => $tablename,
+					'description' => 'Unknown or empty action.', } ],
 			);
 
 		} # End of if($action)
@@ -303,21 +325,21 @@ sub tablectl_ontheweb
 	else
 	{
 		# Invalid table name
-		$tmpl = $errt;
+		$templatef = $templatee;
 		$self->tt_params(
-			'titlename' => ucfirst($self->{'tablename'}),
-			'tablename' => $self->{'tablename'},
-			'fieldname' => q(unknown),
-			'isreadonly' => $rdonly,
+			'titlename' => ucfirst $tablename,
+			'tablename' => $tablename,
+			'fieldname' => 'unknown',
+			'isreadonly' => $tableisro,
 			'contentsname' => 'table',
 			'tablecontents' => [ {
-				'name' => $self->{'tablename'},
-				'description' => q(Unknown table name.), } ],
+				'name' => $tablename,
+				'description' => 'Unknown table name.', } ],
 		);
 
 	} # End of if($table)
 
-	$self->tt_process($tmpl);
+	$self->tt_process($templatef);
 }
 
 1;

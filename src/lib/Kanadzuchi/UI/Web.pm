@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.12 2010/03/27 14:14:20 ak Exp $
+# $Id: Web.pm,v 1.14 2010/05/19 18:25:08 ak Exp $
 # -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
 # -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -19,6 +19,7 @@ package Kanadzuchi::UI::Web;
 #
 use strict;
 use warnings;
+use utf8;
 use base 'CGI::Application';
 use CGI::Application::Plugin::TT;
 use CGI::Application::Plugin::HTMLPrototype;
@@ -119,41 +120,22 @@ sub cgiapp_prerun
 	# +-+-+-+-+-+-+-+-+-+-+-+-+-+
 	# |c|g|i|a|p|p|_|p|r|e|r|u|n|
 	# +-+-+-+-+-+-+-+-+-+-+-+-+-+
-	require Kanadzuchi::RDB;
-	require Kanadzuchi::RDB::Schema;
-
 	my $self = shift();
-	my $hdbi = undef();	# Database handle
+	my $bddr = undef();	# (Kanadzuchi::BdDR) Database object
+	my $conf = $self->{'sysconfig'};
 
 	# Create database object
-	$self->{'database'} = new Kanadzuchi::RDB();
+	require Kanadzuchi::BdDR;
+	$bddr = new Kanadzuchi::BdDR();
 
-	# Set values to Kanadzuchi::Database object, Create data source name
+	# Set values to Kanadzuchi::BdDR object, Create data source name
 	try {
-		unless( $self->{'database'}->setup($self->{'sysconfig'}->{'database'}) )
-		{
-			Kanadzuchi::Exception::Web->throw( '-text' => 'Failed to setup' );
-		}
-
-		if( length($self->{'database'}->datasn()) < 5 )
-		{
-			# Datatabase name or database type is not defined
-			Kanadzuchi::Exception::Web->throw( 
-				'-text' => 'Failed to create data source name' );
-		}
-		
-		eval{ 
-			$hdbi = Kanadzuchi::RDB::Schema->connect(
-					$self->{'database'}->datasn(), 
-					$self->{'database'}->username(),
-					$self->{'database'}->password() );
-		};
-
-		Kanadzuchi::Exception::Web->throw( '-text' => $@ ) if( $@ );
-		$self->{'database'}->handle($hdbi);
+		$bddr->setup( $conf->{'database'} );
+		Kanadzuchi::Exception::Web->throw( '-text' => q{Failed to connect DB} ) unless($bddr->connect());
+		$self->{'database'} = $bddr;
 	}
 	catch Kanadzuchi::Exception::Web with {
-		$self->exception(shift());
+		$self->exception(shift())
 	};
 
 	# Set HTTP header, Character set, Language
@@ -304,7 +286,7 @@ sub exception
 	# @Param <obj>	Kanadzuchi::Exception object
 	my $self = shift();
 	my $mesg = shift();
-	my $file = q(exception.).$self->{'language'}.q(.html);
+	my $file = 'exception.'.$self->{'language'}.'.html';
 
 	$self->tt_params( 'exception' => $mesg );
 	$self->tt_process($file);
