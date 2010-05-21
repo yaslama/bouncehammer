@@ -1,4 +1,4 @@
-# $Id: HTTP.pm,v 1.10 2010/03/26 07:18:31 ak Exp $
+# $Id: HTTP.pm,v 1.11 2010/05/18 07:29:48 ak Exp $
 # -Id: HTTP.pm,v 1.3 2009/10/06 00:36:49 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::
@@ -73,41 +73,22 @@ sub cgiapp_prerun
 	# +-+-+-+-+-+-+-+-+-+-+-+-+-+
 	# |c|g|i|a|p|p|_|p|r|e|r|u|n|
 	# +-+-+-+-+-+-+-+-+-+-+-+-+-+
-	require Kanadzuchi::RDB;
-	require Kanadzuchi::RDB::Schema;
-
 	my $self = shift();
-	my $hdbi = undef();	# Database handle
+	my $bddr = undef();	# (Kanadzuchi::BdDR) Database object
+	my $conf = $self->{'sysconfig'};
 
 	# Create database object
-	$self->{'database'} = new Kanadzuchi::RDB( 'count' => 0, 'cache' => {} );
+	require Kanadzuchi::BdDR;
+	$bddr = new Kanadzuchi::BdDR();
 
-	# Set values to Kanadzuchi::Database object, Create data source name
+	# Set values to Kanadzuchi::BdDR object, Create data source name
 	try {
-		unless( $self->{'database'}->setup($self->{'sysconfig'}->{'database'}) )
-		{
-			Kanadzuchi::Exception::API->throw( '-text' => 'Failed to setup' );
-		}
-
-		if( length($self->{'database'}->datasn()) < 5 )
-		{
-			# Datatabase name or database type is not defined
-			Kanadzuchi::Exception::API->throw( 
-				'-text' => 'Failed to create data source name' );
-		}
-		
-		eval{ 
-			$hdbi = Kanadzuchi::RDB::Schema->connect(
-					$self->{'database'}->datasn(),
-					$self->{'database'}->username(),
-					$self->{'database'}->password() );
-		};
-
-		Kanadzuchi::Exception::API->throw( '-text' => $@ ) if( $@ );
-		$self->{'database'}->handle($hdbi);
+		$bddr->setup( $conf->{'database'} );
+		Kanadzuchi::Exception::API->throw( '-text' => q{Failed to connect DB} ) unless($bddr->connect());
+		$self->{'database'} = $bddr;
 	}
 	catch Kanadzuchi::Exception::API with {
-		$self->exception(shift());
+		$self->exception(shift())
 	};
 
 	# Set HTTP header, Character set, Language
@@ -183,15 +164,22 @@ sub api_query
 	my $self = shift();
 	return() unless( length($self->param('token')) );
 
-	require Kanadzuchi::Mail::Stored::RDB;
-	my $answer = [];
-	my $isjson = 1;
-	my $string = q();
-	my $pagecf = { 'currentpagenum' => 1, 'resultperpage' => 1 };
-	my $wherec = { 'token' => lc($self->param('token')) };
+	require Kanadzuchi::Mail::Stored::BdDR;
+	require Kanadzuchi::BdDR::Page;
+	require Kanadzuchi::Metadata;
 
-	$answer = Kanadzuchi::Mail::Stored::RDB->searchandnew( $self->{'database'}, $wherec, \$pagecf, 1 );
-	$string = Kanadzuchi::Mail::Stored::RDB->serialize( $answer, $isjson );
+	my $iterat = undef();
+	my $string = q();
+	my $wherec = { 'token' => lc($self->param('token')) };
+	my $pagina = Kanadzuchi::BdDR::Page->new( 'resultsperpage' => 1 );
+
+	$iterat = Kanadzuchi::Mail::Stored::BdDR->searchandnew(
+			$self->{'database'}->handle(), $wherec, $pagina );
+	while( my $_e = $iterat->next() )
+	{
+		$string = Kanadzuchi::Metadata->to_string( $_e );
+		last();
+	}
 
 	return($string);
 }
