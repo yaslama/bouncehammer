@@ -1,4 +1,4 @@
-# $Id: 052_mail-bounced.t,v 1.5 2010/05/19 18:25:14 ak Exp $
+# $Id: 052_mail-bounced.t,v 1.6 2010/05/23 05:42:39 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -60,7 +60,7 @@ CALL_PARSER: {
 	is( $ZciParser->nmesgs(), $nMessages, q{The number of messages = }.$nMessages );
 	isa_ok( $ZciParser->messages(), q|ARRAY| );
 
-	$ReturnedMesg = $T->class->eatit( \$ZciParser, { 
+	$ReturnedMesg = $T->class->eatit( $ZciParser, { 
 				'cache' => $T->tempdir()->stringify(), 
 				'greed' => 1, 'verbose' => 0 } );
 	isa_ok( $ReturnedMesg, q|Kanadzuchi::Iterator| );

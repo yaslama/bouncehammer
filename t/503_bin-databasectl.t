@@ -1,4 +1,4 @@
-# $Id: 503_bin-databasectl.t,v 1.6 2010/05/17 00:00:56 ak Exp $
+# $Id: 503_bin-databasectl.t,v 1.7 2010/05/23 05:42:39 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -189,10 +189,10 @@ SKIP: {
 			is( $thisent->{'is-whitelisted'}, 0, '(1) skipped->is-whitelisted = 0' );
 			is( $thisent->{'exceeds-limit'}, 0, '(1) skipped->exceeds-limit = 0' );
 
-			$thisent = $yamlobj->{'status'}->{'cache'};
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'};
 			is( $thisent->{'bouncelogs'}, 0, '(1) cache->bouncelogs = 0' );
 
-			$thisent = $yamlobj->{'status'}->{'cache'}->{'mastertables'};
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'}->{'mastertables'};
 			is( $thisent->{'addressers'}, 2, '(1) cache->matertables->addressers = 2' );
 			is( $thisent->{'senderdomains'}, 19, '(1) cache->matertables->senderdomains = 19' );
 			is( $thisent->{'destinations'}, 14, '(1) cache->matertables->destinations = 14' );
@@ -215,10 +215,10 @@ SKIP: {
 			is( $thisent->{'is-whitelisted'}, 0, '(2) skipped->is-whitelisted = 0' );
 			is( $thisent->{'exceeds-limit'}, 0, '(2) skipped->exceeds-limit = 0' );
 
-			$thisent = $yamlobj->{'status'}->{'cache'};
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'};
 			is( $thisent->{'bouncelogs'}, 36, '(2) cache->bouncelogs = 36' );
 
-			$thisent = $yamlobj->{'status'}->{'cache'}->{'mastertables'};
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'}->{'mastertables'};
 			is( $thisent->{'addressers'}, 0, '(2) cache->matertables->addressers = 0' );
 			is( $thisent->{'senderdomains'}, 0, '(2) cache->matertables->senderdomains = 0' );
 			is( $thisent->{'destinations'}, 0, '(2) cache->matertables->destinations = 0' );
@@ -246,10 +246,10 @@ SKIP: {
 			is( $thisent->{'is-whitelisted'}, 0, '(3) skipped->is-whitelisted = 0' );
 			is( $thisent->{'exceeds-limit'}, 0, '(3) skipped->exceeds-limit = 0' );
 
-			$thisent = $yamlobj->{'status'}->{'cache'};
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'};
 			is( $thisent->{'bouncelogs'}, 54, '(3) cache->bouncelogs = 54' );
 
-			$thisent = $yamlobj->{'status'}->{'cache'}->{'mastertables'};
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'}->{'mastertables'};
 			is( $thisent->{'addressers'}, 0, '(3) cache->matertables->addressers = 0' );
 			is( $thisent->{'senderdomains'}, 0, '(3) cache->matertables->senderdomains = 0' );
 			is( $thisent->{'destinations'}, 0, '(3) cache->matertables->destinations = 0' );
@@ -277,10 +277,10 @@ SKIP: {
 			is( $thisent->{'is-whitelisted'}, 3, '(4) skipped->is-whitelisted = 3' );
 			is( $thisent->{'exceeds-limit'}, 0, '(4) skipped->exceeds-limit = 0' );
 
-			$thisent = $yamlobj->{'status'}->{'cache'};
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'};
 			is( $thisent->{'bouncelogs'}, 36, '(4) cache->bouncelogs = 36' );
 
-			$thisent = $yamlobj->{'status'}->{'cache'}->{'mastertables'};
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'}->{'mastertables'};
 			is( $thisent->{'addressers'}, 0, '(4) cache->matertables->addressers = 0' );
 			is( $thisent->{'senderdomains'}, 0, '(4) cache->matertables->senderdomains = 0' );
 			is( $thisent->{'destinations'}, 0, '(4) cache->matertables->destinations = 0' );
@@ -303,10 +303,10 @@ SKIP: {
 			is( $thisent->{'is-whitelisted'}, 0, '(5) skipped->is-whitelisted = 0' );
 			is( $thisent->{'exceeds-limit'}, 0, '(5) skipped->exceeds-limit = 0' );
 
-			$thisent = $yamlobj->{'status'}->{'cache'};
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'};
 			is( $thisent->{'bouncelogs'}, 39, '(5) cache->bouncelogs = 39' );
 
-			$thisent = $yamlobj->{'status'}->{'cache'}->{'mastertables'};
+			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'}->{'mastertables'};
 			is( $thisent->{'addressers'}, 0, '(5) cache->matertables->addressers = 0' );
 			is( $thisent->{'senderdomains'}, 0, '(5) cache->matertables->senderdomains = 0' );
 			is( $thisent->{'destinations'}, 0, '(5) cache->matertables->destinations = 0' );
