@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.11 2010/05/20 13:11:14 ak Exp $
+# $Id: databasectl.PL,v 1.12 2010/05/23 05:47:51 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -198,10 +198,10 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			}
 
 
-			my $tablecache = new Kanadzuchi::BdDR::Cache();	# (K::B::Cache) Table cache
+			my $tablecache = new Kanadzuchi::BdDR::Cache();	# (K::BdDR::Cache) Table cache
 			my $snegativec = {};				# (Ref->Hash) Negative cache for senderdomain
 			my $xntabalias = lc $xntableobj->alias();	# (String) lower cased txn table alias
-			my $sddomtable = $mastertabs->{'senderdomains'};# (K::Bd::B::Masters::Table) senderdomains table
+			my $sddomtable = $mastertabs->{'senderdomains'};# (K::BdDR::B::Masters::Table) senderdomains table
 
 			my $theprogbar = undef();			# (Term::ProgressBar) Progress bar
 			my $loadedsize = 0;				# (Integer) Loaded data size
