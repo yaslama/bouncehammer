@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.13 2010/05/16 23:58:40 ak Exp $
+# $Id: CLI.pm,v 1.14 2010/05/23 05:42:21 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                       
@@ -251,14 +251,17 @@ sub d
 	# @Description	Print debug message to Standard-Error device
 	# @Param <Lv>	(Integer) debug level
 	# @Param <Msg>	(String) debug message
-	# @Return	(Integer) 1 = Successfully printed
-	#		(Integer) 0 = Missing argument
+	# @Return	(Kanadzuchi::UI::CLI) This Object
 	my $self = shift();
-	my $dlev = shift();
-	my $mesg = shift() || return(0);
-	return(1) if( $self->{'silent'} );
-	printf( STDERR qq{ *debug%d: %s}, $dlev, $mesg ) if( $self->{'debuglevel'} >= $dlev );
-	return(1);
+	my $dlev = shift() || 0;
+	my $argv = shift() || return(0);
+	my $mesg = q();
+
+	return($self) if( $self->{'silent'} || $self->{'debuglevel'} < $dlev );
+
+	$mesg = sprintf( qq{ *debug%d: %s}, $dlev, $argv );
+	defined(wantarray()) ? return($mesg) : printf( STDERR $mesg );
+	return($self);
 }
 
 sub e
