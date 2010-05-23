@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.14 2010/05/19 18:25:03 ak Exp $
+# $Id: Bounced.pm,v 1.15 2010/05/23 05:35:48 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -54,24 +54,23 @@ sub eatit
 	# +-+-+-+-+-+
 	#
 	# @Description	Parse the Mailbox and find error messages
-	# @Param <ref>	(Ref->H::Parser) Parsed mailbox object
+	# @Param <ref>	(Kanadzuchi::Mbox) Parsed mailbox object
 	# @Param <ref>	(Ref->Hash) Configuration
+	# @Param <ref>	(Ref->Code) Callback code for each loop
 	# @Return	(Ref->Array) K::M::Bounced::* objects
 	my $class = shift();
-	my $mailx = shift() || return([]);
+	my $mailx = shift() || return(new Kanadzuchi::Iterator());
 	my $confx = shift() || { 'verbose' => 0, 'cache' => '/tmp', 'fast' => 1 };
+	my $callb = shift() || sub { };
 	my $count = 0;
 
 	my $mimeparser;			# (MIME::Parser) Parser object
 	my $mimeentity;			# (MIME::Head) Header object
 	my $thisobject;			# (K::M::Returned::*) Instance
-	my $vmprogress;			# (Term::ProgressBar)
 	my $mesgpieces = [];		# (Ref->Array) hold $thisobjects
 	my $bouncemesg = {};		# (Ref->Hash) Pre-Construct headers
-	my $tempheader = {};		# (Ref->Hash) Temporary headers
-	my $tempstring = q();		# (String) Temporary variable for parsing
-	my $tempoffset = 0;		# Timezone offset
-	my $tempemails = [];		# (Ref->Array) e-Mail addresses
+
+	return( Kanadzuchi::Iterator->new() ) unless( ref($mailx) eq q|Kanadzuchi::Mbox| );
 
 	# Create and configure MIME::Parser opject
 	# See http://search.cpan.org/~doneill/MIME-tools-5.427/lib/MIME/Parser.pm
@@ -83,28 +82,17 @@ sub eatit
 	$mimeparser->extract_uuencode(0);
 	$mimeparser->extract_nested_messages(0);
 
-	# Verbose mode
-	if( $confx->{'verbose'} > 0 )
+	MIMEPARSER: while( my $_entity = shift @{$mailx->messages} )
 	{
-		eval{	require Term::ProgressBar; 
-			$vmprogress = Term::ProgressBar->new({ 'fh' => \*STDERR, 
-					'ETA' => q(linear), 'name' => q(Parse mailbox),
-					'count' => $$mailx->nmesgs() });
-		};
-	}
+		my $tempheader = {};		# (Ref->Hash) Temporary headers
+		my $tempemails = [];		# (Ref->Array) e-Mail addresses
+		my $tempstring = q();		# (String) Temporary variable for parsing
+		my $tempoffset = 0;		# Timezone offset
 
-	BUILD: foreach my $_entity ( @{$$mailx->messages} )
-	{
 		# Initialize for this loop
 		$mimeentity = $mimeparser->parse_data( $_entity->{'body'} );
 		$bouncemesg = {};
-		$tempheader = {};
-		$tempemails = [];
-		$tempoffset = 0;
-		$tempstring = q();
-
-		# Put progress bar ...
-		$vmprogress->update() if( $vmprogress );
+		$callb->();
 
 		#  ____  _____ ____ ___ ____ ___ _____ _   _ _____ 
 		# |  _ \| ____/ ___|_ _|  _ \_ _| ____| \ | |_   _|
@@ -123,7 +111,7 @@ sub eatit
 					$mimeentity->get('To'),
 					$mimeentity->get('Delivered-To') ) unless( @$tempemails );
 
-			if( $$mailx->greed() && ! @$tempemails )
+			if( $mailx->greed() && ! @$tempemails )
 			{
 				# Greedily find a recipient address
 				@$tempemails = grep( m{[@]}, $mimeentity->get('Envelope-To')
@@ -133,7 +121,7 @@ sub eatit
 			}
 
 			# There is no recipient address, skip.
-			next(BUILD) unless( @$tempemails );
+			next(MIMEPARSER) unless( @$tempemails );
 			map { $_ =~ y{[`'"()<>\r\n$]}{}d; $_ =~ s{\s}{,}g; $_ =~ s{;.+\z}{}g; } @$tempemails;
 
 			RECIPIENTS: foreach my $_e ( @{ Kanadzuchi::Address->parse($tempemails) } )
@@ -148,7 +136,7 @@ sub eatit
 			$tempheader->{'recipient'} ||= $tempheader->{'expanded'} 
 							? Kanadzuchi::Address->new($tempheader->{'expanded'})
 							: q();
-			next(BUILD) unless( $tempheader->{'recipient'} );
+			next(MIMEPARSER) unless( $tempheader->{'recipient'} );
 			$bouncemesg->{'recipient'} = $tempheader->{'recipient'};
 		}
 
@@ -182,10 +170,10 @@ sub eatit
 							 || $mimeentity->get('Sender')
 							 || $mimeentity->get('Resent-Reply-To')
 							 || $mimeentity->get('Apparently-From')
-						) if( ! @$tempemails && $$mailx->greed() );
+						) if( ! @$tempemails && $mailx->greed() );
 			}
 
-			next(BUILD) unless( @$tempemails );
+			next(MIMEPARSER) unless( @$tempemails );
 			map { $_ =~ y{[`'"()<>\r\n$]}{}d; $_ =~ s{\s}{,}g; $_ =~ s{;.+\z}{}g; } @$tempemails;
 
 
@@ -209,7 +197,7 @@ sub eatit
 
 			$tempheader->{'addresser'} ||= $tempheader->{'subaddress'};
 			$tempheader->{'expanded'} = Kanadzuchi::RFC2822->expand_subaddress($tempheader->{'subaddress'});
-			next(BUILD) unless( $tempheader->{'addresser'} );
+			next(MIMEPARSER) unless( $tempheader->{'addresser'} );
 			$bouncemesg->{'addresser'} = $tempheader->{'addresser'};
 		}
 
@@ -268,7 +256,7 @@ sub eatit
 			chomp($tempheader->{'arrivaldate'});
 
 			# Check strange Date header
-			if( $tempheader->{'arrivaldate'} =~ m{\A\s*(\d{2}\s*[A-Z][a-z]{2}\s*\d{4}\s*.+\z)} )
+			if( $tempheader->{'arrivaldate'} =~ m{\A\s*\d{1,2}\s*[A-Z][a-z]{2}\s*\d{4}\s*.+\z} )
 			{
 				# qmail's Date header, 'Date: 29 Apr 2009 01:39:00 -0000'
 				$tempheader->{'arrivaldate'} = q(Thu, ).$tempheader->{'arrivaldate'};
@@ -289,21 +277,8 @@ sub eatit
 			}
 			else
 			{
-				next(BUILD);	# Invalid Date format
+				next(MIMEPARSER);	# Invalid Date format
 			}
-		}
-
-		#     _    ____ _____ ___ ___  _   _ 
-		#    / \  / ___|_   _|_ _/ _ \| \ | |
-		#   / _ \| |     | |  | | | | |  \| |
-		#  / ___ \ |___  | |  | | |_| | |\  |
-		# /_/   \_\____| |_| |___\___/|_| \_|
-		#
-		unless( $bouncemesg->{'action'} )
-		{
-			$tempstring = $mimeentity->get('Action') || q{Failed};
-			chomp($tempstring);
-			next(BUILD) unless( lc($tempstring) eq q{failed} );
 		}
 
 		#   ___  ____      _ _____ ____ _____ 
@@ -315,7 +290,11 @@ sub eatit
 		# Set hash values to the object.
 		# Keys: rcpt,send,date, and stat are required to processing.
 		next() if( $bouncemesg->{'addresser'}->address =~ m{[@]localhost.localdomain\z} );
-		eval{ $tempstring = Time::Piece->strptime( $bouncemesg->{'arrivaldate'}, q{%a, %d %b %Y %T} ); };
+		eval{
+			$tempstring = Time::Piece->strptime( 
+					$bouncemesg->{'arrivaldate'}, q{%a, %d %b %Y %T} )
+					|| Time::Piece->new();
+		};
 
 		$thisobject = __PACKAGE__->new(
 				'addresser' => $bouncemesg->{'addresser'},
@@ -341,9 +320,9 @@ sub eatit
 	continue
 	{
 		# Flush the message entity
-		$$mailx->messages->[ $count++ ] = {};
+		# $mailx->messages->[ $count++ ] = {};
 
-	} # End of foreach() BUILD 
+	} # End of while(MIMEPARSER)
 
 	return( Kanadzuchi::Iterator->new($mesgpieces) );
 }
