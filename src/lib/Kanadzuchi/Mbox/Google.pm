@@ -1,4 +1,4 @@
-# $Id: Google.pm,v 1.3 2010/04/01 08:04:50 ak Exp $
+# $Id: Google.pm,v 1.4 2010/05/23 05:38:07 ak Exp $
 # -Id: Google.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: Google.pm,v 1.1 2009/07/31 09:04:38 ak Exp -
 # Kanadzuchi::Mbox::
@@ -27,7 +27,7 @@ sub detectus
 	# +-+-+-+-+-+-+-+-+
 	#
 	# @Description	Detect an error via Google(Gmail)
-	# @Param <ref>	(Ref->MIME::Head) Message header
+	# @Param <ref>	(Ref->Hash) Message header
 	# @Param <ref>	(Ref->String) Message body
 	# @Return	(String) Pseudo header content
 	my $class = shift();
