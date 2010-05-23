@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.7 2010/04/09 03:52:59 ak Exp $
+# $Id: Mbox.pm,v 1.9 2010/05/23 06:43:17 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -280,9 +280,10 @@ sub parseit
 	# +-+-+-+-+-+-+-+
 	#
 	# @Description	Parse the email text
-	# @Param	<None>
+	# @Param <ref>	(Ref->Code) Callback function
 	# @Return	(Integer) n = The number of parsed messages
 	my $self = shift();
+	my $call = shift() || sub {};
 	my $ends = ENDOF;
 	my $seek = 0;
 	my $emailheader = {
@@ -290,14 +291,13 @@ sub parseit
 		'irregular' => [ 'X-SPASIGN', 'X-AMERROR', 'X-Failed-Recipients' ],
 	};
 
-	my( $_mesg, $_from, $_head, $_body, $__continued, $__ehcounter );
-
-	PARSE_EMAILS: foreach my $_email ( @{$self->{'emails'}} )
+	PARSE_EMAILS: while( my $_email = shift @{$self->{'emails'}} )
 	{
-		$_mesg = {};
-		$_from = q();	# 'From_' of UNIX mbox
-		$_head = q();	# Message header as a string
-		$_body = q();	# Message body as a string
+		my $_mesg = {};
+		my $_from = q();	# 'From_' of UNIX mbox
+		my $_head = q();	# Message header as a string
+		my $_body = q();	# Message body as a string
+		$call->();
 
 		if( $_email =~ m{\AFrom[ ](.+?)\n(.+?)\n\n(.+)$ends\z}so )
 		{
@@ -321,12 +321,12 @@ sub parseit
 		$_mesg->{'from'} = $_from;
 
 		# 2. Parse email headers
-		$__continued = 0;	# Flag; Continued from the previous line.
-		$__ehcounter = 0;	# Temporary counter for email headers
+		my $__continued = 0;	# Flag; Continued from the previous line.
+		my $__ehcounter = 0;	# Temporary counter for email headers
 
 		LINES: foreach my $_ln ( split( qq{\n}, $_head ) )
 		{
-			HEADERS: foreach my $_eh ( @{$emailheader->{'regular'}}, @{$emailheader->{'irregular'}} )
+			HEADERS: foreach my $_eh ( @{ $emailheader->{'regular'} }, @{ $emailheader->{'irregular'} } )
 			{
 				next(HEADERS) unless( $_ln =~ m{\A$_eh[:][ ]*}i );
 				( $_mesg->{'head'}->{ lc($_eh) } ) = $_ln =~ m/\A${_eh}[:][ ]*(.+?)\z/i;
@@ -403,7 +403,6 @@ sub parseit
 		$_mesg->{'body'} =~ s{^[Xx]-[Pp]ostfix-[Ss]ender:[ ]*(.+)$}{<<<<: X-Postfix-Sender: $1}m;
 		$_mesg->{'body'} =~ s{^[Xx]-[Ee]nvelope-[Ff]rom:[ ]*(.+)$}{<<<<: X-Envelope-From: $1}m;
 		$_mesg->{'body'} =~ s{^[Ee]nvelope-[Ff]rom:[ ]*(.+)$}{<<<<: Envelope-From: $1}m;
-		$_mesg->{'body'} =~ s{^[Aa]ction:[ ]*(\S+)$}{<<<<: Action: $1}m;
 		$_mesg->{'body'} =~ s{^[Ss]tatus:[ ]*(\d[.]\d[.]\d).*$}{<<<<: Status: $1}m;
 		$_mesg->{'body'} =~ s{^[Dd]ate:[ ]*(.+)$}{<<<<: Date: $1}m;
 		$_mesg->{'body'} =~ s{^[Ff]rom:[ ]*(.+)$}{<<<<: From: $1}gm;
@@ -422,13 +421,8 @@ sub parseit
 				'body' => $_mesg->{'body'}, } );
 
 		$self->{'nmesgs'}++;
-	}
-	continue
-	{
-		# Flush the entity of the array
-		$self->{'emails'}->[ $seek++ ] = {};
 
-	} # End of foreach():PARSE_EMAILS
+	} # End of while(PARSE_EMAILS)
 
 	$self->{'emails'} = [];
 	return( $self->{'nmesgs'} );
