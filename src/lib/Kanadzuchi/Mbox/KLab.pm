@@ -1,4 +1,4 @@
-# $Id: KLab.pm,v 1.4 2010/05/23 05:38:07 ak Exp $
+# $Id: KLab.pm,v 1.5 2010/05/24 16:54:27 ak Exp $
 # -Id: KLab.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: KLab.pm,v 1.1 2009/07/31 09:04:39 ak Exp -
 # Kanadzuchi::Mbox::
@@ -38,7 +38,6 @@ sub detectus
 
 	$phead .= sprintf("Date: %s\n", $mhead->{'date'} );
 	$phead .= sprintf("From: %s\n", $mhead->{'to'} );
-	$phead .= q(Action: failed).qq(\n);
 
 	if( lc($mhead->{'x-amerror'}) =~ m{\A[ ]?550[ ]+unknown[ ]+user[ ]+(\S+)\z} )
 	{
