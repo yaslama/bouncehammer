@@ -1,4 +1,4 @@
-# $Id: 503_bin-databasectl.t,v 1.7 2010/05/23 05:42:39 ak Exp $
+# $Id: 503_bin-databasectl.t,v 1.8 2010/05/24 16:53:28 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -196,7 +196,7 @@ SKIP: {
 			is( $thisent->{'addressers'}, 2, '(1) cache->matertables->addressers = 2' );
 			is( $thisent->{'senderdomains'}, 19, '(1) cache->matertables->senderdomains = 19' );
 			is( $thisent->{'destinations'}, 14, '(1) cache->matertables->destinations = 14' );
-			is( $thisent->{'providers'}, 25, '(1) cache->matertables->providers = 25' );
+			is( $thisent->{'providers'}, 24, '(1) cache->matertables->providers = 24' );
 		}
 
 		UPDATE_FROM_CONSOLE_WITH_BATCHMODE2: {
