@@ -1,4 +1,4 @@
-# $Id: qmail.pm,v 1.3 2010/05/23 05:38:07 ak Exp $
+# $Id: qmail.pm,v 1.4 2010/05/24 16:54:27 ak Exp $
 # Kanadzuchi::Mbox::
                          ##  ###    
   #####  ##  ##  ####         ##    
@@ -85,22 +85,32 @@ sub detectus
 
 	EACH_LINE: foreach my $_qb ( split( qq{\n}, $$mbody ) )
 	{
-		$qmail = 1 if( $_qb =~ $RxQSBMF->{'begin'} );
+		if( ! $qmail && $_qb =~ $RxQSBMF->{'begin'} )
+		{
+			$qmail = 1;
+			next();
+		}
 
 		# The line which begins with the string 'Remote host said:'
-		SMTP_ERROR: foreach my $_se ( keys(%$se5xx) )
+		unless( $error->{'smtp'} )
 		{
-			last() if( $error->{'smtp'} );
-			if( $_qb =~ $RxSMTPError->{$_se} )
+			SMTP_ERROR: foreach my $_se ( keys(%$se5xx) )
 			{
-				$se5xx->{$_se} = 1;
-				$error->{smtp} = 1;
-				last();
+				if( $_qb =~ $RxSMTPError->{$_se} )
+				{
+					$se5xx->{$_se} = 1;
+					$error->{smtp} = 1;
+					last();
+				}
 			}
 		}
 
 		# The line which begins with the string 'Sorry,...'
-		$error->{'conn'} = 1 if( ! $error->{'smtp'} && $_qb =~ $RxQSBMF->{'sorry'} );
+		if( ! $error->{'smtp'} && $_qb =~ $RxQSBMF->{'sorry'} )
+		{
+			$error->{'conn'} = 1;
+			next();
+		}
 
 		# Get a mail address from the recipient paragraph.
 		$rcptintxt = $1 if( $rcptintxt eq q() && $_qb =~ m{\A[<](.+[@].+)[>][:]\z} );
