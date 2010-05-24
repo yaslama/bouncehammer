@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.6 2010/04/01 08:04:19 ak Exp $
+# $Id: WebMail.pm,v 1.7 2010/05/24 16:55:06 ak Exp $
 # -Id: AOL.pm,v 1.1 2009/08/29 07:33:21 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # -Id: Hotmail.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
@@ -72,8 +72,6 @@ my $domains = {
 	'google' => [
 		qr{(?>\Agmail[.]com\z)},		# GMail http://mail.google.com/mail/
 		qr{(?>\Agooglemail[.]com\z)},		# GMail in U.K. and Germany
-		#qr{(?>\Aauone[.]jp\z)},		# KDDI auone, Gmail
-		#qr{(?>\Alivedoor[.]com\z)},		# livedoor mail http://mail.livedoor.com/, Gmail
 	],
 	'nokia' => [
 		qr{(?>\Aovi[.]com\z)},			# Ovi by Nokia, http://www.ovi.com/
