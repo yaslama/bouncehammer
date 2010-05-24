@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES.JA (utf-8/LF)
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES.JA,v 1.28 2010/05/21 04:49:44 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.29 2010/05/24 16:56:23 ak Exp $
 -----------------------------------------------------------------------
  オープンソースのバウンスメール解析システム``BounceHammer''のリリース
  ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
@@ -20,13 +20,19 @@
     * データベース接続での性能向上のため、新しいO/RマッパーであるDBIx::
       Skinnyモジュールを使用したKanadzuchi::BdDRクラスを実装しました。
     * DBIx::Classは使用しなくなりました。
+    * auone-net.jpからのバウンスメール対応(mailboxfull)
+    * mailboxparserの解析精度が向上しました。
     * bin/databasectlの速度が改善され、約145%速くなりました。
     * bin/datadumperの速度が改善され、約295%速くなりました。
+    * bin/databasectlの消費メモリが約23%少なくなりました。
+    * bin/datadumperの消費メモリが約18%少なくなりました。
 
   修正されたバグ:
     * loggerがファイルのMD5ダイジェストを検査していなかった問題を修正。
     * 大量のメールを含むディレクトリを走査しているときにmailboxparserが
       タイムアウトする問題を修正しました。
+    * Dateヘッダが変なフォーマットであったときにmailboxparserが停止する
+      問題を修正しました。
     * (patch:001) mailboxparser (Kanadzuchi::Mail::Bounced)が最後に見付
       けたメールアドレスを発信者アドレス(Addresser)の値にセットする問題
       を修正しました。
@@ -39,6 +45,7 @@
     * lib/Kanadzuchi/BdDR/Page.pm
     * lib/Kanadzuchi/BdDR/BounceLogs.pm
     * lib/Kanadzuchi/BdDR/BounceLogs/Masters.pm
+    * lib/Kanadzuchi/Mail/Group/JP/WebMail.pm
     * lib/Kanadzuchi/Stored.pm
     * lib/Kanadzuchi/Stored/Mail/BdDR.pm
     * t/063_mail-stored-bddr.t
