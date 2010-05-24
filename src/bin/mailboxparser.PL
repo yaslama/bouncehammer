@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.27 2010/05/23 05:47:51 ak Exp $
+# $Id: mailboxparser.PL,v 1.28 2010/05/24 16:55:32 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -120,6 +120,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	my $sizeofmailbox = 0;		# (Integer) Total size of mailboxes
 	my $parseprogress = undef();	# (Term::ProgressBar) Progress bar object
 	my $progressbarcr = sub {};	# (Ref->Code) Term::ProgressBar
+	my $debugmessages = q();	# (String) Debug message for Term::ProgressBar
 	my $chunksofemail = [];		# (Ref->Array) Path::Class::File objects
 	my $chunkmboxsize = ( $Zci->config->{'file'}->{'maxsize'} * 0.08 ) || 1048576;
 
@@ -260,8 +261,8 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	
 	if( defined($parseprogress) )
 	{
-		$parseprogress->message(
-			$Cmd->d( 2, sprintf( "Size of all mailboxes = %d bytes\n", $sizeofmailbox )) );
+		$debugmessages = $Cmd->d( 2, sprintf( "Size of all mailboxes = %d bytes\n", $sizeofmailbox ));
+		$parseprogress->message( $debugmessages ) if( $debugmessages );
 	}
 
 
@@ -300,10 +301,10 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 
 		if( defined($parseprogress) )
 		{
-			$parseprogress->message(
-				$Cmd->d(1,sprintf( "Log directory = %s\n", $Out )) );
-			$parseprogress->message(
-				$Cmd->d(1,sprintf( "Temporary log = %s\n", $kanadzuchilog->logfile() )) );
+			$debugmessages = $Cmd->d(1,sprintf( "Log directory = %s\n", $Out ));
+			$parseprogress->message( $debugmessages ) if( $debugmessages );
+			$debugmessages = $Cmd->d(1,sprintf( "Temporary log = %s\n", $kanadzuchilog->logfile() ));
+			$parseprogress->message( $debugmessages ) if( $debugmessages );
 		}
 	}
 
@@ -311,7 +312,8 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	push( @$chunksofemail, q|<STDIN>| ) unless( scalar(@$chunksofemail) );
 	if( defined($parseprogress) && $Cmd->operation & $Cmd->option->{'safe'} )
 	{
-		$parseprogress->message( $Cmd->d(1,sprintf( "Safe parse\n", $Out )) );
+		$debugmessages = $Cmd->d(1,sprintf( "Safe parse\n", $Out ));
+		$parseprogress->message( $debugmessages ) if( $debugmessages );
 	}
 
 
