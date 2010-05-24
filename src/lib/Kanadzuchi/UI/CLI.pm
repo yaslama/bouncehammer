@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.14 2010/05/23 05:42:21 ak Exp $
+# $Id: CLI.pm,v 1.15 2010/05/24 16:53:56 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                       
@@ -251,17 +251,17 @@ sub d
 	# @Description	Print debug message to Standard-Error device
 	# @Param <Lv>	(Integer) debug level
 	# @Param <Msg>	(String) debug message
-	# @Return	(Kanadzuchi::UI::CLI) This Object
+	# @Return	(String) Empty or debug message
 	my $self = shift();
 	my $dlev = shift() || 0;
-	my $argv = shift() || return(0);
+	my $argv = shift() || return(q{});
 	my $mesg = q();
 
-	return($self) if( $self->{'silent'} || $self->{'debuglevel'} < $dlev );
+	return(q{}) if( $self->{'silent'} || $self->{'debuglevel'} < $dlev );
 
 	$mesg = sprintf( qq{ *debug%d: %s}, $dlev, $argv );
 	defined(wantarray()) ? return($mesg) : printf( STDERR $mesg );
-	return($self);
+	return(q{});
 }
 
 sub e
@@ -275,7 +275,7 @@ sub e
 	# @Return	<None>
 	# @See		abort(), DESTROY()
 	my $self = shift();
-	my $mesg = shift() || return(0);
+	my $mesg = shift() || return(q{});
 	Carp::carp( qq{ ***error: $mesg} ) unless( $self->{'silent'} );
 	$self->abort();
 }
