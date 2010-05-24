@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.9 2010/05/23 06:43:17 ak Exp $
+# $Id: Mbox.pm,v 1.10 2010/05/24 16:55:58 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -159,12 +159,14 @@ sub _breakit
 	#                    |___/                                  
 	# Pre-Process eMail headers of NON-STANDARD bounce message
 	# au by KDDI(ezweb.ne.jp)
-	if( lc($theheadpart->{'from'}) =~ m{[<]?(?>postmaster[@]ezweb[.]ne[.]jp)[>]?} )
-	{
+	# Received: from nmomta.auone-net.jp ([aaa.bbb.ccc.ddd]) by ...
+	if( lc($theheadpart->{'from'}) =~ m{[<]?(?>postmaster[@]ezweb[.]ne[.]jp)[>]?} ||
+		grep { $_ =~ m{\Afrom[ ]\w+[.]auone-net[.]jp[ ]} } @{ $theheadpart->{'received'} } ){
+
 		eval {
 			use Kanadzuchi::Mbox::aubyKDDI;
 			$parserclass = q(Kanadzuchi::Mbox::aubyKDDI);
-			$pseudofield .= $parserclass->detectus( $theheadpart, q() );
+			$pseudofield .= $parserclass->detectus( $theheadpart, $thebodypart );
 			$isirregular |= $irregularof->{'aubykddi'} if( length( $pseudofield ) );
 		};
 	}
