@@ -1,4 +1,4 @@
-# $Id: 501_bin-logger.t,v 1.8 2010/04/16 06:53:44 ak Exp $
+# $Id: 501_bin-logger.t,v 1.9 2010/05/25 04:48:03 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 345 );
+use Test::More ( tests => 354 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',345) if($@);
+	skip('Because no IPC::Cmd for testing',354) if($@);
 
 	use Kanadzuchi::Test::CLI;
 	use Kanadzuchi;
@@ -176,6 +176,30 @@ SKIP: {
 				}
 			}
 		}
+	}
+
+	BATCHMODE: {
+		my $command = $E->perl().$E->command().$O.q{ -c --batch };
+		my $xresult = qx( $command );
+		my $yamlobj = JSON::Syck::Load($xresult);
+		my $thisent = {};
+
+		isa_ok( $yamlobj, q|HASH|, '--batch returns YAML(HASH)' );
+
+		foreach my $_sk ( 'user', 'command', 'load' )
+		{
+			ok( $yamlobj->{$_sk}, $_sk.' = '.$yamlobj->{$_sk} );
+		}
+
+		ok( $yamlobj->{'time'}->{'started'}, 'time->started = '.$yamlobj->{'time'}->{'started'} );
+		ok( $yamlobj->{'time'}->{'ended'}, 'time->ended = '.$yamlobj->{'time'}->{'ended'} );
+		ok( $yamlobj->{'time'}->{'elapsed'} > -1, 'time->elapsed = '.$yamlobj->{'time'}->{'elapsed'} );
+
+		$thisent = $yamlobj->{'status'}->{'log-files'};
+		ok( $thisent->{'all-of-temporary-logs'}, '->all-of-temporary-logs = '.$thisent->{'all-of-temporary-logs'} );
+		ok( $thisent->{'size-of-temporary-logs'}, '->size-of-temporary-logs = '.$thisent->{'size-of-temporary-logs'} );
+
+		$thisent = $yamlobj->{'status'}->{'records'};
 	}
 
 	POSTPROCESS: {

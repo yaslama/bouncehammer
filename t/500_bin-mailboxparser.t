@@ -1,4 +1,4 @@
-# $Id: 500_bin-mailboxparser.t,v 1.19 2010/04/15 10:17:55 ak Exp $
+# $Id: 500_bin-mailboxparser.t,v 1.20 2010/05/25 04:48:03 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 75 );
+use Test::More ( tests => 91 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',70) if($@);
+	skip('Because no IPC::Cmd for testing',91) if($@);
 
 	use Kanadzuchi::Test::CLI;
 	use Kanadzuchi;
@@ -162,6 +162,39 @@ SKIP: {
 		my $command = $E->perl().$E->command().$O.q{ --log};
 		my $xstatus = scalar(IPC::Cmd::run( 'command' => $command ));
 		ok( $xstatus, $E->command().$O.q{ --log} );
+	}
+
+	BATCHMODE: {
+		my $command = $E->perl().$E->command().$O.q{ --log --batch };
+		my $xresult = qx( $command );
+		my $yamlobj = JSON::Syck::Load($xresult);
+		my $thisent = {};
+
+		isa_ok( $yamlobj, q|HASH|, '--batch returns YAML(HASH)' );
+
+		foreach my $_sk ( 'user', 'command', 'load' )
+		{
+			ok( $yamlobj->{$_sk}, $_sk.' = '.$yamlobj->{$_sk} );
+		}
+
+		ok( $yamlobj->{'time'}->{'started'}, 'time->started = '.$yamlobj->{'time'}->{'started'} );
+		ok( $yamlobj->{'time'}->{'ended'}, 'time->ended = '.$yamlobj->{'time'}->{'ended'} );
+		ok( $yamlobj->{'time'}->{'elapsed'} > -1, 'time->elapsed = '.$yamlobj->{'time'}->{'elapsed'} );
+
+		$thisent = $yamlobj->{'status'};
+		ok( $thisent->{'all-of-mailbox-files'}, '->all-of-mailbox-files = '.$thisent->{'all-of-mailbox-files'} );
+		ok( $thisent->{'size-of-mailboxes'}, '->size-of-mailboxes = '.$thisent->{'size-of-mailboxes'} );
+		ok( $thisent->{'temporary-log-file'}, '->temporary-log-file= '.$thisent->{'temporary-log-file'} );
+		ok( -f $thisent->{'temporary-log-file'} );
+
+		$thisent = $yamlobj->{'status'}->{'messages'};
+		ok( $thisent->{'all-of-emails'}, '->all-of-emails = '.$thisent->{'all-of-emails'} );
+		ok( $thisent->{'bounce-messages'}, '->bounce-messages = '.$thisent->{'bounce-messages'} );
+		ok( $thisent->{'parsed-messages'}, '->parsed-messages = '.$thisent->{'parsed-messages'} );
+
+		$thisent = $yamlobj->{'status'}->{'messages'}->{'ratio'};
+		ok( $thisent->{'content-rate-for-bounce'}, '->content-rate-for-bounce = '.$thisent->{'content-rate-for-bounce'} );
+		ok( $thisent->{'analytical-accuracy'}, '->analytical-accuracy = '.$thisent->{'analytical-accuracy'} );
 	}
 
 	FILE_OPERATION: {
