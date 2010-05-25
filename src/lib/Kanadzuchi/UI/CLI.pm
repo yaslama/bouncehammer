@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.15 2010/05/24 16:53:56 ak Exp $
+# $Id: CLI.pm,v 1.16 2010/05/25 04:48:53 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                       
@@ -39,7 +39,7 @@ __PACKAGE__->mk_ro_accessors(
 	'calledfrom',	# (String) Script name
 	'commandline',	# (String) Command line
 	'processid',	# (Integer) Process ID
-	'statedat',	# (Time::Piece) Start time
+	'startedat',	# (Time::Piece) Start time
 );
 
 # Rewritable accessors
@@ -227,8 +227,9 @@ sub batchstatus
 	my $load = qx(uptime); chomp($load);
 
 	# Block style YAML(is not JSON) format
-	printf( STDOUT qq|--- # %s %s update status\n|, $self->{'startedat'}->ymd('-'), $self->{'calledfrom'} );
+	printf( STDOUT qq|--- # %s %s command status\n|, $self->{'startedat'}->ymd('-'), $self->{'calledfrom'} );
 	printf( STDOUT qq|command: "%s"\n|, $self->{'calledfrom'} );
+	printf( STDOUT qq|arguments: "%s"\n|, $self->{'commandline'} );
 	printf( STDOUT qq|user: "%s"\n|, $ENV{'USER'} || $ENV{'LOGNAME'} || q() );
 	printf( STDOUT qq|load: "%s"\n|, $load );
 	printf( STDOUT qq|time:\n| );
