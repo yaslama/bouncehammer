@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES.JA (utf-8/LF)
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES.JA,v 1.30 2010/05/25 04:49:13 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.32 2010/05/25 10:05:14 ak Exp $
 -----------------------------------------------------------------------
  オープンソースのバウンスメール解析システム``BounceHammer''のリリース
  ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
@@ -11,7 +11,7 @@
 -----------------------------------------------------------------------
 
 -----------------------------------------------------------------------
-2.3.0/2.0.0	2010/05/YY
+2.3.0/2.0.0	2010/05/26
 
   新機能:
     * bin/mailboxparserとbin/loggerコマンドの新オプション: --batch(-B)
@@ -52,6 +52,7 @@
     * lib/Kanadzuchi/Mail/Group/JP/WebMail.pm
     * lib/Kanadzuchi/Stored.pm
     * lib/Kanadzuchi/Stored/Mail/BdDR.pm
+    * t/060_mail-stored.t
     * t/063_mail-stored-bddr.t
     * t/110_bddr.t
     * t/111_bddr-cache.t
