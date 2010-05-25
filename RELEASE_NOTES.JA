@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES.JA (utf-8/LF)
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES.JA,v 1.29 2010/05/24 16:56:23 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.30 2010/05/25 04:49:13 ak Exp $
 -----------------------------------------------------------------------
  オープンソースのバウンスメール解析システム``BounceHammer''のリリース
  ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
@@ -14,18 +14,22 @@
 2.3.0/2.0.0	2010/05/YY
 
   新機能:
+    * bin/mailboxparserとbin/loggerコマンドの新オプション: --batch(-B)
     * WebUI管理画面で宛先所属名(小分類)での検索が可能になりました。
 
   細かな改善点:
     * データベース接続での性能向上のため、新しいO/RマッパーであるDBIx::
       Skinnyモジュールを使用したKanadzuchi::BdDRクラスを実装しました。
-    * DBIx::Classは使用しなくなりました。
+    * DBIx::Classモジュールは使用しなくなりました。
+    * ドコモwebメール(dwmail.jp)とauone(auone.jp)対応。
     * auone-net.jpからのバウンスメール対応(mailboxfull)
-    * mailboxparserの解析精度が向上しました。
+    * bin/mailboxparserの解析精度が向上しました。
     * bin/databasectlの速度が改善され、約145%速くなりました。
-    * bin/datadumperの速度が改善され、約295%速くなりました。
     * bin/databasectlの消費メモリが約23%少なくなりました。
+    * bin/databasectl --batch(-B)オプションの出力フォーマットを変更。
+    * bin/datadumperの速度が改善され、約295%速くなりました。
     * bin/datadumperの消費メモリが約18%少なくなりました。
+    * "Action:"ヘッダは検査しなくなりました。
 
   修正されたバグ:
     * loggerがファイルのMD5ダイジェストを検査していなかった問題を修正。

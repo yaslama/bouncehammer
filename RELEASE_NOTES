@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.49 2010/05/24 16:56:23 ak Exp $
+ $Id: RELEASE_NOTES,v 1.50 2010/05/25 04:49:13 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -17,18 +17,22 @@
 2.3.0/2.0.0	2010/05/YY
 
   New functionality:
+    * New option of bin/mailboxparser and bin/logger: --batch(-B) .
     * Avaiable for search by provider name on the WebUI.
 
   Assorted improvements and code cleanup:
     * BounceHammer uses the new O/R Mapper DBIx::Skinny to improve per-
       formance on database connetion at Kanadzuchi::BdDR module.
-    * BounceHammer no longer uses DBIx::Class.
+    * BounceHammer no longer uses DBIx::Class module.
+    * Support DoCoMo web mail(dwmail.jp) and au one(auone.jp).
     * Support bounce mail from auone-net.jp(mailboxfull).
-    * Analytical accuracy of mailboxparser improvement.
+    * Analytical accuracy of bin/mailboxparser improvement.
     * Improved performance of bin/databasectl, quickened by about 145%.
-    * Improved performance of bin/datadumper, quickened by about 295%.
     * About 23% reduce the memory cost of bin/databasectl
+    * Change the format of bin/databasectl --batch(-B).
+    * Improved performance of bin/datadumper, quickened by about 295%.
     * About 18% reduce the memory cost of bin/datadumper
+    * BounceHammer no longer checks "Action:" header.
 
   Fixed bugs:
     * Fixed an issue that logger did not check the MD5 digest of file.
