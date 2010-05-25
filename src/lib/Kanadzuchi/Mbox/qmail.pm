@@ -1,4 +1,4 @@
-# $Id: qmail.pm,v 1.4 2010/05/24 16:54:27 ak Exp $
+# $Id: qmail.pm,v 1.5 2010/05/25 07:40:19 ak Exp $
 # Kanadzuchi::Mbox::
                          ##  ###    
   #####  ##  ##  ####         ##    
@@ -46,11 +46,11 @@ my $RxSMTPError = {
 	'payload' => qr{\A.+[ ]failed[ ]after[ ]I[ ]sent[ ]the[ ]message[.]\z}o,
 };
 
-# my $RxConnError = {
-# 	'nohost' => qr{\ASorry[,][ ]I[ ]couldn[']t[ ]find[ ]any[ ]host[ ]named[ ]}o,
-# 	'nomxrr' => qr{\ASorry[,][ ]I[ ]couldn[']t[ ]find[ ]a[ ]mail[ ]exchanger[ ]or[ ]IP[ ]address}o,
-# 	'ambimx' => qr{\ASorry[.][ ]Although I[']m listed as a best[-]preference MX or A for that host[,]}o,
-# };
+my $RxConnError = {
+	'nohost' => qr{\ASorry[,][ ]I[ ]couldn[']t[ ]find[ ]any[ ]host[ ]named[ ]}o,
+	# 'nomxrr' => qr{\ASorry[,][ ]I[ ]couldn[']t[ ]find[ ]a[ ]mail[ ]exchanger[ ]or[ ]IP[ ]address}o,
+	# 'ambimx' => qr{\ASorry[.][ ]Although I[']m listed as a best[-]preference MX or A for that host[,]}o,
+};
 
 #   ____ ____ ____ ____ ____ ____ ____ 
 #  ||M |||e |||t |||h |||o |||d |||s ||
@@ -72,6 +72,7 @@ sub detectus
 	my $mbody = shift();
 
 	my $se5xx = { 'mailfrom' => 0, 'rcptto' => 0, 'data' => 0, 'payload' => 0, };
+	my $ce5xx = { 'nohost' => 0, };
 	my $error = { 'conn' => 0, 'smtp' => 0, };
 
 	my $phead = q();
@@ -106,10 +107,17 @@ sub detectus
 		}
 
 		# The line which begins with the string 'Sorry,...'
-		if( ! $error->{'smtp'} && $_qb =~ $RxQSBMF->{'sorry'} )
+		if( ! $error->{'conn'} && $_qb =~ $RxQSBMF->{'sorry'} )
 		{
-			$error->{'conn'} = 1;
-			next();
+			CONN_ERROR: foreach my $_ce ( keys(%$ce5xx) )
+			{
+				if( $_qb =~ $RxConnError->{$_ce} )
+				{
+					$error->{$_ce} = 1;
+					$error->{conn} = 1;
+					last()
+				}
+			}
 		}
 
 		# Get a mail address from the recipient paragraph.
