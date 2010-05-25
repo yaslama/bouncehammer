@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.29 2010/05/25 04:48:22 ak Exp $
+# $Id: mailboxparser.PL,v 1.30 2010/05/25 05:01:37 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -27,7 +27,7 @@ use Kanadzuchi;
 use Kanadzuchi::UI::CLI;
 use Error ':try';
 use Time::Piece;
-use Devel::Size;
+
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
