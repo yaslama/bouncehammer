@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.21 2010/05/24 16:55:58 ak Exp $
+# $Id: Mail.pm,v 1.22 2010/05/25 09:43:32 ak Exp $
 # -Id: Message.pm,v 1.1 2009/08/29 07:32:59 ak Exp -
 # -Id: BounceMessage.pm,v 1.13 2009/08/21 02:43:14 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -143,6 +143,7 @@ sub new
 	DATE_AND_TIME: {
 		last() unless( defined($argvs->{'bounced'}) );
 		last() if( ref($argvs->{'bounced'}) eq q|Time::Piece| );
+		last() unless( $argvs->{'bounced'} =~ m{\A\d+\z} );
 		last() if( $argvs->{'bounced'} < 0 || $argvs->{'bounced'} > (2 ** 32) );
 		$argvs->{'bounced'} = new Time::Piece( $argvs->{'bounced'} );
 	}
