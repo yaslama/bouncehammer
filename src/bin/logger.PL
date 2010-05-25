@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.14 2010/05/11 06:31:24 ak Exp $
+# $Id: logger.PL,v 1.15 2010/05/25 04:48:22 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -49,6 +49,7 @@ my $CLIOPTION = {
 	'truncate'	=> ( 1 << 5 ),
 	'remove'	=> ( 1 << 6 ),
 	'backup'	=> ( 1 << 7 ),
+	'batch'		=> ( 1 << 8 ),
 };
 
 #  __  __    _    ___ _   _ 
@@ -95,7 +96,9 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 {
 	my $logthreshold = 5242880;	# (Integer) 5MB, About 10,000 records
 	my $sizeoftmplog = 0;		# (Integer) File size of all of temporary logs.
+	my $howmanytemps = 0;		# (Integer) How many temporary log files
 	my $tmplogsinhdd = [];		# (Ref->Array) Each temporary logs(Path::Class::File::Lockable)
+	my $statusbydate = {};		# (Ref->Hash) Status of records by date
 	my $hashoftmplog = {};		# (Ref->Hash) Key = MD5 Hash, Value = Temp log file name
 
 	if( scalar( @{$Arg->{'dirs'}} ) == 0 && scalar( @{$Arg->{'files'}} ) == 0 )
@@ -181,7 +184,8 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 	} # End of the loop while(FIND_TEMPLOG_FILES)
 
 	$Arg->{'files'} = [];
-	$Cmd->d( 3,sprintf("The number of temporary logs = %d, size = %d\n", scalar(@$tmplogsinhdd), $sizeoftmplog ) );
+	$howmanytemps = scalar @$tmplogsinhdd;
+	$Cmd->d( 3,sprintf("The number of temporary logs = %d, size = %d\n", $howmanytemps, $sizeoftmplog ) );
 
 
 	# There is no temporary log file.
@@ -194,7 +198,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 	# File List Only: Print the number of temporary log files and exit(0).
 	if( $Cmd->operation & $Cmd->option->{'list'} )
 	{
-		print( STDOUT scalar(@$tmplogsinhdd).qq(\n) );
+		print( STDOUT $howmanytemps.qq(\n) );
 		$Cmd->finish();
 	}
 
@@ -263,6 +267,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 
 				push( @{ $objectbydate->{$_datestring} }, $_o );
 				$recsofloaded++;
+				$statusbydate->{ $_datestring }++;	# Count for --batch(-B) mode
 
 			} # End of the loop foreach(LOAD_RECORDS_IN_TEMPLOG)
 
@@ -580,6 +585,20 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 		$countofchunk--;
 	}
 
+	if( $Cmd->operation & $Cmd->option->{'batch'} )
+	{
+		# Batch mode, output as a block style YAML format
+		my $batchinfo = q();
+
+		$batchinfo .= sprintf( qq|  log-files:\n| );
+		$batchinfo .= sprintf( qq|    all-of-temporary-logs:  %d\n|, $howmanytemps );
+		$batchinfo .= sprintf( qq|    size-of-temporary-logs: %d\n|, $sizeoftmplog );
+		$batchinfo .= sprintf( qq|  records:\n| );
+		map { $batchinfo .= sprintf( qq|    %s: %d\n|, $_, $statusbydate->{$_} ) } sort keys(%$statusbydate);
+
+		$Cmd->batchstatus(\$batchinfo);
+	}
+
 }
 
 $Cmd->finish();
@@ -606,6 +625,7 @@ sub parse_options
 	# Variables for decide operation
 	my (
 		$_opt_backup,
+		$_opt_batch,
 		$_opt_conf,
 		$_opt_list,
 		$_opt_concatenate,
@@ -620,6 +640,8 @@ sub parse_options
 	Getopt::Long::Configure( 'bundling', 'no_ignore_case' ); 
 	Getopt::Long::GetOptions(
 			'backup=s'	=> \$_opt_backup,
+			'B'		=> \$_opt_batch,
+			'batch'		=> \$_opt_batch,
 			'conf=s'	=> \$_opt_conf,
 			'C=s'		=> \$_opt_conf,
 			'concatenate'	=> \$_opt_concatenate,
@@ -704,6 +726,9 @@ sub parse_options
 	if( $_opt_concatenate ){ $_operation |= $Cmd->option->{'concatenate'}; }
 	elsif( $_opt_merge ){ $_operation |= $Cmd->option->{'merge'}; }
 
+	# Output results as a YAML in batch mode 
+	$_operation |= $Cmd->option->{'batch'} if($_opt_batch);
+
 	# Check whether or not Required options are specified.
 	return($_operation);
 }
@@ -734,6 +759,7 @@ sub help
 	printf( STDERR "    --backup <dir>      : Backup; move the temp logs to the directory after mergence.\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * OTHER OPTIONS\n" );
+	printf( STDERR "    -B, --batch         : Run in batch mode, results are printed in YAML format.\n");
 	printf( STDERR "    -C, --conf <config> : Location of the configuration file used instead of \n");
 	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf .\n");
 	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");

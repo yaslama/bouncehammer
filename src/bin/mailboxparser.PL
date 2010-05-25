@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.28 2010/05/24 16:55:32 ak Exp $
+# $Id: mailboxparser.PL,v 1.29 2010/05/25 04:48:22 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -61,6 +61,7 @@ my $CLIOPTION = {
 	'backup'	=> ( 1 << 7 ),
 	'greed'		=> ( 1 << 8 ),
 	'safe'		=> ( 1 << 9 ),
+	'batch'		=> ( 1 << 10 ),
 };
 
 #  __  __    _    ___ _   _ 
@@ -117,6 +118,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	require Digest::MD5;
 	require IO::File;
 
+	my $howmanymboxes = 0;		# (Integer) How many mailbox files
 	my $sizeofmailbox = 0;		# (Integer) Total size of mailboxes
 	my $parseprogress = undef();	# (Term::ProgressBar) Progress bar object
 	my $progressbarcr = sub {};	# (Ref->Code) Term::ProgressBar
@@ -227,6 +229,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			print( $mboxhandle $mfcontents ) if( $mfcontents );
 			$_eachmailfh->close() if( $_eachmailfh );
 			$sizeofmailbox += -s $mf;
+			$howmanymboxes++;
 			alarm(0);
 
 			# Cleanup
@@ -318,7 +321,8 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 
 
 	my $howmanyemails = 0;		# (Integer) How many email messages
-	my $howmanybounce = 0;		# (Integer) How many bounced messages
+	my $howmanybounce = 0;		# (Integer) How many bounce messages
+	my $howmanyparsed = 0;		# (Integer) How many parsed messages
 	my $parseroptions = {		# (Ref->Hash) Options of K::M::Bounced->eatit()
 			'cache' => $Cmd->tmpdir(), 
 			'verbose' => $Cmd->debuglevel(), 
@@ -338,6 +342,9 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		{
 			# Read the mailbox From STDIN
 			$mailboxparser = new Kanadzuchi::Mbox();
+			$debugmessages = $Cmd->d(1, 'Waiting for data from STDIN..., timeout = '
+						.( $Zci->config->{'environment'}->{'timeout'} || 180 ) );
+			$parseprogress->message( $debugmessages ) if( $parseprogress && $debugmessages );
 			undef($Mbox);
 		}
 
@@ -350,6 +357,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		# Slurp the mailbox
 		$mailboxparser->greed( $Cmd->operation & $Cmd->option->{'greed'} ? 1 : 0 );
 		$mailboxparser->slurpit();
+		$howmanyemails += $mailboxparser->nmails();
 
 		alarm(0);	# Reset alarm(Read from STDIN)
 		next() unless( $mailboxparser->nmails() );
@@ -357,6 +365,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		# Progress bar for each parser
 		if( $Cmd->debuglevel > -1 )
 		{
+			eval { require Term::ProgressBar; };
 			$parseprogress = new Term::ProgressBar( { 
 						'fh' => \*STDERR,
 						'ETA' => 'linear',
@@ -372,7 +381,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		# |_|   \__,_|_|  |___/\___|_|   
 		#                                
 		$mailboxparser->parseit( $progressbarcr );
-		$howmanyemails += $mailboxparser->nmesgs();
+		$howmanybounce += $mailboxparser->nmesgs();
 
 		#  _____    _  _____   ___ _____ 
 		# | ____|  / \|_   _| |_ _|_   _|
@@ -382,7 +391,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		# 
 		# Call Kanadzuchi::Mail::Bounced->eatit()
 		$mboxpiterator = Kanadzuchi::Mail::Bounced->eatit( $mailboxparser, $parseroptions, $progressbarcr );
-		$howmanybounce += $mboxpiterator->count();
+		$howmanyparsed += $mboxpiterator->count();
 		$parseprogress->update( $mailboxparser->nmails * 2 ) if( $parseprogress );
 
 		# There is no parsed messages
@@ -421,12 +430,32 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	} # End of foreach(PARSE_CHUNKS_OF_EMAIL)
 
 	$Cmd->d( 0, sprintf( "Parsed messages/emails(ratio) in the mailbox = %d/%d (%.4f)\n",
-			$howmanybounce, $howmanyemails, ($howmanybounce / $howmanyemails) ));
+			$howmanyparsed, $howmanybounce, $howmanybounce == 0 ? 0 : ($howmanyparsed / $howmanybounce) ));
+
 	if( ref($kanadzuchilog->device()) eq q|IO::File| && $kanadzuchilog->logfile() )
 	{
 		$kanadzuchilog->device->close();
 		$kanadzuchilog->logfile->unlock() if( $kanadzuchilog->logfile->locked() );
 		$kanadzuchilog->logfile->remove() if( -f $kanadzuchilog->logfile && ! -s _ );
+	}
+
+	if( $Cmd->operation & $Cmd->option->{'batch'} )
+	{
+		# Batch mode, output as a block style YAML format
+		my $batchinfo = q();
+
+		$batchinfo .= sprintf( qq|  all-of-mailbox-files: %d\n|, $howmanymboxes );
+		$batchinfo .= sprintf( qq|  size-of-mailboxes:    %d\n|, $sizeofmailbox );
+		$batchinfo .= sprintf( qq|  temporary-log-file:   "%s"\n|, -f $kanadzuchilog->logfile ? $kanadzuchilog->logfile : 'NA' );
+		$batchinfo .= sprintf( qq|  messages:\n| );
+		$batchinfo .= sprintf( qq|    all-of-emails:   %d\n|, $howmanyemails );
+		$batchinfo .= sprintf( qq|    bounce-messages: %d\n|, $howmanybounce );
+		$batchinfo .= sprintf( qq|    parsed-messages: %d\n|, $howmanyparsed );
+		$batchinfo .= sprintf( qq|    ratio:\n| );
+		$batchinfo .= sprintf( qq|      content-rate-for-bounce: %.4f\n|, $howmanyemails == 0 ? 0: ( $howmanybounce / $howmanyemails ) );
+		$batchinfo .= sprintf( qq|      analytical-accuracy:     %.4f\n|, $howmanybounce == 0 ? 0: ( $howmanyparsed / $howmanybounce ) );
+
+		$Cmd->batchstatus(\$batchinfo);
 	}
 
 }
@@ -454,6 +483,7 @@ sub parse_options
 
 	# Variables for decide operation
 	my (
+		$_opt_batch,
 		$_opt_conf,
 		$_opt_format,
 		$_opt_greed,
@@ -478,6 +508,8 @@ sub parse_options
 	Getopt::Long::GetOptions(
 			'2'		=> \$_opt_2way,
 			'two-way'	=> \$_opt_2way,
+			'B'		=> \$_opt_batch,
+			'batch'		=> \$_opt_batch,
 			'backup=s'	=> \$_opt_backup,
 			'conf=s'	=> \$_opt_conf,
 			'C=s'		=> \$_opt_conf,
@@ -586,7 +618,16 @@ sub parse_options
 	{
 		# Log option
 		$_operation |= $Cmd->option->{'log'};
-		$_operation |= $Cmd->option->{'two-way'} if( $_opt_2way );
+
+		if( $_opt_2way )
+		{
+			$_operation |= $Cmd->option->{'two-way'};
+		}
+		elsif( $_opt_batch )
+		{
+			# Output results as a YAML in batch mode 
+			$_operation |= $Cmd->option->{'batch'};
+		}
 
 		if( defined($_opt_outputdir) && -d $_opt_outputdir && -r _ && -x _ )
 		{
@@ -645,6 +686,7 @@ sub help
 	printf( STDERR "    --backup <dir>      : Backup; move the mailbox to the directory after parsing.\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * OTHER OPTIONS\n" );
+	printf( STDERR "    -B, --batch         : Run in batch mode, results are printed in YAML format.\n");
 	printf( STDERR "    -C, --conf <config> : Location of the configuration file used instead of \n");
 	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf .\n");
 	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");

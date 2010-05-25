@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.12 2010/05/23 05:47:51 ak Exp $
+# $Id: databasectl.PL,v 1.13 2010/05/25 04:48:22 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -356,68 +356,65 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			} # End of while(LOAD_EACH_FILE)
 
 			# Verbose messages of update status and cache information
-			if( $Cmd->debuglevel > 1 || ( $Cmd->operation & $Cmd->option->{'batch'} ) )
+			$Cmd->d(2,sprintf("%5d Records are successfully inserted\n", $execstatus->{'insert'} ));
+			$Cmd->d(2,sprintf("%5d Records are successfully updated\n",  $execstatus->{'update'} ));
+			$Cmd->d(2,sprintf("%5d Records are skipped|no senderdomain\n", $execstatus->{'nofrom'} ));
+			$Cmd->d(2,sprintf("%5d Records are skipped|older or same time stmap\n", $execstatus->{'tooold'} ));
+			$Cmd->d(2,sprintf("%5d Records are skipped|reason is whitelisted\n", $execstatus->{'whited'} ));
+			$Cmd->d(2,sprintf("%5d Records are skipped|exceeds limit:%d\n", $execstatus->{'exceed'}, $xsoftlimit ));
+			$Cmd->d(2,sprintf("%5d Records are failed to insert or update\n", $execstatus->{'failed'} ));
+
+			if( $Cmd->operation & $Cmd->option->{'batch'} )
 			{
-				$Cmd->d(2,sprintf("%5d Records are successfully inserted\n", $execstatus->{'insert'} ));
-				$Cmd->d(2,sprintf("%5d Records are successfully updated\n",  $execstatus->{'update'} ));
-				$Cmd->d(2,sprintf("%5d Records are skipped|no senderdomain\n", $execstatus->{'nofrom'} ));
-				$Cmd->d(2,sprintf("%5d Records are skipped|older or same time stmap\n", $execstatus->{'tooold'} ));
-				$Cmd->d(2,sprintf("%5d Records are skipped|reason is whitelisted\n", $execstatus->{'whited'} ));
-				$Cmd->d(2,sprintf("%5d Records are skipped|exceeds limit:%d\n", $execstatus->{'exceed'}, $xsoftlimit ));
-				$Cmd->d(2,sprintf("%5d Records are failed to insert or update\n", $execstatus->{'failed'} ));
+				# Batch mode, output as a block style YAML format
+				my $batchinfo = q();
+				my $skippedis = 0;
+				map { $skippedis += $execstatus->{$_} } ( qw{nofrom tooold whited exceed} );
 
-				if( $Cmd->operation & $Cmd->option->{'batch'} )
+				$batchinfo .= sprintf( qq|  record: %d\n|, $thelinesof );
+				$batchinfo .= sprintf( qq|  insert: %d\n|, $execstatus->{'insert'} );
+				$batchinfo .= sprintf( qq|  update: %d\n|, $execstatus->{'update'} );
+
+				$batchinfo .= sprintf( qq|  skipped:\n| );
+				$batchinfo .= sprintf( qq|    no-senderdomain: %d\n|, $execstatus->{'nofrom'} );
+				$batchinfo .= sprintf( qq|    too-old-or-same: %d\n|, $execstatus->{'tooold'} );
+				$batchinfo .= sprintf( qq|    is-whitelisted: %d\n|, $execstatus->{'whited'} );
+				$batchinfo .= sprintf( qq|    exceeds-limit: %d\n|, $execstatus->{'exceed'} );
+
+				if( $xntableobj->error->{'count'} || grep { $mastertabs->{$_}->error->{'count'} > 0 } keys(%$mastertabs) )
 				{
-					# Batch mode, output as a block style YAML format
-					my $batchinfo = q();
-					my $skippedis = 0;
-					map { $skippedis += $execstatus->{$_} } ( qw{nofrom tooold whited exceed} );
-
-					$batchinfo .= sprintf( qq|  record: %d\n|, $thelinesof );
-					$batchinfo .= sprintf( qq|  insert: %d\n|, $execstatus->{'insert'} );
-					$batchinfo .= sprintf( qq|  update: %d\n|, $execstatus->{'update'} );
-
-					$batchinfo .= sprintf( qq|  skipped:\n| );
-					$batchinfo .= sprintf( qq|    no-senderdomain: %d\n|, $execstatus->{'nofrom'} );
-					$batchinfo .= sprintf( qq|    too-old-or-same: %d\n|, $execstatus->{'tooold'} );
-					$batchinfo .= sprintf( qq|    is-whitelisted: %d\n|, $execstatus->{'whited'} );
-					$batchinfo .= sprintf( qq|    exceeds-limit: %d\n|, $execstatus->{'exceed'} );
-
-					if( $xntableobj->error->{'count'} || grep { $mastertabs->{$_}->error->{'count'} > 0 } keys(%$mastertabs) )
-					{
-						$batchinfo .= sprintf( qq|  failed:\n| );
-						$batchinfo .= sprintf( qq|    bouncelogs: %d\n|, $xntableobj->error->{'count'} );
-						$batchinfo .= sprintf( qq|    mastertables:\n| );
-						$batchinfo .= sprintf( qq|      addressers: %d\n|, $mastertabs->{'addressers'}->error->{'count'} );
-						$batchinfo .= sprintf( qq|      senderdomains: %d\n|, $mastertabs->{'senderdomains'}->error->{'count'} );
-						$batchinfo .= sprintf( qq|      destinations: %d\n|, $mastertabs->{'destinations'}->error->{'count'} );
-						$batchinfo .= sprintf( qq|      providers: %d\n|, $mastertabs->{'providers'}->error->{'count'} );
-					}
-
-					if( scalar values( %{ $tablecache->count } ) )
-					{
-						$batchinfo .= sprintf( qq|  cache:\n| );
-						$batchinfo .= sprintf( qq|    positive:\n| );
-						$batchinfo .= sprintf( qq|      bouncelogs: %d\n|, $tablecache->count->{'bouncelogs'} || 0 );
-						$batchinfo .= sprintf( qq|      mastertables:\n| );
-						$batchinfo .= sprintf( qq|        addressers: %d\n|, $tablecache->count->{'addressers'} || 0 );
-						$batchinfo .= sprintf( qq|        senderdomains: %d\n|, $tablecache->count->{'senderdomains'} || 0 );
-						$batchinfo .= sprintf( qq|        destinations: %d\n|, $tablecache->count->{'destinations'} || 0 );
-						$batchinfo .= sprintf( qq|        providers: %d\n|, $tablecache->count->{'providers'} || 0 );
-					}
-
-					if( scalar values(%$snegativec) )
-					{
-						$batchinfo .= sprintf( qq|    negative:\n| );
-						$batchinfo .= sprintf( qq|      mastertables:\n| );
-						$batchinfo .= sprintf( qq|        senderdomains:\n| );
-						map { $batchinfo .= 
-								sprintf( qq|          %s: %d\n|, $_, $snegativec->{$_} )
-							} keys( %$snegativec );
-					}
-
-					$Cmd->batchstatus(\$batchinfo);
+					$batchinfo .= sprintf( qq|  failed:\n| );
+					$batchinfo .= sprintf( qq|    bouncelogs: %d\n|, $xntableobj->error->{'count'} );
+					$batchinfo .= sprintf( qq|    mastertables:\n| );
+					$batchinfo .= sprintf( qq|      addressers: %d\n|, $mastertabs->{'addressers'}->error->{'count'} );
+					$batchinfo .= sprintf( qq|      senderdomains: %d\n|, $mastertabs->{'senderdomains'}->error->{'count'} );
+					$batchinfo .= sprintf( qq|      destinations: %d\n|, $mastertabs->{'destinations'}->error->{'count'} );
+					$batchinfo .= sprintf( qq|      providers: %d\n|, $mastertabs->{'providers'}->error->{'count'} );
 				}
+
+				if( scalar values( %{ $tablecache->count } ) )
+				{
+					$batchinfo .= sprintf( qq|  cache:\n| );
+					$batchinfo .= sprintf( qq|    positive:\n| );
+					$batchinfo .= sprintf( qq|      bouncelogs: %d\n|, $tablecache->count->{'bouncelogs'} || 0 );
+					$batchinfo .= sprintf( qq|      mastertables:\n| );
+					$batchinfo .= sprintf( qq|        addressers: %d\n|, $tablecache->count->{'addressers'} || 0 );
+					$batchinfo .= sprintf( qq|        senderdomains: %d\n|, $tablecache->count->{'senderdomains'} || 0 );
+					$batchinfo .= sprintf( qq|        destinations: %d\n|, $tablecache->count->{'destinations'} || 0 );
+					$batchinfo .= sprintf( qq|        providers: %d\n|, $tablecache->count->{'providers'} || 0 );
+				}
+
+				if( scalar values(%$snegativec) )
+				{
+					$batchinfo .= sprintf( qq|    negative:\n| );
+					$batchinfo .= sprintf( qq|      mastertables:\n| );
+					$batchinfo .= sprintf( qq|        senderdomains:\n| );
+					map { $batchinfo .= 
+							sprintf( qq|          %s: %d\n|, $_, $snegativec->{$_} )
+						} keys( %$snegativec );
+				}
+
+				$Cmd->batchstatus(\$batchinfo);
 			}
 
 		} # End of if(UPDATE)
@@ -643,7 +640,7 @@ sub help
 	printf( STDERR "    --port <portnum>    : DB Host port number.\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * OTHER OPTIONS\n" );
-	printf( STDERR "    -B, --batch         : Run in batch mode, results are printed in YAML|JSON format.\n");
+	printf( STDERR "    -B, --batch         : Run in batch mode, results are printed in YAML format.\n");
 	printf( STDERR "    -C, --conf <config> : Location of the configuration file used instead of \n");
 	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf\n");
 	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
