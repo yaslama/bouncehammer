@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.13 2010/05/25 04:48:22 ak Exp $
+# $Id: databasectl.PL,v 1.14 2010/05/25 09:42:57 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -158,6 +158,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			my $rthreshold = 10000;		# (Integer) About 10,000 records
 			my $thelinesof = 0;		# (Integer) The number of records in the logs
 			my $sizeoflogs = 0;		# (Integer) File size of all of the logs
+			my $theprogbar = undef();			# (Term::ProgressBar) Progress bar
 
 			# Create the log file name by the day(-t, -y, or -b option )
 			if( scalar(@$Lfs) == 0 && defined($Day) )
@@ -176,6 +177,17 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 					Kanadzuchi::Exception::File->throw(
 						'-text' => 'There is no log file' ) unless( grep { -s $_ && -r _ && -T _ } @$Lfs );
 					alarm(0);
+
+					# Prepare the progress bar
+					if( -t STDIN && $Cmd->debuglevel > -1 )
+					{
+						eval{ require Term::ProgressBar; };
+						$theprogbar = new Term::ProgressBar( { 
+									'fh' => \*STDERR,
+									'ETA' => 'linear',
+									'name' => 'Check log files',
+									'count' => scalar @$Lfs } );
+					}
 
 					# Check the number of records in the log files
 					foreach my $f ( @$Lfs )
@@ -203,10 +215,10 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			my $xntabalias = lc $xntableobj->alias();	# (String) lower cased txn table alias
 			my $sddomtable = $mastertabs->{'senderdomains'};# (K::BdDR::B::Masters::Table) senderdomains table
 
-			my $theprogbar = undef();			# (Term::ProgressBar) Progress bar
 			my $loadedsize = 0;				# (Integer) Loaded data size
 			my $loadedline = 0;				# (Integer) Loaded line
 
+			my $debugmesgs = q();				# (String) Debug message string
 			my $recinthedb = $xntableobj->count();		# (Integer) The number of records in the db
 			my $xsoftlimit = $Zci->config->{'database'}->{'table'}->{'bouncelogs'}->{'maxrecords'} || 0;
 			my $execstatus = {
@@ -214,15 +226,24 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 				'failed' => 0, 'nofrom' => 0, 'whited' => 0, };
 
 			# Verbose message
-			$Cmd->d(1,sprintf("Total size of log files = %d\n", $sizeoflogs));
-			$Cmd->d(1,sprintf("Bounce messages in the log file = %d\n", $thelinesof));
-			$Cmd->d(1,sprintf("Bounce messages in the database = %d\n", $recinthedb));
-			$Cmd->d(1,sprintf("Limit the number of records(db) = %d\n", $xsoftlimit));
+			if( $theprogbar )
+			{
+				$debugmesgs = $Cmd->d(1,sprintf("Total size of log files = %d\n", $sizeoflogs));
+				$theprogbar->message( $debugmesgs );
+
+				$debugmesgs = $Cmd->d(1,sprintf("Bounce messages in the log file = %d\n", $thelinesof));
+				$theprogbar->message( $debugmesgs );
+
+				$debugmesgs = $Cmd->d(1,sprintf("Bounce messages in the database = %d\n", $recinthedb));
+				$theprogbar->message( $debugmesgs );
+
+				$debugmesgs = $Cmd->d(1,sprintf("Limit the number of records(db) = %d\n", $xsoftlimit));
+				$theprogbar->message( $debugmesgs );
+			}
 
 			# Prepare the progress bar
 			if( -t STDIN && $Cmd->debuglevel > -1 )
 			{
-				eval{ require Term::ProgressBar; };
 				$theprogbar = new Term::ProgressBar( { 
 							'fh' => \*STDERR,
 							'ETA' => q{linear},
