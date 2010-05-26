@@ -1,4 +1,4 @@
-# $Id: Test.pm,v 1.19 2010/05/23 05:46:52 ak Exp $
+# $Id: Test.pm,v 1.20 2010/05/25 23:54:44 ak Exp $
 # -Id: Test.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Test.pm,v 1.10 2009/08/17 12:39:31 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -96,6 +96,7 @@ sub parse_ontheweb
 		{
 			READ_EMAIL_FILE: while(1)
 			{
+				push( @$sourcelist, $givenemail );
 				$sizeofmail = -s $givenemail;
 				$givenctype = lc $cgiq->uploadInfo( $givenemail )->{'Content-Type'} || 'text/plain';
 				$errortitle = 'toobig' if( $maxtxtsize > 0 && length($sizeofmail) > $maxtxtsize );
@@ -116,7 +117,6 @@ sub parse_ontheweb
 				} # End of while(READ)
 
 				$datasource .= qq(\n);
-				push( @$sourcelist, $givenemail );
 				last();
 
 			} # Enf of while(READ_EMAIL_FILE)
@@ -144,15 +144,11 @@ sub parse_ontheweb
 			my $temporaryd = ( -w '/tmp' ? '/tmp' : File::Spec->tmpdir() );
 			my $counter4id = 0;
 
-			# Slurp
+			# Slurp , parse, and eat
 			$objzcimbox = new Kanadzuchi::Mbox( 'file' => \$datasource );
 			$objzcimbox->greed(1);
-			$objzcimbox->slurpit();
-			last() unless( $objzcimbox->nmails() );
-			$objzcimbox->parseit();
-			last() unless( $objzcimbox->nmesgs() );
-
-			# Eat
+			$objzcimbox->slurpit() || last();
+			$objzcimbox->parseit() || last();
 			$mpiterator = Kanadzuchi::Mail::Bounced->eatit( 
 					$objzcimbox, { 'cache' => $temporaryd, 'verbose' => 0, 'fast' => 1, } );
 			last() unless( $mpiterator->count() );
@@ -183,10 +179,7 @@ sub parse_ontheweb
 					$eachdamned->{'bounced'}  = $o->bounced->ymd().'('.$o->bounced->wdayname().') '.$o->bounced->hms();
 					$eachdamned->{'bounced'} .= ' '.$o->timezoneoffset() if( $o->timezoneoffset() );
 					push( @$damnedobjs, $eachdamned );
-
-					# last(LOAD_AND_DAMN) if( $counter4id >= $parseuntil );
-
-				} # End of while(LOAD_AND_DAMN)
+				}
 			}
 			else
 			{
@@ -233,7 +226,7 @@ sub parse_ontheweb
 				$xntableobj = Kanadzuchi::BdDR::BounceLogs::Table->new( 'handle' => $bddrobject->handle() );
 				$mastertabs = Kanadzuchi::BdDR::BounceLogs::Masters::Table->mastertables( $bddrobject->handle() );
 				$xntabalias = lc $xntableobj->alias();
-				$recinthedb = $xntableobj->count();		# (Integer) The number of records in the db
+				$recinthedb = $xntableobj->count();
 
 				DATABASECTL: while( my $o = $mpiterator->next() )
 				{
@@ -331,13 +324,13 @@ sub parse_ontheweb
 			'bouncemessages' => $damnedobjs,
 			'parseddatatext' => $serialized,
 			'parsedfilename' => join( ',', @$sourcelist ),
-			'parsedfilesize' => length($datasource),
-			'parsedmessages' => $mpiterator->count(),
+			'parsedfilesize' => $datasource ? length($datasource) : $sizeofmail,
+			'parsedmessages' => defined($mpiterator) ? $mpiterator->count() : 0,
 			'outputformat' => $dataformat,
 			'onlineparse' => 1,
 			'onlineupdate' => $registerit,
 			'updateresult' => $execstatus,
-			'errortitle' => $errortitle, );
+			'parseerror' => $errortitle, );
 	}
 
 	$self->tt_process($file);
