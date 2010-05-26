@@ -1,6 +1,6 @@
-/* $Id: pagination.css,v 1.1 2010/05/18 08:16:54 ak Exp $ */
+/* $Id: pagination.css,v 1.2 2010/05/25 23:52:32 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
-/* Pager Classes */
+/* Pagination Classes */
 div.pagination {
 	margin: 0;
 	padding: 1px 2px;
@@ -18,25 +18,38 @@ div.pagination a:link, a:hover, a:visited, a:visited:hover {
 	text-decoration: none;
 }
 
+div.pagination .summary {
+	margin: 0 0 1px 0;
+	padding: 1px 1px 2px 1px;
+	color: #c0c6c9; /* Haiao */
+	text-align: right;
+	border-color: #727171; /* Nibiiro */
+	border-width: 0 0 1px 0;
+	border-style: solid;
+}
+
 div.pagination .lhs {
 	margin: 0;
 	padding: 2px;
-	text-align: left;
-	width: 5px;
+	width: 32px;
 	float: left;
+	text-align: left;
+	vertical-align: middle;
 }
 
 div.pagination .rhs {
 	margin: 0;
 	padding: 2px;
-	text-align: right;
-	width: 224px;
+	width: 32px;
 	float: right;
+	text-align: right;
+	vertical-align: middle;
 }
 
 div.pagination .mid {
-	margin: 0;
+	margin: 0 38px 0 38px;
 	padding: 2px;
+	text-align: left;
 }
 
 div.pagination .thispage {

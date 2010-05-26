@@ -38,9 +38,7 @@
 	[%- END -%]
 [%- END -%]
 [%- SET availablepages = [ pp_start .. pp_endby ] -%]
-
-<div class = 'lhs'>&nbsp;</div>
-<div class = 'rhs'>
+<div class = 'summary'>
 	[%- IF pagination.count > 0 -%]
 		検索結果
 		[%- IF pagination.count > 1 -%]
@@ -54,15 +52,28 @@
 		<strong>検索条件に一致する結果なし</strong>
 	[%- END -%]
 </div>
+<div class = 'lhs'>
+	[%- IF lastpagenumber > 1 -%]
+		[%- IF currentpagenum > 1 -%]
+			&nbsp;<a href = '[% baseuri %]/[% currentpagenum - 1 %]/[% resultsperpage %]'><strong>前</strong></a>&nbsp;
+		[%- END -%]
+	[%- END -%]
+</div>
+<div class = 'rhs'>
+	[%- IF lastpagenumber > 1 -%]
+		[%- IF currentpagenum < lastpagenumber -%]
+			&nbsp;<a href = '[% baseuri %]/[% currentpagenum + 1 %]/[% resultsperpage %]'><strong>次</strong></a>&nbsp;
+		[%- END -%]
+	[%- END -%]
+</div>
 <div class = 'mid'>
 	[%- IF lastpagenumber > 1 -%]
 		[%- IF currentpagenum > 1 -%]
-			<a href = '[% baseuri %]/[% currentpagenum - 1 %]/[% resultsperpage %]'><strong>前</strong></a>&nbsp;
 			[%- IF currentpagenum > ( ( pagesintheline / 2 ) + 1 ) -%]
 				<a href = '[% baseuri %]/1/[% resultsperpage %]'>1</a>&nbsp;..&nbsp;
 			[%- END -%]
 		[%- END -%]
-						
+
 		[%- FOREACH PP IN availablepages -%]
 			[%- IF PP == pagination.currentpagenum -%]
 				<span class = 'thispage'>&nbsp;<strong>[% PP %]</strong>&nbsp;</span>&nbsp;
@@ -75,9 +86,6 @@
 			[%- IF ( pp_endby + 1 ) < lastpagenumber -%]
 				.. <a href = '[% baseuri %]/[% lastpagenumber %]/[% resultsperpage %]'>[% lastpagenumber %]</a>&nbsp;
 			[%- END -%]
-			<a href = '[% baseuri %]/[% currentpagenum + 1 %]/[% resultsperpage %]'><strong>次</strong></a>
 		[%- END -%]
-	[%- ELSE -%]
-		&nbsp;
 	[%- END -%]
 </div>

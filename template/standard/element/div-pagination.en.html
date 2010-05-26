@@ -38,9 +38,7 @@
 	[%- END -%]
 [%- END -%]
 [%- SET availablepages = [ pp_start .. pp_endby ] -%]
-
-<div class = 'lhs'>&nbsp;</div>
-<div class = 'rhs'>
+<div class = 'summary'>
 	[%- IF pagination.count > 0 -%]
 		Results
 		[%- IF pagination.count > 1 -%]
@@ -53,10 +51,23 @@
 		<strong>No records in the DB</strong>
 	[%- END -%]
 </div>
+<div class = 'lhs'>
+	[%- IF lastpagenumber > 1 -%]
+		[%- IF currentpagenum > 1 -%]
+			&nbsp;<a href = '[% baseuri %]/[% currentpagenum - 1 %]/[% resultsperpage %]'><strong>Prev.</strong></a>&nbsp;
+		[%- END -%]
+	[%- END -%]
+</div>
+<div class = 'rhs'>
+	[%- IF lastpagenumber > 1 -%]
+		[%- IF currentpagenum < lastpagenumber -%]
+			&nbsp;<a href = '[% baseuri %]/[% currentpagenum + 1 %]/[% resultsperpage %]'><strong>Next</strong></a>&nbsp;
+		[%- END -%]
+	[%- END -%]
+</div>
 <div class = 'mid'>
 	[%- IF lastpagenumber > 1 -%]
 		[%- IF currentpagenum > 1 -%]
-			<a href = '[% baseuri %]/[% currentpagenum - 1 %]/[% resultsperpage %]'><strong>Previous</strong></a>&nbsp;
 			[%- IF currentpagenum > ( ( pagesintheline / 2 ) + 1 ) -%]
 				<a href = '[% baseuri %]/1/[% resultsperpage %]'>1</a>&nbsp;..&nbsp;
 			[%- END -%]
@@ -74,9 +85,6 @@
 			[%- IF ( pp_endby + 1 ) < lastpagenumber -%]
 				.. <a href = '[% baseuri %]/[% lastpagenumber %]/[% resultsperpage %]'>[% lastpagenumber %]</a>&nbsp;
 			[%- END -%]
-			<a href = '[% baseuri %]/[% currentpagenum + 1 %]/[% resultsperpage %]'><strong>Next</strong></a>
 		[%- END -%]
-	[%- ELSE -%]
-		&nbsp;
 	[%- END -%]
 </div>
