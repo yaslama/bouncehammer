@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.23 2010/05/19 18:25:10 ak Exp $
+# $Id: Search.pm,v 1.24 2010/05/26 03:56:17 ak Exp $
 # -Id: Search.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Search.pm,v 1.11 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -135,27 +135,17 @@ sub search_ontheweb
 			$wcparams->{'recipient'} =  lc $cgiqueryp->param('recipient');
 			$wcparams->{'recipient'} =~ y{[;'" ]}{}d;
 			$wcparams->{'recipient'} =  $rfc2822c->cleanup($wcparams->{'recipient'});
+			$wherecond->{'recipient'} = $wcparams->{'recipient'} if( length($wcparams->{'recipient'}) );
 		}
 
 		foreach my $w ( 'addresser', 'senderdomain', 'destination', 'token', 'provider' )
 		{
 			next() unless( defined($cgiqueryp->param($w)) );
 			( $wcparams->{$w} = lc($cgiqueryp->param($w)) ) =~ y{[;'" ]}{}d;
+			next() unless( length($wcparams->{$w}) );
 
-			$validcnd = $rfc2822c->is_emailaddress($wcparams->{$w}) if( $w eq 'addresser' );
-			$validcnd = $rfc2822c->is_domainpart($wcparams->{$w}) if( $w eq 'senderdomain' || $w eq 'destination' );
-			$validcnd = 1 if( $w eq 'token' && $wcparams->{$w} =~ m{\A[0-9a-f]{32}\z} );
-			$validcnd = 1 if( $w eq 'provider' && $wcparams->{$w} =~ m{\A\w+\z} );
-
-			if( $validcnd )
-			{
-				$wherecond->{$w} = $wcparams->{$w};
-				$advancedx++;
-			}
-			else
-			{
-				$errorsinq->{$w} = $wcparams->{$w};
-			}
+			$wherecond->{$w} = $wcparams->{$w};
+			$advancedx++;
 		}
 
 		foreach my $w ( 'hostgroup', 'reason' )
@@ -199,7 +189,7 @@ sub search_ontheweb
 		$encrypted = $self->encryptit($decrypted);
 
 		# Downloading
-		$downloadx = $cgiqueryp->param('downloadx') ? 1 : 0;
+		$downloadx = $cgiqueryp->param('enabledownload') ? 1 : 0;
 		$datformat = $cgiqueryp->param('datformat') || 'yaml';
 	}
 
@@ -342,7 +332,7 @@ sub search_ontheweb
 					# Send query and receive results
 					$iteratorr = Kanadzuchi::Mail::Stored::BdDR->searchandnew(
 								$bddr->handle(), $wherecond, $paginated );
-					last() unless( $iteratorr->hasnext() );
+					last() unless( $iteratorr->count() );
 
 					while( my $obj = $iteratorr->next() )
 					{
@@ -362,7 +352,7 @@ sub search_ontheweb
 					last() unless($paginated->hasnext());
 					$paginated->next();
 
-				} # End of while(1)
+				}
 
 			} # End of the block(SEARCH_AND_NEW)
 
