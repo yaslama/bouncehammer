@@ -1,4 +1,4 @@
-# $Id: HTTP.pm,v 1.11 2010/05/18 07:29:48 ak Exp $
+# $Id: HTTP.pm,v 1.12 2010/05/26 03:56:06 ak Exp $
 # -Id: HTTP.pm,v 1.3 2009/10/06 00:36:49 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::
@@ -166,20 +166,24 @@ sub api_query
 
 	require Kanadzuchi::Mail::Stored::BdDR;
 	require Kanadzuchi::BdDR::Page;
-	require Kanadzuchi::Metadata;
+	require Kanadzuchi::Log;
 
 	my $iterat = undef();
+	my $zcilog = undef();
 	my $string = q();
 	my $wherec = { 'token' => lc($self->param('token')) };
 	my $pagina = Kanadzuchi::BdDR::Page->new( 'resultsperpage' => 1 );
 
 	$iterat = Kanadzuchi::Mail::Stored::BdDR->searchandnew(
 			$self->{'database'}->handle(), $wherec, $pagina );
-	while( my $_e = $iterat->next() )
-	{
-		$string = Kanadzuchi::Metadata->to_string( $_e );
-		last();
-	}
+	return(q{}) unless( $iterat->count() );
+
+	# Create serialized data for the format JSON
+	$zcilog = Kanadzuchi::Log->new();
+	$zcilog->count( $iterat->count() );
+	$zcilog->format( 'json' );
+	$zcilog->entities( $iterat->all() );
+	$string = $zcilog->dumper() || q();
 
 	return($string);
 }
