@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.10 2010/05/19 18:25:28 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.11 2010/05/25 23:53:08 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -407,6 +407,19 @@ div.result p.exception {
 	background: #e2041b; /* Shoujouhi */
 	color: #fffffc; /* Gofun-iro */
 	font-weight: bold;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+
+div.errormessage {
+	margin: 4px 1px;
+	padding: 4px;
+	background: #e2041b; /* Shoujouhi */
+	color: #fffffc; /* Gofun-iro */
+	font-size: 11px;
+	font-weight: bold;
+	text-align: left;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;

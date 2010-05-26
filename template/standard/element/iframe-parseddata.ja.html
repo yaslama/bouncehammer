@@ -1,4 +1,4 @@
-[%- SET IFRAMEHEIGHT = 128 -%]
+[%- SET IFRAMEHEIGHT = 144 -%]
 [%- IF parsedmessages -%]
 	[%- SET IFRAMEHEIGHT = ( IFRAMEHEIGHT + ( parsedmessages + 600 ) ) %]
 [%- END -%]
@@ -53,7 +53,7 @@
 							<td class = 'extra'> </td>
 						</tr>
 
-						[% IF onlineupdate == 1 %]
+						[% IF onlineupdate == 1 AND parseerror == '' %]
 							<tr>
 								<td class = 'key'>新規登録数</td>
 								<td class = 'value'>[% updateresult.insert %] 件</td>
@@ -87,9 +87,10 @@
 					[% INCLUDE "div-result.${mylanguage}.html" %]
 				[% ELSE %]
 					<textarea name = 'serialized' id = 'serialized' class = 'serialized'
-						rows = '12' cols = '90' readonly = 'readonly'>[% parseddatatext %]</textarea>
+						rows = '22' cols = '87' readonly = 'readonly'>[% parseddatatext %]</textarea>
 				[% END %]
 			[%- ELSE -%]
+				<div class = 'errormessage'>
 				[%- IF parseerror == "toobig" -%]
 					データサイズが大きすぎます。
 				[%- ELSIF parseerror == "nottext" %]
@@ -97,6 +98,7 @@
 				[%- ELSE -%]
 					解析対象となる内容は電子メール内に見つかりませんでした。
 				[%- END -%]
+				</div>
 			[%- END -%]
 		</div>
 	</body>
