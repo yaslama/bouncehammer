@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.52 2010/05/25 10:05:14 ak Exp $
+ $Id: RELEASE_NOTES,v 1.53 2010/05/25 23:55:20 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -33,6 +33,7 @@
     * Improved performance of bin/datadumper, quickened by about 295%.
     * About 18% reduce the memory cost of bin/datadumper
     * BounceHammer no longer checks "Action:" header.
+    * A little improvement of WebUI.
 
   Fixed bugs:
     * Fixed an issue that logger did not check the MD5 digest of file.
@@ -55,6 +56,7 @@
     * lib/Kanadzuchi/Mail/Group/JP/WebMail.pm
     * lib/Kanadzuchi/Stored.pm
     * lib/Kanadzuchi/Stored/Mail/BdDR.pm
+    * t/055_mail-group.t
     * t/060_mail-stored.t
     * t/063_mail-stored-bddr.t
     * t/110_bddr.t
