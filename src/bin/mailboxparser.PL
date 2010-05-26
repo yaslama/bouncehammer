@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.30 2010/05/25 05:01:37 ak Exp $
+# $Id: mailboxparser.PL,v 1.31 2010/05/25 23:55:01 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -337,6 +337,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		if( $Mbox ne q|<STDIN>| )
 		{
 			$mailboxparser = new Kanadzuchi::Mbox( 'file' => $Mbox->stringify() );
+			alarm(0);	# Reset alarm
 		}
 		else
 		{
@@ -356,11 +357,8 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		# 
 		# Slurp the mailbox
 		$mailboxparser->greed( $Cmd->operation & $Cmd->option->{'greed'} ? 1 : 0 );
-		$mailboxparser->slurpit();
+		$mailboxparser->slurpit() || next();
 		$howmanyemails += $mailboxparser->nmails();
-
-		alarm(0);	# Reset alarm(Read from STDIN)
-		next() unless( $mailboxparser->nmails() );
 
 		# Progress bar for each parser
 		if( $Cmd->debuglevel > -1 )
@@ -380,7 +378,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		# |  __/ (_| | |  \__ \  __/ |   
 		# |_|   \__,_|_|  |___/\___|_|   
 		#                                
-		$mailboxparser->parseit( $progressbarcr );
+		$mailboxparser->parseit( $progressbarcr ) || next();
 		$howmanybounce += $mailboxparser->nmesgs();
 
 		#  _____    _  _____   ___ _____ 
