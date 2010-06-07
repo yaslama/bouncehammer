@@ -1,4 +1,4 @@
-# $Id: 000_compile-core.t,v 1.16 2010/05/24 16:53:27 ak Exp $
+# $Id: 000_compile-core.t,v 1.17 2010/05/30 06:07:14 ak Exp $
 use strict;
 use warnings;
 use lib qw(./t/lib ./dist/lib ./src/lib);
@@ -50,6 +50,7 @@ my $Modules = [
 	q(Kanadzuchi::Mbox::KLab),
 	q(Kanadzuchi::Mbox::aubyKDDI),
 	q(Kanadzuchi::Mbox::qmail),
+	q(Kanadzuchi::MIME::Parser),
 	q(Kanadzuchi::Metadata),
 	q(Kanadzuchi::RFC1893),
 	q(Kanadzuchi::RFC2606),
