@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.15 2010/05/23 05:35:48 ak Exp $
+# $Id: Bounced.pm,v 1.17 2010/06/03 06:58:06 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -26,8 +26,8 @@ use Kanadzuchi::RFC1893;
 use Kanadzuchi::RFC2822;
 use Kanadzuchi::Time;
 use Kanadzuchi::Iterator;
+use Kanadzuchi::MIME::Parser;
 use Time::Piece;
-use MIME::Parser;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||A |||c |||c |||e |||s |||s |||o |||r |||s ||
@@ -60,27 +60,17 @@ sub eatit
 	# @Return	(Ref->Array) K::M::Bounced::* objects
 	my $class = shift();
 	my $mailx = shift() || return(new Kanadzuchi::Iterator());
-	my $confx = shift() || { 'verbose' => 0, 'cache' => '/tmp', 'fast' => 1 };
+	my $confx = shift() || { 'verbose' => 0 };
 	my $callb = shift() || sub { };
 	my $count = 0;
 
-	my $mimeparser;			# (MIME::Parser) Parser object
-	my $mimeentity;			# (MIME::Head) Header object
+	my $mimeparser;			# (Kanadzuchi::MIME::Parser) Parser object
 	my $thisobject;			# (K::M::Returned::*) Instance
 	my $mesgpieces = [];		# (Ref->Array) hold $thisobjects
 	my $bouncemesg = {};		# (Ref->Hash) Pre-Construct headers
 
 	return( Kanadzuchi::Iterator->new() ) unless( ref($mailx) eq q|Kanadzuchi::Mbox| );
-
-	# Create and configure MIME::Parser opject
-	# See http://search.cpan.org/~doneill/MIME-tools-5.427/lib/MIME/Parser.pm
-	$mimeparser = new MIME::Parser();
-	$mimeparser->output_dir( $confx->{'cache'} || q{/tmp} );
-	$mimeparser->tmp_to_core(0);
-	$mimeparser->output_to_core( $confx->{'fast'} || 0 );
-	$mimeparser->decode_headers(0);
-	$mimeparser->extract_uuencode(0);
-	$mimeparser->extract_nested_messages(0);
+	$mimeparser = new Kanadzuchi::MIME::Parser();
 
 	MIMEPARSER: while( my $_entity = shift @{$mailx->messages} )
 	{
@@ -90,7 +80,8 @@ sub eatit
 		my $tempoffset = 0;		# Timezone offset
 
 		# Initialize for this loop
-		$mimeentity = $mimeparser->parse_data( $_entity->{'body'} );
+		$mimeparser->parseit( \$_entity->{'body'} );
+		next() unless( $mimeparser->count() );
 		$bouncemesg = {};
 		$callb->();
 
@@ -104,20 +95,20 @@ sub eatit
 		{
 			# Directly access to the values, more faster
 			@$tempemails = grep( m{[@]},
-						$mimeentity->get('X-Actual-Recipient'),
-						$mimeentity->get('Final-Recipient'),
-						$mimeentity->get('Original-Recipient') );
+						$mimeparser->getit('X-Actual-Recipient'),
+						$mimeparser->getit('Final-Recipient'),
+						$mimeparser->getit('Original-Recipient') );
 			@$tempemails = grep( m{[@]}, 
-					$mimeentity->get('To'),
-					$mimeentity->get('Delivered-To') ) unless( @$tempemails );
+					$mimeparser->getit('To'),
+					$mimeparser->getit('Delivered-To') ) unless( @$tempemails );
 
 			if( $mailx->greed() && ! @$tempemails )
 			{
 				# Greedily find a recipient address
-				@$tempemails = grep( m{[@]}, $mimeentity->get('Envelope-To')
-							 || $mimeentity->get('X-Envelope-To')
-							 || $mimeentity->get('Resent-To')
-							 || $mimeentity->get('Apparently-To') );
+				@$tempemails = grep( m{[@]}, $mimeparser->getit('Envelope-To')
+							 || $mimeparser->getit('X-Envelope-To')
+							 || $mimeparser->getit('Resent-To')
+							 || $mimeparser->getit('Apparently-To') );
 			}
 
 			# There is no recipient address, skip.
@@ -153,29 +144,28 @@ sub eatit
 
 			# Directly access to the values, more faster
 			@$tempemails = grep( m{[@]}, 
-						$mimeentity->get('From'),
-						$mimeentity->get('Return-Path'),
-						$mimeentity->get('Reply-To') );
+						$mimeparser->getit('From'),
+						$mimeparser->getit('Return-Path'),
+						$mimeparser->getit('Reply-To') );
 			unless( @$tempemails )
 			{
 				# There is neither From: nor Reply-To: header.
 				@$tempemails = grep( m{[@]}, 
-							$mimeentity->get('Errors-To'),
-							$mimeentity->get('X-Postfix-Sender'),
-							$mimeentity->get('Envelope-From'),
-							$mimeentity->get('X-Envelope-From') );
+							$mimeparser->getit('Errors-To'),
+							$mimeparser->getit('X-Postfix-Sender'),
+							$mimeparser->getit('Envelope-From'),
+							$mimeparser->getit('X-Envelope-From') );
 
 				# Greedily find an addresser.
-				@$tempemails = grep( m{[@]}, $mimeentity->get('Resent-From')
-							 || $mimeentity->get('Sender')
-							 || $mimeentity->get('Resent-Reply-To')
-							 || $mimeentity->get('Apparently-From')
+				@$tempemails = grep( m{[@]}, $mimeparser->getit('Resent-From')
+							 || $mimeparser->getit('Sender')
+							 || $mimeparser->getit('Resent-Reply-To')
+							 || $mimeparser->getit('Apparently-From')
 						) if( ! @$tempemails && $mailx->greed() );
 			}
 
 			next(MIMEPARSER) unless( @$tempemails );
 			map { $_ =~ y{[`'"()<>\r\n$]}{}d; $_ =~ s{\s}{,}g; $_ =~ s{;.+\z}{}g; } @$tempemails;
-
 
 			ADDRESSER: foreach my $_e ( @{ Kanadzuchi::Address->parse($tempemails) } )
 			{
@@ -209,14 +199,13 @@ sub eatit
 		#
 		unless( $bouncemesg->{'deliverystatus'} )
 		{
-			$tempheader->{'deliverystatus'} = $mimeentity->get('Status') || next();
+			$tempheader->{'deliverystatus'} = $mimeparser->getit('Status') || next();
 
 			# Convert from (string)'5.1.2' to (int)512;
 			$tempheader->{'deliverystatus'} =~ y{[0-9]}{}dc;
 			next() unless( $tempheader->{'deliverystatus'} );
 			$bouncemesg->{'deliverystatus'} = int($tempheader->{'deliverystatus'});
 		}
-
 
 		#  ____ ___    _    ____ _   _  ___  ____ _____ ___ ____ 
 		# |  _ \_ _|  / \  / ___| \ | |/ _ \/ ___|_   _|_ _/ ___|
@@ -226,8 +215,7 @@ sub eatit
 		#
 		unless( $bouncemesg->{'diagnosticcode'} )
 		{
-			# Access via MIME::Parser->head->get()
-			$tempheader->{'diagnosticcode'} =  $mimeentity->get('Diagnostic-Code') || q{};
+			$tempheader->{'diagnosticcode'} =  $mimeparser->getit('Diagnostic-Code') || q{};
 			$tempheader->{'diagnosticcode'} =~ y{[`"'\r\n]}{}d;	# Drop quotation marks and CR/LF
 			$tempheader->{'diagnosticcode'} =~ y{[ ]}{}s;		# Squeeze spaces
 			chomp($tempheader->{'diagnosticcode'});
@@ -244,13 +232,12 @@ sub eatit
 		# Arrival-Date, Last-Attempt-Date, and Date
 		unless( $bouncemesg->{'arrivaldate'} )
 		{
-			# Access via MIME::Parser->head->get()
-			 $tempheader->{'arrivaldate'} = $mimeentity->get('Arrival-Date')
-							|| $mimeentity->get('Last-Attempt-Date')
-							|| $mimeentity->get('Date')
-							|| $mimeentity->get('Posted-Date')
-							|| $mimeentity->get('Posted')
-							|| $mimeentity->get('Resent-Date')
+			 $tempheader->{'arrivaldate'} = $mimeparser->getit('Arrival-Date')
+							|| $mimeparser->getit('Last-Attempt-Date')
+							|| $mimeparser->getit('Date')
+							|| $mimeparser->getit('Posted-Date')
+							|| $mimeparser->getit('Posted')
+							|| $mimeparser->getit('Resent-Date')
 							|| q();
 			next() unless( $tempheader->{'arrivaldate'} );
 			chomp($tempheader->{'arrivaldate'});
@@ -315,12 +302,6 @@ sub eatit
 		}
 
 		push( @$mesgpieces, $thisobject );
-
-	}
-	continue
-	{
-		# Flush the message entity
-		# $mailx->messages->[ $count++ ] = {};
 
 	} # End of while(MIMEPARSER)
 
@@ -780,7 +761,12 @@ sub is_somethingelse
 
 	unless($else)
 	{
-		if( $stat == Kanadzuchi::RFC1893->standardcode('notaccept') ||
+		if( $stat == Kanadzuchi::RFC1893->internalcode('suspended','temporary') )
+		{
+			$else = 'suspended';
+			$diag = 'suspended';
+		}
+		elsif( $stat == Kanadzuchi::RFC1893->standardcode('notaccept') ||
 			$stat == Kanadzuchi::RFC1893->internalcode('notaccept') ){
 
 			$else = 'notaccept';
