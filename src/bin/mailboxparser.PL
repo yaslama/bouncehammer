@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.31 2010/05/25 23:55:01 ak Exp $
+# $Id: mailboxparser.PL,v 1.32 2010/06/03 07:02:19 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -60,8 +60,7 @@ my $CLIOPTION = {
 	'remove'	=> ( 1 << 6 ),
 	'backup'	=> ( 1 << 7 ),
 	'greed'		=> ( 1 << 8 ),
-	'safe'		=> ( 1 << 9 ),
-	'batch'		=> ( 1 << 10 ),
+	'batch'		=> ( 1 << 9 ),
 };
 
 #  __  __    _    ___ _   _ 
@@ -310,24 +309,14 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			$parseprogress->message( $debugmessages ) if( $debugmessages );
 		}
 	}
-
-
 	push( @$chunksofemail, q|<STDIN>| ) unless( scalar(@$chunksofemail) );
-	if( defined($parseprogress) && $Cmd->operation & $Cmd->option->{'safe'} )
-	{
-		$debugmessages = $Cmd->d(1,sprintf( "Safe parse\n", $Out ));
-		$parseprogress->message( $debugmessages ) if( $debugmessages );
-	}
-
 
 	my $howmanyemails = 0;		# (Integer) How many email messages
 	my $howmanybounce = 0;		# (Integer) How many bounce messages
 	my $howmanyparsed = 0;		# (Integer) How many parsed messages
 	my $parseroptions = {		# (Ref->Hash) Options of K::M::Bounced->eatit()
-			'cache' => $Cmd->tmpdir(), 
 			'verbose' => $Cmd->debuglevel(), 
-			'skip' => $Skip,
-			'fast' => ( $Cmd->operation() & $Cmd->option->{'safe'} ? 0 : 1 ), };
+			'skip' => $Skip, };
 
 	PARSE_CHUNKS_OF_EMAIL: while( my $Mbox = shift @$chunksofemail )
 	{
@@ -492,7 +481,7 @@ sub parse_options
 		$_opt_truncate,
 		$_opt_backup,
 		$_opt_verbose,
-		$_opt_safe,
+		$_opt_safe,	# Obsolete
 		$_opt_skip,
 		$_opt_skip_temperror,
 		$_opt_skip_norelaying,
@@ -520,8 +509,8 @@ sub parse_options
 			'output=s'	=> \$_opt_outputdir,
 			'o=s'		=> \$_opt_outputdir,
 			'remove'	=> \$_opt_remove,
-			'S'		=> \$_opt_safe,
-			'safe'		=> \$_opt_safe,
+			'S'		=> \$_opt_safe,	# Obsolete
+			'safe'		=> \$_opt_safe,	# Obsolete
 			's'		=> \$_opt_skip,
 			'skip'		=> \$_opt_skip,
 			'skip-temperror'   => \$_opt_skip_temperror,
@@ -635,7 +624,6 @@ sub parse_options
 
 	# Enable Parsing, greedily parse
 	if( $_opt_greed ){ $_operation |= $Cmd->option->{'greed'}; }
-	if( $_opt_safe  ){ $_operation |= $Cmd->option->{'safe'};  }
 
 	# Skip by the reason 
 	if( $_opt_skip || $_opt_skip_temperror || $_opt_skip_norelaying 
@@ -667,7 +655,7 @@ sub help
 	printf( STDERR "\n" );
 	printf( STDERR " * PARSING OPTIONS\n" );
 	printf( STDERR "    -g, --greed         : %s greedily parse messages\n", $Cmd->calledfrom() );
-	printf( STDERR "    -S, --safe          : (SLOW) The parser output all their decoded body data to disk files.\n");
+	printf( STDERR "    -S, --safe          : Obsolete\n" );
 	printf( STDERR "    -s, --skip          : Skip if the reason is the followings, \n");
 	printf( STDERR "    --skip-temperror    :  - Skip if the status is temporary error(4xx).\n");
 	printf( STDERR "    --skip-norelaying   :  - Skip if the reason is 'Relaying Denied'.\n");
