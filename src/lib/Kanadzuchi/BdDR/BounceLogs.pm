@@ -1,4 +1,4 @@
-# $Id: BounceLogs.pm,v 1.4 2010/05/20 15:24:16 ak Exp $
+# $Id: BounceLogs.pm,v 1.5 2010/06/03 06:59:00 ak Exp $
 # -Id: BounceLogs.pm,v 1.9 2010/03/04 08:33:28 ak Exp -
 # -Id: BounceLogs.pm,v 1.1 2009/08/29 08:58:48 ak Exp -
 # -Id: BounceLogs.pm,v 1.6 2009/08/27 05:09:55 ak Exp -
@@ -28,12 +28,7 @@ use Kanadzuchi::Mail;
 use Time::Piece;
 use utf8;
 
-install_inflate_rule( 
-		'description' => callback {
-			inflate { my $d = shift(); utf8::encode($d) if( utf8::is_utf8($d) ); return($d) };
-			deflate { my $d = shift(); utf8::decode($d) unless( utf8::is_utf8($d) ); return($d) };
-		}
-	);
+install_utf8_columns('description');
 install_inflate_rule( 
 		'^(bounced|updated)$' => callback {
 			inflate { return( Time::Piece->new(shift()) ) };

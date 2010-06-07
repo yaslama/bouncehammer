@@ -1,4 +1,4 @@
-# $Id: Masters.pm,v 1.5 2010/05/20 15:24:24 ak Exp $
+# $Id: Masters.pm,v 1.6 2010/06/03 06:59:08 ak Exp $
 # -Id: Addressers.pm,v 1.4 2010/03/04 08:33:28 ak Exp -
 # -Id: Addressers.pm,v 1.4 2010/02/21 20:42:02 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -25,12 +25,7 @@ use DBIx::Skinny::Schema;
 use utf8;
 
 # UTF-8 Columns
-install_inflate_rule( 
-		'description' => callback {
-			inflate { my $d = shift(); utf8::encode($d) if( utf8::is_utf8($d) ); return($d) };
-			deflate { my $d = shift(); utf8::decode($d) unless( utf8::is_utf8($d) ); return($d) };
-		}
-	);
+install_utf8_columns('description');
 
 # Addressers
 install_table( 't_addressers' => schema { 
