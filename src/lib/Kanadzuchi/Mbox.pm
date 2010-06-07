@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.10 2010/05/24 16:55:58 ak Exp $
+# $Id: Mbox.pm,v 1.11 2010/06/03 07:00:45 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -159,8 +159,10 @@ sub _breakit
 	#                    |___/                                  
 	# Pre-Process eMail headers of NON-STANDARD bounce message
 	# au by KDDI(ezweb.ne.jp)
+	# Received: from ezweb.ne.jp (wmflb12na02.ezweb.ne.jp [222.15.69.197])
 	# Received: from nmomta.auone-net.jp ([aaa.bbb.ccc.ddd]) by ...
 	if( lc($theheadpart->{'from'}) =~ m{[<]?(?>postmaster[@]ezweb[.]ne[.]jp)[>]?} ||
+		grep { $_ =~ m{\Afrom[ ]ezweb[.]ne[.]jp[ ]} } @{ $theheadpart->{'received'} } ||
 		grep { $_ =~ m{\Afrom[ ]\w+[.]auone-net[.]jp[ ]} } @{ $theheadpart->{'received'} } ){
 
 		eval {
@@ -321,6 +323,7 @@ sub parseit
 
 		# 1. Set the content in UNIX From_ Line
 		$_mesg->{'from'} = $_from;
+		$_mesg->{'head'}->{'received'} = [];
 
 		# 2. Parse email headers
 		my $__continued = 0;	# Flag; Continued from the previous line.
