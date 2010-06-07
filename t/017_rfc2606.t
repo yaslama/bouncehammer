@@ -1,4 +1,4 @@
-# $Id: 017_rfc2606.t,v 1.1 2010/02/22 20:10:21 ak Exp $
+# $Id: 017_rfc2606.t,v 1.2 2010/06/03 06:54:33 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::RFC2606;
-use Test::More ( tests => 65 );
+use Test::More ( tests => 132 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -64,6 +64,21 @@ CLASS_METHODS: {
 			$d .= 'x';
 			is( $class->is_rfc2606($d),0, q{->is_rfc2606(}.$d.q{)} );
 			is( $class->is_reserved($d),0, q{->is_reserved(}.$d.q{)} );
+		}
+	}
+
+	EXCEPTION_VALIES: {
+
+		FALSE: foreach my $f ( @{$Kanadzuchi::Test::FalseValues}, @{$Kanadzuchi::Test::ZeroValues} )
+		{
+			my $argv = defined($f) ? sprintf("%#x",ord($f)) : 'undef()';
+			is( $class->is_rfc2606($f), 0, q{->is_rfc2606(}.$argv.q{)} );
+		}
+
+		CONTORL: foreach my $c ( @{$Kanadzuchi::Test::EscapeCharacters}, @{$Kanadzuchi::Test::ControlCharacters} )
+		{
+			my $argv = defined($c) ? sprintf("%#x",ord($c)) : 'undef()';
+			is( $class->is_reserved( $c ), 0, '->is_reserved('.$argv.')' );
 		}
 	}
 }
