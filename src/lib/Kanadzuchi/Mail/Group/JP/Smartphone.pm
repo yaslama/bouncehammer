@@ -1,4 +1,4 @@
-# $Id: Smartphone.pm,v 1.3 2010/03/01 23:41:55 ak Exp $
+# $Id: Smartphone.pm,v 1.4 2010/06/01 05:28:00 ak Exp $
 # -Id: SmartPhone.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
@@ -41,6 +41,7 @@ my $domains = {
 	],
 	'nttdocomo' => [
 		qr{(?>\Amopera[.]ne[.]jp\z)},			# mopera, http://www.mopera.net/
+		qr{(?>\Amopera[.]net\z)},
 		qr{(?>\Adocomo[.]blackberry[.]com\z)},		# BlackBerry by NTT DoCoMo
 	],
 };
