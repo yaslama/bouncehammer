@@ -1,4 +1,4 @@
-# $Id: Kanadzuchi.pm,v 1.19 2010/05/26 03:57:31 ak Exp $
+# $Id: Kanadzuchi.pm,v 1.21 2010/06/03 07:01:36 ak Exp $
 # -Id: TheHammer.pm,v 1.4 2009/09/01 23:19:41 ak Exp -
 # -Id: Herculaneum.pm,v 1.13 2009/08/27 05:09:23 ak Exp -
 # -Id: Version.pm,v 1.35 2009/08/27 05:09:29 ak Exp -
@@ -47,7 +47,7 @@ __PACKAGE__->mk_accessors(
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-our $VERSION = q{2.3.1};
+our $VERSION = q{2.3.2};
 our $SYSNAME = q{BounceHammer};
 our $SYSCONF = q{__KANADZUCHIROOT__/etc/bouncehammer.cf};
 
@@ -269,7 +269,7 @@ sub get_logfile
 			# Temporary Log file name
 			while(1)
 			{
-				$_rand = $$ + int(rand() * 1000);
+				$_rand = $$ + int(rand() * 10);
 				$_time = $time->epoch();
 				$file = sprintf("%s/%s.%s.%08x.%06x.%s", 
 						$lopt->{'output'}, $logf->{'prefix'}, $lopt->{'date'},
@@ -282,7 +282,7 @@ sub get_logfile
 			# Log file name for the fallback
 			while(1)
 			{
-				$_rand = ( 2 ** 24 - 1 ) ^ $$ - int(rand() * 1000);
+				$_rand = ( 2 ** 24 - 1 ) ^ $$ - int(rand() * 10);
 				$_time = ~$time->epoch();
 				$file = sprintf("%s/%s.%s.%08x.%06x.%s", 
 						$lopt->{'output'}, $logf->{'prefix'}, $lopt->{'date'},
@@ -296,7 +296,7 @@ sub get_logfile
 			while(1)
 			{
 				$_rand = ( 2 ** 24 - 1 ) ^ $$ / 2;
-				$_time = $time->epoch() / 100;
+				$_time = $time->epoch() / 10;
 				$file = sprintf("%s/%s.%s.%08x.%06x.%s", 
 						$lopt->{'output'}, $logf->{'prefix'}, $lopt->{'date'},
 						$_time, $_rand, $logf->{'suffix'} );
