@@ -1,4 +1,4 @@
-# $Id: RFC1893.pm,v 1.1 2010/04/01 08:02:12 ak Exp $
+# $Id: RFC1893.pm,v 1.2 2010/06/03 07:00:02 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                 
@@ -54,6 +54,7 @@ my $InternalCode = {
 		'mailboxfull'	=> 485,
 		'exceedlimit'	=> 486,
 		'systemfull'	=> 487,
+		'suspended'	=> 488,
 	},
 	'permanent' => {
 		'undefined'	=> 580,
