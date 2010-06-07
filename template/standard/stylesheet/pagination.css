@@ -1,9 +1,12 @@
-/* $Id: pagination.css,v 1.2 2010/05/25 23:52:32 ak Exp $ */
+/* $Id: pagination.css,v 1.3 2010/06/03 06:55:01 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Pagination Classes */
 div.pagination {
 	margin: 0;
-	padding: 1px 2px;
+}
+
+div.pageindex {
+	padding: 2px 0;
 	background: #383c3c; /* Youkan-iro */
 	color: #e5e4e6; /* Shiraumenezu */
 	font-size: 11px;
@@ -13,22 +16,19 @@ div.pagination {
 	-opera-border-radius: 4px;
 }
 
-div.pagination a:link, a:hover, a:visited, a:visited:hover {
+div.pageindex a:link, a:hover, a:visited, a:visited:hover {
 	color: #e5e4e6; /* Shiraumenezu */
 	text-decoration: none;
 }
 
-div.pagination .summary {
+div.pagination .pagesummary {
 	margin: 0 0 1px 0;
 	padding: 1px 1px 2px 1px;
-	color: #c0c6c9; /* Haiao */
+	color: #383c3c; /* Youkan-iro */
 	text-align: right;
-	border-color: #727171; /* Nibiiro */
-	border-width: 0 0 1px 0;
-	border-style: solid;
 }
 
-div.pagination .lhs {
+div.pageindex .lhs {
 	margin: 0;
 	padding: 2px;
 	width: 32px;
@@ -37,7 +37,7 @@ div.pagination .lhs {
 	vertical-align: middle;
 }
 
-div.pagination .rhs {
+div.pageindex .rhs {
 	margin: 0;
 	padding: 2px;
 	width: 32px;
@@ -46,13 +46,13 @@ div.pagination .rhs {
 	vertical-align: middle;
 }
 
-div.pagination .mid {
+div.pageindex .mid {
 	margin: 0 38px 0 38px;
 	padding: 2px;
 	text-align: left;
 }
 
-div.pagination .thispage {
+div.pageindex .thispage {
 	padding: 1px;
 	font-size: 12px;
 	border-width: 1px;
