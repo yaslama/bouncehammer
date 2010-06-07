@@ -1,4 +1,4 @@
-# $Id: Modules.PL,v 1.17 2010/05/18 07:42:40 ak Exp $
+# $Id: Modules.PL,v 1.18 2010/05/30 06:09:26 ak Exp $
 # -Id: PERL-MODULES.PL,v 1.1 2009/08/29 07:32:08 ak Exp -
 # -Id: PERL-MODULES,v 1.6 2009/08/12 01:57:35 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -20,7 +20,6 @@ my $Dependencies = {
 		'IO::File'		=> [ 1.20, 5.00307, 'Perl' ],
 		'JSON::Syck'		=> [ 0.30, 0, 'MIT' ],
 		'List::Util'		=> [ 1.13, 5.007003, 'Perl' ],
-		'MIME::Parser'		=> [ 5.420, 0, 'Perl' ],
 		'Path::Class'		=> [ 0.17, 0, 'Perl' ],
 		'Perl6::Slurp'		=> [ 0.03, 0, 'Unknown' ],
 		'Term::ProgressBar'	=> [ 2.09, 0, 'Perl' ],
