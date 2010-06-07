@@ -1,4 +1,4 @@
-# $Id: 041_mbox.t,v 1.2 2010/02/17 16:07:58 ak Exp $
+# $Id: 041_mbox.t,v 1.3 2010/05/29 01:39:39 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -96,6 +96,13 @@ PARSE_EACH_MAILBOX: foreach my $f ( 'single-message.eml', 'double-messages.eml',
 		ok( length($h->{'to'}), q{To: }.$h->{'to'} );
 		ok( length($h->{'subject'}), q{Subject: }.$h->{'subject'} );
 		ok( length($h->{'date'}), q{Date: }.$h->{'date'} );
+	}
+}
+
+TODO: {
+	local $TODO = 'Not implemented';
+	READ_FROM_STDIN : {
+		;
 	}
 }
 
