@@ -1,4 +1,4 @@
-# $Id: Summary.pm,v 1.10 2010/05/19 18:25:10 ak Exp $
+# $Id: Summary.pm,v 1.11 2010/06/06 14:25:07 ak Exp $
 # -Id: Summary.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Summary.pm,v 1.1 2009/08/18 02:37:53 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -60,7 +60,7 @@ sub summary_ontheweb
 		my $tname = lc $mtobj->alias();
 		my $count = $mtobj->count();
 		my $maxrr = $tableconf->{$tname}->{'maxrecords'};
-		my $ratio = $maxrr ? sprintf( "0.4f", $count / $maxrr ) : 0;
+		my $ratio = $maxrr ? sprintf( "%0.4f", $count / $maxrr ) : 0;
 
 		$tablesumm->{ $tname } = {
 				'capacity' => $ratio,
