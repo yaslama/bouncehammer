@@ -658,7 +658,8 @@ PATCH
 GREP
 FIND
 SED
-ENABLE_DEBUGCODE
+WEBUI_TRUE
+WEBUI_FALSE
 PERL
 CPAN
 PERLDOC
@@ -1249,7 +1250,7 @@ if test -n "$ac_init_help"; then
 Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-debug          Turn on debugging(>level 2)
+  --enable-webui          Enable WebUI(default=yes)
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -2741,19 +2742,26 @@ echo "$as_me: error: *** Cannot find sed program" >&2;}
    { (exit 1); exit 1; }; }
 fi
 
-# Check whether --enable-debug was given.
-if test "${enable_debug+set}" = set; then
-  enableval=$enable_debug; enable_debug="$enableval"
+# Check whether --enable-webui was given.
+if test "${enable_webui+set}" = set; then
+  enableval=$enable_webui; enable_webui="$enableval"
 else
-  enable_debug="no"
+  enable_webui="yes"
 fi
 
-if test "x$enable_debug" = "xyes"; then
-	ENABLE_DEBUGCODE=1
+	 if test "x$enable_webui" = "xyes"; then
+  WEBUI_TRUE=
+  WEBUI_FALSE='#'
 else
-	ENABLE_DEBUGCODE=0
+  WEBUI_TRUE='#'
+  WEBUI_FALSE=
 fi
 
+if test "x$enable_webui" = "xyes"; then
+	LIST_ARGV='list'
+else
+	LIST_ARGV='list-no-webui'
+fi
 
 
 # Check whether --with-perl was given.
@@ -2966,7 +2974,7 @@ fi
 
 MISSING_PERL_MODULES=''
 MISSING_MODULE_COUNT=0
-for PM in `$PERL ./Modules.PL list`; do
+for PM in `$PERL ./Modules.PL $LIST_ARGV`; do
 	{ echo "$as_me:$LINENO: checking for $PM" >&5
 echo $ECHO_N "checking for $PM... $ECHO_C" >&6; }
 	if $PERL -M$PM -e '' > /dev/null 2>&1; then
@@ -3138,6 +3146,13 @@ LIBOBJS=$ac_libobjs
 LTLIBOBJS=$ac_ltlibobjs
 
 
+if test -z "${WEBUI_TRUE}" && test -z "${WEBUI_FALSE}"; then
+  { { echo "$as_me:$LINENO: error: conditional \"WEBUI\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+echo "$as_me: error: conditional \"WEBUI\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
 
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
@@ -3751,7 +3766,8 @@ PATCH!$PATCH$ac_delim
 GREP!$GREP$ac_delim
 FIND!$FIND$ac_delim
 SED!$SED$ac_delim
-ENABLE_DEBUGCODE!$ENABLE_DEBUGCODE$ac_delim
+WEBUI_TRUE!$WEBUI_TRUE$ac_delim
+WEBUI_FALSE!$WEBUI_FALSE$ac_delim
 PERL!$PERL$ac_delim
 CPAN!$CPAN$ac_delim
 PERLDOC!$PERLDOC$ac_delim
@@ -3761,7 +3777,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 87; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 88; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

@@ -1,6 +1,6 @@
 dnl #                                               -*- Autoconf -*-
 dnl # Process this file with autoconf to produce a configure script.
-dnl # $Id: configure.ac,v 1.30 2010/05/30 06:09:47 ak Exp $
+dnl # $Id: configure.ac,v 1.34 2010/06/08 03:15:45 ak Exp $
 dnl # -Id: configure.ac,v 1.8 2009/12/01 10:35:23 ak Exp -
 dnl # -Id: configure.ac,v 1.35 2009/08/27 05:09:04 ak Exp -
 dnl # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -43,15 +43,15 @@ if test "x$SED" = x; then
 	AC_MSG_ERROR([*** Cannot find sed program])
 fi
 
-AC_ARG_ENABLE(debug,
-	AC_HELP_STRING( [--enable-debug], [Turn on debugging(>level 2) ] ),
-	[enable_debug="$enableval"], [enable_debug="no"])
-if test "x$enable_debug" = "xyes"; then
-	ENABLE_DEBUGCODE=1
+AC_ARG_ENABLE(webui,
+	AC_HELP_STRING( [--enable-webui], [Enable WebUI(default=yes)] ),
+	[enable_webui="$enableval"], [enable_webui="yes"])
+	AM_CONDITIONAL([WEBUI], [test "x$enable_webui" = "xyes"])
+if test "x$enable_webui" = "xyes"; then
+	LIST_ARGV='list'
 else
-	ENABLE_DEBUGCODE=0
+	LIST_ARGV='list-no-webui'
 fi
-AC_SUBST(ENABLE_DEBUGCODE)
 
 AC_ARG_WITH([perl],
 	AC_HELP_STRING(
@@ -92,7 +92,7 @@ fi
 dnl # Checks for libraries.
 MISSING_PERL_MODULES=''
 MISSING_MODULE_COUNT=0
-for PM in `$PERL ./Modules.PL list`; do
+for PM in `$PERL ./Modules.PL $LIST_ARGV`; do
 	AC_MSG_CHECKING(for $PM)
 	if $PERL -M$PM -e '' > /dev/null 2>&1; then
 		PM_PATH=`$PERLDOC -Ul $PM`

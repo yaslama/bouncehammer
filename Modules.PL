@@ -1,4 +1,4 @@
-# $Id: Modules.PL,v 1.18 2010/05/30 06:09:26 ak Exp $
+# $Id: Modules.PL,v 1.20 2010/06/08 03:15:45 ak Exp $
 # -Id: PERL-MODULES.PL,v 1.1 2009/08/29 07:32:08 ak Exp -
 # -Id: PERL-MODULES,v 1.6 2009/08/12 01:57:35 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -10,6 +10,9 @@ my $Dependencies = {
 	# 'Engine' => { 'Module name' => [ version, core module, license ] },
 	'Kanadzuchi' => {
 		'Class::Accessor::Fast::XS' => [ 0.03, 0, 'Perl' ],
+		'Compress::Zlib'	=> [ 2.023, 5.009003, 'Perl' ],
+		'Crypt::CBC'		=> [ 2.30, 0, 'Unknown' ],
+		'Crypt::DES'		=> [ 1.00, 0, 'Unknown' ],
 		'DBIx::Skinny'		=> [ 0.0711, 0, 'Perl' ],
 		'Digest::MD5'		=> [ 2.27, 5.007003, 'Perl' ],
 		'Email::AddressParser'	=> [ 0.04, 0, 'Apache' ],
@@ -17,6 +20,9 @@ my $Dependencies = {
 		'Error'			=> [ 0.17015, 0, 'Perl' ],
 		'File::Copy'		=> [ 2.06, 5.002, 'Perl' ],
 		'File::Spec'		=> [ 0.86, 5.00405, 'Unknown' ],
+		'IO::Compress::Bzip2'	=> [ 2.023, 5.010001, 'Perl' ],
+		'IO::Compress::Gzip'	=> [ 2.023, 5.009004, 'Perl' ],
+		'IO::Compress::Zip'	=> [ 2.023, 5.009004, 'Perl' ],
 		'IO::File'		=> [ 1.20, 5.00307, 'Perl' ],
 		'JSON::Syck'		=> [ 0.30, 0, 'MIT' ],
 		'List::Util'		=> [ 1.13, 5.007003, 'Perl' ],
@@ -38,16 +44,10 @@ my $Dependencies = {
 		'CGI::Application::Plugin::Session'	=> [ 1.03, 0, 'Perl' ],
 		'CGI::Application::Plugin::TT'		=> [ 1.04, 0, 'Perl' ],
 		'CGI::Application::Dispatch'		=> [ 2.16, 0, 'Unknown' ],
-		'CGI::Application'	=> [ 4.21, 0, 'Perl' ],
-		'Compress::Zlib'	=> [ 2.023, 5.009003, 'Perl' ],
-		'Crypt::CBC'		=> [ 2.30, 0, 'Unknown' ],
-		'Crypt::DES'		=> [ 1.00, 0, 'Unknown' ],
-		'IO::Compress::Bzip2'	=> [ 2.023, 5.010001, 'Perl' ],
-		'IO::Compress::Gzip'	=> [ 2.023, 5.009004, 'Perl' ],
-		'IO::Compress::Zip'	=> [ 2.023, 5.009004, 'Perl' ],
+		'CGI::Application'			=> [ 4.21, 0, 'Perl' ],
 	},
 	'Test' => {
-		'IPC::Cmd'	=> [ 0.25, 5.009005, 'Unknown' ],
+		# Optional 'IPC::Cmd'	=> [ 0.25, 5.009005, 'Unknown' ],
 		'Test::More'	=> [ 0.80, 5.006002, 'Perl' ],
 	},
 };
@@ -78,7 +78,15 @@ sub modules
 	}
 }
 
-sub list { print qq($_\n) for @{ modules() }; }
+sub list
+{
+	my $argv = shift() || q();
+	foreach my $m ( @{ modules() } )
+	{
+		next() if( $argv eq 'no-webui' && $m =~ m{\ACGI::} );
+		print $m."\n";
+	}
+}
 
 sub check
 {
@@ -135,6 +143,10 @@ if( $Command eq 'list' )
 {
 	list();
 }
+elsif( $Command eq 'list-no-webui' )
+{
+	list('no-webui');
+}
 elsif( $Command eq 'check' )
 {
 	check();
@@ -145,7 +157,7 @@ elsif( $Command eq 'installed' || $Command eq 'missing' )
 }
 else
 {
-	printf(STDERR "Usage: perl %s (list|check|installed|missing)\n", $0 );
+	printf(STDERR "Usage: perl %s (list|list-no-webui|check|installed|missing)\n", $0 );
 }
 
 __END__
