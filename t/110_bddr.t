@@ -1,4 +1,4 @@
-# $Id: 110_bddr.t,v 1.1 2010/05/17 00:00:55 ak Exp $
+# $Id: 110_bddr.t,v 1.2 2010/06/08 00:59:45 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,7 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::BdDR;
 use JSON::Syck;
-use Test::More ( tests => 429 );
+use Test::More ( tests => 161 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -66,24 +66,29 @@ METHODS: {
 			ok( length($object->datasn()), q{->datasn() = }.$object->datasn() );
 		}
 
-		CONNECT: {
-			if( $d eq 'SQLite' )
-			{
+		next() unless( $d eq 'SQLite' );
+
+		SKIP: {
+			my $Skip = 2;
+			eval { require DBI; }; skip( 'Because no DBI for testing', $Skip ) if( $@ );
+			eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $Skip ) if( $@ );
+
+			CONNECT: {
 				my $dbhx = $object->connect();
 				isa_ok( $dbhx, q|DBI::db|, q{->connect(SQLite)} );
 				my $dbhs = $object->disconnect();
 				ok( $dbhs, q{->disconnect(SQLite)} );
 			}
 		}
+	}
 
-		FAIL: {
-			foreach my $e ( @{$Kanadzuchi::Test::ExceptionalValues} )
-			{
-				my $argv = defined($e) ? sprintf("%#x", ord($e)) : 'undef()';
-				my $dbio = Kanadzuchi::BdDR->new->setup($e);
-				is( ref($dbio), $T->class(), q{->setup() = }.$argv );
-				is( $dbio->datasn(), undef(), q{->setup->datasn() = ''} );
-			}
+	FAIL: {
+		foreach my $e ( @{$Kanadzuchi::Test::ExceptionalValues} )
+		{
+			my $argv = defined($e) ? sprintf("%#x", ord($e)) : 'undef()';
+			my $dbio = Kanadzuchi::BdDR->new->setup($e);
+			is( ref($dbio), $T->class(), q{->setup() = }.$argv );
+			is( $dbio->datasn(), undef(), q{->setup->datasn() = ''} );
 		}
 	}
 
