@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: tablectl.PL,v 1.11 2010/05/18 07:29:44 ak Exp $
+# $Id: tablectl.PL,v 1.12 2010/06/08 19:16:51 ak Exp $
 # -Id: tablectl.PL,v 1.12 2010/02/21 20:09:01 ak Exp -
 # -Id: tablectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: tablectl.PL,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -20,7 +20,6 @@ package Kanadzuchi::Command::Tablectl;
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 use lib '__KANADZUCHIROOT__/lib';
-use utf8;
 use strict;
 use warnings;
 use Kanadzuchi;
