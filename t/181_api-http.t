@@ -1,4 +1,4 @@
-# $Id: 181_api-http.t,v 1.2 2009/12/17 20:45:05 ak Exp $
+# $Id: 181_api-http.t,v 1.3 2010/06/08 00:59:45 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,6 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Kanadzuchi::API::HTTP;
 use Test::More ( tests => 1 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
@@ -28,8 +27,22 @@ my $T = new Kanadzuchi::Test(
 # ||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 #
-PREPROCESS: {
-	can_ok( $T->class(), @{$T->methods()} );
+SKIP: {
+	eval {
+		require CGI::Application;
+		require CGI::Application::Dispatch;
+		require CGI::Application::Plugin::TT;
+		require CGI::Application::Plugin::Session;
+		require CGI::Application::Plugin::HTMLPrototype;
+	};
+
+	skip( 'CGI::Application::* is not installed', scalar 1 ) if( $@ );
+
+	use Kanadzuchi::API::HTTP;
+	PREPROCESS: {
+		can_ok( $T->class(), @{$T->methods()} );
+	}
 }
+
 
 __END__

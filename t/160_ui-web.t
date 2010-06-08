@@ -1,4 +1,4 @@
-# $Id: 160_ui-web.t,v 1.4 2010/02/19 14:32:59 ak Exp $
+# $Id: 160_ui-web.t,v 1.5 2010/06/08 00:59:45 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,6 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Kanadzuchi::UI::Web;
 use Test::More ( tests => 17 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
@@ -86,10 +85,25 @@ $ENV = {
 #
 can_ok( $T->class(), @{$T->methods()} );
 
-foreach my $w ( values(%$W) )
-{
-	use_ok( $w->class() );
-	can_ok( $w->class(), @{$w->methods()} );
+SKIP: {
+	eval {
+		require CGI::Application;
+		require CGI::Application::Dispatch;
+		require CGI::Application::Plugin::TT;
+		require CGI::Application::Plugin::Session;
+		require CGI::Application::Plugin::HTMLPrototype;
+	};
+
+	skip( 'CGI::Application::* is not installed', scalar 16 ) if( $@ );
+
+	use Kanadzuchi::UI::Web;
+	foreach my $w ( values(%$W) )
+	{
+		use_ok( $w->class() );
+		can_ok( $w->class(), @{$w->methods()} );
+	}
+
 }
 
 __END__
+

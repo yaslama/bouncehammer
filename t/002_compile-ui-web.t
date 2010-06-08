@@ -16,7 +16,18 @@ my $Modules = [
 	q(Kanadzuchi::UI::Web::Dispatch),
 ];
 
-plan( tests => $#{$Modules} + 1 );
-foreach my $module ( @$Modules ){ use_ok($module); }
+plan( tests => scalar @$Modules );
+SKIP: {
+	eval {
+		require CGI::Application;
+		require CGI::Application::Dispatch;
+		require CGI::Application::Plugin::TT;
+		require CGI::Application::Plugin::Session;
+		require CGI::Application::Plugin::HTMLPrototype;
+	};
+
+	skip( 'CGI::Application::* is not installed', scalar @$Modules ) if( $@ );
+	foreach my $module ( @$Modules ){ use_ok($module); }
+}
 
 __END__
