@@ -1,15 +1,15 @@
-# $Id: MasterTables.pm,v 1.14 2010/05/19 18:25:10 ak Exp $
+# $Id: MasterTables.pm,v 1.15 2010/06/08 19:15:05 ak Exp $
 # -Id: MasterTables.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: MasterTables.pm,v 1.7 2009/08/15 15:06:56 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::Web::
-                                                                                  
- ##  ##                  ##              ######         ##    ###                 
- ######   ####   ##### ###### ####  #####  ##     ####  ##     ##   ####   #####  
- ######      ## ##       ##  ##  ## ##  ## ##        ## #####  ##  ##  ## ##      
- ##  ##   #####  ####    ##  ###### ##     ##     ##### ##  ## ##  ######  ####   
- ##  ##  ##  ##     ##   ##  ##     ##     ##    ##  ## ##  ## ##  ##         ##  
- ##  ##   ##### #####     ### ####  ##     ##     ##### ##### ####  ####  #####   
+                                                                                
+ ##  ##                  ##              ######       ##    ###                 
+ ######   ####   ##### ###### ####  #####  ##   ####  ##     ##   ####   #####  
+ ######      ## ##       ##  ##  ## ##  ## ##      ## #####  ##  ##  ## ##      
+ ##  ##   #####  ####    ##  ###### ##     ##   ##### ##  ## ##  ######  ####   
+ ##  ##  ##  ##     ##   ##  ##     ##     ##  ##  ## ##  ## ##  ##         ##  
+ ##  ##   ##### #####     ### ####  ##     ##   ##### ##### ####  ####  #####   
 package Kanadzuchi::UI::Web::MasterTables;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -19,6 +19,7 @@ package Kanadzuchi::UI::Web::MasterTables;
 #
 use strict;
 use warnings;
+use utf8;
 use base 'Kanadzuchi::UI::Web';
 use Kanadzuchi::BdDR;
 use Kanadzuchi::BdDR::BounceLogs::Masters;
@@ -56,6 +57,7 @@ sub tablelist_ontheweb
 	$paginated->set( $mastertab->count( $wherecond ) );
 	$paginated->skip( $self->param('pi_page') || 1 );
 	$list = $mastertab->search( $wherecond, $paginated );
+	map { utf8::encode($_->{'description'}) if( utf8::is_utf8($_->{'description'}) ) } @$list;
 
 	$self->tt_params( 
 		'sortby' => $paginated->colnameorderby(),
@@ -293,6 +295,10 @@ sub tablectl_ontheweb
 			}
 
 			$tabrecord = $mastertab->search( {}, $paginated );
+			map {
+				utf8::encode($_->{'description'}) if( utf8::is_utf8($_->{'description'}) ) 
+			} @$tabrecord, @$removedrecord;
+
 			$self->tt_params( 
 				'titlename' => ucfirst $tablename,
 				'tablename' => $tablename,
