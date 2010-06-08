@@ -1,4 +1,4 @@
-# $Id: 061_mail-stored-yaml.t,v 1.5 2010/05/19 18:25:14 ak Exp $
+# $Id: 061_mail-stored-yaml.t,v 1.6 2010/06/08 00:59:08 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -145,11 +145,11 @@ CONSTRUCTORS: {
 		is( $entity->diagnosticcode(), q(Test record), $T->class.q{->loadandnew()->diagnosticcode() } );
 		is( $entity->timezoneoffset(), q(+0900), $T->class.q{->loadandnew()->timezoneoffset() } );
 	}
-} # 44
+} # 43
 
-EACH_METHODS: {
+SKIP: {
 	my $BdDR = undef();
-	my $Skip = 1350;
+	my $Skip = 1387;
 	my $Btab = undef();
 	my $Mtab = {};
 	my $Cdat = undef();
