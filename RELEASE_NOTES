@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.60 2010/06/07 20:43:30 ak Exp $
+ $Id: RELEASE_NOTES,v 1.62 2010/06/08 03:44:34 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -27,10 +27,15 @@
     * bin/mailboxparser --safe(-S) option is obsoleted.
     * BounceHammer now supports ***@mopera.net address(Smartphone).
     * Improved analytical accuracy of bin/mailboxparser(@ezweb.ne.jp)
+    * The new configure option: --disable-webui don't install WebUI and
+      API(HTTP).
+    * Delete the configure option: --enable-debug .
 
   Fixed bugs:
     * Fixed an issue that  the capacity ratio of mastertable is incor-
       rectly displayed on WebUI/Summary page.
+    * Fixed an issue that make test fails if DBD::SQLite module is not
+      installed.
 
   New files:
     * lib/Kanadzuchi/MIME/Parser.pm
