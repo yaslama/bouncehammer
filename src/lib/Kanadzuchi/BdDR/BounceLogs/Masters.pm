@@ -1,4 +1,4 @@
-# $Id: Masters.pm,v 1.6 2010/06/03 06:59:08 ak Exp $
+# $Id: Masters.pm,v 1.7 2010/06/08 19:16:47 ak Exp $
 # -Id: Addressers.pm,v 1.4 2010/03/04 08:33:28 ak Exp -
 # -Id: Addressers.pm,v 1.4 2010/02/21 20:42:02 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -22,7 +22,6 @@ use DBIx::Skinny;
  #####    #### ##  ##  ####  ##  ##  #####  
 package Kanadzuchi::BdDR::BounceLogs::Masters::Schema;
 use DBIx::Skinny::Schema;
-use utf8;
 
 # UTF-8 Columns
 install_utf8_columns('description');

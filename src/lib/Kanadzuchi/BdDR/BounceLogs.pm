@@ -1,4 +1,4 @@
-# $Id: BounceLogs.pm,v 1.5 2010/06/03 06:59:00 ak Exp $
+# $Id: BounceLogs.pm,v 1.6 2010/06/08 19:16:45 ak Exp $
 # -Id: BounceLogs.pm,v 1.9 2010/03/04 08:33:28 ak Exp -
 # -Id: BounceLogs.pm,v 1.1 2009/08/29 08:58:48 ak Exp -
 # -Id: BounceLogs.pm,v 1.6 2009/08/27 05:09:55 ak Exp -
@@ -26,7 +26,6 @@ package Kanadzuchi::BdDR::BounceLogs::Schema;
 use DBIx::Skinny::Schema;
 use Kanadzuchi::Mail;
 use Time::Piece;
-use utf8;
 
 install_utf8_columns('description');
 install_inflate_rule( 

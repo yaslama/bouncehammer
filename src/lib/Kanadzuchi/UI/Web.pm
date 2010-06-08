@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.14 2010/05/19 18:25:08 ak Exp $
+# $Id: Web.pm,v 1.15 2010/06/08 19:16:49 ak Exp $
 # -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
 # -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -19,7 +19,6 @@ package Kanadzuchi::UI::Web;
 #
 use strict;
 use warnings;
-use utf8;
 use base 'CGI::Application';
 use CGI::Application::Plugin::TT;
 use CGI::Application::Plugin::HTMLPrototype;
