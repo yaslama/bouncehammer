@@ -14,11 +14,6 @@
 
 @SET_MAKE@
 
-# $Id: Makefile.am,v 1.2 2010/03/05 01:14:05 ak Exp $
-# Copyright (C) 2009,2010 Cubicroot Co. Ltd.
-# This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/UI,
-# is processed by automake to create Makefile.in.
-
 VPATH = @srcdir@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -67,7 +62,7 @@ RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = $(SUBDIRS)
+DIST_SUBDIRS = Web
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 pkgdatadir = @libdir@/Kanadzuchi/UI
 ACLOCAL = @ACLOCAL@
@@ -85,7 +80,6 @@ DEFS = @DEFS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
-ENABLE_DEBUGCODE = @ENABLE_DEBUGCODE@
 FIND = @FIND@
 GREP = @GREP@
 INSTALL = @INSTALL@
@@ -166,9 +160,16 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = Web
+@WEBUI_FALSE@SUBDIRS = 
+
+# $Id: Makefile.am,v 1.5 2010/06/08 02:34:20 ak Exp $
+# Copyright (C) 2009,2010 Cubicroot Co. Ltd.
+# This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/UI,
+# is processed by automake to create Makefile.in.
+@WEBUI_TRUE@SUBDIRS = Web
 distdir = $(BUILDROOT)/dist/lib/Kanadzuchi/UI
-pkgdata_DATA = CLI.pm Web.pm
+@WEBUI_FALSE@pkgdata_DATA = CLI.pm
+@WEBUI_TRUE@pkgdata_DATA = CLI.pm Web.pm
 all: all-recursive
 
 .SUFFIXES:

@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.36 2010/05/29 01:39:32 ak Exp $
+# $Id: Makefile.am,v 1.39 2010/06/08 03:15:45 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -9,7 +9,11 @@ SYSVERSION = 2.3.2
 CMD_MODULE = ./Modules.PL
 CMD_IMPLEM = ./Implement.PL
 PATCH_TBOP = ./diff/perl-TB-option-on-filehandle.patch
+if WEBUI
 SUBDIRS = src template
+else
+SUBDIRS = src
+endif
 
 .PHONY: clean
 all-am: Makefile apply-patch
@@ -58,16 +62,17 @@ message:
 	@echo "-----------------------------------------------------------------------------"
 	@echo " To use BounceHammer Command line tools"
 	@echo
-	@echo "  1. Set up and start a database(PostgreSQL, MySQL, or SQLite)"
+	@echo "  1. Setup and start database(PostgreSQL, MySQL, or SQLite)"
 	@echo "  2. Create tables"
 	@echo "       a. Run @datadir@/script/{PostgreSQL,MySQL,SQLite}.sql"
 	@echo "       b. Run @datadir@/script/mastertable-*.sql"
 	@echo "       c. Run @datadir@/script/records-example.sql"
 	@echo "  3. Copy @sysconfdir@/bouncehammer.cf-example @sysconfdir@/bouncehammer.cf"
 	@echo "  4. Edit @sysconfdir@/bouncehammer.cf "
-	@echo "  5. Install a perl module: 'DBD::Pg' or 'DBD::mysql' or 'DBD::SQLite'."
+	@echo "  5. Install the perl module: 'DBD::Pg' or 'DBD::mysql' or 'DBD::SQLite'."
 	@echo "  6. @bindir@/* command line tools are avaliable"
 	@echo
+if WEBUI
 	@echo "-----------------------------------------------------------------------------"
 	@echo " To use BounceHammer WebUI"
 	@echo
@@ -78,6 +83,7 @@ message:
 	@echo "  5. Do not forget chmod a+x 'DocumentRoot'/bouncehammer.cgi"
 	@echo "  6. Open 'http://yourhost/path/to/docroot/bouncehammer.cgi/index' "
 	@echo
+endif
 	@echo "-----------------------------------------------------------------------------"
 	@echo " To show this screen, type 'make message' and hit 'Return' key"
 	@echo " See more description at BounceHmammer website; http://bouncehammer.jp/"

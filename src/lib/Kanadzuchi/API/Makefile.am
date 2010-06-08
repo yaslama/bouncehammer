@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.5 2010/03/23 20:31:32 ak Exp $
+# $Id: Makefile.am,v 1.9 2010/06/08 03:15:24 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/API,
 # is processed by automake to create Makefile.in.
@@ -34,10 +34,9 @@ install-am: distlib
 	done
 
 uninstall-am:
-	rm -f $(instdir)/$(modules)
-	rm -f $(pkgdatadir)/*.pm
+	rm -f $(instdir)/$(modules) 2> /dev/null
+	rm -f $(pkgdatadir)/*.pm 2> /dev/null
 
 .PHONY: clean
 clean:
-	rm -f $(distdir)/*.pm
-
+	rm -f $(distdir)/*.pm 2> /dev/null

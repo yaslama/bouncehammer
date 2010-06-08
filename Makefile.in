@@ -57,7 +57,7 @@ RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = $(SUBDIRS)
+DIST_SUBDIRS = src template
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -84,7 +84,6 @@ DEFS = @DEFS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
-ENABLE_DEBUGCODE = @ENABLE_DEBUGCODE@
 FIND = @FIND@
 GREP = @GREP@
 INSTALL = @INSTALL@
@@ -166,7 +165,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
-# $Id: Makefile.am,v 1.36 2010/05/29 01:39:32 ak Exp $
+# $Id: Makefile.am,v 1.39 2010/06/08 03:15:45 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -177,7 +176,8 @@ SYSVERSION = 2.3.2
 CMD_MODULE = ./Modules.PL
 CMD_IMPLEM = ./Implement.PL
 PATCH_TBOP = ./diff/perl-TB-option-on-filehandle.patch
-SUBDIRS = src template
+@WEBUI_FALSE@SUBDIRS = src
+@WEBUI_TRUE@SUBDIRS = src template
 all: all-recursive
 
 .SUFFIXES:
@@ -633,26 +633,26 @@ message:
 	@echo "-----------------------------------------------------------------------------"
 	@echo " To use BounceHammer Command line tools"
 	@echo
-	@echo "  1. Set up and start a database(PostgreSQL, MySQL, or SQLite)"
+	@echo "  1. Setup and start database(PostgreSQL, MySQL, or SQLite)"
 	@echo "  2. Create tables"
 	@echo "       a. Run @datadir@/script/{PostgreSQL,MySQL,SQLite}.sql"
 	@echo "       b. Run @datadir@/script/mastertable-*.sql"
 	@echo "       c. Run @datadir@/script/records-example.sql"
 	@echo "  3. Copy @sysconfdir@/bouncehammer.cf-example @sysconfdir@/bouncehammer.cf"
 	@echo "  4. Edit @sysconfdir@/bouncehammer.cf "
-	@echo "  5. Install a perl module: 'DBD::Pg' or 'DBD::mysql' or 'DBD::SQLite'."
+	@echo "  5. Install the perl module: 'DBD::Pg' or 'DBD::mysql' or 'DBD::SQLite'."
 	@echo "  6. @bindir@/* command line tools are avaliable"
 	@echo
-	@echo "-----------------------------------------------------------------------------"
-	@echo " To use BounceHammer WebUI"
-	@echo
-	@echo "  1. Configure your web server, turn 'ExecCGI' on "
-	@echo "  2. Copy @sysconfdir@/webui.cf-example @sysconfdir@/webui.cf"
-	@echo "  3. Edit @sysconfdir@/webui.cf "
-	@echo "  4. Copy @datadir@/script/bouncehammer.cgi to 'DocumentRoot'"
-	@echo "  5. Do not forget chmod a+x 'DocumentRoot'/bouncehammer.cgi"
-	@echo "  6. Open 'http://yourhost/path/to/docroot/bouncehammer.cgi/index' "
-	@echo
+@WEBUI_TRUE@	@echo "-----------------------------------------------------------------------------"
+@WEBUI_TRUE@	@echo " To use BounceHammer WebUI"
+@WEBUI_TRUE@	@echo
+@WEBUI_TRUE@	@echo "  1. Configure your web server, turn 'ExecCGI' on "
+@WEBUI_TRUE@	@echo "  2. Copy @sysconfdir@/webui.cf-example @sysconfdir@/webui.cf"
+@WEBUI_TRUE@	@echo "  3. Edit @sysconfdir@/webui.cf "
+@WEBUI_TRUE@	@echo "  4. Copy @datadir@/script/bouncehammer.cgi to 'DocumentRoot'"
+@WEBUI_TRUE@	@echo "  5. Do not forget chmod a+x 'DocumentRoot'/bouncehammer.cgi"
+@WEBUI_TRUE@	@echo "  6. Open 'http://yourhost/path/to/docroot/bouncehammer.cgi/index' "
+@WEBUI_TRUE@	@echo
 	@echo "-----------------------------------------------------------------------------"
 	@echo " To show this screen, type 'make message' and hit 'Return' key"
 	@echo " See more description at BounceHmammer website; http://bouncehammer.jp/"
