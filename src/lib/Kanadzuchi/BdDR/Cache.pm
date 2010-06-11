@@ -1,4 +1,4 @@
-# $Id: Cache.pm,v 1.2 2010/05/16 23:58:20 ak Exp $
+# $Id: Cache.pm,v 1.3 2010/06/10 10:28:39 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::BdDR::
                                     
@@ -9,12 +9,6 @@
  ##  ## ##  ## ##    ##  ## ##      
   ####   #####  #### ##  ##  ####   
 package Kanadzuchi::BdDR::Cache;
-
-#  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
-# ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
-# ||__|||__|||__|||__|||__|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
-#
 use base 'Class::Accessor::Fast::XS';
 use strict;
 use warnings;
