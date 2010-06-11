@@ -1,11 +1,11 @@
 dnl #                                               -*- Autoconf -*-
 dnl # Process this file with autoconf to produce a configure script.
-dnl # $Id: configure.ac,v 1.35 2010/06/08 19:17:19 ak Exp $
+dnl # $Id: configure.ac,v 1.37 2010/06/10 09:19:32 ak Exp $
 dnl # -Id: configure.ac,v 1.8 2009/12/01 10:35:23 ak Exp -
 dnl # -Id: configure.ac,v 1.35 2009/08/27 05:09:04 ak Exp -
 dnl # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 AC_PREREQ(2.61)
-AC_INIT([BounceHammer], [2.3.3], [bugs@bouncehammer.jp])
+AC_INIT([BounceHammer], [2.3.4], [bugs@bouncehammer.jp])
 AM_INIT_AUTOMAKE([foreign])
 AC_PREFIX_DEFAULT(/usr/local/bouncehammer)
 AC_CANONICAL_HOST
@@ -143,7 +143,9 @@ AC_CONFIG_FILES([Makefile
                  src/lib/Kanadzuchi/BdDR/Makefile
                  src/lib/Kanadzuchi/Config/Makefile
                  src/lib/Kanadzuchi/Mail/Bounced/Makefile
+                 src/lib/Kanadzuchi/Mail/Bounced/JP/Makefile
                  src/lib/Kanadzuchi/Mail/Group/JP/Makefile
+                 src/lib/Kanadzuchi/Mail/Group/RU/Makefile
                  src/lib/Kanadzuchi/Mail/Group/Makefile
                  src/lib/Kanadzuchi/Mail/Makefile
                  src/lib/Kanadzuchi/Mail/Stored/Makefile
