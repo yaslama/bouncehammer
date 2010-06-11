@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.16 2010/05/25 04:48:53 ak Exp $
+# $Id: CLI.pm,v 1.17 2010/06/10 10:28:53 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                       
@@ -388,3 +388,4 @@ sub exception
 }
 
 1;
+__END__
