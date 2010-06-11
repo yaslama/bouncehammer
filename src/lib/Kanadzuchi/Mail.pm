@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.22 2010/05/25 09:43:32 ak Exp $
+# $Id: Mail.pm,v 1.23 2010/06/10 09:18:04 ak Exp $
 # -Id: Message.pm,v 1.1 2009/08/29 07:32:59 ak Exp -
 # -Id: BounceMessage.pm,v 1.13 2009/08/21 02:43:14 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -24,7 +24,13 @@ use Kanadzuchi::String;
 use Kanadzuchi::Address;
 use Kanadzuchi::Metadata;
 use Kanadzuchi::Time;
+use Kanadzuchi::RFC2606;
+use Kanadzuchi::Mail::Group;
+use Kanadzuchi::Mail::Group::Neighbor;
+use Kanadzuchi::Mail::Group::WebMail;
+use Kanadzuchi::Mail::Bounced::Generic;
 use Time::Piece;
+use JSON::Syck;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||A |||c |||c |||e |||s |||s |||o |||r |||s ||
@@ -96,8 +102,9 @@ my $ReasonWhy = {
 	'onhold'	=> 19,
 };
 
-my $DomainCache = {};
 
+my $DomainCache = {};
+my $LoadedGroup = Kanadzuchi::Mail::Group->legere();
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -158,10 +165,6 @@ sub new
 	DETECT_PROVIDER_AND_HOSTGROUP: {
 		last() unless( $class =~ m{\AKanadzuchi::Mail::Bounced\z} );
 		last() unless( $argvs->{'destination'} );
-		eval {
-			use Kanadzuchi::RFC2606;
-			use Kanadzuchi::Mail::Bounced::Generic;
-		};
 
 		my $dpart = $argvs->{'destination'};
 		my $klass = $class.q|::Generic|;	# Default Class = K::M::B::Generic
@@ -177,33 +180,22 @@ sub new
 		{
 			if( $DomainCache->{$dpart}->{'class'} )
 			{
+				# Domain information exists in the cache.
 				$klass = $DomainCache->{$dpart}->{'class'};
 				$group = $DomainCache->{$dpart}->{'group'};
 				$provi = $DomainCache->{$dpart}->{'provider'};
 			}
 			else
 			{
-				eval {
-					require Kanadzuchi::Mail::Group::Neighbor;
-					require Kanadzuchi::Mail::Group::JP::Cellphone;
-					require Kanadzuchi::Mail::Group::JP::Smartphone;
-					require Kanadzuchi::Mail::Group::JP::WebMail;
-					require Kanadzuchi::Mail::Group::WebMail;
-				};
-
-				my $tmpcn = q();
-				my $tmpci = {};
-
-				foreach my $c ( 'Neighbor', 'JP::Cellphone', 'JP::Smartphone', 'JP::WebMail', 'WebMail' )
+				foreach my $g ( q|Kanadzuchi::Mail::Group::Neighbor|, @$LoadedGroup, q|Kanadzuchi::Mail::Group::WebMail| )
 				{
-					$tmpcn = q|Kanadzuchi::Mail::Group::|.$c;
-					$tmpci = $tmpcn->detectus($dpart);
+					my $dinfo = $g->reperio($dpart);
 
-					if( $tmpci->{'class'} )
+					if( $dinfo->{'class'} )
 					{
-						$klass = $tmpci->{'class'};
-						$group = $tmpci->{'group'};
-						$provi = $tmpci->{'provider'};
+						$klass = $dinfo->{'class'};
+						$group = $dinfo->{'group'};
+						$provi = $dinfo->{'provider'};
 						last();
 					}
 				}
