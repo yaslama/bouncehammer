@@ -1,6 +1,6 @@
-# $Id: WebMail.pm,v 1.3 2010/06/10 09:16:07 ak Exp $
+# $Id: WebMail.pm,v 1.2 2010/06/10 09:12:31 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
-# Kanadzuchi::Mail::Group::JP::
+# Kanadzuchi::Mail::Group::RU::
                                                    
  ##  ##         ##     ##  ##           ##  ###    
  ##  ##   ####  ##     ######   ####         ##    
@@ -8,7 +8,7 @@
  ######  ###### ##  ## ##  ##   #####   ##   ##    
  ######  ##     ##  ## ##  ##  ##  ##   ##   ##    
  ##  ##   ####  #####  ##  ##   #####  #### ####   
-package Kanadzuchi::Mail::Group::JP::WebMail;
+package Kanadzuchi::Mail::Group::RU::WebMail;
 use base 'Kanadzuchi::Mail::Group';
 use strict;
 use warnings;
@@ -18,32 +18,19 @@ use warnings;
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-# Major company's Webmail domains(Japan)
+# Major company's Webmail domains in Russia
 my $Domains = {
-	'goo' => [
-		# goo mail, http://mail.goo.ne.jp/goomail/index.ghtml
-		qr{(?>\Amail[.]goo[.]ne[.]jp\z)},
-		qr{(?>\Agoo[.]jp\z)},
+	'runet' => [
+		qr{(?>\A(?:mail|bk|inbox|list)[.]ru\z)},
 	],
-	'nttdocomo' => [
-		# DoCoMo web mail powered by goo; http://dwmail.jp/
-		qr{(?>\Adwmail[.]jp\z)},
-	],
-	'aubykddi' => [
-		# KDDI auone(Gmail); http://auone.jp/
-		qr{(?>\Aauone[.]jp\z)},
-	],
-	'livedoor' => [
-		# livedoor mail(Gmail) http://mail.livedoor.com/
-		qr{(?>\Alivedoor[.]com\z)},
+	'yandex' => [
+		qr{(?>\Ayandex[.]ru\z)},
 	],
 };
 
 my $Classes = {
-	'goo'		=> 'Generic',
-	'nttdocomo'	=> 'Generic',
-	'aubykddi'	=> 'Generic',
-	'livedoor'	=> 'Generic',
+	'runet'		=> 'Generic',
+	'yandex'	=> 'Generic',
 };
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -56,13 +43,16 @@ sub reperio
 	# +-+-+-+-+-+-+-+
 	# |r|e|p|e|r|i|o|
 	# +-+-+-+-+-+-+-+
-	#
+	
 	# @Description	Detect and load the class for the domain
 	# @Param <str>	(String) Domain part
 	# @Return	(Ref->Hash) Class, Group, Provider name or Empty string
 	my $class = shift();
 	my $dpart = shift() || return({});
 	my $mdata = { 'class' => q(), 'group' => q(), 'provider' => q(), };
+	my $cpath = q();
+
+	return($mdata) unless( $dpart =~ m{(?>[.]ru\z)} );
 
 	foreach my $d ( keys(%$Domains) )
 	{

@@ -1,4 +1,4 @@
-# $Id: Cellphone.pm,v 1.2 2010/02/21 20:36:58 ak Exp $
+# $Id: Cellphone.pm,v 1.3 2010/06/10 09:16:07 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
                                                             
@@ -10,22 +10,16 @@
   ####   #### #### #### ##     ##  ##  ####  ##  ##  ####   
                         ##                                  
 package Kanadzuchi::Mail::Group::JP::Cellphone;
-
-#  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
-# ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
-# ||__|||__|||__|||__|||__|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
-#
+use base 'Kanadzuchi::Mail::Group';
 use strict;
 use warnings;
-use base 'Kanadzuchi::Mail::Group';
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-my $domains = {
+my $Domains = {
 	'nttdocomo' => [ 
 		qr{(?>\Adocomo[.]ne[.]jp\z)},
 	],
@@ -42,10 +36,10 @@ my $domains = {
 	],
 };
 
-my $classes = {
-	'nttdocomo' => 'NTTDoCoMo',
-	'aubykddi'  => 'aubyKDDI',
-	'softbank'  => 'SoftBank',
+my $Classes = {
+	'nttdocomo'	=> 'JP::NTTDoCoMo',
+	'aubykddi'	=> 'JP::aubyKDDI',
+	'softbank'	=> 'JP::SoftBank',
 };
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -53,11 +47,11 @@ my $classes = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub detectus
+sub reperio
 {
-	# +-+-+-+-+-+-+-+-+
-	# |d|e|t|e|c|t|u|s|
-	# +-+-+-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+
+	# |r|e|p|e|r|i|o|
+	# +-+-+-+-+-+-+-+
 	#
 	# @Description	Detect and load the class for the domain
 	# @Param <str>	(String) Domain part
@@ -65,42 +59,27 @@ sub detectus
 	my $class = shift();
 	my $dpart = shift() || return({});
 	my $mdata = { 'class' => q(), 'group' => q(), 'provider' => q(), };
+	my $cpath = q();
 
-	return({}) unless( $dpart =~ m{(?>ne[.]jp\z)} );
+	return($mdata) unless( $dpart =~ m{(?>[.]ne[.]jp\z)} );
 
-	foreach my $d ( keys(%$domains) )
+	foreach my $d ( keys(%$Domains) )
 	{
-		if( grep { $dpart =~ $_ } @{$domains->{$d}} )
-		{
-			$mdata->{'class'} = $Kanadzuchi::Mail::Group::ClassName.q{::}.$classes->{$d};
-			$mdata->{'group'} = 'cellphone';
-			$mdata->{'provider'} = $d;
-			require $Kanadzuchi::Mail::Group::ClassPath.'/'.$classes->{$d}.'.pm';
-			last();
-		}
+		next() unless( grep { $dpart =~ $_ } @{ $Domains->{$d} } );
+
+		$mdata->{'class'} = q|Kanadzuchi::Mail::Bounced|.'::'.$Classes->{$d};
+		$mdata->{'group'} = 'cellphone';
+		$mdata->{'provider'} = $d;
+
+		$cpath =  $mdata->{'class'};
+		$cpath =~ y{:}{/}s;
+		$cpath .= '.pm';
+
+		require $cpath;
+		last();
 	}
 
 	return($mdata);
-}
-
-sub is_cellphone
-{
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	# |i|s|_|c|e|l|l|u|l|a|r|p|h|o|n|e|
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	#
-	# @Description	Whether addr is cellphone or not
-	# @Param <str>	(String) Domain part
-	# @Return	(Integer) 1 = is cellularphone
-	#		(Integer) 0 = is not cellularphone
-	my $class = shift();
-	my $dpart = shift() || return(0);
-
-	foreach my $d ( keys(%$domains) )
-	{
-		return(1) if( grep { $dpart =~ $_ } @{$domains->{$d}} );
-	}
-	return(0);
 }
 
 1;
