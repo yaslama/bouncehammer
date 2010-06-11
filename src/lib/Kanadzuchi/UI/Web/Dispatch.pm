@@ -1,4 +1,4 @@
-# $Id: Dispatch.pm,v 1.2 2010/03/26 07:20:08 ak Exp $
+# $Id: Dispatch.pm,v 1.4 2010/06/10 10:28:56 ak Exp $
 # -Id: Index.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Index.pm,v 1.3 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -12,15 +12,9 @@
  ####    #### #####  ##     #####   ### #### ##  ##  
                      ##                              
 package Kanadzuchi::UI::Web::Dispatch;
-
-#  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
-# ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
-# ||__|||__|||__|||__|||__|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
-#
+use base 'CGI::Application::Dispatch';
 use strict;
 use warnings;
-use base 'CGI::Application::Dispatch';
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -30,8 +24,6 @@ use base 'CGI::Application::Dispatch';
 my $Settings = {
 	'coreconfig'	=> '__KANADZUCHIETC__/bouncehammer.cf',
 	'webconfig'	=> '__KANADZUCHIETC__/webui.cf',
-	'mailboxparser'	=> '__KANADZUCHIBIN__/mailboxparser',
-	'databasectl'	=> '__KANADZUCHIBIN__/databasectl',
 	'template'	=> '__KANADZUCHIDATA__/template',
 };
 
@@ -82,8 +74,6 @@ my $DispatchArgsToNew = {
 		'cf' => $Settings->{'coreconfig'},
 		'wf' => $Settings->{'webconfig'},
 		'tf' => $Settings->{'template'},
-		'px' => $Settings->{'mailboxparser'},
-		'cx' => $Settings->{'databasectl'},
 	},
 };
 
