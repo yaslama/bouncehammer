@@ -1,11 +1,11 @@
-# $Id: Makefile.am,v 1.40 2010/06/08 19:17:19 ak Exp $
+# $Id: Makefile.am,v 1.42 2010/06/10 09:41:15 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer, is processed by automake to create Makefile.in.
 ENGINENAME = Kanadzuchi
 SYSTEMNAME = BounceHammer
-SYSVERSION = 2.3.3
+SYSVERSION = 2.3.4
 CMD_MODULE = ./Modules.PL
 CMD_IMPLEM = ./Implement.PL
 PATCH_TBOP = ./diff/perl-TB-option-on-filehandle.patch
@@ -23,6 +23,8 @@ clean-am: reverse-patch
 	find . -name '*.rej' -type f -exec rm -f {} \;
 	find . -name '*.rej.orig' -type f -exec rm -f {} \;
 	rm -fr ./.temp ./.test
+	rm -f /tmp/hammer.1970-01-01.11111111.111111.tmp
+	rm -f /tmp/bouncehammer-test.db
 
 distclean-am: clean-am
 	rm -fr ./dist
@@ -54,6 +56,36 @@ sublocalstatedir:
 	mkdir -pm 0755 @localstatedir@/{cache,db,incoming,log,run,spool,tmp}
 	$(CHMOD) g+w  @localstatedir@/db
 	$(CHMOD) 1777 @localstatedir@/{cache,incoming,run,spool,tmp}
+
+uninstall-old-files:
+	@echo "Uninstall files which are removed at ver 2.3.0"
+
+	rm -f @prefix@/lib/Kanadzuchi/RDB.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/MasterTable.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Schema.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Schema/Addressers.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Schema/BounceLogs.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Schema/Destinations.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Schema/HostGroups.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Schema/Providers.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Schema/Reasons.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Schema/SenderDomains.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Table.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Table/Addressers.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Table/Destinations.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Table/HostGroups.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Table/Providers.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Table/Reasons.pm
+	rm -f @prefix@/lib/Kanadzuchi/RDB/Table/SenderDomains.pm
+	rm -f @prefix@/lib/Kanadzuchi/Mail/Stored/RDB.pm
+	rm -f @prefix@/share/template/standard/element/div-pager.en.html
+	rm -f @prefix@/share/template/standard/element/div-pager.ja.html
+	rm -f @prefix@/share/template/standard/stylesheet/pager.css
+
+	@echo "Uninstall files which are renamed at ver 2.3.4"
+	rm -f @prefix@/lib/Kanadzuchi/Mail/Bounced/NTTDoCoMo.pm
+	rm -f @prefix@/lib/Kanadzuchi/Mail/Bounced/aubyKDDI.pm
+	rm -f @prefix@/lib/Kanadzuchi/Mail/Bounced/SoftBank.pm
 
 message:
 	@echo
