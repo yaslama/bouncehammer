@@ -1,11 +1,11 @@
-# $Id: Makefile.am,v 1.2 2010/04/01 08:03:34 ak Exp $
+# $Id: Makefile.am,v 1.3 2010/06/10 09:14:56 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/Mail/Bounced,
 # is processed by automake to create Makefile.in.
-
+SUBDIRS = JP
 distdir = $(BUILDROOT)/dist/lib/Kanadzuchi/Mail/Bounced
 pkgdatadir = @libdir@/Kanadzuchi/Mail/Bounced
-pkgdata_DATA = Generic.pm NTTDoCoMo.pm SoftBank.pm aubyKDDI.pm Yahoo.pm
+pkgdata_DATA = Generic.pm Yahoo.pm
 
 all-am:
 	test -d $(distdir) || mkdir -p $(distdir)
