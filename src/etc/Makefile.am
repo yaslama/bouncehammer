@@ -1,14 +1,14 @@
-# $Id: Makefile.am,v 1.6 2010/06/08 03:15:22 ak Exp $
+# $Id: Makefile.am,v 1.7 2010/06/10 09:18:55 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/src/etc, is processed by 
 # automake to create Makefile.in.
 if WEBUI
 sysconf_DATA = aliases-example bouncehammer.cf-example crontab-example \
-	neighbor-domains-example prove.cf test-run.cf webui.cf-example \
-	httpd.conf-example
+	neighbor-domains-example prove.cf test-run.cf group-by-area-example \
+	webui.cf-example httpd.conf-example
 else
 sysconf_DATA = aliases-example bouncehammer.cf-example crontab-example \
-	neighbor-domains-example prove.cf test-run.cf
+	neighbor-domains-example prove.cf test-run.cf group-by-area-example
 endif
 distdir = $(BUILDROOT)/dist/etc
 instdir = @sysconfdir@
