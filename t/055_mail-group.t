@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.1 2010/05/25 23:54:00 ak Exp $
+# $Id: 055_mail-group.t,v 1.3 2010/06/10 09:09:38 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 74 );
+use Test::More ( tests => 155 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -22,14 +22,16 @@ my $Classes = {
         'jpcellphone'	=> q|Kanadzuchi::Mail::Group::JP::Cellphone|,
         'jpsmartphone'	=> q|Kanadzuchi::Mail::Group::JP::Smartphone|,
         'jpwebmail'	=> q|Kanadzuchi::Mail::Group::JP::WebMail|,
+        'ruwebmail'	=> q|Kanadzuchi::Mail::Group::RU::WebMail|,
 };
 
 my $Domains = {
         'neighbor'	=> [],
-        'webmail'	=> [ qw( aol.com gmail.com yahoo.com hotmail.com mail.ru me.com ovi.com ) ],
+        'webmail'	=> [ qw( aol.com gmail.com yahoo.com hotmail.com me.com ovi.com ) ],
         'jpcellphone'	=> [ qw( docomo.ne.jp ezweb.ne.jp softbank.ne.jp ) ],
         'jpsmartphone'	=> [ qw( i.softbank.jp docomo.blackberry.com emnet.ne.jp willcom.com ) ],
         'jpwebmail'	=> [ qw( auone.jp dwmail.jp ) ],
+        'ruwebmail'	=> [ qw( mail.ru yandex.ru ) ],
 };
 
 #  ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ 
@@ -37,8 +39,26 @@ my $Domains = {
 # ||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 #
-REQUIRE: foreach my $c ( keys(%$Classes) ){ require_ok("$Classes->{$c}"); }
-METHODS: foreach my $c ( keys(%$Classes) ){ can_ok( $Classes->{$c}, 'detectus' ); }
+
+REQUIRE: {
+	use_ok($BaseGrp);
+	foreach my $c ( keys(%$Classes) ){ require_ok("$Classes->{$c}") }
+}
+
+METHODS: {
+	can_ok($BaseGrp, qw(reperio legere));
+	foreach my $c ( keys(%$Classes) ){ can_ok( $Classes->{$c}, 'reperio' ) } 
+
+	LEGERE: {
+		my $loadedgr = $BaseGrp->legere();
+
+		isa_ok( $loadedgr, q|ARRAY| );
+		foreach my $g ( @$loadedgr )
+		{
+			ok( (grep { $g eq $_ } values(%$Classes)), $g );
+		}
+	}
+}
 
 # 3. Call class method
 CLASS_METHODS: foreach my $c ( keys(%$Domains) )
@@ -46,11 +66,21 @@ CLASS_METHODS: foreach my $c ( keys(%$Domains) )
 	my $detected = {};
 	MATCH: foreach my $s ( @{$Domains->{$c}} )
 	{
-		$detected = $Classes->{ $c }->detectus($s);
-		isa_ok( $detected, q|HASH|, '->detecuts' );
+		$detected = $Classes->{ $c }->reperio($s);
+		isa_ok( $detected, q|HASH|, '->reperio' );
 		ok( $detected->{'class'}, '->class = '.$detected->{'class'} );
 		ok( $detected->{'group'}, '->group = '.$detected->{'group'} );
 		ok( $detected->{'provider'}, '->provider = '.$detected->{'provider'} );
+	}
+
+	DONT_MATCH: foreach my $s ( @{$Domains->{$c}} )
+	{
+		$detected = $Classes->{ $c }->reperio($s.'.org');
+		isa_ok( $detected, q|HASH|, '->reperio' );
+		is( $detected->{'class'}, q(), '->class = ' );
+		is( $detected->{'group'}, q(), '->group = ' );
+		is( $detected->{'provider'}, q(), '->provider = ' );
+
 	}
 }
 
