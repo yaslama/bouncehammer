@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.11 2010/06/03 07:00:45 ak Exp $
+# $Id: Mbox.pm,v 1.13 2010/06/10 09:18:04 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -12,6 +12,10 @@
  ##  ## ##  ## ##  ## ####   
  ##  ## #####   #### ##  ##  
 package Kanadzuchi::Mbox;
+
+# See also
+#  * http://en.wikipedia.org/wiki/Comparison_of_mail_servers
+#  * http://en.wikipedia.org/wiki/List_of_mail_servers
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
@@ -41,18 +45,9 @@ __PACKAGE__->mk_accessors(
 # ||C |||o |||n |||s |||t |||a |||n |||t ||
 # ||__|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
-#  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
-# ||F |||u |||n |||c |||t |||i |||o |||n |||s ||
-# ||__|||__|||__|||__|||__|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 sub ENDOF() { qq(\n__THE_END_OF_THE_EMAIL__\n); }
 
-#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
-# ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
-# ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
-#
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
@@ -146,7 +141,7 @@ sub _breakit
 		eval {
 			use Kanadzuchi::Mbox::qmail;
 			$parserclass = q(Kanadzuchi::Mbox::qmail);
-			$pseudofield .= $parserclass->detectus( $theheadpart, $thebodypart );
+			$pseudofield .= $parserclass->reperio( $theheadpart, $thebodypart );
 			$isirregular |= $irregularof->{'djbqmail'} if( length( $pseudofield ) );
 		};
 	}
@@ -168,7 +163,7 @@ sub _breakit
 		eval {
 			use Kanadzuchi::Mbox::aubyKDDI;
 			$parserclass = q(Kanadzuchi::Mbox::aubyKDDI);
-			$pseudofield .= $parserclass->detectus( $theheadpart, $thebodypart );
+			$pseudofield .= $parserclass->reperio( $theheadpart, $thebodypart );
 			$isirregular |= $irregularof->{'aubykddi'} if( length( $pseudofield ) );
 		};
 	}
@@ -186,7 +181,7 @@ sub _breakit
 		eval {
 			use Kanadzuchi::Mbox::KLab;
 			$parserclass  = q(Kanadzuchi::Mbox::KLab);
-			$pseudofield .= $parserclass->detectus( $theheadpart, q() );
+			$pseudofield .= $parserclass->reperio( $theheadpart, q() );
 			$isirregular |= $irregularof->{'accelmail'} if( length( $pseudofield ) );
 		};
 	}
@@ -203,7 +198,7 @@ sub _breakit
 		eval {
 			use Kanadzuchi::Mbox::Google;
 			$parserclass  = q(Kanadzuchi::Mbox::Google);
-			$pseudofield .= $parserclass->detectus( $theheadpart, $thebodypart );
+			$pseudofield .= $parserclass->reperio( $theheadpart, $thebodypart );
 			$isirregular |= $irregularof->{'googlemail'} if( length( $pseudofield ) );
 		};
 	}

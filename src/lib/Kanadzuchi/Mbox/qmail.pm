@@ -1,4 +1,4 @@
-# $Id: qmail.pm,v 1.5 2010/05/25 07:40:19 ak Exp $
+# $Id: qmail.pm,v 1.7 2010/06/10 10:28:51 ak Exp $
 # Kanadzuchi::Mbox::
                          ##  ###    
   #####  ##  ##  ####         ##    
@@ -7,11 +7,11 @@
   #####  ##  ## ##  ##   ##   ##    
      ##  ##  ##  #####  #### ####   
      ##                             
+package Kanadzuchi::Mbox::qmail;
 
 # qmail: the Internet's MTA of choice - http://cr.yp.to/qmail.html
 # The qmail-send Bounce Message Format (QSBMF) http://cr.yp.to/proto/qsbmf.txt
 # QSBMF IS NOT COMPATIBLE WITH RFC 1894 http://www.ietf.org/rfc/rfc1894.txt
-package Kanadzuchi::Mbox::qmail;
 use strict;
 use warnings;
 use Kanadzuchi::RFC1893;
@@ -52,16 +52,16 @@ my $RxConnError = {
 	# 'ambimx' => qr{\ASorry[.][ ]Although I[']m listed as a best[-]preference MX or A for that host[,]}o,
 };
 
-#   ____ ____ ____ ____ ____ ____ ____ 
-#  ||M |||e |||t |||h |||o |||d |||s ||
-#  ||__|||__|||__|||__|||__|||__|||__||
-#  |/__\|/__\|/__\|/__\|/__\|/__\|/__\|
-# 
-sub detectus
+#  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
+# ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
+# ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
+#
+sub reperio
 {
-	# +-+-+-+-+-+-+-+-+
-	# |d|e|t|e|c|t|u|s|
-	# +-+-+-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+
+	# |r|e|p|e|r|i|o|
+	# +-+-+-+-+-+-+-+
 	#
 	# @Description	Detect an error from qmail
 	# @Param <ref>	(Ref->Hash) Message header
