@@ -1,4 +1,4 @@
-# $Id: UserUnknown.pm,v 1.4 2010/04/02 11:42:26 ak Exp $
+# $Id: UserUnknown.pm,v 1.5 2010/06/10 10:02:51 ak Exp $
 # -Id: UserUnknown.pm,v 1.1 2009/08/29 07:33:28 ak Exp -
 # -Id: UserUnknown.pm,v 1.2 2009/05/11 08:22:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -11,12 +11,6 @@
  ##  ##      ## ##     ##     ##  ##  ##  ## ## ##  ##  ## ##  ## ###### ##  ##  
   ####   #####   ####  ##      ####   ##  ## ##  ## ##  ##  ####  ##  ## ##  ##  
 package Kanadzuchi::Mail::Why::UserUnknown;
-
-#  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
-# ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
-# ||__|||__|||__|||__|||__|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
-#
 use base 'Kanadzuchi::Mail::Why';
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
@@ -29,6 +23,7 @@ $Patterns = [
 	qr(user unknown\z)o,
 	qr(no such mailbox)o,
 	qr(no such user here)o,
+	qr(no such user!)o,
 	qr(destination server rejected recipients)o,
 	qr(recipient address rejected: user unknown in relay recipient table)o,
 	qr(recipient address rejected: user unknown in local recipient table)o,
