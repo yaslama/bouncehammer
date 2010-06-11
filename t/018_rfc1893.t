@@ -1,4 +1,4 @@
-# $Id: 018_rfc1893.t,v 1.1 2010/04/15 09:21:48 ak Exp $
+# $Id: 018_rfc1893.t,v 1.2 2010/06/11 00:06:04 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::RFC1893;
-use Test::More ( tests => 130 );
+use Test::More ( tests => 89 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -18,7 +18,7 @@ use Test::More ( tests => 130 );
 #
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::RFC1893|,
-	'methods' => [ 'code2int', 'int2code', 'standardcode', 'internalcode' ],
+	'methods' => [ 'int2code', 'standardcode', 'internalcode' ],
 	'instance' => undef(), );
 
 my $StandardCode = {
@@ -96,9 +96,6 @@ CLASS_METHODS: {
 
 			$dsstr = $class->int2code($dsint);
 			is( $dsstr, $dcode, sprintf("->int2code(%d) = %s", $dsint, $dsstr ) );
-
-			$dsint = $class->code2int($dsstr);
-			is( $dsint, $StandardCode->{$c}->{$r}, sprintf("->code2int(%s) = %d", $dsstr, $dsint) );
 		}
 	}
 
@@ -112,9 +109,6 @@ CLASS_METHODS: {
 
 			$dsstr = $class->int2code($dsint);
 			is( $dsstr, $dcode, sprintf("->int2code(%d) = %s", $dsint, $dsstr ) );
-
-			$dsint = $class->code2int($dsstr);
-			is( $dsint, $InternalCode->{$c}->{$r}, sprintf("->code2int(%s) = %d", $dsstr, $dsint) );
 		}
 	}
 
@@ -128,9 +122,6 @@ CLASS_METHODS: {
 
 		$dsstr = $class->int2code($e);
 		is( $dsstr, q(), sprintf("->int2code(%s) = ''", defined($e) ? $e : 'undef' ) );
-
-		$dsint = $class->code2int($e);
-		is( $dsint, 0, sprintf("->code2int(%s) = 0", defined($e) ? $e : 'undef' ) );
 	}
 }
 
