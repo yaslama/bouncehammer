@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.24 2010/05/26 03:56:17 ak Exp $
+# $Id: Search.pm,v 1.25 2010/06/11 00:06:02 ak Exp $
 # -Id: Search.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Search.pm,v 1.11 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -133,7 +133,6 @@ sub search_ontheweb
 		{
 			# Pre-Process Recipient address
 			$wcparams->{'recipient'} =  lc $cgiqueryp->param('recipient');
-			$wcparams->{'recipient'} =~ y{[;'" ]}{}d;
 			$wcparams->{'recipient'} =  $rfc2822c->cleanup($wcparams->{'recipient'});
 			$wherecond->{'recipient'} = $wcparams->{'recipient'} if( length($wcparams->{'recipient'}) );
 		}
@@ -141,7 +140,7 @@ sub search_ontheweb
 		foreach my $w ( 'addresser', 'senderdomain', 'destination', 'token', 'provider' )
 		{
 			next() unless( defined($cgiqueryp->param($w)) );
-			( $wcparams->{$w} = lc($cgiqueryp->param($w)) ) =~ y{[;'" ]}{}d;
+			( $wcparams->{$w} = lc($cgiqueryp->param($w)) ) =~ y{;'" }{}d;
 			next() unless( length($wcparams->{$w}) );
 
 			$wherecond->{$w} = $wcparams->{$w};

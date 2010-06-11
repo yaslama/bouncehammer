@@ -1,4 +1,4 @@
-# $Id: RFC2822.pm,v 1.8 2010/03/01 23:41:41 ak Exp $
+# $Id: RFC2822.pm,v 1.10 2010/06/11 00:05:57 ak Exp $
 # -Id: RFC2822.pm,v 1.1 2009/08/29 08:52:03 ak Exp -
 # -Id: RFC2822.pm,v 1.6 2009/05/29 08:22:21 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -11,12 +11,6 @@
  ## ##  ##    ##  ## ##     ##  ## ##     ##      
  ##  ## ##     ####  ######  ####  ###### ######  
 package Kanadzuchi::RFC2822;
-
-#  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
-# ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
-# ||__|||__|||__|||__|||__|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
-#
 use strict;
 use warnings;
 
@@ -170,7 +164,7 @@ sub cleanup
 	$email =~ s{\A\s+}{}g;		# Remove spaces in the head
 	$email =~ s{\s+\z}{}g;		# Remove spaces in the tail
 	$email =~ s{\Amailto:}{}g;	# Remove 'mailto' schema
-	$email =~ y{[<>]}{}d;		# Remove angle brackets
+	$email =~ y{[]<>()'";: }{}d;	# Remove brackets and quotations
 	return($email);
 }
 
