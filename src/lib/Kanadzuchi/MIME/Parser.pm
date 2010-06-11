@@ -1,4 +1,4 @@
-# $Id: Parser.pm,v 1.2 2010/06/07 20:42:54 ak Exp $
+# $Id: Parser.pm,v 1.4 2010/06/11 00:05:59 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::MIME::
                                             
@@ -9,12 +9,6 @@
  ##     ##  ## ##         ## ##     ##      
  ##      ##### ##     #####   ####  ##      
 package Kanadzuchi::MIME::Parser;
-
-#  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
-# ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
-# ||__|||__|||__|||__|||__|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
-#
 use base 'Class::Accessor::Fast::XS';
 use strict;
 use warnings;
@@ -27,12 +21,6 @@ use warnings;
 __PACKAGE__->mk_accessors(
 	'data'		# (Ref->Hash) MIME Entity
 );
-
-#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
-# ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
-# ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
-#
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -82,8 +70,8 @@ sub parseit
 			my $headname = $1;
 			my $headdata = $2;
 
-			$headdata =~ s{\A\s+}{}g;
-			$headdata =~ s{\s+\z}{}g;
+			$headdata =~ s{\A\s+}{};
+			$headdata =~ s{\s+\z}{};
 			next() unless( $headdata );
 
 			$self->{'data'}->{$headname} = [] unless( ref($self->{'data'}->{$headname}) eq q|ARRAY| );

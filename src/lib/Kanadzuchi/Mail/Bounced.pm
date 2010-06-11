@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.17 2010/06/03 06:58:06 ak Exp $
+# $Id: Bounced.pm,v 1.19 2010/06/11 00:06:01 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -28,19 +28,6 @@ use Kanadzuchi::Time;
 use Kanadzuchi::Iterator;
 use Kanadzuchi::MIME::Parser;
 use Time::Piece;
-
-#  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
-# ||A |||c |||c |||e |||s |||s |||o |||r |||s ||
-# ||__|||__|||__|||__|||__|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
-#
-# __PACKAGE__->mk_accessors();
-
-#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
-# ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
-# ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
-#
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -113,7 +100,7 @@ sub eatit
 
 			# There is no recipient address, skip.
 			next(MIMEPARSER) unless( @$tempemails );
-			map { $_ =~ y{[`'"()<>\r\n$]}{}d; $_ =~ s{\s}{,}g; $_ =~ s{;.+\z}{}g; } @$tempemails;
+			map { $_ =~ y{`'"()<>\r\n$}{}d; $_ =~ y{ }{,}; $_ =~ s{;.+\z}{}g; } @$tempemails;
 
 			RECIPIENTS: foreach my $_e ( @{ Kanadzuchi::Address->parse($tempemails) } )
 			{
@@ -165,7 +152,7 @@ sub eatit
 			}
 
 			next(MIMEPARSER) unless( @$tempemails );
-			map { $_ =~ y{[`'"()<>\r\n$]}{}d; $_ =~ s{\s}{,}g; $_ =~ s{;.+\z}{}g; } @$tempemails;
+			map { $_ =~ y{`'"()<>\r\n$}{}d; $_ =~ y{ }{,}; $_ =~ s{;.+\z}{}g; } @$tempemails;
 
 			ADDRESSER: foreach my $_e ( @{ Kanadzuchi::Address->parse($tempemails) } )
 			{
@@ -202,7 +189,7 @@ sub eatit
 			$tempheader->{'deliverystatus'} = $mimeparser->getit('Status') || next();
 
 			# Convert from (string)'5.1.2' to (int)512;
-			$tempheader->{'deliverystatus'} =~ y{[0-9]}{}dc;
+			$tempheader->{'deliverystatus'} =~ y{0-9}{}dc;
 			next() unless( $tempheader->{'deliverystatus'} );
 			$bouncemesg->{'deliverystatus'} = int($tempheader->{'deliverystatus'});
 		}
@@ -216,8 +203,8 @@ sub eatit
 		unless( $bouncemesg->{'diagnosticcode'} )
 		{
 			$tempheader->{'diagnosticcode'} =  $mimeparser->getit('Diagnostic-Code') || q{};
-			$tempheader->{'diagnosticcode'} =~ y{[`"'\r\n]}{}d;	# Drop quotation marks and CR/LF
-			$tempheader->{'diagnosticcode'} =~ y{[ ]}{}s;		# Squeeze spaces
+			$tempheader->{'diagnosticcode'} =~ y{`"'\r\n}{}d;	# Drop quotation marks and CR/LF
+			$tempheader->{'diagnosticcode'} =~ y{ }{}s;		# Squeeze spaces
 			chomp($tempheader->{'diagnosticcode'});
 
 			$bouncemesg->{'diagnosticcode'} = $tempheader->{'diagnosticcode'};
@@ -308,10 +295,10 @@ sub eatit
 	return( Kanadzuchi::Iterator->new($mesgpieces) );
 }
 
-#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
-# ||P |||u |||b |||l |||i |||c |||       |||M |||e |||t |||h |||o |||d |||s ||
-# ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
+#  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
+# ||I |||n |||s |||t |||a |||n |||c |||e |||       |||M |||e |||t |||h |||o |||d |||s ||
+# ||__|||__|||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 sub tellmewhy
 {
