@@ -1,4 +1,4 @@
-# $Id: Archive.pm,v 1.5 2010/03/01 23:41:41 ak Exp $
+# $Id: Archive.pm,v 1.6 2010/06/10 10:28:35 ak Exp $
 # -Id: Compress.pm,v 1.1 2009/08/29 08:04:54 ak Exp -
 # -Id: Compress.pm,v 1.2 2009/05/29 08:22:21 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -45,10 +45,6 @@ __PACKAGE__->mk_accessors(
 # ||C |||o |||n |||s |||t |||a |||n |||t ||
 # ||__|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
-#  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
-# ||F |||u |||n |||c |||t |||i |||o |||n |||s ||
-# ||__|||__|||__|||__|||__|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 sub ARCHIVEFORMAT() { 'gzip' }	# Default archive format
 
@@ -69,11 +65,7 @@ sub new
 	my $class = shift();
 	my $argvs = { @_ };
 	my $plmod = q();
-	my $afext = {
-		'zip' => 'zip',
-		'gzip' => 'gz',
-		'bzip2' => 'bz2',
-	};
+	my $afext = { 'zip' => 'zip', 'gzip' => 'gz', 'bzip2' => 'bz2' };
 
 	MODULENAME: {
 		$plmod = [split( q{::}, $class )]->[2] || $class->ARCHIVEFORMAT();
@@ -150,8 +142,8 @@ sub is_available
 	my $self = shift();
 	my $path = $self->{'module'};
 
-	$path =~ s{::}{/}g;
-	$path .= q{.pm};
+	$path =~ y{:}{/}s;
+	$path .= '.pm';
 
 	eval { require $path; };
 	return(1) unless( $@ );

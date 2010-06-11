@@ -1,4 +1,4 @@
-# $Id: Statistics.pm,v 1.5 2010/03/01 23:41:41 ak Exp $
+# $Id: Statistics.pm,v 1.6 2010/06/10 10:28:35 ak Exp $
 # -Id: Statistics.pm,v 1.1 2009/08/29 09:00:23 ak Exp -
 # -Id: Statistics.pm,v 1.1 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -11,12 +11,6 @@
     ### ##  ##  ##  ##    ##      ##   ##    ##  ##        ##  
  #####   ### #####   ### #### #####     ### ####  #### #####   
 package Kanadzuchi::Statistics;
-
-#  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
-# ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
-# ||__|||__|||__|||__|||__|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
-#
 use base 'Class::Accessor::Fast::XS';
 use strict;
 use warnings;
