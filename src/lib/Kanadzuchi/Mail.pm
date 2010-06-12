@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.23 2010/06/10 09:18:04 ak Exp $
+# $Id: Mail.pm,v 1.24 2010/06/12 13:20:23 ak Exp $
 # -Id: Message.pm,v 1.1 2009/08/29 07:32:59 ak Exp -
 # -Id: BounceMessage.pm,v 1.13 2009/08/21 02:43:14 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -104,7 +104,7 @@ my $ReasonWhy = {
 
 
 my $DomainCache = {};
-my $LoadedGroup = Kanadzuchi::Mail::Group->legere();
+my $LoadedGroup = Kanadzuchi::Mail::Group->postult();
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -189,7 +189,7 @@ sub new
 			{
 				foreach my $g ( q|Kanadzuchi::Mail::Group::Neighbor|, @$LoadedGroup, q|Kanadzuchi::Mail::Group::WebMail| )
 				{
-					my $dinfo = $g->reperio($dpart);
+					my $dinfo = $g->reperit($dpart);
 
 					if( $dinfo->{'class'} )
 					{

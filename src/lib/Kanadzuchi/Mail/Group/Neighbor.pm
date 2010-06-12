@@ -1,4 +1,4 @@
-# $Id: Neighbor.pm,v 1.4 2010/06/10 09:16:45 ak Exp $
+# $Id: Neighbor.pm,v 1.5 2010/06/12 13:20:27 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::
                                                           
@@ -34,10 +34,10 @@ my $OurDomain = ( -r $Neighbors && -s _ && -T _ ) ? JSON::Syck::LoadFile($Neighb
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub reperio 
+sub reperit 
 {
 	# +-+-+-+-+-+-+-+
-	# |r|e|p|e|r|i|o|
+	# |r|e|p|e|r|i|t|
 	# +-+-+-+-+-+-+-+
 	#
 	# @Description	Detect and load the class for the domain

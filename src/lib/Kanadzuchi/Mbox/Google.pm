@@ -1,4 +1,4 @@
-# $Id: Google.pm,v 1.7 2010/06/10 10:28:51 ak Exp $
+# $Id: Google.pm,v 1.8 2010/06/12 13:20:32 ak Exp $
 # -Id: Google.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: Google.pm,v 1.1 2009/07/31 09:04:38 ak Exp -
 # Kanadzuchi::Mbox::
@@ -20,10 +20,10 @@ use Kanadzuchi::RFC1893;
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub reperio
+sub reperit
 {
 	# +-+-+-+-+-+-+-+
-	# |r|e|p|e|r|i|o|
+	# |r|e|p|e|r|i|t|
 	# +-+-+-+-+-+-+-+
 	#
 	# @Description	Detect an error via Google(Gmail)

@@ -1,4 +1,4 @@
-# $Id: Group.pm,v 1.3 2010/06/10 09:17:17 ak Exp $
+# $Id: Group.pm,v 1.4 2010/06/12 13:20:25 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::
                                      
@@ -18,14 +18,14 @@ use warnings;
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub reperio {}
-sub legere
+sub reperit {}
+sub postult
 {
-	# +-+-+-+-+-+-+
-	# |l|e|g|e|r|e|
-	# +-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+
+	# |p|o|s|t|u|l|t|
+	# +-+-+-+-+-+-+-+
 	#
-	# @Description	Read Kanadzuchi::Mail::Group::XX::YY
+	# @Description	Require Kanadzuchi::Mail::Group::???::*
 	# @Param	<None>
 	# @Return	(Ref->Array) Loaded class names
 	my $class = shift();

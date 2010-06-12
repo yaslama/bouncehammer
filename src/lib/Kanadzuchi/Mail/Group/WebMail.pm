@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.9 2010/06/10 09:16:45 ak Exp $
+# $Id: WebMail.pm,v 1.10 2010/06/12 13:20:27 ak Exp $
 # -Id: AOL.pm,v 1.1 2009/08/29 07:33:21 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # -Id: Hotmail.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
@@ -29,8 +29,8 @@ use warnings;
 my $Domains = {
 	'aol' => [
 		# AOL; America OnLine
-		qr{(?>\A(?:aol|aim)[.]com\z)},
-		qr{(?>\Aaol[.](?:de|fr|in|jp|nl|se)\z)},
+		qr{(?>\Aaim[.](?:com|net)\z},
+		qr{(?>\Aaol[.](?:asia|be|ch|de|fr|in|jp|nl|se)\z)},
 		qr{(?>\Aaol[.](?:co[.]uk|com[.]br)\z)},
 		qr{(?>\Anetscape[.]net\z)},
 	],
@@ -93,10 +93,10 @@ my $Classes = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub reperio
+sub reperit
 {
 	# +-+-+-+-+-+-+-+
-	# |r|e|p|e|r|i|o|
+	# |r|e|p|e|r|i|t|
 	# +-+-+-+-+-+-+-+
 	#
 	# @Description	Detect and load the class for the domain

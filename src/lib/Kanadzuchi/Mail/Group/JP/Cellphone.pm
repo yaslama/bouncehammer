@@ -1,4 +1,4 @@
-# $Id: Cellphone.pm,v 1.3 2010/06/10 09:16:07 ak Exp $
+# $Id: Cellphone.pm,v 1.4 2010/06/12 13:20:28 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
                                                             
@@ -47,10 +47,10 @@ my $Classes = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub reperio
+sub reperit
 {
 	# +-+-+-+-+-+-+-+
-	# |r|e|p|e|r|i|o|
+	# |r|e|p|e|r|i|t|
 	# +-+-+-+-+-+-+-+
 	#
 	# @Description	Detect and load the class for the domain

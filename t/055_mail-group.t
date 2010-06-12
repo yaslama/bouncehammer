@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.3 2010/06/10 09:09:38 ak Exp $
+# $Id: 055_mail-group.t,v 1.4 2010/06/12 13:20:34 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -46,11 +46,11 @@ REQUIRE: {
 }
 
 METHODS: {
-	can_ok($BaseGrp, qw(reperio legere));
-	foreach my $c ( keys(%$Classes) ){ can_ok( $Classes->{$c}, 'reperio' ) } 
+	can_ok($BaseGrp, qw(reperit postult));
+	foreach my $c ( keys(%$Classes) ){ can_ok( $Classes->{$c}, 'reperit' ) } 
 
 	LEGERE: {
-		my $loadedgr = $BaseGrp->legere();
+		my $loadedgr = $BaseGrp->postult();
 
 		isa_ok( $loadedgr, q|ARRAY| );
 		foreach my $g ( @$loadedgr )
@@ -66,8 +66,8 @@ CLASS_METHODS: foreach my $c ( keys(%$Domains) )
 	my $detected = {};
 	MATCH: foreach my $s ( @{$Domains->{$c}} )
 	{
-		$detected = $Classes->{ $c }->reperio($s);
-		isa_ok( $detected, q|HASH|, '->reperio' );
+		$detected = $Classes->{ $c }->reperit($s);
+		isa_ok( $detected, q|HASH|, '->reperit' );
 		ok( $detected->{'class'}, '->class = '.$detected->{'class'} );
 		ok( $detected->{'group'}, '->group = '.$detected->{'group'} );
 		ok( $detected->{'provider'}, '->provider = '.$detected->{'provider'} );
@@ -75,8 +75,8 @@ CLASS_METHODS: foreach my $c ( keys(%$Domains) )
 
 	DONT_MATCH: foreach my $s ( @{$Domains->{$c}} )
 	{
-		$detected = $Classes->{ $c }->reperio($s.'.org');
-		isa_ok( $detected, q|HASH|, '->reperio' );
+		$detected = $Classes->{ $c }->reperit($s.'.org');
+		isa_ok( $detected, q|HASH|, '->reperit' );
 		is( $detected->{'class'}, q(), '->class = ' );
 		is( $detected->{'group'}, q(), '->group = ' );
 		is( $detected->{'provider'}, q(), '->provider = ' );
