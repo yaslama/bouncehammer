@@ -149,16 +149,16 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 @WEBUI_FALSE@sysconf_DATA = aliases-example bouncehammer.cf-example crontab-example \
-@WEBUI_FALSE@	neighbor-domains-example prove.cf test-run.cf
+@WEBUI_FALSE@	neighbor-domains-example prove.cf test-run.cf group-by-area-example
 
 
-# $Id: Makefile.am,v 1.6 2010/06/08 03:15:22 ak Exp $
+# $Id: Makefile.am,v 1.7 2010/06/10 09:18:55 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/src/etc, is processed by 
 # automake to create Makefile.in.
 @WEBUI_TRUE@sysconf_DATA = aliases-example bouncehammer.cf-example crontab-example \
-@WEBUI_TRUE@	neighbor-domains-example prove.cf test-run.cf webui.cf-example \
-@WEBUI_TRUE@	httpd.conf-example
+@WEBUI_TRUE@	neighbor-domains-example prove.cf test-run.cf group-by-area-example \
+@WEBUI_TRUE@	webui.cf-example httpd.conf-example
 
 distdir = $(BUILDROOT)/dist/etc
 instdir = @sysconfdir@
