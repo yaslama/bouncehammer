@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.10 2010/06/12 13:20:27 ak Exp $
+# $Id: WebMail.pm,v 1.11 2010/06/13 07:40:11 ak Exp $
 # -Id: AOL.pm,v 1.1 2009/08/29 07:33:21 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # -Id: Hotmail.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
@@ -29,52 +29,55 @@ use warnings;
 my $Domains = {
 	'aol' => [
 		# AOL; America OnLine
-		qr{(?>\Aaim[.](?:com|net)\z},
-		qr{(?>\Aaol[.](?:asia|be|ch|de|fr|in|jp|nl|se)\z)},
-		qr{(?>\Aaol[.](?:co[.]uk|com[.]br)\z)},
-		qr{(?>\Anetscape[.]net\z)},
+		qr{\Aaim[.](?:com|net)\z},
+		qr{\Aaol[.](?:com|be|ch|cl|de|dk|es|fi|fr|hk|in|it|jp|kr|nl|pl|ru|se|tw)\z},
+		qr{\Aaol[.]co[.](?:nz|uk)\z},
+		qr{\Aaol[.]com[.](?:ar|au|br|co|mx|ve)\z},
+		qr{\Anetscape[.]net\z},
 	],
 	'microsoft' => [
 		# Windows Live Hotmail http://www.hotmail.com/
-		qr{(?>\Amsn[.]com\z)},
-		qr{(?>\Amsnhotmail[.]com\z)},
-		qr{(?>\Awindowslive[.]com\z)},
-		qr{(?>\Ahotmail[.](?:com|fr|it|de|es|jp|se)\z)},
-		qr{(?>\Ahotmail[.]co[.](?:jp|uk|th)\z)},
-		qr{(?>\Ahotmail[.]com[.](?:ar|tr|br)\z)},
-		qr{(?>\Alive[.](?:com|at|be|ca|cl|cn|de|dk|fr|hk|ie|it|jp|nl|no|ru|se)\z)},
-		qr{(?>\Alive[.]co[.](?:kr|za|uk)\z)},
-		qr{(?>\Alive[.]com[.](?:ar|au|my|mx|sg)\z)},
+		qr{\Amsn[.](?:com|mv)\z},
+		qr{\A(?:hotmail|live|msnhotmail)[.]com\z},
+		qr{\Awindowslive[.](?:com|ez)\z},
+		qr{\Ahotmail[.](?:ac|as|at|bb|be|bs|ca|ch|cl|cz|de|dk|es|fi|fr|gr|hk|hu)\z},
+		qr{\Ahotmail[.](?:it|la|lt|lu|lv|ly|mn|mw|my|nl|no|ph|pn|pt|rs|se|sg|sh|sk|vu)\z},
+		qr{\Ahotmail[.]co[.](?:at|id|il|in|jp|kr|nz|pn|th|ug|uk|za)\z},
+		qr{\Ahotmail[.]com[.](?:ar|au|bo|br|hk|my|ph|pl|sg|tr|tt|tw|vn)\z},
+		qr{\Alive[.](?:at|be|ca|ch|cl|cn|de|dk|fi|fr|hk|ie|in|it|jp|nl|no|ph|ru|se)\z},
+		qr{\Alive[.]co[.](?:in|kr|uk|za)\z},
+		qr{\Alive[.]com[.](?:ar|au|co|mx|my|pe|ph|pk|pt|sg|ve)\z},
 	],
 	'yahoo' => [
 		# Yahoo! Mail; http://world.yahoo.com/
-		qr{(?>\Ayahoo[.]com\z)},
-		qr{(?>\Ayahoo[.]com[.](?:ar|au|br|cn|hk|kr|my|mx|no|ph|ru|sg|es|se|tw)\z)},
-		qr{(?>\Ayahoo[.](?:at|ba|ca|de|dk|es|fr|gr|ie|it|kr|ru|se|tw)\z)},
-		qr{(?>\Ayahoo[.]co[.](?:in|jp|kr|ru|th|tw|uk)\z)},
-		qr{(?>\A(?:ymail|rocketmail)[.]com\z)},		# From 2008/06/19
+		qr{\Ayahoo[.]com\z},
+		qr{\Ayahoo[.](?:at|ca|cl|cn|de|dk|es|fr|gr|ie|in|it|jp|no|pl|ro|se)\z},
+		qr{\Ayahoo[.]com[.](?:ar|au|br|cn|co|hk|mx|my|pe|ph|sg|tr|tw|ve|vn)\z},
+		qr{\Ayahoo[.]co[.](?:hu|id|in|jp|kr|nz|th|uk)\z},
+		qr{\A(?:ymail|rocketmail)[.]com\z},		# From 2008/06/19
 
 		# http://promo.mail.yahoo.co.jp/collabo/
 		# From 2009/12/01
-		qr{(?>\Ailove-(?:mickey|minnie|pooh|stitch|tinkerbell)[.]jp\z)},
-		qr{(?>\Agamba[-]fan[.]jp\z)},
-		qr{(?>\Ahawks[-]fan[.]jp\z)},
-		qr{(?>\Ay[-]fmarinos[.]com\z)},		# From 2010/02/17
+		qr{\Ailove-(?:mickey|minnie|pooh|stitch|tinkerbell)[.]jp\z},
+		qr{\Agamba[-]fan[.]jp\z},
+		qr{\Ahawks[-]fan[.]jp\z},
+		qr{\Ay[-]fmarinos[.]com\z},		# From 2010/02/17
 	],
 	'apple' => [
 		# mobileme, http://me.com/
-		qr{(?>\A(?:mac|me)[.]com\z)},
+		qr{\A(?:mac|me)[.]com\z},
 	],
 	'google' => [
 		# GMail http://mail.google.com/mail/
-		qr{(?>\Agmail[.]com\z)},
+		qr{\Agmail[.]com\z},
+		qr{\Agmail[.](?:bj|cf|ge|ie|lu|re|ug)\z},
 
 		# GMail in U.K. and Germany
-		qr{(?>\Agooglemail[.]com\z)},
+		qr{\Agooglemail[.]com\z},
 	],
 	'nokia' => [
 		# Ovi by Nokia, http://www.ovi.com/
-		qr{(?>\Aovi[.]com\z)},
+		qr{\Aovi[.]com\z},
 	],
 };
 
