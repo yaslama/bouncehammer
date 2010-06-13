@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.3 2010/06/12 13:20:30 ak Exp $
+# $Id: WebMail.pm,v 1.4 2010/06/13 07:40:15 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::RU::
                                                    
@@ -21,10 +21,10 @@ use warnings;
 # Major company's Webmail domains in Russia
 my $Domains = {
 	'runet' => [
-		qr{(?>\A(?:mail|bk|inbox|list)[.]ru\z)},
+		qr{\A(?:mail|bk|inbox|list)[.]ru\z},
 	],
 	'yandex' => [
-		qr{(?>\Ayandex[.]ru\z)},
+		qr{\Ayandex[.]ru\z},
 	],
 };
 

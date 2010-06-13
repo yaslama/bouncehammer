@@ -1,4 +1,4 @@
-# $Id: Smartphone.pm,v 1.6 2010/06/12 13:20:28 ak Exp $
+# $Id: Smartphone.pm,v 1.7 2010/06/13 07:40:13 ak Exp $
 # -Id: SmartPhone.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
@@ -25,25 +25,24 @@ my $Domains = {
 	'willcom' => [
 		# Willcom AIR-EDGE
 		# http://www.willcom-inc.com/ja/service/contents_service/create/center_info/index.html
-		qr{(?>\Apdx[.]ne[.]jp\z)},
-		qr{(?>\A(?:di|dj|dk|wm)[.]pdx[.]ne[.]jp\z)},
-		qr{(?>willcom[.]com\z)},	# Created at 2009/01/15
+		qr{\Apdx[.]ne[.]jp\z},
+		qr{\A(?:di|dj|dk|wm)[.]pdx[.]ne[.]jp\z},
+		qr{willcom[.]com\z},	# Created at 2009/01/15
 	],
 	'emobile' => [ 
 		# EMOBILE EMNET
-		qr{(?>\Aemnet[.]ne[.]jp\z)},
+		qr{\Aemnet[.]ne[.]jp\z},
 	],
 	'softbank' => [ 
 		# SoftBank|Apple iPhone
-		qr{(?>\Ai[.]softbank[.]jp\z)},
+		qr{\Ai[.]softbank[.]jp\z},
 	],
 	'nttdocomo' => [
 		# mopera, http://www.mopera.net/
-		qr{(?>\Amopera[.]ne[.]jp\z)},
-		qr{(?>\Amopera[.]net\z)},
+		qr{\Amopera[.](?:ne[.]jp|net)\z},
 
 		# BlackBerry by NTT DoCoMo
-		qr{(?>\Adocomo[.]blackberry[.]com\z)},
+		qr{\Adocomo[.]blackberry[.]com\z},
 	],
 };
 

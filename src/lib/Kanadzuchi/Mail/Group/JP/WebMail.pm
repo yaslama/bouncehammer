@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.4 2010/06/12 13:20:29 ak Exp $
+# $Id: WebMail.pm,v 1.5 2010/06/13 07:40:13 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
                                                    
@@ -22,20 +22,20 @@ use warnings;
 my $Domains = {
 	'goo' => [
 		# goo mail, http://mail.goo.ne.jp/goomail/index.ghtml
-		qr{(?>\Amail[.]goo[.]ne[.]jp\z)},
-		qr{(?>\Agoo[.]jp\z)},
+		qr{\Amail[.]goo[.]ne[.]jp\z},
+		qr{\Agoo[.]jp\z},
 	],
 	'nttdocomo' => [
 		# DoCoMo web mail powered by goo; http://dwmail.jp/
-		qr{(?>\Adwmail[.]jp\z)},
+		qr{\Adwmail[.]jp\z},
 	],
 	'aubykddi' => [
 		# KDDI auone(Gmail); http://auone.jp/
-		qr{(?>\Aauone[.]jp\z)},
+		qr{\Aauone[.]jp\z},
 	],
 	'livedoor' => [
 		# livedoor mail(Gmail) http://mail.livedoor.com/
-		qr{(?>\Alivedoor[.]com\z)},
+		qr{\Alivedoor[.]com\z},
 	],
 };
 

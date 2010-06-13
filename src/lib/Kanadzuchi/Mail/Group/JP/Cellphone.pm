@@ -1,4 +1,4 @@
-# $Id: Cellphone.pm,v 1.4 2010/06/12 13:20:28 ak Exp $
+# $Id: Cellphone.pm,v 1.5 2010/06/13 07:40:13 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
                                                             
@@ -21,18 +21,18 @@ use warnings;
 #
 my $Domains = {
 	'nttdocomo' => [ 
-		qr{(?>\Adocomo[.]ne[.]jp\z)},
+		qr{\Adocomo[.]ne[.]jp\z},
 	],
 	'aubykddi'  => [
-		qr{(?>\Aezweb[.]ne[.]jp\z)},
-		qr{(?>\A[0-9a-z]{2}[.]ezweb[.]ne[.]jp\z)},
-		qr{(?>\A[0-9a-z][-0-9a-z]{0,8}[0-9a-z][.]biz[.]ezweb[.]ne[.]jp\z)},
+		qr{\Aezweb[.]ne[.]jp\z},
+		qr{\A[0-9a-z]{2}[.]ezweb[.]ne[.]jp\z},
+		qr{\A[0-9a-z][-0-9a-z]{0,8}[0-9a-z][.]biz[.]ezweb[.]ne[.]jp\z},
 	],
 	'softbank'  => [
-		qr{(?>\Asoftbank[.]ne[.]jp\z)},
-		qr{(?>\A[dhtcrksnq][.]vodafone[.]ne[.]jp\z)},
-		qr{(?>\Ajp-[dhtcrksnq][.]ne[.]jp\z)},
-		qr{(?>\Adisney[.]ne[.]jp\z)},
+		qr{\Asoftbank[.]ne[.]jp\z},
+		qr{\A[dhtcrksnq][.]vodafone[.]ne[.]jp\z},
+		qr{\Ajp-[dhtcrksnq][.]ne[.]jp\z},
+		qr{\Adisney[.]ne[.]jp\z},
 	],
 };
 
