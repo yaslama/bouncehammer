@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.4 2010/06/12 13:20:34 ak Exp $
+# $Id: 055_mail-group.t,v 1.5 2010/06/13 08:39:58 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 155 );
+use Test::More ( tests => 174 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -19,6 +19,7 @@ my $BaseGrp = q|Kanadzuchi::Mail::Group|;
 my $Classes = {
         'neighbor'	=> q|Kanadzuchi::Mail::Group::Neighbor|,
         'webmail'	=> q|Kanadzuchi::Mail::Group::WebMail|,
+        'cawebmail'	=> q|Kanadzuchi::Mail::Group::CA::WebMail|,
         'jpcellphone'	=> q|Kanadzuchi::Mail::Group::JP::Cellphone|,
         'jpsmartphone'	=> q|Kanadzuchi::Mail::Group::JP::Smartphone|,
         'jpwebmail'	=> q|Kanadzuchi::Mail::Group::JP::WebMail|,
@@ -28,6 +29,7 @@ my $Classes = {
 my $Domains = {
         'neighbor'	=> [],
         'webmail'	=> [ qw( aol.com gmail.com yahoo.com hotmail.com me.com ovi.com ) ],
+	'cawebmail'	=> [ qw( hushmail.com hush.com ) ],
         'jpcellphone'	=> [ qw( docomo.ne.jp ezweb.ne.jp softbank.ne.jp ) ],
         'jpsmartphone'	=> [ qw( i.softbank.jp docomo.blackberry.com emnet.ne.jp willcom.com ) ],
         'jpwebmail'	=> [ qw( auone.jp dwmail.jp ) ],
