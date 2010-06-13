@@ -1,9 +1,9 @@
-# $Id: Makefile.am,v 1.6 2010/06/13 08:39:53 ak Exp $
+# $Id: Makefile.am,v 1.7 2010/06/13 12:14:21 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/Mail/Group,
 # is processed by automake to create Makefile.in.
 
-SUBDIRS = CA JP RU
+SUBDIRS = AU CA JP RU
 distdir = $(BUILDROOT)/dist/lib/Kanadzuchi/Mail/Group
 instdir = @prefix@/lib/Kanadzuchi/Mail/Group
 modules = Neighbor.pm

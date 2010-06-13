@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.5 2010/06/13 08:39:58 ak Exp $
+# $Id: 055_mail-group.t,v 1.6 2010/06/13 12:13:47 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 174 );
+use Test::More ( tests => 193 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -17,23 +17,25 @@ use Test::More ( tests => 174 );
 #
 my $BaseGrp = q|Kanadzuchi::Mail::Group|;
 my $Classes = {
-        'neighbor'	=> q|Kanadzuchi::Mail::Group::Neighbor|,
-        'webmail'	=> q|Kanadzuchi::Mail::Group::WebMail|,
-        'cawebmail'	=> q|Kanadzuchi::Mail::Group::CA::WebMail|,
-        'jpcellphone'	=> q|Kanadzuchi::Mail::Group::JP::Cellphone|,
-        'jpsmartphone'	=> q|Kanadzuchi::Mail::Group::JP::Smartphone|,
-        'jpwebmail'	=> q|Kanadzuchi::Mail::Group::JP::WebMail|,
-        'ruwebmail'	=> q|Kanadzuchi::Mail::Group::RU::WebMail|,
+	'neighbor'	=> q|Kanadzuchi::Mail::Group::Neighbor|,
+	'webmail'	=> q|Kanadzuchi::Mail::Group::WebMail|,
+	'auwebmail'	=> q|Kanadzuchi::Mail::Group::AU::WebMail|,
+	'cawebmail'	=> q|Kanadzuchi::Mail::Group::CA::WebMail|,
+	'jpcellphone'	=> q|Kanadzuchi::Mail::Group::JP::Cellphone|,
+	'jpsmartphone'	=> q|Kanadzuchi::Mail::Group::JP::Smartphone|,
+	'jpwebmail'	=> q|Kanadzuchi::Mail::Group::JP::WebMail|,
+	'ruwebmail'	=> q|Kanadzuchi::Mail::Group::RU::WebMail|,
 };
 
 my $Domains = {
-        'neighbor'	=> [],
-        'webmail'	=> [ qw( aol.com gmail.com yahoo.com hotmail.com me.com ovi.com ) ],
+	'neighbor'	=> [],
+	'webmail'	=> [ qw( aol.com gmail.com yahoo.com hotmail.com me.com ovi.com ) ],
+	'auwebmail'	=> [ qw( fastmail.net fastmail.fm ) ],
 	'cawebmail'	=> [ qw( hushmail.com hush.com ) ],
-        'jpcellphone'	=> [ qw( docomo.ne.jp ezweb.ne.jp softbank.ne.jp ) ],
-        'jpsmartphone'	=> [ qw( i.softbank.jp docomo.blackberry.com emnet.ne.jp willcom.com ) ],
-        'jpwebmail'	=> [ qw( auone.jp dwmail.jp ) ],
-        'ruwebmail'	=> [ qw( mail.ru yandex.ru ) ],
+	'jpcellphone'	=> [ qw( docomo.ne.jp ezweb.ne.jp softbank.ne.jp ) ],
+	'jpsmartphone'	=> [ qw( i.softbank.jp docomo.blackberry.com emnet.ne.jp willcom.com ) ],
+	'jpwebmail'	=> [ qw( auone.jp dwmail.jp ) ],
+	'ruwebmail'	=> [ qw( mail.ru yandex.ru ) ],
 };
 
 #  ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ 

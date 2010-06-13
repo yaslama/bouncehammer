@@ -1,4 +1,4 @@
-# $Id: group-by-area-example,v 1.2 2010/06/13 08:39:49 ak Exp $
+# $Id: group-by-area-example,v 1.3 2010/06/13 12:13:39 ak Exp $
 # group-by-area:
 #   If you use this file, it should be saved as 'group-by-area' .
 #   Kanadzuchi::Mail::Group reads this file as YAML for getting the
@@ -14,6 +14,11 @@
 #       # 1 = Load 'Kanadzuchi::Mail::Group::<AREACODE>::<HOSTGROUP>', Then it
 #             correctly classify host group and provider.
 #
+# Host groups which are used in Australia
+#   webmail: WebMail domains of FastMail
+au:
+  webmail: 1
+
 # Host groups which are used in Canada
 #   webmail: WebMail domains of Hush Communications Canada Inc.
 ca:

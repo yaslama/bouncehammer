@@ -144,6 +144,7 @@ AC_CONFIG_FILES([Makefile
                  src/lib/Kanadzuchi/Config/Makefile
                  src/lib/Kanadzuchi/Mail/Bounced/Makefile
                  src/lib/Kanadzuchi/Mail/Bounced/JP/Makefile
+                 src/lib/Kanadzuchi/Mail/Group/AU/Makefile
                  src/lib/Kanadzuchi/Mail/Group/CA/Makefile
                  src/lib/Kanadzuchi/Mail/Group/JP/Makefile
                  src/lib/Kanadzuchi/Mail/Group/RU/Makefile
