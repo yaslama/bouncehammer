@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.6 2010/06/13 12:13:47 ak Exp $
+# $Id: 055_mail-group.t,v 1.7 2010/06/14 05:41:31 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 193 );
+use Test::More ( tests => 220 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -25,17 +25,19 @@ my $Classes = {
 	'jpsmartphone'	=> q|Kanadzuchi::Mail::Group::JP::Smartphone|,
 	'jpwebmail'	=> q|Kanadzuchi::Mail::Group::JP::WebMail|,
 	'ruwebmail'	=> q|Kanadzuchi::Mail::Group::RU::WebMail|,
+	'uswebmail'	=> q|Kanadzuchi::Mail::Group::US::WebMail|,
 };
 
 my $Domains = {
 	'neighbor'	=> [],
-	'webmail'	=> [ qw( aol.com gmail.com yahoo.com hotmail.com me.com ovi.com ) ],
+	'webmail'	=> [ qw( aol.com gmail.com yahoo.com hotmail.com me.com ovi.com excite.com ) ],
 	'auwebmail'	=> [ qw( fastmail.net fastmail.fm ) ],
 	'cawebmail'	=> [ qw( hushmail.com hush.com ) ],
 	'jpcellphone'	=> [ qw( docomo.ne.jp ezweb.ne.jp softbank.ne.jp ) ],
 	'jpsmartphone'	=> [ qw( i.softbank.jp docomo.blackberry.com emnet.ne.jp willcom.com ) ],
 	'jpwebmail'	=> [ qw( auone.jp dwmail.jp ) ],
 	'ruwebmail'	=> [ qw( mail.ru yandex.ru ) ],
+	'uswebmail'	=> [ qw( mail.com usa.com ) ],
 };
 
 #  ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ 

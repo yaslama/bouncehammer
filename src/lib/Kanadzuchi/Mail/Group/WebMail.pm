@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.11 2010/06/13 07:40:11 ak Exp $
+# $Id: WebMail.pm,v 1.12 2010/06/14 05:41:25 ak Exp $
 # -Id: AOL.pm,v 1.1 2009/08/29 07:33:21 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # -Id: Hotmail.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
@@ -35,6 +35,22 @@ my $Domains = {
 		qr{\Aaol[.]com[.](?:ar|au|br|co|mx|ve)\z},
 		qr{\Anetscape[.]net\z},
 	],
+	'apple' => [
+		# mobileme, http://me.com/
+		qr{\A(?:mac|me)[.]com\z},
+	],
+	'excite' => [
+		# http://excite.com/
+		qr{\Aexcite[.](?:com|co[.]jp)\z},
+	],
+	'google' => [
+		# GMail http://mail.google.com/mail/
+		qr{\Agmail[.]com\z},
+		qr{\Agmail[.](?:bj|cf|ge|ie|lu|re|ug)\z},
+
+		# GMail in U.K. and Germany
+		qr{\Agooglemail[.]com\z},
+	],
 	'microsoft' => [
 		# Windows Live Hotmail http://www.hotmail.com/
 		qr{\Amsn[.](?:com|mv)\z},
@@ -47,6 +63,10 @@ my $Domains = {
 		qr{\Alive[.](?:at|be|ca|ch|cl|cn|de|dk|fi|fr|hk|ie|in|it|jp|nl|no|ph|ru|se)\z},
 		qr{\Alive[.]co[.](?:in|kr|uk|za)\z},
 		qr{\Alive[.]com[.](?:ar|au|co|mx|my|pe|ph|pk|pt|sg|ve)\z},
+	],
+	'nokia' => [
+		# Ovi by Nokia, http://www.ovi.com/
+		qr{\Aovi[.]com\z},
 	],
 	'yahoo' => [
 		# Yahoo! Mail; http://world.yahoo.com/
@@ -63,32 +83,16 @@ my $Domains = {
 		qr{\Ahawks[-]fan[.]jp\z},
 		qr{\Ay[-]fmarinos[.]com\z},		# From 2010/02/17
 	],
-	'apple' => [
-		# mobileme, http://me.com/
-		qr{\A(?:mac|me)[.]com\z},
-	],
-	'google' => [
-		# GMail http://mail.google.com/mail/
-		qr{\Agmail[.]com\z},
-		qr{\Agmail[.](?:bj|cf|ge|ie|lu|re|ug)\z},
-
-		# GMail in U.K. and Germany
-		qr{\Agooglemail[.]com\z},
-	],
-	'nokia' => [
-		# Ovi by Nokia, http://www.ovi.com/
-		qr{\Aovi[.]com\z},
-	],
 };
 
 my $Classes = {
 	'aol'		=> 'Generic',
-	'microsoft'	=> 'Generic',
-	'yahoo'		=> 'Yahoo',
-	'runet'		=> 'Generic',
 	'apple'		=> 'Generic',
+	'excite'	=> 'Generic',
 	'google'	=> 'Generic',
 	'nokia'		=> 'Generic',
+	'microsoft'	=> 'Generic',
+	'yahoo'		=> 'Yahoo',
 };
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
