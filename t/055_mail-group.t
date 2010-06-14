@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.14 2010/06/14 12:39:31 ak Exp $
+# $Id: 055_mail-group.t,v 1.15 2010/06/14 16:23:15 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 406 );
+use Test::More ( tests => 425 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -21,6 +21,7 @@ my $Classes = {
 	'webmail'	=> q|Kanadzuchi::Mail::Group::WebMail|,
 	'auwebmail'	=> q|Kanadzuchi::Mail::Group::AU::WebMail|,
 	'cawebmail'	=> q|Kanadzuchi::Mail::Group::CA::WebMail|,
+	'cnwebmail'	=> q|Kanadzuchi::Mail::Group::CN::WebMail|,
 	'czwebmail'	=> q|Kanadzuchi::Mail::Group::CZ::WebMail|,
 	'dewebmail'	=> q|Kanadzuchi::Mail::Group::DE::WebMail|,
 	'egwebmail'	=> q|Kanadzuchi::Mail::Group::EG::WebMail|,
@@ -41,6 +42,7 @@ my $Domains = {
 				lycos.com lycosmail.com ) ],
 	'auwebmail'	=> [ qw( fastmail.net fastmail.fm ) ],
 	'cawebmail'	=> [ qw( hushmail.com hush.com ) ],
+	'cnwebmail'	=> [ qw( 163.com 188.com ) ],
 	'czwebmail'	=> [ qw( seznam.cz email.cz ) ],
 	'dewebmail'	=> [ qw( gmx.de ) ],
 	'egwebmail'	=> [ qw( gawab.com giza.cc ) ],
