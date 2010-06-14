@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.12 2010/06/14 05:41:25 ak Exp $
+# $Id: WebMail.pm,v 1.13 2010/06/14 10:30:24 ak Exp $
 # -Id: AOL.pm,v 1.1 2009/08/29 07:33:21 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # -Id: Hotmail.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
@@ -51,6 +51,10 @@ my $Domains = {
 		# GMail in U.K. and Germany
 		qr{\Agooglemail[.]com\z},
 	],
+	'lycos' => [
+		# http://www.lycos.com/
+		qr{\Alycos(?:mail)?[.]com\z},
+	],
 	'microsoft' => [
 		# Windows Live Hotmail http://www.hotmail.com/
 		qr{\Amsn[.](?:com|mv)\z},
@@ -90,6 +94,7 @@ my $Classes = {
 	'apple'		=> 'Generic',
 	'excite'	=> 'Generic',
 	'google'	=> 'Generic',
+	'lycos'		=> 'Generic',
 	'nokia'		=> 'Generic',
 	'microsoft'	=> 'Generic',
 	'yahoo'		=> 'Yahoo',
