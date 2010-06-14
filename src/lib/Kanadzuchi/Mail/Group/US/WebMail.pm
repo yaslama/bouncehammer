@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.2 2010/06/14 11:35:09 ak Exp $
+# $Id: WebMail.pm,v 1.3 2010/06/14 12:37:30 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::CA::
                                                    
@@ -20,9 +20,27 @@ use warnings;
 #
 # Major company's Webmail domains in United States of America
 my $Domains = {
+	# EXPERIMENTAL(Not Tested), Does anyone know other domains of bluetie.com?
+	# http://www.bluetie.com/
+	'bluetie' => [
+		qr{\Abluetie[.]com\z},
+	],
+
 	# http://www.inbox.com/
 	'inboxcom' => [
 		qr{\Ainbox[.]com\z},
+	],
+
+	# EXPERIMENTAL(Not Tested), Does anyone know other domains of lavabit.com?
+	# http://lavabit.com/
+	'lavabit' => [
+		qr{\Alavabit[.]com\z},
+	],
+
+	# EXPERIMENTAL(Not Tested), Does anyone know other domains of luxsci.com?
+	# http://luxsci.com/
+	'luxsci' => [
+		qr{\Aluxsci[.]com\z},
 	],
 
 	# http://www.mail.com/intl/
@@ -104,8 +122,11 @@ my $Domains = {
 };
 
 my $Classes = {
-	'mailcom'	=> 'Generic',
+	'bluetie'	=> 'Generic',
 	'inboxcom'	=> 'Generic',
+	'lavabit'	=> 'Generic',
+	'luxsci'	=> 'Generic',
+	'mailcom'	=> 'Generic',
 };
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
