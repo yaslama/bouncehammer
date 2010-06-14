@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.1 2010/06/14 05:41:29 ak Exp $
+# $Id: WebMail.pm,v 1.2 2010/06/14 11:35:09 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::CA::
                                                    
@@ -20,6 +20,11 @@ use warnings;
 #
 # Major company's Webmail domains in United States of America
 my $Domains = {
+	# http://www.inbox.com/
+	'inboxcom' => [
+		qr{\Ainbox[.]com\z},
+	],
+
 	# http://www.mail.com/intl/
 	'mailcom' => [
 		# 2-4 characters(.com)
@@ -100,6 +105,7 @@ my $Domains = {
 
 my $Classes = {
 	'mailcom'	=> 'Generic',
+	'inboxcom'	=> 'Generic',
 };
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
