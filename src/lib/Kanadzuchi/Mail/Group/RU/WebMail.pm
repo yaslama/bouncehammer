@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.4 2010/06/13 07:40:15 ak Exp $
+# $Id: WebMail.pm,v 1.5 2010/06/14 08:49:43 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::RU::
                                                    
@@ -52,7 +52,7 @@ sub reperit
 	my $mdata = { 'class' => q(), 'group' => q(), 'provider' => q(), };
 	my $cpath = q();
 
-	return($mdata) unless( $dpart =~ m{(?>[.]ru\z)} );
+	return($mdata) unless( $dpart =~ m{[.]ru\z} );
 
 	foreach my $d ( keys(%$Domains) )
 	{
