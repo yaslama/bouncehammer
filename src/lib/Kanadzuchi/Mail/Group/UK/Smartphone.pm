@@ -1,4 +1,4 @@
-# $Id: Smartphone.pm,v 1.1 2010/06/14 10:31:10 ak Exp $
+# $Id: Smartphone.pm,v 1.2 2010/06/14 11:01:18 ak Exp $
 # -Id: SmartPhone.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
@@ -22,7 +22,7 @@ use warnings;
 #
 # Smart phone domains
 my $Domains = {
-	'o2' => [
+	'telefonica' => [
 		# Telefonica O2 UK Limited.
 		# https://www.o2.co.uk/
 		qr{\Ao2[.]co[.]uk\z},
@@ -30,7 +30,7 @@ my $Domains = {
 };
 
 my $Classes = {
-	'o2'		=> 'Generic',
+	'telefonica'	=> 'Generic',
 };
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
