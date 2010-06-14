@@ -1,4 +1,4 @@
-# $Id: group-by-area-example,v 1.8 2010/06/14 11:03:39 ak Exp $
+# $Id: group-by-area-example,v 1.9 2010/06/14 11:23:08 ak Exp $
 # group-by-area:
 #   If you use this file, it should be saved as 'group-by-area' .
 #   Kanadzuchi::Mail::Group reads this file as YAML for getting the
@@ -22,6 +22,11 @@ au:
 # Host groups which are used in Canada
 #   webmail: Hushmail
 ca:
+  webmail: 1
+
+# Host groups which are used in Czech Republic/Czechia
+#   webmail: Seznam
+cz:
   webmail: 1
 
 # Host groups which are used in Bundesrepublik Deutschland
