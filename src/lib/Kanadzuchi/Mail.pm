@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.24 2010/06/12 13:20:23 ak Exp $
+# $Id: Mail.pm,v 1.25 2010/06/14 07:29:14 ak Exp $
 # -Id: Message.pm,v 1.1 2009/08/29 07:32:59 ak Exp -
 # -Id: BounceMessage.pm,v 1.13 2009/08/21 02:43:14 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -187,7 +187,7 @@ sub new
 			}
 			else
 			{
-				foreach my $g ( q|Kanadzuchi::Mail::Group::Neighbor|, @$LoadedGroup, q|Kanadzuchi::Mail::Group::WebMail| )
+				foreach my $g ( q|Kanadzuchi::Mail::Group::Neighbor|, q|Kanadzuchi::Mail::Group::WebMail|, @$LoadedGroup )
 				{
 					my $dinfo = $g->reperit($dpart);
 
