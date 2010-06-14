@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.5 2010/06/14 08:49:43 ak Exp $
+# $Id: WebMail.pm,v 1.6 2010/06/14 11:20:09 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::RU::
                                                    
@@ -50,7 +50,6 @@ sub reperit
 	my $class = shift();
 	my $dpart = shift() || return({});
 	my $mdata = { 'class' => q(), 'group' => q(), 'provider' => q(), };
-	my $cpath = q();
 
 	return($mdata) unless( $dpart =~ m{[.]ru\z} );
 
