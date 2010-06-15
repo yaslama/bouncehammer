@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.1 2010/06/14 08:51:08 ak Exp $
+# $Id: WebMail.pm,v 1.2 2010/06/15 09:14:31 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::DE::
                                                    
@@ -21,13 +21,13 @@ use warnings;
 # Major company's Webmail domains in Germany(Bundesrepublik Deutschland)
 my $Domains = {
 	# http://www.gmx.net/
-	'gmx' => [
+	'gmx.de' => [
 		qr{\Agmx[.]de\z},
 	],
 };
 
 my $Classes = {
-	'gmx'		=> 'Generic',
+	'gmx.de'	=> 'Generic',
 };
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
