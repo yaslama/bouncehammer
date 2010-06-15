@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.16 2010/06/15 04:02:00 ak Exp $
+# $Id: 055_mail-group.t,v 1.17 2010/06/15 05:14:44 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 444 );
+use Test::More ( tests => 463 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -32,6 +32,7 @@ my $Classes = {
 	'krwebmail'	=> q|Kanadzuchi::Mail::Group::KR::WebMail|,
 	'nowebmail'	=> q|Kanadzuchi::Mail::Group::NO::WebMail|,
 	'ruwebmail'	=> q|Kanadzuchi::Mail::Group::RU::WebMail|,
+	'twwebmail'	=> q|Kanadzuchi::Mail::Group::TW::WebMail|,
 	'uksmartphone'	=> q|Kanadzuchi::Mail::Group::UK::Smartphone|,
 	'uswebmail'	=> q|Kanadzuchi::Mail::Group::US::WebMail|,
 };
@@ -54,6 +55,7 @@ my $Domains = {
 	'krwebmail'	=> [ qw( hanmail.net empas.com ) ],
 	'nowebmail'	=> [ qw( runbox.com ) ],
 	'ruwebmail'	=> [ qw( mail.ru yandex.ru ) ],
+	'twwebmail'	=> [ qw( seed.net.tw mars.seed.net.tw ) ],
 	'uksmartphone'	=> [ qw( o2.co.uk ) ],
 	'uswebmail'	=> [ qw( bluetie.com lavabit.com luxsci.com inbox.com mail.com usa.com ) ],
 };

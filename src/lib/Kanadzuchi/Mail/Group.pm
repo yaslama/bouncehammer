@@ -1,4 +1,4 @@
-# $Id: Group.pm,v 1.15 2010/06/15 04:01:54 ak Exp $
+# $Id: Group.pm,v 1.16 2010/06/15 05:14:38 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::
                                      
@@ -38,7 +38,7 @@ sub postult
 	$JSON::Syck::SortKeys        = 0;
 
 	# Experimental implementation for the future.
-	my $areakeylist = [ qw(AU CA CN CZ DE EG IN JP KR NO RU UK US) ];
+	my $areakeylist = [ qw(AU CA CN CZ DE EG IN JP KR NO RU TW UK US) ];
 	my $groupbyarea = '__KANADZUCHIROOT__/etc/group-by-area';
 	my $loadedgroup = ( -r $groupbyarea && -s _ && -T _ ) ? JSON::Syck::LoadFile($groupbyarea) : {};
 	my $didfileload = keys %$loadedgroup ? 1 : 0;
