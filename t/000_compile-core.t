@@ -1,4 +1,4 @@
-# $Id: 000_compile-core.t,v 1.34 2010/06/15 08:21:34 ak Exp $
+# $Id: 000_compile-core.t,v 1.35 2010/06/15 08:57:35 ak Exp $
 use strict;
 use warnings;
 use lib qw(./t/lib ./dist/lib ./src/lib);
@@ -36,6 +36,7 @@ my $Modules = [
 	q(Kanadzuchi::Mail::Group::DE::WebMail),
 	q(Kanadzuchi::Mail::Group::EG::WebMail),
 	q(Kanadzuchi::Mail::Group::IN::WebMail),
+	q(Kanadzuchi::Mail::Group::IR::WebMail),
 	q(Kanadzuchi::Mail::Group::JP::Cellphone),
 	q(Kanadzuchi::Mail::Group::JP::Smartphone),
 	q(Kanadzuchi::Mail::Group::JP::WebMail),

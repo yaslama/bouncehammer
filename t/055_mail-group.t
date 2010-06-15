@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.20 2010/06/15 08:21:34 ak Exp $
+# $Id: 055_mail-group.t,v 1.21 2010/06/15 08:57:35 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 496 );
+use Test::More ( tests => 507 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -27,6 +27,7 @@ my $Classes = {
 	'dewebmail'	=> q|Kanadzuchi::Mail::Group::DE::WebMail|,
 	'egwebmail'	=> q|Kanadzuchi::Mail::Group::EG::WebMail|,
 	'inwebmail'	=> q|Kanadzuchi::Mail::Group::IN::WebMail|,
+	'irwebmail'	=> q|Kanadzuchi::Mail::Group::IR::WebMail|,
 	'jpcellphone'	=> q|Kanadzuchi::Mail::Group::JP::Cellphone|,
 	'jpsmartphone'	=> q|Kanadzuchi::Mail::Group::JP::Smartphone|,
 	'jpwebmail'	=> q|Kanadzuchi::Mail::Group::JP::WebMail|,
@@ -53,6 +54,7 @@ my $Domains = {
 	'dewebmail'	=> [ qw( gmx.de ) ],
 	'egwebmail'	=> [ qw( gawab.com giza.cc ) ],
 	'inwebmail'	=> [ qw( ibibo.com ) ],
+	'irwebmail'	=> [ qw( iran.ir ) ],
 	'jpcellphone'	=> [ qw( docomo.ne.jp ezweb.ne.jp softbank.ne.jp d.vodafone.ne.jp jp-k.ne.jp ) ],
 	'jpsmartphone'	=> [ qw( i.softbank.jp docomo.blackberry.com emnet.ne.jp willcom.com ) ],
 	'jpwebmail'	=> [ qw( auone.jp dwmail.jp ) ],
