@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.5 2010/06/13 07:40:13 ak Exp $
+# $Id: WebMail.pm,v 1.6 2010/06/15 05:14:10 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
                                                    
@@ -18,32 +18,32 @@ use warnings;
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-# Major company's Webmail domains(Japan)
+# Major company's Webmail domains in Japan
 my $Domains = {
+	'aubykddi' => [
+		# KDDI auone(Gmail); http://auone.jp/
+		qr{\Aauone[.]jp\z},
+	],
 	'goo' => [
 		# goo mail, http://mail.goo.ne.jp/goomail/index.ghtml
 		qr{\Amail[.]goo[.]ne[.]jp\z},
 		qr{\Agoo[.]jp\z},
 	],
-	'nttdocomo' => [
-		# DoCoMo web mail powered by goo; http://dwmail.jp/
-		qr{\Adwmail[.]jp\z},
-	],
-	'aubykddi' => [
-		# KDDI auone(Gmail); http://auone.jp/
-		qr{\Aauone[.]jp\z},
-	],
 	'livedoor' => [
 		# livedoor mail(Gmail) http://mail.livedoor.com/
 		qr{\Alivedoor[.]com\z},
 	],
+	'nttdocomo' => [
+		# DoCoMo web mail powered by goo; http://dwmail.jp/
+		qr{\Adwmail[.]jp\z},
+	],
 };
 
 my $Classes = {
-	'goo'		=> 'Generic',
-	'nttdocomo'	=> 'Generic',
 	'aubykddi'	=> 'Generic',
+	'goo'		=> 'Generic',
 	'livedoor'	=> 'Generic',
+	'nttdocomo'	=> 'Generic',
 };
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
