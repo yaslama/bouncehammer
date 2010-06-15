@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.6 2010/06/14 11:20:09 ak Exp $
+# $Id: WebMail.pm,v 1.7 2010/06/15 10:30:57 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::RU::
                                                    
@@ -20,15 +20,28 @@ use warnings;
 #
 # Major company's Webmail domains in Russia
 my $Domains = {
+	# http://qip.ru/
+	'qip' => [
+		qr{\A(?:qip|pochta|front|hotbox|hotmail|land|newmail)[.]ru\z},
+		qr{\A(?:nightmail|nm|pochtamt|pop3|rbcmail|smtp)[.]ru\z},
+		qr{\A(?:fromru|mail15|mail333)[.]com\z},
+		qr{\Akrovatka[.]su\z},
+		qr{\Apisem[.]net\z},
+	],
+
+	# http://mail.ru/
 	'runet' => [
 		qr{\A(?:mail|bk|inbox|list)[.]ru\z},
 	],
+
+	# http://yandex.ru/
 	'yandex' => [
 		qr{\Ayandex[.]ru\z},
 	],
 };
 
 my $Classes = {
+	'qip'		=> 'Generic',
 	'runet'		=> 'Generic',
 	'yandex'	=> 'Generic',
 };
@@ -50,8 +63,6 @@ sub reperit
 	my $class = shift();
 	my $dpart = shift() || return({});
 	my $mdata = { 'class' => q(), 'group' => q(), 'provider' => q(), };
-
-	return($mdata) unless( $dpart =~ m{[.]ru\z} );
 
 	foreach my $d ( keys(%$Domains) )
 	{
