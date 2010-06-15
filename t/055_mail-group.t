@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.21 2010/06/15 08:57:35 ak Exp $
+# $Id: 055_mail-group.t,v 1.22 2010/06/15 10:31:36 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -27,11 +27,11 @@ my $Classes = {
 	'dewebmail'	=> q|Kanadzuchi::Mail::Group::DE::WebMail|,
 	'egwebmail'	=> q|Kanadzuchi::Mail::Group::EG::WebMail|,
 	'inwebmail'	=> q|Kanadzuchi::Mail::Group::IN::WebMail|,
-	'irwebmail'	=> q|Kanadzuchi::Mail::Group::IR::WebMail|,
 	'jpcellphone'	=> q|Kanadzuchi::Mail::Group::JP::Cellphone|,
 	'jpsmartphone'	=> q|Kanadzuchi::Mail::Group::JP::Smartphone|,
 	'jpwebmail'	=> q|Kanadzuchi::Mail::Group::JP::WebMail|,
 	'krwebmail'	=> q|Kanadzuchi::Mail::Group::KR::WebMail|,
+	'lvwebmail'	=> q|Kanadzuchi::Mail::Group::LV::WebMail|,
 	'nowebmail'	=> q|Kanadzuchi::Mail::Group::NO::WebMail|,
 	'ruwebmail'	=> q|Kanadzuchi::Mail::Group::RU::WebMail|,
 	'sgwebmail'	=> q|Kanadzuchi::Mail::Group::SG::WebMail|,
@@ -54,11 +54,11 @@ my $Domains = {
 	'dewebmail'	=> [ qw( gmx.de ) ],
 	'egwebmail'	=> [ qw( gawab.com giza.cc ) ],
 	'inwebmail'	=> [ qw( ibibo.com ) ],
-	'irwebmail'	=> [ qw( iran.ir ) ],
 	'jpcellphone'	=> [ qw( docomo.ne.jp ezweb.ne.jp softbank.ne.jp d.vodafone.ne.jp jp-k.ne.jp ) ],
 	'jpsmartphone'	=> [ qw( i.softbank.jp docomo.blackberry.com emnet.ne.jp willcom.com ) ],
 	'jpwebmail'	=> [ qw( auone.jp dwmail.jp ) ],
 	'krwebmail'	=> [ qw( hanmail.net empas.com ) ],
+	'lvwebmail'	=> [ qw( inbox.lv ) ],
 	'nowebmail'	=> [ qw( runbox.com ) ],
 	'ruwebmail'	=> [ qw( mail.ru yandex.ru ) ],
 	'sgwebmail'	=> [ qw( insing.com ) ],

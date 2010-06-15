@@ -1,4 +1,4 @@
-# $Id: group-by-area-example,v 1.17 2010/06/15 08:57:28 ak Exp $
+# $Id: group-by-area-example,v 1.18 2010/06/15 10:31:29 ak Exp $
 # group-by-area:
 #   If you use this file, it should be saved as 'group-by-area' .
 #   Kanadzuchi::Mail::Group reads this file as YAML for getting the
@@ -54,11 +54,6 @@ eg:
 in:
   webmail: 1
 
-# Host groups which are used in Iran
-#   webmail: Iran Email(iran.ir)
-ir:
-  webmail: 1
-
 # Host groups which are used in Japan
 #   cellphone: NTT DoCoMo, au by KDDI, SoftBank Mobile.
 #   smartphone:iPhone, EMOBILE, WILLCOM, and such.
@@ -72,6 +67,12 @@ jp:
 #   webmail: Daum(Hanmail), Empas
 kr:
   webmail: 1
+
+# Host groups which are used in Republic of Latvia
+#   webmail: inbokss(inbox.lv)
+lv:
+  webmail: 1
+
 
 # Host groups which are used in Norway
 #   webmail: runbox.com
