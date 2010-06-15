@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.1 2010/06/14 11:23:17 ak Exp $
+# $Id: WebMail.pm,v 1.2 2010/06/15 09:14:18 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::CZ::
                                                    
@@ -20,13 +20,13 @@ use warnings;
 #
 # Major company's Webmail domains in Czech Republic/Czechia
 my $Domains = {
-	'seznam' => [
+	'seznam.cz' => [
 		qr{\A(?:seznam|email|post|spoluzaci|stream|firmy)[.]cz\z},
 	],
 };
 
 my $Classes = {
-	'seznam'	=> 'Generic',
+	'seznam.cz'	=> 'Generic',
 };
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
