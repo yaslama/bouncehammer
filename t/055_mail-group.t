@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.15 2010/06/14 16:23:15 ak Exp $
+# $Id: 055_mail-group.t,v 1.16 2010/06/15 04:02:00 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 425 );
+use Test::More ( tests => 444 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -29,6 +29,7 @@ my $Classes = {
 	'jpcellphone'	=> q|Kanadzuchi::Mail::Group::JP::Cellphone|,
 	'jpsmartphone'	=> q|Kanadzuchi::Mail::Group::JP::Smartphone|,
 	'jpwebmail'	=> q|Kanadzuchi::Mail::Group::JP::WebMail|,
+	'krwebmail'	=> q|Kanadzuchi::Mail::Group::KR::WebMail|,
 	'nowebmail'	=> q|Kanadzuchi::Mail::Group::NO::WebMail|,
 	'ruwebmail'	=> q|Kanadzuchi::Mail::Group::RU::WebMail|,
 	'uksmartphone'	=> q|Kanadzuchi::Mail::Group::UK::Smartphone|,
@@ -50,6 +51,7 @@ my $Domains = {
 	'jpcellphone'	=> [ qw( docomo.ne.jp ezweb.ne.jp softbank.ne.jp d.vodafone.ne.jp jp-k.ne.jp ) ],
 	'jpsmartphone'	=> [ qw( i.softbank.jp docomo.blackberry.com emnet.ne.jp willcom.com ) ],
 	'jpwebmail'	=> [ qw( auone.jp dwmail.jp ) ],
+	'krwebmail'	=> [ qw( hanmail.net empas.com ) ],
 	'nowebmail'	=> [ qw( runbox.com ) ],
 	'ruwebmail'	=> [ qw( mail.ru yandex.ru ) ],
 	'uksmartphone'	=> [ qw( o2.co.uk ) ],
