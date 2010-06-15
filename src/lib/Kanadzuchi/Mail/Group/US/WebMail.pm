@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.3 2010/06/14 12:37:30 ak Exp $
+# $Id: WebMail.pm,v 1.4 2010/06/15 09:14:36 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::CA::
                                                    
@@ -24,6 +24,11 @@ my $Domains = {
 	# http://www.bluetie.com/
 	'bluetie' => [
 		qr{\Abluetie[.]com\z},
+	],
+
+	# http://gmx.com/
+	'gmx.com' => [
+		qr{\Agmx[.]com\z},
 	],
 
 	# http://www.inbox.com/
@@ -123,6 +128,7 @@ my $Domains = {
 
 my $Classes = {
 	'bluetie'	=> 'Generic',
+	'gmx.com'	=> 'Generic',
 	'inboxcom'	=> 'Generic',
 	'lavabit'	=> 'Generic',
 	'luxsci'	=> 'Generic',
