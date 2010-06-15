@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.19 2010/06/15 07:43:52 ak Exp $
+# $Id: 055_mail-group.t,v 1.20 2010/06/15 08:21:34 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 485 );
+use Test::More ( tests => 496 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -37,6 +37,7 @@ my $Classes = {
 	'twwebmail'	=> q|Kanadzuchi::Mail::Group::TW::WebMail|,
 	'uksmartphone'	=> q|Kanadzuchi::Mail::Group::UK::Smartphone|,
 	'uswebmail'	=> q|Kanadzuchi::Mail::Group::US::WebMail|,
+	'zawebmail'	=> q|Kanadzuchi::Mail::Group::ZA::WebMail|,
 };
 
 my $Domains = {
@@ -62,6 +63,7 @@ my $Domains = {
 	'twwebmail'	=> [ qw( seed.net.tw mars.seed.net.tw ) ],
 	'uksmartphone'	=> [ qw( o2.co.uk ) ],
 	'uswebmail'	=> [ qw( bluetie.com lavabit.com luxsci.com inbox.com mail.com usa.com ) ],
+	'zawebmail'	=> [ qw( webmail.co.za ) ],
 };
 
 #  ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ 
