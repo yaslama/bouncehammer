@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.22 2010/06/15 10:31:36 ak Exp $
+# $Id: 055_mail-group.t,v 1.23 2010/06/16 08:16:25 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -80,7 +80,7 @@ REQUIRE: {
 }
 
 METHODS: {
-	can_ok($BaseGrp, qw(reperit postult));
+	can_ok($BaseGrp, qw(reperit postult communisexemplar nominisexemplaria classisnomina));
 	foreach my $c ( keys(%$Classes) ){ can_ok( $Classes->{$c}, 'reperit' ) } 
 
 	LEGERE: {
@@ -98,13 +98,17 @@ METHODS: {
 CLASS_METHODS: foreach my $c ( keys(%$Domains) )
 {
 	my $detected = {};
+	my $thegroup = q();
 	MATCH: foreach my $s ( @{$Domains->{$c}} )
 	{
 		$detected = $Classes->{ $c }->reperit($s);
-		isa_ok( $detected, q|HASH|, '->reperit' );
-		ok( $detected->{'class'}, '->class = '.$detected->{'class'} );
-		ok( $detected->{'group'}, '->group = '.$detected->{'group'} );
-		ok( $detected->{'provider'}, '->provider = '.$detected->{'provider'} );
+		$thegroup = lc $Classes->{ $c };
+		$thegroup =~ s{\A.+::}{};
+
+		isa_ok( $detected, q|HASH|, '->reperit('.$s.')' );
+		ok( $detected->{'class'}, '->reperit('.$s.')->class = '.$detected->{'class'} );
+		is( $detected->{'group'}, $thegroup, '->reperit('.$s.')->group = '.$detected->{'group'} );
+		ok( $detected->{'provider'}, '->reperit('.$s.')->provider = '.$detected->{'provider'} );
 	}
 
 	DONT_MATCH: foreach my $s ( @{$Domains->{$c}} )

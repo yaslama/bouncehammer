@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.6 2010/06/15 05:14:10 ak Exp $
+# $Id: WebMail.pm,v 1.7 2010/06/16 08:15:34 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
                                                    
@@ -13,68 +13,45 @@ use base 'Kanadzuchi::Mail::Group';
 use strict;
 use warnings;
 
-#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
-# ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
-# ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
-# |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
-#
-# Major company's Webmail domains in Japan
-my $Domains = {
-	'aubykddi' => [
-		# KDDI auone(Gmail); http://auone.jp/
-		qr{\Aauone[.]jp\z},
-	],
-	'goo' => [
-		# goo mail, http://mail.goo.ne.jp/goomail/index.ghtml
-		qr{\Amail[.]goo[.]ne[.]jp\z},
-		qr{\Agoo[.]jp\z},
-	],
-	'livedoor' => [
-		# livedoor mail(Gmail) http://mail.livedoor.com/
-		qr{\Alivedoor[.]com\z},
-	],
-	'nttdocomo' => [
-		# DoCoMo web mail powered by goo; http://dwmail.jp/
-		qr{\Adwmail[.]jp\z},
-	],
-};
-
-my $Classes = {
-	'aubykddi'	=> 'Generic',
-	'goo'		=> 'Generic',
-	'livedoor'	=> 'Generic',
-	'nttdocomo'	=> 'Generic',
-};
-
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub reperit
+# Major company's Webmail domains in Japan
+sub nominisexemplaria
 {
-	# +-+-+-+-+-+-+-+
-	# |r|e|p|e|r|i|t|
-	# +-+-+-+-+-+-+-+
-	#
-	# @Description	Detect and load the class for the domain
-	# @Param <str>	(String) Domain part
-	# @Return	(Ref->Hash) Class, Group, Provider name or Empty string
 	my $class = shift();
-	my $dpart = shift() || return({});
-	my $mdata = { 'class' => q(), 'group' => q(), 'provider' => q(), };
+	return {
+		'aubykddi' => [
+			# KDDI auone(Gmail); http://auone.jp/
+			qr{\Aauone[.]jp\z},
+		],
+		'goo' => [
+			# goo mail, http://mail.goo.ne.jp/goomail/index.ghtml
+			qr{\Amail[.]goo[.]ne[.]jp\z},
+			qr{\Agoo[.]jp\z},
+		],
+		'livedoor' => [
+			# livedoor mail(Gmail) http://mail.livedoor.com/
+			qr{\Alivedoor[.]com\z},
+		],
+		'nttdocomo' => [
+			# DoCoMo web mail powered by goo; http://dwmail.jp/
+			qr{\Adwmail[.]jp\z},
+		],
+	};
+}
 
-	foreach my $d ( keys(%$Domains) )
-	{
-		next() unless( grep { $dpart =~ $_ } @{ $Domains->{$d} } );
-
-		$mdata->{'class'} = q|Kanadzuchi::Mail::Bounced::|.$Classes->{$d};
-		$mdata->{'group'} = 'webmail';
-		$mdata->{'provider'} = $d;
-		last();
-	}
-
-	return($mdata);
+sub classisnomina
+{
+	my $class = shift();
+	return {
+		'aubykddi'	=> 'Generic',
+		'goo'		=> 'Generic',
+		'livedoor'	=> 'Generic',
+		'nttdocomo'	=> 'Generic',
+	};
 }
 
 1;
