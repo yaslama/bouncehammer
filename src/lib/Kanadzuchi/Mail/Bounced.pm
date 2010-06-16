@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.19 2010/06/11 00:06:01 ak Exp $
+# $Id: Bounced.pm,v 1.20 2010/06/16 12:57:47 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -360,7 +360,7 @@ sub is_filtered
 			eval { use Kanadzuchi::Mail::Why::Filtered; };
 			my $flib = q|Kanadzuchi::Mail::Why::Filtered|;
 
-			if( $stat == 513 || $flib->is_included($self->{diagnosticcode}) )
+			if( $stat == 513 || $flib->habettextu($self->{diagnosticcode}) )
 			{
 				# PC/spam filter
 				#   Status: 5.1.3
@@ -411,17 +411,17 @@ sub is_userunknown
 			#   Status: 5.1.1
 			#   Diagnostic-Code: SMTP; 550 5.1.1 <***@example.jp>:
 			#     Recipient address rejected: User unknown in local recipient table
-			$isuu = 1 unless( $rclass->is_included($dicode) );
+			$isuu = 1 unless( $rclass->habettextu($dicode) );
 		}
 		elsif( $stat == Kanadzuchi::RFC1893->internalcode($subj) )
 		{
-			$isuu = 1 unless( $rclass->is_included($dicode) );
+			$isuu = 1 unless( $rclass->habettextu($dicode) );
 		}
 		else
 		{
 			if( int( $stat / 100 ) == 5 )
 			{
-				$isuu = 1 if( $uclass->is_included($dicode) );
+				$isuu = 1 if( $uclass->habettextu($dicode) );
 			}
 			elsif( int( $stat / 100 ) == 4 )
 			{
@@ -429,7 +429,7 @@ sub is_userunknown
 				# Status: 4.4.7
 				# Diagnostic-Code: SMTP; 450 4.1.1 <***@example.jp>:
 				#   Recipient address rejected: User unknown in virtual mailbox table
-				$isuu = 1 if( $uclass->is_included($dicode) );
+				$isuu = 1 if( $uclass->habettextu($dicode) );
 			}
 		}
 	}
@@ -474,7 +474,7 @@ sub is_hostunknown
 			my $dicode = $self->{'diagnosticcode'};
 
 			eval { use Kanadzuchi::Mail::Why::HostUnknown; };
-			$ishu = 1 if( $hclass->is_included($dicode) );
+			$ishu = 1 if( $hclass->habettextu($dicode) );
 		}
 	}
 	return($ishu);
@@ -524,7 +524,7 @@ sub is_mailboxfull
 			my $dicode = $self->{'diagnosticcode'};
 			eval { use Kanadzuchi::Mail::Why::MailboxFull; };
 
-			$ismf = 1 if( $mclass->is_included($dicode) );
+			$ismf = 1 if( $mclass->habettextu($dicode) );
 		}
 	}
 	return($ismf);
@@ -568,7 +568,7 @@ sub is_exceedlimit
 			my $dicode = $self->{'diagnosticcode'};
 			eval { use Kanadzuchi::Mail::Why::ExceedLimit; };
 
-			$isxl = 1 if( $bclass->is_included($dicode) );
+			$isxl = 1 if( $bclass->habettextu($dicode) );
 		}
 	}
 	return($isxl);
@@ -612,7 +612,7 @@ sub is_toobigmesg
 			my $dicode = $self->{'diagnosticcode'};
 			eval { use Kanadzuchi::Mail::Why::TooBig; };
 
-			$istb = 1 if( $bclass->is_included($dicode) );
+			$istb = 1 if( $bclass->habettextu($dicode) );
 		}
 	}
 	return($istb);
@@ -642,7 +642,7 @@ sub is_norelaying
 
 	eval { use Kanadzuchi::Mail::Why::RelayingDenied; };
 
-	$isnr = 1 if( $rclass->is_included($dicode) );
+	$isnr = 1 if( $rclass->habettextu($dicode) );
 	return($isnr);
 }
 

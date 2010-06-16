@@ -1,4 +1,4 @@
-# $Id: 054_mail-why.t,v 1.3 2010/04/02 11:44:17 ak Exp $
+# $Id: 054_mail-why.t,v 1.4 2010/06/16 12:57:51 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -83,23 +83,23 @@ my $OtherString = 'This string does not match with any patterns';
 # |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 #
 REQUIRE: foreach my $c ( keys(%$Classes) ){ require_ok("$Classes->{$c}"); }
-METHODS: foreach my $c ( keys(%$Classes) ){ can_ok( $Classes->{$c}, 'is_included' ); }
+METHODS: foreach my $c ( keys(%$Classes) ){ can_ok( $Classes->{$c}, 'habettextu' ); }
 
 # 3. Call class method
 CLASS_METHODS: foreach my $c ( keys(%$Classes) )
 {
 	MATCH: foreach my $s ( @{$Strings->{$c}} )
 	{
-		ok( $Classes->{$c}->is_included($s), 'Match String by '.$c.q{->is_included()} );
+		ok( $Classes->{$c}->habettextu($s), 'Match String by '.$c.q{->habettextu()} );
 	}
 
-	is( $Classes->{$c}->is_included($OtherString), 0, 'No Match String by '.$c.q{->is_included()} );
+	is( $Classes->{$c}->habettextu($OtherString), 0, 'No Match String by '.$c.q{->habettextu()} );
 
 	ZERO: foreach my $z ( @{$Kanadzuchi::Test::ExceptionalValues} )
 	{
 		my $argv = defined($z) ? sprintf("%#x", ord($z)) : 'undef()';
-		is( $Classes->{$c}->is_included($z), 0,
-			'No Match String by '.$c.'->is_included('.$argv.')' );
+		is( $Classes->{$c}->habettextu($z), 0,
+			'No Match String by '.$c.'->habettextu('.$argv.')' );
 	}
 }
 
