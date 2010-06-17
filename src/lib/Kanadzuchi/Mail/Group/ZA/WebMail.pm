@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.2 2010/06/16 08:15:56 ak Exp $
+# $Id: WebMail.pm,v 1.3 2010/06/17 12:00:38 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::ZA::
                                                    
@@ -27,7 +27,9 @@ sub nominisexemplaria
 		# Experimental(Not tested)
 		# http://www.webmail.co.za/
 		'webmail.co.za' => [
-			qr{\Awebmail[.]co[.]za\z},
+			qr{\A(?:exclusive|executive|home|magic|rave|star|work|web)mail[.]co[.]za\z},
+			qr{\Athe(?:cricket|golf|pub|rugby)[.]co[.]za\z},
+			qr{\A(?:mailbox|websurfer)[.]co[.]za\z},
 		],
 	};
 }
