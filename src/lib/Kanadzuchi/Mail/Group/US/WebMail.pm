@@ -1,6 +1,6 @@
-# $Id: WebMail.pm,v 1.5 2010/06/16 08:15:54 ak Exp $
+# $Id: WebMail.pm,v 1.6 2010/06/17 12:00:36 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
-# Kanadzuchi::Mail::Group::CA::
+# Kanadzuchi::Mail::Group::US::
                                                    
  ##  ##         ##     ##  ##           ##  ###    
  ##  ##   ####  ##     ######   ####         ##    
