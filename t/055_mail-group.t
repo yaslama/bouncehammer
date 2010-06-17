@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.23 2010/06/16 08:16:25 ak Exp $
+# $Id: 055_mail-group.t,v 1.24 2010/06/17 12:00:41 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 507 );
+use Test::More ( tests => 545 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -33,10 +33,12 @@ my $Classes = {
 	'krwebmail'	=> q|Kanadzuchi::Mail::Group::KR::WebMail|,
 	'lvwebmail'	=> q|Kanadzuchi::Mail::Group::LV::WebMail|,
 	'nowebmail'	=> q|Kanadzuchi::Mail::Group::NO::WebMail|,
+	'nzwebmail'	=> q|Kanadzuchi::Mail::Group::NZ::WebMail|,
 	'ruwebmail'	=> q|Kanadzuchi::Mail::Group::RU::WebMail|,
 	'sgwebmail'	=> q|Kanadzuchi::Mail::Group::SG::WebMail|,
 	'twwebmail'	=> q|Kanadzuchi::Mail::Group::TW::WebMail|,
 	'uksmartphone'	=> q|Kanadzuchi::Mail::Group::UK::Smartphone|,
+	'ukwebmail'	=> q|Kanadzuchi::Mail::Group::UK::WebMail|,
 	'uswebmail'	=> q|Kanadzuchi::Mail::Group::US::WebMail|,
 	'zawebmail'	=> q|Kanadzuchi::Mail::Group::ZA::WebMail|,
 };
@@ -60,10 +62,12 @@ my $Domains = {
 	'krwebmail'	=> [ qw( hanmail.net empas.com ) ],
 	'lvwebmail'	=> [ qw( inbox.lv ) ],
 	'nowebmail'	=> [ qw( runbox.com ) ],
+	'nzwebmail'	=> [ qw( coolkiwi.com ) ],
 	'ruwebmail'	=> [ qw( mail.ru yandex.ru ) ],
 	'sgwebmail'	=> [ qw( insing.com ) ],
 	'twwebmail'	=> [ qw( seed.net.tw mars.seed.net.tw ) ],
 	'uksmartphone'	=> [ qw( o2.co.uk ) ],
+	'ukwebmail'	=> [ qw( gmx.co.uk postmaster.co.uk yipple.com ) ],
 	'uswebmail'	=> [ qw( bluetie.com lavabit.com luxsci.com inbox.com mail.com usa.com ) ],
 	'zawebmail'	=> [ qw( webmail.co.za ) ],
 };
