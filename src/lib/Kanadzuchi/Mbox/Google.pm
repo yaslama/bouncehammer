@@ -1,4 +1,4 @@
-# $Id: Google.pm,v 1.8 2010/06/12 13:20:32 ak Exp $
+# $Id: Google.pm,v 1.9 2010/06/17 05:54:02 ak Exp $
 # -Id: Google.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: Google.pm,v 1.1 2009/07/31 09:04:38 ak Exp -
 # Kanadzuchi::Mbox::
@@ -14,6 +14,9 @@ package Kanadzuchi::Mbox::Google;
 use strict;
 use warnings;
 use Kanadzuchi::RFC1893;
+
+my $RxFromGmail = qr{Delivery to the following recipient failed permanently:};
+my $RxErrorHead = qr{The error that the other server returned was:};
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -48,41 +51,90 @@ sub reperit
 	#	that the other server returned was: 
 	#	550 550 <recipient-address-heare@example.jp>: User unknown (state 14).
 	#
-	return(q{}) unless( $mhead->{'from'} =~ m{[@]googlemail[.]com[>]?\z} );
-	return(q{}) unless( $mhead->{'subject'} =~ m{Delivery[ ]Status[ ]Notification} );
-	return(q{}) unless( $$mbody =~ m{This is an automatically generated Delivery Status Notification}i );
+	return q{} unless( $mhead->{'from'} =~ m{[@]googlemail[.]com[>]?\z} );
+	return q{} unless( $mhead->{'subject'} =~ m{Delivery[ ]Status[ ]Notification} );
+
+	my $gmail = 0;		# Flag, is Gmail or not.
+	my $state = 0;		# (state xx).
+	my $frcpt = q();	# X-Final-Recipients: header or email address in the body.
+	my $dcode = q();	# Diagnostic-Code: header or error text.
+	my $bodyb = q();	# Boby part for rewriting
+	my $error = q();	# Error reason: userunknown, filtered, mailboxfull...
+	my $dstat = q();	# Pseudo D.S.N.
 
 	$phead .= sprintf("Date: %s\n", $mhead->{'date'} );
 	$phead .= sprintf("From: %s\n", $mhead->{'to'} );
+	$frcpt  = $1 if( lc($mhead->{'x-failed-recipients'}) =~ m{\A[ ]?(.+[@].+)[ ]*\z} );
 
-	# X-Failed-Recipients: recipient-address-here@example.jp
-	if( lc($mhead->{'x-failed-recipients'}) =~ m{\A[ ]?(.+)[ ]*\z} )
+	EACH_LINE: foreach my $_gl ( split( qq{\n}, $$mbody ) )
 	{
-		my $frcpt = $1;
-		my $ebody = qr{Delivery[ ]to[ ]the[ ]following[ ]recipient[ ]failed[ ]permanently:}io;
-		my $ectxt = qr{The[ ]error[ ]that[ ]the[ ]other[ ]server[ ]returned[ ]was:}io;
-		my $dcode = q();
-		my $dstat = Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode('onhold'));
+		next() if( $_gl =~ m{\A\z} );
+		if( ! $gmail && $_gl =~ $RxFromGmail ){ $gmail = 1; next(); }
+		next() unless( $gmail );
 
-		return(q{}) unless( $$mbody =~ m{$ebody\n\n.+$frcpt} );
+		# ^Irecipient-address-here@example.jp
+		if( $gmail && $_gl =~ m{\A\s+(.+)\z} ){ $frcpt ||= $1; next(); }
 
-		if( $$mbody =~ m{$ectxt[ ]+\d+[ ](.+)[ ]+[(]state[ ]\d+[)][.]\n}is )
-		{
-			# Get the delivery status value from Diagnostic-Code header
-			$dcode = $1;
-			if( $dcode =~ m{[^\d]+[#]?(\d[.]\d[.]\d)[^\d]+} ){ $dstat = $1; }
+		$_gl =~ s{=\z}{}g;
+		$bodyb .= $_gl if( $_gl =~ m{\A\w} );
 
-			$phead .= q(Diagnostic-Code: SMTP; ).qq($dcode\n);
-			$phead .= q(Status: ).qq($dstat\n);
-			$phead .= q(Final-Recipient: rfc822; ).qq($frcpt\n);
-			$phead .= q(To: ).qq($frcpt\n);
-		}
+		last() if( $_gl =~ m{[(]state[ ]\d+[)][.]} );
+		last() if( $_gl =~ m{\A\s*[-][-]+} || $_gl =~ m{\A[.]\z} );
+	}
+	$bodyb =~ s{\A.+$RxErrorHead }{};
+	$state =  $1 if( $bodyb =~ m{[(]state[ ](\d+)[)][.]} );
+
+	if( $bodyb =~ m{\d{3}[ ]\d{3}[ ](\d[.]\d[.]\d)[ ][<](.+?)[>][.][.][.][ ](.+)\z} )
+	{
+		# There is D.S.N. code in the body part.
+		# 550 550 5.1.1 <userunknown@example.jp>... User Unknown (state 14).
+		$dstat = $1;
+		$frcpt ||= $2;
+		$dcode = $3;
 	}
 	else
 	{
-		return(q{});
+		# There is NO D.S.N. code in the body part.
+		if( $state == 14 )
+		{
+			$error = 'userunknown';
+		}
+		elsif( $state == 18 )
+		{
+			$error = 'filtered';
+		}
+		else
+		{
+			$error = 'onhold';
+		}
+		$dstat = Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode($error));
+
+		if( $bodyb =~ m{\d{3}[ ]\d{3}[ ][<](.+?)[>]:[ ](User unknown.+)\z} )
+		{
+			# 550 550 <userunknown@example.com>: User unknown (state 14).
+			$frcpt ||= $1;
+			$dcode = $2;
+		}
+		elsif( $bodyb =~ m{\d{3}[ ]\d{3}[ ](.+)[ ]([^\s]+[@][^\s]+)[ ](.+)\z} )
+		{
+			# 550 550 Unknown user is-user-unknown@example.ne.jp (state 14).
+			# 550 550 Unknown user filtered-address@example.ne.jp (state 18).
+			$frcpt ||= $2;
+			$dcode = $1.' '.$3;
+		}
+		else
+		{
+			# Unsupported error message in body part.
+			return q{};
+		}
+
 	}
 
+	return($phead) unless( $frcpt );
+	$phead .= q(Diagnostic-Code: SMTP; ).qq($dcode\n);
+	$phead .= q(Status: ).qq($dstat\n);
+	$phead .= q(Final-Recipient: rfc822; ).qq($frcpt\n);
+	$phead .= q(To: ).qq($frcpt\n);
 	return( $phead );
 }
 
