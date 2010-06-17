@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# $Id: Makefile.am,v 1.3 2010/06/10 09:17:17 ak Exp $
+# $Id: Makefile.am,v 1.4 2010/06/17 09:15:57 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/Mail,
 # is processed by automake to create Makefile.in.
@@ -167,7 +167,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = Bounced Group Stored Why
 distdir = $(BUILDROOT)/dist/lib/Kanadzuchi/Mail
-instdir = @prefix@/lib/Kanadzuchi/Mail/Group
+instdir = @prefix@/lib/Kanadzuchi/Mail
 modules = Group.pm
 pkgdata_DATA = Bounced.pm Stored.pm Why.pm
 all: all-recursive
