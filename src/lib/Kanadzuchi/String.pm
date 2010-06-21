@@ -1,4 +1,4 @@
-# $Id: String.pm,v 1.5 2010/06/10 10:28:35 ak Exp $
+# $Id: String.pm,v 1.6 2010/06/19 09:44:15 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
 
@@ -32,13 +32,30 @@ sub token
 	#		(String) Blank/failed to create token
 	# @See		http://en.wikipedia.org/wiki/ASCII
 	#		http://search.cpan.org/~gaas/Digest-MD5-2.39/MD5.pm
-	my $class = shift() || return(q{});
-	my $afrom = shift() || return(q{});
-	my $arcpt = shift() || return(q{});
+	my $class = shift() || return q{};
+	my $afrom = shift() || return q{};
+	my $arcpt = shift() || return q{};
 
 	# Format: STX(0x02) Sender-Address RS(0x1e) Recipient-Address ETC(0x03)
 	return( Digest::MD5::md5_hex( 
 			sprintf( "\x02%s\x1e%s\x03", lc($afrom), lc($arcpt) ) ));
+}
+
+sub is_validtoken
+{
+	# +-+-+-+-+-+-+-+-+-+-+-+-+-+
+	# |i|s|_|v|a|l|i|d|t|o|k|e|n|
+	# +-+-+-+-+-+-+-+-+-+-+-+-+-+
+	#
+	# @Description	Message token validation
+	# @Param <str>	(String) Message token(MD5 hex digest)
+	# @Return	0 = Invalid message token string
+	#		1 = Valid message token string
+	my $class = shift();
+	my $token = shift() || return(0);
+
+	return(1) if( $token =~ m{\A[0-9a-f]{32}\z} );
+	return(0);
 }
 
 1;
