@@ -1,4 +1,4 @@
-# $Id: 014_string.t,v 1.4 2010/02/22 05:59:17 ak Exp $
+# $Id: 014_string.t,v 1.5 2010/06/19 09:44:17 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::String;
-use Test::More ( tests => 51 );
+use Test::More ( tests => 97 );
 no warnings 'once';
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
@@ -19,7 +19,7 @@ no warnings 'once';
 #
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::String|,
-	'methods' => [ 'token' ],
+	'methods' => [ 'token', 'is_validtoken' ],
 	'instance' => undef(), );
 
 #  ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ 
@@ -39,12 +39,14 @@ MESSAGE_TOKEN: {
 	is( $c->token('hoge',''), q(), q{->token('hoge','')} );
 	is( $c->token('','fuga'), q(), q{->token('','fuga')} );
 	is( $c->token(0,0), q(), q{->token(0,0)} );
+	ok( $c->is_validtoken($c->token('hoge','fuga')), '->is_validtoken() = 1' );
 
 	FALSE: foreach my $f ( @{$Kanadzuchi::Test::FalseValues} )
 	{
 		my $argv = defined($f) ? sprintf("%#x",ord($f)) : 'undef';
 		$d = $c->token( $f, $f );
 		is( length($d), 0, q{->token(}.$argv.q{) = }.$d );
+		is( $c->is_validtoken($d), 0, '->is_validtoken() = 0' );
 	}
 
 	CONTROL: foreach my $e ( @{$Kanadzuchi::Test::EscapeCharacters}, @{$Kanadzuchi::Test::ControlCharacters} )
@@ -52,6 +54,7 @@ MESSAGE_TOKEN: {
 		my $argv = defined($e) ? sprintf("%#x",ord($e)) : 'undef';
 		$d = $c->token( $e, $e );
 		ok( length($d), q{->token(}.$e.q{) = }.$argv );
+		ok( $c->is_validtoken($d), '->is_validtoken() = 1' );
 	}
 }
 
