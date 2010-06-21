@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.33 2010/06/17 05:52:58 ak Exp $
+# $Id: mailboxparser.PL,v 1.35 2010/06/21 03:29:45 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -561,7 +561,6 @@ sub parse_options
 
 		my @_argvs = @ARGV;
 
-		map { $_ =~ y{[ ]}{}d; } @_argvs;
 		@{ $Mail->{'files'} } = grep { -f $_ && -T _ && -r _ } @_argvs;
 		@{ $Mail->{'dirs'}  } = grep { -d $_ && -x _ && -r _ } @_argvs;
 
@@ -593,6 +592,7 @@ sub parse_options
 		my $_1stcharacter = substr( $_opt_format, 0, 1 );
 		$Fmt =  $_1stcharacter eq q(y) ? q(yaml) :
 			$_1stcharacter eq q(j) ? q(json) :
+			$_1stcharacter eq q(c) ? q(csv) :
 			$_1stcharacter eq q(a) ? q(asciitable) : q(yaml);
 	}
 	else
@@ -677,7 +677,7 @@ sub help
 	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf .\n");
 	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
 	printf( STDERR "    -F, --format <char> : Output(STDOUT only) format, the following are available.\n");
-	printf( STDERR "                          [y]aml = Default, [j]son, and [a]sciitable\n");
+	printf( STDERR "                          [y]aml = Default, [j]son, [c]sv and [a]sciitable\n");
 	printf( STDERR "    --silent            : Silent mode, All MESSAGES WILL NOT BE DISPLAYED.\n");
 	printf( STDERR "    -v, --verbose       : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
 	printf( STDERR "    --help              : Print help message(This screen)\n");

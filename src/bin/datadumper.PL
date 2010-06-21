@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.14 2010/05/19 18:24:51 ak Exp $
+# $Id: datadumper.PL,v 1.15 2010/06/21 03:29:46 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -447,7 +447,8 @@ sub parse_options
 	{
 		my $_1stcharacter = substr( $_opt_format, 0, 1 );
 		$Fmt =  $_1stcharacter eq q(y) ? q(yaml) :
-			$_1stcharacter eq q(j) ? q(json) : q(yaml);
+			$_1stcharacter eq q(j) ? q(json) :
+			$_1stcharacter eq q(c) ? q(csv) : q(yaml);
 	}
 	else
 	{
@@ -499,7 +500,7 @@ sub help
 	printf( STDERR "                                 __KANADZUCHIETC__/bouncehammer.cf\n");
 	printf( STDERR "    -T, --test                 : Test mode, same as ``-C /path/to/test-run.cf''\n");
 	printf( STDERR "    -F, --format <char>        : Output format, the following are available.\n");
-	printf( STDERR "                                 [y]aml = Default, [j]son, and [a]sciitable\n");
+	printf( STDERR "                                 [y]aml = Default, [j]son, [c]sv and [a]sciitable\n");
 	printf( STDERR "    --silent                   : Silent mode, All MESSAGES WILL NOT BE DISPLAYED.\n");
 	printf( STDERR "    -v, --verbose              : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
 	printf( STDERR "    --help                     : Print help message(This screen)\n");
