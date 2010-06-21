@@ -1,4 +1,4 @@
-# $Id: 090_log.t,v 1.8 2010/05/23 05:42:39 ak Exp $
+# $Id: 090_log.t,v 1.9 2010/06/21 03:30:09 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -12,7 +12,7 @@ use Kanadzuchi::Mail::Bounced;
 use Kanadzuchi::Mbox;
 use Kanadzuchi::Log;
 use Path::Class;
-use Test::More ( tests => 34 );
+use Test::More ( tests => 42 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -25,7 +25,7 @@ my $L = new Kanadzuchi::Test(
 );
 
 my $NM = 37;
-my $OF = [ 'yaml', 'asciitable' ];
+my $OF = [ 'yaml', 'json', 'csv', 'asciitable' ];
 my $MR = undef();
 my $TD = undef();
 my $KP = undef();
