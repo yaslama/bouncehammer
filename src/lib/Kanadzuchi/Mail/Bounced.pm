@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.20 2010/06/16 12:57:47 ak Exp $
+# $Id: Bounced.pm,v 1.21 2010/06/19 09:47:32 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -235,6 +235,12 @@ sub eatit
 				# qmail's Date header, 'Date: 29 Apr 2009 01:39:00 -0000'
 				$tempheader->{'arrivaldate'} = q(Thu, ).$tempheader->{'arrivaldate'};
 			}
+			elsif( $tempheader->{'arrivaldate'} =~ m{\A\s*(\d{4})[-](\d\d)[-](\d\d)[ ](\d\d:\d\d:\d\d)[ ](.\d{4})\z} )
+			{
+				# Mail.app(MacOS X)'s faked Bounce, Arrival-Date: 2010-06-18 17:17:52 +0900
+				$tempheader->{'arrivaldate'} =
+					sprintf("Thu, %d %s %s %s %s", $3, [Time::Piece->mon_list()]->[$2-1], $1, $4, $5 );
+			}
 
 			if( $tempheader->{'arrivaldate'} =~ m{\A\s*(.+)\s*([-+]\d{4}).*\z} )
 			{
@@ -265,9 +271,8 @@ sub eatit
 		# Keys: rcpt,send,date, and stat are required to processing.
 		next() if( $bouncemesg->{'addresser'}->address =~ m{[@]localhost.localdomain\z} );
 		eval{
-			$tempstring = Time::Piece->strptime( 
-					$bouncemesg->{'arrivaldate'}, q{%a, %d %b %Y %T} )
-					|| Time::Piece->new();
+			$tempstring = Time::Piece->strptime( $bouncemesg->{'arrivaldate'}, q{%a, %d %b %Y %T} );
+			$tempstring = Time::Piece->new() unless( ref($tempstring) eq q|Time::Piece| );
 		};
 
 		$thisobject = __PACKAGE__->new(
