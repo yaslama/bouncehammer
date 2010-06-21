@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.14 2010/06/12 13:20:23 ak Exp $
+# $Id: Mbox.pm,v 1.15 2010/06/19 09:49:53 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -139,7 +139,7 @@ sub _breakit
 		grep { $_ =~ m{\A[(]qmail[ ]+\d+[ ]+invoked[ ]+for[ ]+bounce[)]} } @{ $theheadpart->{'received'} } ){
 
 		eval {
-			use Kanadzuchi::Mbox::qmail;
+			require Kanadzuchi::Mbox::qmail;
 			$parserclass = q(Kanadzuchi::Mbox::qmail);
 			$pseudofield .= $parserclass->reperit( $theheadpart, $thebodypart );
 			$isirregular |= $irregularof->{'djbqmail'} if( length( $pseudofield ) );
@@ -157,11 +157,14 @@ sub _breakit
 	# Received: from ezweb.ne.jp (wmflb12na02.ezweb.ne.jp [222.15.69.197])
 	# Received: from nmomta.auone-net.jp ([aaa.bbb.ccc.ddd]) by ...
 	if( lc($theheadpart->{'from'}) =~ m{[<]?(?>postmaster[@]ezweb[.]ne[.]jp)[>]?} ||
-		grep { $_ =~ m{\Afrom[ ]ezweb[.]ne[.]jp[ ]} } @{ $theheadpart->{'received'} } ||
-		grep { $_ =~ m{\Afrom[ ]\w+[.]auone-net[.]jp[ ]} } @{ $theheadpart->{'received'} } ){
+		( scalar @{ $theheadpart->{'received'} } &&
+			( grep { $_ =~ m{\Afrom[ ]ezweb[.]ne[.]jp[ ]} } @{ $theheadpart->{'received'} } ||
+			  grep { $_ =~ m{\Afrom[ ]\w+[.]auone-net[.]jp[ ]} } @{ $theheadpart->{'received'} } )
+		)
+	){
 
 		eval {
-			use Kanadzuchi::Mbox::aubyKDDI;
+			require Kanadzuchi::Mbox::aubyKDDI;
 			$parserclass = q(Kanadzuchi::Mbox::aubyKDDI);
 			$pseudofield .= $parserclass->reperit( $theheadpart, $thebodypart );
 			$isirregular |= $irregularof->{'aubykddi'} if( length( $pseudofield ) );
@@ -179,7 +182,7 @@ sub _breakit
 	if( $theheadpart->{'x-amerror'} )
 	{
 		eval {
-			use Kanadzuchi::Mbox::KLab;
+			require Kanadzuchi::Mbox::KLab;
 			$parserclass  = q(Kanadzuchi::Mbox::KLab);
 			$pseudofield .= $parserclass->reperit( $theheadpart, q() );
 			$isirregular |= $irregularof->{'accelmail'} if( length( $pseudofield ) );
@@ -193,10 +196,16 @@ sub _breakit
 	# |___|_|  |_|  \___|\__, |\__,_|_|\__,_|_|     \____|_|  |_|
 	#                    |___/                                   
 	# Google Mail: GMail
-	if( $theheadpart->{'x-failed-recipients'} )
-	{
+	# From: Mail Delivery Subsystem <mailer-daemon@googlemail.com>
+	# Received: from vw-in-f109.1e100.net [74.125.113.109] by ...
+	if( lc($theheadpart->{'from'}) =~ m{[<]?(?>mailer[-]daemon[@]googlemail[.]com)[>]?\z} ||
+		( scalar @{ $theheadpart->{'received'} } &&
+			grep { $_ =~ m{\Afrom[ ][^\s]+?[.]1e100[.]net[ ]} } @{ $theheadpart->{'received'} }
+		) ||
+		$theheadpart->{'x-failed-recipients'} ){
+
 		eval {
-			use Kanadzuchi::Mbox::Google;
+			require Kanadzuchi::Mbox::Google;
 			$parserclass  = q(Kanadzuchi::Mbox::Google);
 			$pseudofield .= $parserclass->reperit( $theheadpart, $thebodypart );
 			$isirregular |= $irregularof->{'googlemail'} if( length( $pseudofield ) );
