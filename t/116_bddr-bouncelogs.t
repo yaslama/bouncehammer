@@ -1,4 +1,4 @@
-# $Id: 116_bddr-bouncelogs.t,v 1.1 2010/05/17 00:00:56 ak Exp $
+# $Id: 116_bddr-bouncelogs.t,v 1.3 2010/06/19 09:45:45 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,15 +8,15 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 872 );
+use Test::More ( tests => 983 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-my $Methods = [ 'new', '_is_validid', 'is_validcolumn', 'count', 'search',
-		'insert', 'update', 'disableit' ];
+my $Methods = [ 'new', 'is_validid', 'is_validcolumn', 'count', 'search',
+		'insert', 'update', 'disable', 'remove' ];
 
 my $Class = q|Kanadzuchi::BdDR::BounceLogs::Table|;
 my $Klass = q|Kanadzuchi::BdDR::BounceLogs|;
@@ -178,19 +178,20 @@ SKIP: {
 				$entity = shift @{ $Btable->search( { 'token' => $_e->{'token'} }, $Page ) };
 				is( $entity->{'reason'}, 'unstable', 'new reason = unstable' );
 				is( $entity->{'hostgroup'}, 'neighbor', 'new hostgroup = neighbor' );
-				is( $entity->{'addresser'}, $origin->{'addresser'}, 'addresser:'.$origin->{'addresser'}.'is not updated' );
+				is( $entity->{'addresser'}, $origin->{'addresser'}, 'addresser:'.$origin->{'addresser'}.' is not updated' );
 			}
 
-			DISABLEIT: {
-				$thisid = $Btable->disableit( { 'token' => $_e->{'token'} } );
-				ok( $thisid, '->disableit(token='.$_e->{'token'}.')' );
+			DISABLE: {
+				$thisid = $Btable->disable( { 'token' => $_e->{'token'} } );
+				ok( $thisid, '->disable(token='.$_e->{'token'}.')' );
 
 				$entity = shift @{ $Btable->search( { 'token' => $_e->{'token'} }, $Page ) };
 				is( $entity->{'disabled'}, 1, 'disabled = 1' );
-				is( $entity->{'recipient'}, $origin->{'recipient'}, 'recipient'.$origin->{'recipient'}.'is not updated' );
+				is( $entity->{'recipient'}, $origin->{'recipient'}, 'recipient:'.$origin->{'recipient'}.' is not updated' );
 			}
 
-			SEARCH_AGAIN: {
+
+			SEARCH_AGAIN1: {
 				is( $Btable->count( { 'disabled' => 1 } ), $record - 2, '->count(disabled) = '.$record );
 
 				$Page->resultsperpage(10);
@@ -199,6 +200,36 @@ SKIP: {
 				$entity = $Btable->search( { 'disabled' => 1 }, $Page );
 				is( scalar(@$entity), $record < 12 ? $record - 2 : 10 );
 			}
+
+			ENABLE: {
+				$thisid = $Btable->update( { 'disabled' => 0 }, { 'id' => $_e->{'id'} } );
+				ok( $thisid, '->update(disable=0,id='.$thisid.')' );
+			}
+
+			REMOVE: {
+				if( ( $_e->{'id'} % 3 ) == 0 )
+				{
+					$thisid = $Btable->remove( { 'id' => $_e->{'id'}, 'token' => $_e->{'token'} } );
+					ok( $thisid, '->remove(id='.$_e->{'id'}.',token='.$_e->{'token'}.') = '.$thisid );
+				}
+				elsif( ( $_e->{'id'} % 3 ) == 1 )
+				{
+					$thisid = $Btable->remove( { 'id' => $_e->{'id'} } );
+					ok( $thisid, '->remove(id='.$_e->{'id'}.' = '.$thisid );
+				}
+				elsif( ( $_e->{'id'} % 3 ) == 2 )
+				{
+					$thisid = $Btable->remove( { 'token' => $_e->{'token'} } );
+					ok( $thisid, '->remove(token='.$_e->{'token'}.') = '.$thisid );
+				}
+			}
+
+			SEARCH_AGAIN2: {
+				$entity = $Btable->search( { 'token' => $_e->{'token'} }, $Page );
+				is( scalar(@$entity), 0, 'record = 0 (removed)' );
+			}
+
+			$record--;
 
 		}
 	}

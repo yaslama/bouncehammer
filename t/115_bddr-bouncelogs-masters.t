@@ -1,4 +1,4 @@
-# $Id: 115_bddr-bouncelogs-masters.t,v 1.2 2010/05/18 07:30:06 ak Exp $
+# $Id: 115_bddr-bouncelogs-masters.t,v 1.3 2010/06/19 09:45:44 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -15,7 +15,7 @@ use Test::More ( tests => 2717 );
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-my $Methods = [ 'whichtable', 'mastertables', 'new', '_is_validid', 'is_validcolumn',
+my $Methods = [ 'whichtable', 'mastertables', 'new', 'is_validid', 'is_validcolumn',
 		'count', 'getidbyname', 'getnamebyid', 'getentbyid', 'search', 'insert',
 		'update', 'remove' ];
 
