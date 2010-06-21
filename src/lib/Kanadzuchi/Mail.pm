@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.25 2010/06/14 07:29:14 ak Exp $
+# $Id: Mail.pm,v 1.26 2010/06/21 03:32:12 ak Exp $
 # -Id: Message.pm,v 1.1 2009/08/29 07:32:59 ak Exp -
 # -Id: BounceMessage.pm,v 1.13 2009/08/21 02:43:14 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -388,7 +388,7 @@ sub damn
 	$damn->{'description'} = ${ Kanadzuchi::Metadata->to_string($self->{'description'}) };
 	$damn->{'diagnosticcode'} = $self->{'description'}->{'diagnosticcode'};
 	$damn->{'deliverystatus'} = $self->{'description'}->{'deliverystatus'};
-	$damn->{'timezomeoffset'} = Kanadzuchi::Time->second2tz($self->{'description'}->{'timezoneoffset'});
+	$damn->{'timezoneoffset'} = Kanadzuchi::Time->second2tz($self->{'description'}->{'timezoneoffset'});
 
 	return($damn);
 }
