@@ -1,4 +1,4 @@
-# $Id: 500_bin-mailboxparser.t,v 1.20 2010/05/25 04:48:03 ak Exp $
+# $Id: 500_bin-mailboxparser.t,v 1.21 2010/06/21 03:29:48 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,7 +7,7 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 91 );
+use Test::More ( tests => 93 );
 
 SKIP: {
 	eval{ require IPC::Cmd; }; 
@@ -86,6 +86,11 @@ SKIP: {
 		{
 			'name' => 'Format is ASCIITable, -Fa',
 			'option' => $O.q( -Fa ),
+			'count' => 0,
+		},
+		{
+			'name' => 'Format is CSV, -Fc',
+			'option' => $O.q( -Fc ),
 			'count' => 0,
 		},
 		{
