@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.6 2010/06/17 12:00:36 ak Exp $
+# $Id: WebMail.pm,v 1.7 2010/06/17 18:02:02 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::US::
                                                    
@@ -129,6 +129,15 @@ sub nominisexemplaria
 			qr{\A(?:hk|jp)popstarmail[.]org\z},
 			qr{\Apcmail[.]com[.]tw\z},
 		],
+
+		# http://www.pobox.com/index/
+		'pobox' => [
+			qr{\Aonepost[.]net\z},
+			qr{\A(?:po|foo|right|topic|immer|siempre)box[.]com\z},
+			qr{\A(?:veri|foo)box[.]net\z},
+			qr{\A(?:penguin|permanental|siempre|immer)mail[.]com\z},
+			qr{\A(?:mailzone|lifetimeaddress)[.]com\z},
+		],
 	};
 }
 
@@ -142,6 +151,7 @@ sub classisnomina
 		'lavabit'	=> 'Generic',
 		'luxsci'	=> 'Generic',
 		'mailcom'	=> 'Generic',
+		'pobox'		=> 'Generic',
 	};
 }
 
