@@ -1,4 +1,4 @@
-# $Id: BounceLogs.pm,v 1.7 2010/06/10 10:28:39 ak Exp $
+# $Id: BounceLogs.pm,v 1.9 2010/06/19 09:46:36 ak Exp $
 # -Id: BounceLogs.pm,v 1.9 2010/03/04 08:33:28 ak Exp -
 # -Id: BounceLogs.pm,v 1.1 2009/08/29 08:58:48 ak Exp -
 # -Id: BounceLogs.pm,v 1.6 2009/08/27 05:09:55 ak Exp -
@@ -126,11 +126,11 @@ sub new
 # ||__|||__|||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub _is_validid
+sub is_validid
 {
-	# +-+-+-+-+-+-+-+-+-+-+-+
-	# |_|i|s|_|v|a|l|i|d|i|d|
-	# +-+-+-+-+-+-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+-+-+-+
+	# |i|s|_|v|a|l|i|d|i|d|
+	# +-+-+-+-+-+-+-+-+-+-+
 	#
 	# @Description	Database ID validation
 	# @Param	<None>
@@ -366,7 +366,7 @@ sub update
 	my $cond = shift() || return(0);
 	my $stat = 0;
 
-	return(0) if( ! $self->_is_validid($cond->{'id'}) && ! $cond->{'token'} );
+	return(0) if( ! $self->is_validid($cond->{'id'}) && ! $cond->{'token'} );
 	eval {
 		$stat = $self->{'object'}->update( $self->{'table'}, $data, $cond );
 	};
@@ -376,11 +376,36 @@ sub update
 	return(0);
 }
 
-sub disableit
+sub remove
 {
-	# +-+-+-+-+-+-+-+-+-+
-	# |d|i|s|a|b|l|e|i|t|
-	# +-+-+-+-+-+-+-+-+-=
+	# +-+-+-+-+-+-+
+	# |r|e|m|o|v|e|
+	# +-+-+-+-+-+-+
+	#
+	# @Description	DELETE: remove the reocrd
+	# @Param <ref>	(Ref->Hash) Where condition
+	# @Return	(Integer) 0 = Failed to remove or parameter error
+	#		(Integer) 1 = Successfully removed
+	my $self = shift();
+	my $cond = shift() || return(0);
+	my $stat = 0;
+
+	return(0) if( ! $self->is_validid($cond->{'id'}) && ! $cond->{'token'} );
+	eval {
+		$stat = $self->{'object'}->delete( $self->{'table'}, $cond );
+	};
+	return($stat) unless($@);
+	$self->{'error'}->{'string'} = $@;
+	$self->{'error'}->{'count'}++;
+	return(0);
+
+}
+
+sub disable
+{
+	# +-+-+-+-+-+-+-+
+	# |d|i|s|a|b|l|e|
+	# +-+-+-+-+-+-+-+
 	#
 	# @Description	Disable the rocord
 	# @Param <ref>	(Ref->Hash) Where Condition
@@ -388,6 +413,7 @@ sub disableit
 	#		(Integer) 0 = Failed to UPDATE
 	my $self = shift();
 	my $cond = shift() || return(0);
+	return(0) if( ! $self->is_validid($cond->{'id'}) && ! $cond->{'token'} );
 	return($self->update( { 'disabled' => 1 }, $cond ) );
 }
 
