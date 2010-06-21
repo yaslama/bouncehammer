@@ -1,4 +1,4 @@
-# $Id: Google.pm,v 1.9 2010/06/17 05:54:02 ak Exp $
+# $Id: Google.pm,v 1.10 2010/06/19 09:51:14 ak Exp $
 # -Id: Google.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: Google.pm,v 1.1 2009/07/31 09:04:38 ak Exp -
 # Kanadzuchi::Mbox::
@@ -14,8 +14,10 @@ package Kanadzuchi::Mbox::Google;
 use strict;
 use warnings;
 use Kanadzuchi::RFC1893;
+use Kanadzuchi::RFC2822;
 
-my $RxFromGmail = qr{Delivery to the following recipient failed permanently:};
+my $RxPermGmail = qr{Delivery to the following recipient failed permanently:};
+my $RxTempGmail = qr{Delivery to the following recipient has been delayed:};
 my $RxErrorHead = qr{The error that the other server returned was:};
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -59,7 +61,7 @@ sub reperit
 	my $frcpt = q();	# X-Final-Recipients: header or email address in the body.
 	my $dcode = q();	# Diagnostic-Code: header or error text.
 	my $bodyb = q();	# Boby part for rewriting
-	my $error = q();	# Error reason: userunknown, filtered, mailboxfull...
+	my $error = 'onhold';	# Error reason: userunknown, filtered, mailboxfull...
 	my $dstat = q();	# Pseudo D.S.N.
 
 	$phead .= sprintf("Date: %s\n", $mhead->{'date'} );
@@ -69,11 +71,24 @@ sub reperit
 	EACH_LINE: foreach my $_gl ( split( qq{\n}, $$mbody ) )
 	{
 		next() if( $_gl =~ m{\A\z} );
-		if( ! $gmail && $_gl =~ $RxFromGmail ){ $gmail = 1; next(); }
+
+		if( ! $gmail && ( $_gl =~ $RxPermGmail || $_gl =~ $RxTempGmail ) )
+		{
+			# The line match with 'Delivery to the following...'
+			$gmail = 1;
+			next();
+		}
 		next() unless( $gmail );
 
 		# ^Irecipient-address-here@example.jp
-		if( $gmail && $_gl =~ m{\A\s+(.+)\z} ){ $frcpt ||= $1; next(); }
+		if( $gmail && $_gl =~ m{\A\s+([^\s]+[@][^\s]+)\z} )
+		{
+			my $_rcpt = $1;
+			my $_2822 = q|Kanadzuchi::RFC2822|;
+
+			$frcpt ||= $_rcpt if( $_2822->is_emailaddress($_2822->cleanup($_rcpt)) );
+			next();
+		}
 
 		$_gl =~ s{=\z}{}g;
 		$bodyb .= $_gl if( $_gl =~ m{\A\w} );
@@ -81,14 +96,17 @@ sub reperit
 		last() if( $_gl =~ m{[(]state[ ]\d+[)][.]} );
 		last() if( $_gl =~ m{\A\s*[-][-]+} || $_gl =~ m{\A[.]\z} );
 	}
+
 	$bodyb =~ s{\A.+$RxErrorHead }{};
 	$state =  $1 if( $bodyb =~ m{[(]state[ ](\d+)[)][.]} );
+	$dstat =  $1 if( $bodyb =~ m{[(][#](\d[.]\d[.]\d)[)]} );
 
-	if( $bodyb =~ m{\d{3}[ ]\d{3}[ ](\d[.]\d[.]\d)[ ][<](.+?)[>][.][.][.][ ](.+)\z} )
+	if( $bodyb =~ m{\d{3}[ ]\d{3}[ ](\d[.]\d[.]\d)[ ][<](.+?)[>]:?(.+)\z} )
 	{
 		# There is D.S.N. code in the body part.
 		# 550 550 5.1.1 <userunknown@example.jp>... User Unknown (state 14).
-		$dstat = $1;
+		# 450 450 4.2.2 <mailboxfull@example.jp>... Mailbox Full (state 14).
+		$dstat ||= $1;
 		$frcpt ||= $2;
 		$dcode = $3;
 	}
@@ -103,11 +121,7 @@ sub reperit
 		{
 			$error = 'filtered';
 		}
-		else
-		{
-			$error = 'onhold';
-		}
-		$dstat = Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode($error));
+
 
 		if( $bodyb =~ m{\d{3}[ ]\d{3}[ ][<](.+?)[>]:[ ](User unknown.+)\z} )
 		{
@@ -125,12 +139,13 @@ sub reperit
 		else
 		{
 			# Unsupported error message in body part.
-			return q{};
+			;
 		}
 
 	}
 
 	return($phead) unless( $frcpt );
+	$dstat ||= Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode($error));
 	$phead .= q(Diagnostic-Code: SMTP; ).qq($dcode\n);
 	$phead .= q(Status: ).qq($dstat\n);
 	$phead .= q(Final-Recipient: rfc822; ).qq($frcpt\n);
