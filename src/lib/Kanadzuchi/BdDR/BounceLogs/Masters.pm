@@ -1,4 +1,4 @@
-# $Id: Masters.pm,v 1.8 2010/06/10 10:28:41 ak Exp $
+# $Id: Masters.pm,v 1.9 2010/06/19 09:46:38 ak Exp $
 # -Id: Addressers.pm,v 1.4 2010/03/04 08:33:28 ak Exp -
 # -Id: Addressers.pm,v 1.4 2010/02/21 20:42:02 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -202,11 +202,11 @@ sub new
 # ||__|||__|||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub _is_validid
+sub is_validid
 {
-	# +-+-+-+-+-+-+-+-+-+-+-+
-	# |_|i|s|_|v|a|l|i|d|i|d|
-	# +-+-+-+-+-+-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+-+-+-+
+	# |i|s|_|v|a|l|i|d|i|d|
+	# +-+-+-+-+-+-+-+-+-+-+
 	#
 	# @Description	Database ID validation
 	# @Param	<None>
@@ -309,7 +309,7 @@ sub getnamebyid
 	my $anid = shift() || return(q{});
 	my $name = q();
 
-	return(q{}) unless( $self->_is_validid($anid) );
+	return(q{}) unless( $self->is_validid($anid) );
 	eval {
 		my $_tobj = $self->{'object'};
 		my $_tsql = sprintf( "SELECT %s FROM %s WHERE id = :id", $self->{'field'}, $self->{'table'} );
@@ -336,7 +336,7 @@ sub getentbyid
 	my $anid = shift() || return({});
 	my $trow = {};
 
-	return({}) unless( $self->_is_validid($anid) );
+	return({}) unless( $self->is_validid($anid) );
 
 	eval {
 		my $_tobj = $self->{'object'};
@@ -458,7 +458,7 @@ sub update
 	my $stat = 0;
 
 	return(0) if( ref($data) ne q|HASH| || ref($cond) ne q|HASH| );
-	return(0) unless( $self->_is_validid($cond->{'id'}) );
+	return(0) unless( $self->is_validid($cond->{'id'}) );
 
 	eval {
 		my $_new1 = {};
@@ -492,7 +492,7 @@ sub remove
 	my $stat = 0;
 
 	return(0) unless( ref($cond) eq q|HASH| );
-	return(0) unless( $self->_is_validid($cond->{'id'}) );
+	return(0) unless( $self->is_validid($cond->{'id'}) );
 	eval {
 		my $_tobj = $self->{'object'};
 		my $_cond = { 'id' => $cond->{'id'} };
