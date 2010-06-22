@@ -1,4 +1,4 @@
-# $Id: 061_mail-stored-yaml.t,v 1.6 2010/06/08 00:59:08 ak Exp $
+# $Id: 061_mail-stored-yaml.t,v 1.7 2010/06/22 07:17:15 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -160,13 +160,13 @@ SKIP: {
 	eval { require DBI; }; skip( 'Because no DBI for testing', $Skip ) if( $@ );
 	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $Skip ) if( $@ );
 
-	use Time::Piece;
-	use Kanadzuchi::Test::DBI;
-	use Kanadzuchi::BdDR::Page;
-	use Kanadzuchi::BdDR::Cache;
-	use Kanadzuchi::BdDR;
-	use Kanadzuchi::BdDR::BounceLogs;
-	use Kanadzuchi::BdDR::BounceLogs::Masters;
+	require Time::Piece;
+	require Kanadzuchi::Test::DBI;
+	require Kanadzuchi::BdDR::Page;
+	require Kanadzuchi::BdDR::Cache;
+	require Kanadzuchi::BdDR;
+	require Kanadzuchi::BdDR::BounceLogs;
+	require Kanadzuchi::BdDR::BounceLogs::Masters;
 
 	CONNECT: {
 		$BdDR = Kanadzuchi::BdDR->new();

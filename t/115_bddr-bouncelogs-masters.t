@@ -1,4 +1,4 @@
-# $Id: 115_bddr-bouncelogs-masters.t,v 1.3 2010/06/19 09:45:44 ak Exp $
+# $Id: 115_bddr-bouncelogs-masters.t,v 1.4 2010/06/22 07:17:16 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -31,17 +31,18 @@ my $Page = undef();
 # ||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 #
-can_ok( $Class, @$Methods );
 
 SKIP: {
-	my $howmanyskips = 2716;
+	my $howmanyskips = 2717;
 	eval { require DBI; }; skip( 'Because no DBI for testing', $howmanyskips ) if( $@ );
 	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $howmanyskips ) if( $@ );
 
-	use Kanadzuchi::Test::DBI;
-	use Kanadzuchi::BdDR;
-	use Kanadzuchi::BdDR::Page;
-	use Kanadzuchi::BdDR::BounceLogs::Masters;
+	require Kanadzuchi::Test::DBI;
+	require Kanadzuchi::BdDR;
+	require Kanadzuchi::BdDR::Page;
+	require Kanadzuchi::BdDR::BounceLogs::Masters;
+
+	can_ok( $Class, @$Methods );
 
 	CONNECT: {
 		$BdDR = Kanadzuchi::BdDR->new();
@@ -71,11 +72,11 @@ SKIP: {
 	}
 
 	EACH_TABLE: {
-		use Kanadzuchi;
-		use Kanadzuchi::Test::CLI;
-		use Kanadzuchi::RFC2822;
-		use Kanadzuchi::Time;
-		use JSON::Syck;
+		require Kanadzuchi;
+		require Kanadzuchi::Test::CLI;
+		require Kanadzuchi::RFC2822;
+		require Kanadzuchi::Time;
+		require JSON::Syck;
 
 		my $tabset = {
 			'Addressers' => { 'column' => 'email', 'has' => 'sender01@example.jp', 'new' => 'vicepresident@example.gov' },

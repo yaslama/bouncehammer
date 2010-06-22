@@ -1,4 +1,4 @@
-# $Id: 501_bin-logger.t,v 1.9 2010/05/25 04:48:03 ak Exp $
+# $Id: 501_bin-logger.t,v 1.10 2010/06/22 07:17:16 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,13 +10,14 @@ use warnings;
 use Test::More ( tests => 354 );
 
 SKIP: {
+	my $howmanyskips = 354;
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',354) if($@);
+	skip( 'Because no IPC::Cmd for testing', $howmanyskips ) if($@);
 
-	use Kanadzuchi::Test::CLI;
-	use Kanadzuchi;
-	use JSON::Syck;
-	use File::Copy;
+	require Kanadzuchi::Test::CLI;
+	require Kanadzuchi;
+	require JSON::Syck;
+	require File::Copy;
 
 	#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 	# ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||

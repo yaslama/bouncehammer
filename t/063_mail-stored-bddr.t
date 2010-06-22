@@ -1,4 +1,4 @@
-# $Id: 063_mail-stored-bddr.t,v 1.4 2010/06/21 09:54:15 ak Exp $
+# $Id: 063_mail-stored-bddr.t,v 1.5 2010/06/22 07:17:15 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -60,19 +60,20 @@ PREPROCESS: {
 	# 9 Tests
 }
 
-use Kanadzuchi::BdDR;
-use Kanadzuchi::BdDR::Page;
-use Kanadzuchi::BdDR::Cache;
-use Kanadzuchi::BdDR::BounceLogs;
-use Kanadzuchi::BdDR::BounceLogs::Masters;
-use Kanadzuchi::Mail;
-use Kanadzuchi::Test::DBI;
-use Kanadzuchi::Mail::Stored::YAML;
 
 SKIP: {
 	my $howmanyskips = 699;
 	eval { require DBI; }; skip( 'Because no DBI for testing', $howmanyskips ) if( $@ );
 	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $howmanyskips ) if( $@ );
+
+	require Kanadzuchi::BdDR;
+	require Kanadzuchi::BdDR::Page;
+	require Kanadzuchi::BdDR::Cache;
+	require Kanadzuchi::BdDR::BounceLogs;
+	require Kanadzuchi::BdDR::BounceLogs::Masters;
+	require Kanadzuchi::Mail;
+	require Kanadzuchi::Test::DBI;
+	require Kanadzuchi::Mail::Stored::YAML;
 
 	my $BdDR = undef();
 	my $Btab = undef();

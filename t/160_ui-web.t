@@ -1,4 +1,4 @@
-# $Id: 160_ui-web.t,v 1.5 2010/06/08 00:59:45 ak Exp $
+# $Id: 160_ui-web.t,v 1.6 2010/06/22 07:17:16 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 17 );
+use Test::More ( tests => 16 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -83,7 +83,6 @@ $ENV = {
 # ||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 #
-can_ok( $T->class(), @{$T->methods()} );
 
 SKIP: {
 	eval {
@@ -94,9 +93,10 @@ SKIP: {
 		require CGI::Application::Plugin::HTMLPrototype;
 	};
 
-	skip( 'CGI::Application::* is not installed', scalar 16 ) if( $@ );
+	skip( 'CGI::Application::* is not installed', 16 ) if( $@ );
 
-	use Kanadzuchi::UI::Web;
+	require Kanadzuchi::UI::Web;
+
 	foreach my $w ( values(%$W) )
 	{
 		use_ok( $w->class() );

@@ -1,4 +1,4 @@
-# $Id: 181_api-http.t,v 1.3 2010/06/08 00:59:45 ak Exp $
+# $Id: 181_api-http.t,v 1.4 2010/06/22 07:17:16 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -36,9 +36,9 @@ SKIP: {
 		require CGI::Application::Plugin::HTMLPrototype;
 	};
 
-	skip( 'CGI::Application::* is not installed', scalar 1 ) if( $@ );
+	skip( 'CGI::Application::* is not installed', 1 ) if( $@ );
 
-	use Kanadzuchi::API::HTTP;
+	require Kanadzuchi::API::HTTP;
 	PREPROCESS: {
 		can_ok( $T->class(), @{$T->methods()} );
 	}

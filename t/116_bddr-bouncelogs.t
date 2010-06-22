@@ -1,4 +1,4 @@
-# $Id: 116_bddr-bouncelogs.t,v 1.3 2010/06/19 09:45:45 ak Exp $
+# $Id: 116_bddr-bouncelogs.t,v 1.4 2010/06/22 07:17:16 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -26,21 +26,20 @@ my $Klass = q|Kanadzuchi::BdDR::BounceLogs|;
 # ||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 #
-can_ok( $Class, @$Methods );
 
 SKIP: {
-	my $howmanyskips = 871;
+	my $howmanyskips = 983;
 	eval { require DBI; }; skip( 'Because no DBI for testing', $howmanyskips ) if( $@ );
 	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $howmanyskips ) if( $@ );
 
-	use Kanadzuchi::Test::DBI;
-	use Kanadzuchi::BdDR;
-	use Kanadzuchi::BdDR::Page;
-	use Kanadzuchi::BdDR::BounceLogs;
-	use Kanadzuchi::BdDR::BounceLogs::Masters;
-	use Kanadzuchi::Metadata;
-	use JSON::Syck;
-	use Time::Piece;
+	require Kanadzuchi::Test::DBI;
+	require Kanadzuchi::BdDR;
+	require Kanadzuchi::BdDR::Page;
+	require Kanadzuchi::BdDR::BounceLogs;
+	require Kanadzuchi::BdDR::BounceLogs::Masters;
+	require Kanadzuchi::Metadata;
+	require JSON::Syck;
+	require Time::Piece;
 
 	my $Btable = undef();
 	my $Mtable = undef();
@@ -50,6 +49,8 @@ SKIP: {
 	my $Temp = {};
 	my $Data = [];
 	my $JSON = undef();
+
+	can_ok( $Class, @$Methods );
 
 	CONNECT: {
 

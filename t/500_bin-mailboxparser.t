@@ -1,4 +1,4 @@
-# $Id: 500_bin-mailboxparser.t,v 1.21 2010/06/21 03:29:48 ak Exp $
+# $Id: 500_bin-mailboxparser.t,v 1.22 2010/06/22 07:17:16 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,13 +10,14 @@ use warnings;
 use Test::More ( tests => 93 );
 
 SKIP: {
+	my $howmanyskips = 93;
 	eval{ require IPC::Cmd; }; 
-	skip('Because no IPC::Cmd for testing',91) if($@);
+	skip( 'Because no IPC::Cmd for testing', $howmanyskips ) if($@);
 
-	use Kanadzuchi::Test::CLI;
-	use Kanadzuchi;
-	use JSON::Syck;
-	use File::Basename;
+	require Kanadzuchi::Test::CLI;
+	require Kanadzuchi;
+	require JSON::Syck;
+	require File::Basename;
 
 	#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 	# ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||

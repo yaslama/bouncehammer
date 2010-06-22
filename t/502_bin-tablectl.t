@@ -1,4 +1,4 @@
-# $Id: 502_bin-tablectl.t,v 1.13 2010/05/24 16:53:27 ak Exp $
+# $Id: 502_bin-tablectl.t,v 1.14 2010/06/22 07:17:16 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,24 +9,24 @@ use strict;
 use warnings;
 use Test::More ( tests => 1661 );
 
-my $Skip = 1661;	# How many skips
 
 SKIP: {
+	my $Skip = 1661;	# How many skips
 	eval{ require IPC::Cmd; }; 
 	skip('Because no IPC::Cmd for testing',$Skip) if($@);
 
 	eval { require DBI; }; skip( 'Because no DBI for testing', $Skip ) if( $@ );
 	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $Skip ) if( $@ );
 
-	use Kanadzuchi::Test::CLI;
-	use Kanadzuchi::Test::DBI;
-	use Kanadzuchi;
-	use Kanadzuchi::Mail;
-	use Kanadzuchi::BdDR;
-	use Kanadzuchi::BdDR::Page;
-	use Kanadzuchi::BdDR::BounceLogs::Masters;
-	use JSON::Syck;
-	use File::Copy;
+	require Kanadzuchi::Test::CLI;
+	require Kanadzuchi::Test::DBI;
+	require Kanadzuchi;
+	require Kanadzuchi::Mail;
+	require Kanadzuchi::BdDR;
+	require Kanadzuchi::BdDR::Page;
+	require Kanadzuchi::BdDR::BounceLogs::Masters;
+	require JSON::Syck;
+	require File::Copy;
 
 	#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 	# ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||

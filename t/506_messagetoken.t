@@ -1,4 +1,4 @@
-# $Id: 506_messagetoken.t,v 1.3 2010/03/01 21:32:07 ak Exp $
+# $Id: 506_messagetoken.t,v 1.4 2010/06/22 07:17:16 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,10 +10,14 @@ use warnings;
 use Test::More ( tests => 43 );
 
 SKIP: {
-	use Kanadzuchi::Test::CLI;
-	use Kanadzuchi;
-	use JSON::Syck;
-	use File::Copy;
+	my $howmanyskips = 43;
+	eval{ require IPC::Cmd; }; 
+	skip( 'Because no IPC::Cmd for testing', $howmanyskips ) if($@);
+
+	require Kanadzuchi::Test::CLI;
+	require Kanadzuchi;
+	require JSON::Syck;
+	require File::Copy;
 
 	#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 	# ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
