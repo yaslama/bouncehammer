@@ -1,4 +1,4 @@
-# $Id: 115_bddr-bouncelogs-masters.t,v 1.4 2010/06/22 07:17:16 ak Exp $
+# $Id: 115_bddr-bouncelogs-masters.t,v 1.5 2010/06/22 13:55:24 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 2717 );
+use Test::More ( tests => 2741 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -33,7 +33,7 @@ my $Page = undef();
 #
 
 SKIP: {
-	my $howmanyskips = 2717;
+	my $howmanyskips = 2741;
 	eval { require DBI; }; skip( 'Because no DBI for testing', $howmanyskips ) if( $@ );
 	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $howmanyskips ) if( $@ );
 
@@ -83,7 +83,7 @@ SKIP: {
 			'SenderDomains' => {'column' => 'domainname', 'has' => 'example.jp', 'new' => 'example.gov' },
 			'Destinations' => {'column' => 'domainname', 'has' => 'example.org', 'new' => 'example.kyoto.lg.jp' },
 			'HostGroups' => { 'column' => 'name', 'has' => 'cellphone', 'new' => 'uucp' },
-			'Providers' => { 'column' => 'name', 'has' => 'rfc2606', 'new' => 'google' },
+			'Providers' => { 'column' => 'name', 'has' => 'rfc2606', 'new' => 'ieee' },
 			'Reasons' => { 'column' => 'why', 'has' => 'userunknown', 'new' => 'closed' },
 		};
 		my $R = 39;
