@@ -1,4 +1,4 @@
-# $Id: 111_bddr-cache.t,v 1.1 2010/05/17 00:00:55 ak Exp $
+# $Id: 111_bddr-cache.t,v 1.2 2010/06/21 09:52:59 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,7 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::BdDR::Cache;
 use Digest::MD5;
-use Test::More ( tests => 382 );
+use Test::More ( tests => 928 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -19,7 +19,7 @@ use Test::More ( tests => 382 );
 #
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::BdDR::Cache|,
-	'methods' => [ 'new', 'cache', 'count', 'getit', 'setit' ],
+	'methods' => [ 'new', 'cache', 'count', 'getit', 'setit', 'purgeit' ],
 	'instance' => new Kanadzuchi::BdDR::Cache(),
 );
 
@@ -73,6 +73,20 @@ METHODS: {
 				$cachev = $object->getit( $_t, $_k );
 				is( $cachev, $kvpair->{$_k}, '->getit('.$_k.') = '.$cachev );
 				ok( $object->count->{$_t}, '->count('.$_t.') = '.$object->count->{$_t} );
+			}
+		}
+	}
+
+	PURGEIT: {
+		foreach my $_t ( @$tables )
+		{
+			foreach my $_k ( keys(%$kvpair) )
+			{
+				$cached = $object->purgeit( $_t, $_k );
+				isa_ok( $cached, $T->class() );
+				$cachev = $object->getit( $_t, $_k );
+				is( $cachev, undef(), 'purgeit->getit('.$_k.') = undef' );
+				ok( ( $object->count->{$_t} > -1 ), '->count('.$_t.') = '.$object->count->{$_t} );
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.11 2010/05/19 18:25:17 ak Exp $
+# $Id: Mail.pm,v 1.12 2010/06/21 09:54:17 ak Exp $
 package Kanadzuchi::Test::Mail;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -50,6 +50,8 @@ our $MethodList = {
 	],
 	'Stored::BdDR' => [
 		'searchandnew',
+		'remove',
+		'disable',
 	],
 };
 
