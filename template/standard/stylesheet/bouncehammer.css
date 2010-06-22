@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.12 2010/06/21 09:47:09 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.13 2010/06/22 12:59:04 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -129,7 +129,7 @@ body {
 h1 {
 	margin: 0;
 	padding: 0;
-	color: #3e62ad; /* Kakitsubata */
+	color: #0095d9; /* Ao */
 	font-size: 20px;
 	font-family: 'Gill Sans Lite', 'Century Gothic', Verdana, 'Trebuchet MS';
 	border-style: solid;
@@ -142,7 +142,7 @@ h2 {
 	padding: 0 0 0 3px;
 	font-size: 16px;
 	font-family: 'Trebuchet MS', Verdana;
-	color: #544a47; /* Kurotsurubami */
+	color: #1e50a2; /* Ruri-iro */
 }
 
 h3 {}
@@ -154,7 +154,7 @@ h4 {
 	font-family: 'Gill Sans Lite', 'Century Gothic', Verdana, 'Trebuchet MS';
 	text-align: center;
 	color: #524e4d; /* Keshizumi-iro */
-	background: #dddcd6; /* Kinunezu */
+	background: #e5e4e6; /* Shiraumenezu */
 }
 
 h5 {}
@@ -206,27 +206,6 @@ a:visited {
 	text-decoration: none; 
 }
 
-span.baguette {
-	padding: 2px 8px;
-	color: #afafb0; /* Gin-nezu */
-	background: #383c3c; /* Youkan-iro */
-	border-color: #2b2b2b;	/* Rou-iro */
-	border-style: solid;
-	border-width: 1px;
-	-webkit-border-radius: 12px;
-	-moz-border-radius: 12px;
-	-opera-border-radius: 12px;
-}
-
-span.baguette a:link, span.baguette a:visited {
-	color: #afafb0; /* Gin-nezu */
-}
-
-span.baguette a:hover, span.baguette a:hover:visited {
-	text-decoration: none;
-	color: #89c3eb; /* Wasurenagusa-iro */
-}
-
 input.wide { /* Wide input field */
 	margin: 2px 0 2px 0;
 	padding: 4px;
@@ -239,6 +218,7 @@ input.wide { /* Wide input field */
 }
 
 span.flatbutton, input.flatbutton {
+	width: 64px;
 	margin: 2px;
 	padding: 2px 4px;
 	color: #727171; /* Nibi-iro */

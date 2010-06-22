@@ -39,11 +39,17 @@
 				<table><tbody>
 					<tr>
 						<td class = 'key-in-summary'>From:</td>
-						<td class = 'value-in-summary'>[% B.addresser %]</td>
+						<td class = 'value-in-summary'>
+							<input type = 'text' class = 'emailaddress [%- removedclassname -%]' 
+								onClick = 'this.select();' value = '[% B.addresser %]' />
+						</td>
 					</tr>
 					<tr>
 						<td class = 'key-in-summary'>To:</td>
-						<td class = 'value-in-summary'>[% B.recipient %]</td>
+						<td class = 'value-in-summary'>
+							<input type = 'text' class = 'emailaddress [%- removedclassname -%]' 
+								onClick = 'this.select();' value = '[% B.recipient %]' />
+						</td>
 					</tr>
 					<tr>
 						<td class = 'key-in-summary'>Date:</td>
@@ -72,14 +78,18 @@
 					</tr>
 
 					<tr>
-						<td class = 'key'>Sender Address(From:)</td>
-						<td class = 'value'>[% B.addresser %]</td>
+						<td class = 'key'>Sender Address|From:</td>
+						<td class = 'value'>
+							<input type = 'text' class = 'emailaddress' onClick = 'this.select();' value = '[% B.addresser %]' />
+						</td>
 						<td class = 'extra'></td>
 					</tr>
 
 					<tr>
-						<td class = 'key'>Recipient Address(To:)</td>
-						<td class = 'value'> [% B.recipient %]</td>
+						<td class = 'key'>Recipient Address|To:</td>
+						<td class = 'value'>
+							<input type = 'text' class = 'emailaddress' onClick = 'this.select();' value = '[% B.recipient %]' />
+						</td>
 						<td class = 'extra'></td>
 					</tr>
 
@@ -117,7 +127,7 @@
 						<td class = 'key'>Message Token(MD5)</td>
 						<td class = 'value'>
 							<span class = 'token'>
-								<input type = 'text' value = '[% B.token %]' />
+								<input type = 'text' value = '[% B.token %]' onClick = 'this.select();' />
 							</span>
 						</td>
 						<td class = 'extra'>
@@ -142,12 +152,12 @@
 							[%- IF isupdated == 1 -%]</strong>[%- END -%]
 						</td>
 						<td class = 'extra'>
-							<input type = 'submit' id = 'do-update-[% B.id %]' style = 'display: [% DisplayProp %];'
-								class = 'flatbutton' value = 'Update' disabled onClick = "this.value = 'Updating...';" />
 						</td>
 					</tr>
 				</tbody>
 				</table>
+				<input type = 'submit' id = 'do-update-[% B.id %]' style = 'display: [% DisplayProp %];'
+					class = 'flatbutton' value = 'Update' disabled onClick = "this.value = 'Updating...';" />
 				</form>
 
 				[%- prototype.form_remote_tag( {

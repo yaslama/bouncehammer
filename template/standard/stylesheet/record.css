@@ -1,4 +1,4 @@
-/* $Id: record.css,v 1.4 2010/06/21 09:47:10 ak Exp $ */
+/* $Id: record.css,v 1.5 2010/06/22 12:59:04 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Record classes */
 div.record {
@@ -10,24 +10,26 @@ div.record {
 div.record .recordsummary {
 	margin: 0;
 	padding: 4px 1px 1px 1px;
-	border-style: dotted;
+	border-style: solid;
 	border-width: 1px;
-	border-color: #524e4d; /* Keshizumi-iro */
+	border-color: #9ea1a3; /* Suzu-iro */
 	background: #fffffc; /* Gofun-iro */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
 }
 
 div.record .isremoved
 {
 	background: #9ea1a3; /* Suzu-iro */
+	margin: 0;
 }
 
 div.record .recorddetails {
 	margin: 4px 0 0 0;
-	padding: 1px 0 22px 0;
+	padding: 1px 0 4px 0;
 	border-style: dotted;
-	border-width: 1px 0 0 0;
-	border-color: #524e4d; /* Keshizumi-iro */
-	background: #fffffc; /* Gofun-iro */
+	border-width: 0;
 }
 
 div.record .number-in-summary {
@@ -87,7 +89,7 @@ td.key { /* LHS */
 div.record td.key, div.record td.value, div.record td.extra {
 	border-width: 0 0 1px 0;
 	border-style: dotted;
-	border-color: #e5e4e6; /* Shiraumenezu */
+	border-color: #ebf6f7; /* Shiraumenezu */
 }
 
 td.value, td.extra {
@@ -122,3 +124,9 @@ span.token input {
 	-opera-border-radius: 4px;
 }
 
+input.emailaddress {
+	width: 370px;
+	padding: 1px 2px 1px 0;
+	color: #524e4d; /* Keshizumi-iro */
+	border-width: 0;
+}
