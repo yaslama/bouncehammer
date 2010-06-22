@@ -1,4 +1,4 @@
-# $Id: Update.pm,v 1.9 2010/05/19 18:25:10 ak Exp $
+# $Id: Update.pm,v 1.10 2010/06/21 10:19:28 ak Exp $
 # -Id: Update.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Update.pm,v 1.6 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -56,19 +56,17 @@ sub update_ontheweb
 	if( $iter->count() )
 	{
 		my $this = undef();	# (K::Mail::Stored::YAML) YAML object
-		my $that = undef();	# (K::Mail::Stored::BdDR) BdDR object
 		my $iitr = undef();	# (K::Iterator) Iterator for inner process
 		my $data = [];		# (Ref->Array) Updated record
 		my $cdat = new Kanadzuchi::BdDR::Cache();
 		my $btab = new Kanadzuchi::BdDR::BounceLogs::Table( 'handle' => $bddr->handle() );
 
-		while( $this = $iter->next() )
-		{
-			$this->hostgroup( $self->query->param('hostgroup') );
-			$this->reason( $self->query->param('reason') );
-			$this->updated( Time::Piece->new() );
-			last();
-		}
+		$this = $iter->first();
+		return('No such record') unless( $this->id() );
+
+		$this->hostgroup( $self->query->param('hostgroup') );
+		$this->reason( $self->query->param('reason') );
+		$this->updated( Time::Piece->new() );
 
 		if( $this->update( $btab, $cdat ) )
 		{
