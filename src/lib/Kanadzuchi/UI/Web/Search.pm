@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.26 2010/06/22 03:14:51 ak Exp $
+# $Id: Search.pm,v 1.27 2010/06/22 13:00:20 ak Exp $
 # -Id: Search.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Search.pm,v 1.11 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -104,9 +104,9 @@ sub search_ontheweb
 		}
 
 		# Pagination
+		$paginated->resultsperpage( $self->param('pi_rpp') || 10 );
 		$paginated->set( $bouncelog->count( $wherecond ) );
 		$paginated->skip( $self->param('pi_page') || 1 );
-		$paginated->resultsperpage( $self->param('pi_rpp') || 10 );
 
 		# Downloading
 		if( $ENV{'PATH_INFO'} =~ m{/download} )
@@ -177,9 +177,9 @@ sub search_ontheweb
 		}
 
 		# Pagination, ORDER BY
+		$paginated->resultsperpage( $cgiqueryp->param('resultsperpage') || 10 );
 		$paginated->set( $bouncelog->count( $wherecond ) );
 		$paginated->skip( $cgiqueryp->param('thenextpagenum') || 1 );
-		$paginated->resultsperpage( $cgiqueryp->param('resultsperpage') || 10 );
 		$paginated->colnameorderby( lc($cgiqueryp->param('orderby')) || 'id' );
 		$paginated->descendorderby( $cgiqueryp->param('descend') ? 1 : 0 );
 
