@@ -1,4 +1,4 @@
-# $Id: BdDR.pm,v 1.5 2010/06/10 10:28:49 ak Exp $
+# $Id: BdDR.pm,v 1.6 2010/06/21 09:53:52 ak Exp $
 # -Id: RDB.pm,v 1.10 2010/03/26 07:21:27 ak Exp -
 # -Id: Stored.pm,v 1.5 2009/12/31 16:30:13 ak Exp -
 # -Id: Stored.pm,v 1.1 2009/08/29 07:33:13 ak Exp -
@@ -51,6 +51,66 @@ sub searchandnew
 
 	map { push( @$sdata, __PACKAGE__->new(%$_) ) } @$xrecs;
 	return( Kanadzuchi::Iterator->new($sdata) );
+}
+
+sub remove
+{
+	# +-+-+-+-+-+-+
+	# |r|e|m|o|v|e|
+	# +-+-+-+-+-+-+
+	#
+	# @Description	DELETE the rocord(Wrapper method of BdDR::BounceLogs->remove())
+	# @Param <obj>	(K::BdDR::BounceLogs::Table) TxnTable object
+	# @Param <obj>	(K::BdDR::Cache) Cache object
+	# @Return	(Integer)  1 = Successfully removed
+	#		(Integer)  0 = No data to DELETE in the db || Failed to DELETE
+	my $self = shift();
+	my $xtable = shift() || return(0);
+	my $tcache = shift() || return(0);
+	my $wherec = {};
+
+	return(0) if( ! $self->{'id'} && ! $self->{'token'} );
+	$wherec->{'id'} = $self->{'id'} if( $self->{'id'} );
+	$wherec->{'token'} = $self->{'token'} if( $self->{'token'} );
+
+	if( $xtable->remove( $wherec ) )
+	{
+		$tcache->purgeit( lc $xtable->alias(), $self->{'token'} );
+		return(1);
+	}
+	return(0);
+
+}
+
+sub disable
+{
+	# +-+-+-+-+-+-+-+
+	# |d|i|s|a|b|l|e|
+	# +-+-+-+-+-+-+-+
+	#
+	# @Description	Disable the rocord(Wrapper method of BdDR::BounceLogs->disable())
+	# @Param <obj>	(K::BdDR::BounceLogs::Table) TxnTable object
+	# @Param <obj>	(K::BdDR::Cache) Cache object
+	# @Return	(Integer)  1 = Successfully disabled
+	#		(Integer)  0 = No data to UPDATE(disable) in the db || Failed to UPDATE
+	my $self = shift();
+	my $xtable = shift() || return(0);
+	my $tcache = shift() || return(0);
+	my $xcache = undef();
+	my $wherec = {};
+
+	return(0) if( ! $self->{'id'} && ! $self->{'token'} );
+	$wherec->{'id'} = $self->{'id'} if( $self->{'id'} );
+	$wherec->{'token'} = $self->{'token'} if( $self->{'token'} );
+
+	if( $xtable->disable( $wherec ) )
+	{
+		$xcache = $tcache->getit( lc $xtable->alias(), $self->{'token'} );
+		$xcache->{'disabled'} = 1;
+		$tcache->setit( lc $xtable->alias(), $self->{'token'}, $xcache );
+		return(1);
+	}
+	return(0);
 }
 
 1;
