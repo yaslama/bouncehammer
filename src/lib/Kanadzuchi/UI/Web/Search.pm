@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.25 2010/06/11 00:06:02 ak Exp $
+# $Id: Search.pm,v 1.26 2010/06/22 03:14:51 ak Exp $
 # -Id: Search.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Search.pm,v 1.11 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -189,9 +189,8 @@ sub search_ontheweb
 
 		# Downloading
 		$downloadx = $cgiqueryp->param('enabledownload') ? 1 : 0;
-		$datformat = $cgiqueryp->param('datformat') || 'yaml';
+		$datformat = $cgiqueryp->param('downloadformat') || 'yaml';
 	}
-
 
 	if( $downloadx )
 	{
