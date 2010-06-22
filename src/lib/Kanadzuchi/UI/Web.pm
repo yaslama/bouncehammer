@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.16 2010/06/10 10:28:53 ak Exp $
+# $Id: Web.pm,v 1.17 2010/06/21 09:51:46 ak Exp $
 # -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
 # -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -101,6 +101,7 @@ sub setup
 		'Token' => 'token_ontheweb',
 		'Search' => 'search_ontheweb',
 		'Update' => 'update_ontheweb',
+		'Delete' => 'delete_ontheweb',
 		'Profile' => 'profile_ontheweb',
 		'Summary' => 'summary_ontheweb',
 		'TableList' => 'tablelist_ontheweb',
