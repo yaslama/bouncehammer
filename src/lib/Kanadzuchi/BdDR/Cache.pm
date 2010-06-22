@@ -1,4 +1,4 @@
-# $Id: Cache.pm,v 1.3 2010/06/10 10:28:39 ak Exp $
+# $Id: Cache.pm,v 1.4 2010/06/21 09:52:57 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::BdDR::
                                     
@@ -86,5 +86,23 @@ sub setit
 	return($self);
 }
 
+sub purgeit
+{
+	# +-+-+-+-+-+-+-+
+	# |p|u|r|g|e|i|t|
+	# +-+-+-+-+-+-+-+
+	#
+	# @Description	Purge the cache data of the record
+	# @Param <tab>	(String) Table name
+	# @Param <key>	(String) Key
+	# @Return	(K::B::Cache) This object
+	my $self = shift();
+	my $ctab = shift() || return($self);
+	my $thek = shift() || return($self);
+
+	delete $self->{'cache'}->{$ctab}->{$thek};
+	$self->{'count'}->{$ctab}-- unless( defined $self->{'cache'}->{$ctab}->{$thek} );
+	return($self);
+}
 1;
 __END__
