@@ -1,4 +1,4 @@
-# $Id: Update.pm,v 1.10 2010/06/21 10:19:28 ak Exp $
+# $Id: Update.pm,v 1.11 2010/06/22 12:59:44 ak Exp $
 # -Id: Update.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Update.pm,v 1.6 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -58,35 +58,38 @@ sub update_ontheweb
 		my $this = undef();	# (K::Mail::Stored::YAML) YAML object
 		my $iitr = undef();	# (K::Iterator) Iterator for inner process
 		my $data = [];		# (Ref->Array) Updated record
+		my $dont = 0;		# (Integer) Flag, Do Not UPDATE
+		my $stat = 0;		# (Integer) UPDATE Status
 		my $cdat = new Kanadzuchi::BdDR::Cache();
 		my $btab = new Kanadzuchi::BdDR::BounceLogs::Table( 'handle' => $bddr->handle() );
 
 		$this = $iter->first();
 		return('No such record') unless( $this->id() );
 
-		$this->hostgroup( $self->query->param('hostgroup') );
-		$this->reason( $self->query->param('reason') );
-		$this->updated( Time::Piece->new() );
+		$dont |= $self->query->param('hostgroup') eq '_' ? 1 : 0;
+		$dont |= $self->query->param('reason') eq '_' ? 2 : 0;
 
-		if( $this->update( $btab, $cdat ) )
-		{
-			$data = $this->damn();
-			$data->{'updated'}  = $this->updated->ymd().'('.$this->updated->wdayname().') '.$this->updated->hms();
-			$data->{'bounced'}  = $this->bounced->ymd().'('.$this->bounced->wdayname().') '.$this->bounced->hms();
-			$data->{'bounced'} .= ' '.$this->timezoneoffset() if( $this->timezoneoffset() );
+		$this->hostgroup( $self->query->param('hostgroup') ) unless( $dont & 1 );
+		$this->reason( $self->query->param('reason') ) unless( $dont & 2 );
 
-			$self->tt_params( 'bouncemessages' => [ $data ], 'isupdated' => 1 );
-			$self->tt_process( $file );
-		}
-		else
+		if( $dont != 3 )
 		{
-			# Failed to update
-			return('Failed');
+			$this->updated( Time::Piece->new() );
+			$stat = $this->update( $btab, $cdat );
+
+			return('Failed') unless( $stat );
 		}
+
+		$data = $this->damn();
+		$data->{'updated'}  = $this->updated->ymd().'('.$this->updated->wdayname().') '.$this->updated->hms();
+		$data->{'bounced'}  = $this->bounced->ymd().'('.$this->bounced->wdayname().') '.$this->bounced->hms();
+		$data->{'bounced'} .= ' '.$this->timezoneoffset() if( $this->timezoneoffset() );
+
+		$self->tt_params( 'bouncemessages' => [ $data ], 'isupdated' => 1 );
+		$self->tt_process( $file );
 	}
 	else
 	{
-		# Failed to update
 		return('No such record in the database');
 	}
 }
