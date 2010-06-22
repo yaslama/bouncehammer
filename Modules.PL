@@ -1,4 +1,4 @@
-# $Id: Modules.PL,v 1.20 2010/06/08 03:15:45 ak Exp $
+# $Id: Modules.PL,v 1.21 2010/06/22 07:20:11 ak Exp $
 # -Id: PERL-MODULES.PL,v 1.1 2009/08/29 07:32:08 ak Exp -
 # -Id: PERL-MODULES,v 1.6 2009/08/12 01:57:35 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -20,9 +20,9 @@ my $Dependencies = {
 		'Error'			=> [ 0.17015, 0, 'Perl' ],
 		'File::Copy'		=> [ 2.06, 5.002, 'Perl' ],
 		'File::Spec'		=> [ 0.86, 5.00405, 'Unknown' ],
-		'IO::Compress::Bzip2'	=> [ 2.023, 5.010001, 'Perl' ],
+		# Optional 'IO::Compress::Bzip2'	=> [ 2.023, 5.010001, 'Perl' ],
 		'IO::Compress::Gzip'	=> [ 2.023, 5.009004, 'Perl' ],
-		'IO::Compress::Zip'	=> [ 2.023, 5.009004, 'Perl' ],
+		# Optional 'IO::Compress::Zip'	=> [ 2.023, 5.009004, 'Perl' ],
 		'IO::File'		=> [ 1.20, 5.00307, 'Perl' ],
 		'JSON::Syck'		=> [ 0.30, 0, 'MIT' ],
 		'List::Util'		=> [ 1.13, 5.007003, 'Perl' ],

@@ -1,4 +1,4 @@
-# $Id: 074_archive-zip.t,v 1.2 2009/12/22 06:34:42 ak Exp $
+# $Id: 074_archive-zip.t,v 1.3 2010/06/22 07:17:15 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,12 +7,6 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Kanadzuchi::Test;
-use Kanadzuchi::Archive;
-use Kanadzuchi::Archive::Zip;
-use Path::Class;
-use File::Copy;
-use File::Basename;
 use Test::More ( tests => 119 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
@@ -20,37 +14,48 @@ use Test::More ( tests => 119 );
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-my $Z = new Kanadzuchi::Test(
-	'class' => q|Kanadzuchi::Archive::Zip|,
-	'methods' => [ 'ARCHIVEFORMAT', 'new', 'compress', 'is_available' ],
-	'instance' => new Kanadzuchi::Archive::Zip(),
-);
-my $Prefix = 'zip';
+SKIP: {
+	my $Skip = 119;
+	eval { require IO::Compress::Zip; }; 
+	skip( 'Because no IO::Compress::Zip for testing', $Skip ) if( $@ );
 
-PREPROCESS: {
-	isa_ok( $Z->instance(), $Z->class() );
-	can_ok( $Z->class(), @{$Z->methods} );
-}
+	require Kanadzuchi::Test;
+	require Path::Class;
+	require File::Copy;
+	require File::Basename;
+	require Kanadzuchi::Archive;
+	require Kanadzuchi::Archive::Zip;
 
-foreach my $archive ( $Z )
-{
-	my $object = undef();
-	my $classx = $archive->class();
-	my $testsf = $Z->tempdir().'/17-messages.eml';
-	my $zipped = $Z->tempdir().'/17-messages.zip';
-	my $format = lc( [ reverse(split( '::', $classx )) ]->[0] );
-	my $zisize = 0;
-	my $lvsize = 0;
+	my $Z = new Kanadzuchi::Test(
+		'class' => q|Kanadzuchi::Archive::Zip|,
+		'methods' => [ 'ARCHIVEFORMAT', 'new', 'compress', 'is_available' ],
+		'instance' => new Kanadzuchi::Archive::Zip(),
+	);
+	my $Prefix = 'zip';
 
-	File::Copy::copy( $Z->example().q{/17-messages.eml}, $testsf ) unless( -e $testsf );
-	unlink( $testsf.q{.zip} ) if( -e $testsf.q{.zip} );
-	unlink( $zipped ) if( -e $zipped );
+	PREPROCESS: {
+		isa_ok( $Z->instance(), $Z->class() );
+		can_ok( $Z->class(), @{$Z->methods} );
+	}
 
-	my $z1 = $classx->new( 'input' => $testsf );
-	my $z2 = $classx->new( 'input' => $testsf, 'output' => $zipped );
-	my $z3 = $classx->new( 'input' => $testsf, 'output' => $zipped, 'filename' => '17.eml' );
+	foreach my $archive ( $Z )
+	{
+		my $object = undef();
+		my $classx = $archive->class();
+		my $testsf = $Z->tempdir().'/17-messages.eml';
+		my $zipped = $Z->tempdir().'/17-messages.zip';
+		my $format = lc( [ reverse(split( '::', $classx )) ]->[0] );
+		my $zisize = 0;
+		my $lvsize = 0;
 
-	SKIP: {
+		File::Copy::copy( $Z->example().q{/17-messages.eml}, $testsf ) unless( -e $testsf );
+		unlink( $testsf.q{.zip} ) if( -e $testsf.q{.zip} );
+		unlink( $zipped ) if( -e $zipped );
+
+		my $z1 = $classx->new( 'input' => $testsf );
+		my $z2 = $classx->new( 'input' => $testsf, 'output' => $zipped );
+		my $z3 = $classx->new( 'input' => $testsf, 'output' => $zipped, 'filename' => '17.eml' );
+
 
 		skip( 'There is no IO::Copress::Zip module', 117 ) unless( $z1->is_available() );
 
