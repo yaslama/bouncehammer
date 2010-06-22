@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.27 2010/06/22 03:16:54 ak Exp $
+# $Id: 055_mail-group.t,v 1.28 2010/06/22 09:02:13 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 583 );
+use Test::More ( tests => 647 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -62,7 +62,8 @@ my $Domains = {
 	'irwebmail'	=> [ qw( iran.ir ) ],
 	'jpcellphone'	=> [ qw( docomo.ne.jp ezweb.ne.jp softbank.ne.jp d.vodafone.ne.jp jp-k.ne.jp ) ],
 	'jpsmartphone'	=> [ qw( i.softbank.jp docomo.blackberry.com emnet.ne.jp willcom.com ) ],
-	'jpwebmail'	=> [ qw( auone.jp dwmail.jp ) ],
+	'jpwebmail'	=> [ qw( auone.jp dwmail.jp mail.goo.ne.jp goo.jp infoseek.jp livedoor.com
+				 nifty.com nifmail.jp kitty.jp x-o.jp ) ],
 	'krwebmail'	=> [ qw( hanmail.net empas.com ) ],
 	'lvwebmail'	=> [ qw( inbox.lv ) ],
 	'nowebmail'	=> [ qw( runbox.com ) ],
