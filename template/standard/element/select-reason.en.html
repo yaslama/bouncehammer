@@ -20,7 +20,7 @@
 -%]
 [%- SET isselected = '' -%]
 [% IF B.id %]
-	<select name = 'reason' onChange = "enableIt('do-update-[% B.id %]');">
+	<select name = 'reason' id = 'reasons-of-[% B.id %]' onChange = "enableIt('do-update-[% B.id %]');">
 [% ELSE %]
 	<select name = 'reason' onChange = "checkrw.innerHTML = '&#9745; Use';">
 [% END %]

@@ -155,12 +155,14 @@
 									dosearch.value = 'ダウンロード(4)';
 									enableIt('yamlff');
 									enableIt('jsonff');
+									enableIt('csvff');
 								}
 								else{
 									enableIt('resultsperpage');
 									dosearch.value = '検索(4)';
 									disableIt('yamlff');
 									disableIt('jsonff');
+									disableIt('csvff');
 								}"/>
 						検索結果をダウンロードする
 					</td>
@@ -176,6 +178,8 @@
 								YAML</span> &nbsp; &nbsp; 
 							<span><input id = 'jsonff' type = 'radio' name = 'downloadformat' value = 'json' disabled />
 								JSON</span> &nbsp; &nbsp; 
+							<span><input id = 'csvff' type = 'radio' name = 'downloadformat' value = 'csv' disabled />
+								CSV</span> &nbsp; &nbsp; 
 						</fieldset>
 					</td>
 					<td class = 'extra' id = 'checkff'></td>
