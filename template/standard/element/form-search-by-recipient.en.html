@@ -2,16 +2,16 @@
 <div id = 'queryform'>
 	<form action = '[% scriptname %]/search/recipient' method = 'POST'>
 	<fieldset>
-		<legend>Search by Recipient Address(3)</legend>
+		<legend>Search by Recipient Address</legend>
 		<input type = 'text' name = 'recipient' accesskey = '3' style = 'width: 430px;' class = 'wide'
 			placeholder = 'Recipient(To) Address' autosave = '[% systemname %].recipient' results = '16' />
-		<input type = 'submit' value = 'Search(4)' id = 'dosearch' accesskey = '4' class = 'flatbutton' />
-		<input type = 'reset' value = 'Reset(0)' accesskey = '0' class = 'flatbutton' /><br />
+		<input type = 'submit' value = 'Search' id = 'dosearch' accesskey = '4' class = 'flatbutton' />
+		<input type = 'reset' value = 'Reset' accesskey = '0' class = 'flatbutton' /><br />
 		<span class = 'shortdescription'>E-mail address is empty, all data will be displayed.</span>
 
 		<div style = 'margin: 8px 8px 4px 8px;'>
 			<a href = "javascript:void(0)" onClick = "toggleIt('search-condition');"
-				accesskey = '9'>Search Condition(9)</a>
+				accesskey = '9'>Search Condition</a>
 		</div>
 
 		<div id = 'search-condition' style = 'display: [% showsearchcondition %];'> 
@@ -152,14 +152,14 @@
 							onChange = "
 								if( this.checked == true ){
 									disableIt('resultsperpage');
-									dosearch.value = 'Download(4)';
+									dosearch.value = 'Download';
 									enableIt('yamlff');
 									enableIt('jsonff');
 									enableIt('csvff');
 								}
 								else{
 									enableIt('resultsperpage');
-									dosearch.value = 'Search(4)';
+									dosearch.value = 'Search';
 									disableIt('yamlff');
 									disableIt('jsonff');
 									disableIt('csvff');
