@@ -26,7 +26,7 @@
 
 		<div id = 'Central-Ward'>
 
-			<h2>[% tablesumm.bouncelogs.screenname %] テーブル</h2>
+			<h2>[% tablesumm.bouncelogs.screenname %] テーブル [%- IF tableconf.bouncelogs.readonly > 0 -%](読出専用)[%- END -%]</h2>
 			<div class = 'summary'>
 				<table>
 					<tbody>
@@ -78,25 +78,12 @@
 								[% END %]
 							</td>
 						</tr>
-
-						<tr>
-							<td class = 'key'>追加</td>
-							<td class = 'value'>
-								[% IF tableconf.bouncelogs.readonly > 0 %]
-									不可
-								[% ELSE %]
-									可
-									<a href = '[% thepageuri %]/test/'>(追加)</a>
-								[% END %]
-							</td>
-							<td class = 'extra'></td>
-						</tr>
 					</tbody>
 				</table>
 			</div>
 
 			[% FOREACH T IN [ 'senderdomains','destinations' ] %]
-				<h2>[% tablesumm.${T}.screenname %] テーブル</h2>
+				<h2>[% tablesumm.${T}.screenname %] テーブル [%- IF tableconf.${T}.readonly > 0 -%](読出専用)[%- END -%]</h2>
 				<div class = 'summary'>
 					<table>
 						<tbody>
@@ -147,19 +134,6 @@
 										[% tablesumm.${T}.capacity * 100 %] %
 									[% END %]
 								</td>
-							</tr>
-
-							<tr>
-								<td class = 'key'>追加/削除</td>
-								<td class = 'value'>
-									[% IF tableconf.${T}.readonly > 0 %]
-										不可
-									[% ELSE %]
-										可
-										<a href = '[% thepageuri %]/tables/[% T %]/list'>(編集)</a>
-									[% END %]
-								</td>
-								<td class = 'extra'></td>
 							</tr>
 						</tbody>
 					</table>

@@ -1,4 +1,4 @@
-/* $Id: mastertable.css,v 1.5 2010/03/29 04:37:01 ak Exp $ */
+/* $Id: mastertable.css,v 1.6 2010/06/23 07:36:21 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Master table classes */
 table.stored {
@@ -84,6 +84,11 @@ tbody.mastertable tr td {
 	background: #eaf4fc; /* Geppaku */
 	font-weight: bold;
 }
+
+.mastertable input.rewritabletext:focus, .mastertable input.newone:focus {
+	border-color: #2ca9e1; /* Namari-iro */
+}
+
 
 .mastertable input.readonlytext {
 	padding: 3px;

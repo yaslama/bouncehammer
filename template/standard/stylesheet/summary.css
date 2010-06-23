@@ -1,4 +1,4 @@
-/* $Id: summary.css,v 1.4 2010/03/25 02:11:57 ak Exp $ */
+/* $Id: summary.css,v 1.5 2010/06/23 07:36:21 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Summary classes */
 div.summary {
@@ -6,9 +6,9 @@ div.summary {
 	margin: 6px 1px 12px 18px;
 	padding: 4px;
 	border-width: 1px;
-	border-color: #dcdddd; /* Shironezu */
+	border-color: #c1e4e9; /* Shiraai */
 	border-style: solid;
-	background-color: #f3f3f2; /* Shironeri */
+	background-color: #ebf6f7; /* Aijiro */
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;

@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.13 2010/06/22 12:59:04 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.14 2010/06/23 07:36:21 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -217,6 +217,10 @@ input.wide { /* Wide input field */
 	-opera-border-radius: 4px;
 }
 
+input.wide:focus {
+	border-color: #2ca9e1; /* Namari-iro */
+}
+
 span.flatbutton, input.flatbutton {
 	width: 64px;
 	margin: 2px;
@@ -291,7 +295,7 @@ ul.index {
 	list-style-type: none;
 }
 
-ul.index li.item {
+ul.index li.item, ul.index li.itemgroup {
 	width: 130px;
 	margin: 2px 0;
 	padding: 2px 2px 2px 8px;
@@ -301,7 +305,7 @@ ul.index li.item {
 ul.index li.item:hover,
 ul.index li.subitem:hover {
 	font-weight: bold;
-	background: #e5e4e6; /* Shiraumenezu */
+	background: #eaf4fc; /* Geppaku */
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;
@@ -322,7 +326,7 @@ ul.index a:link {
 
 ul.index a:hover, ul.index a:visited:hover {
 	color: #007bbb; /* Kompeki */
-	background: #e5e4e6; /* Shiraumenezu */
+	background: #eaf4fc; /* Geppaku */
 	text-decoration: none; 
 }
 
