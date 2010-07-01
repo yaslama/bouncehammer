@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.15 2010/06/19 09:49:53 ak Exp $
+# $Id: Mbox.pm,v 1.18 2010/07/01 13:24:53 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -26,6 +26,8 @@ use base 'Class::Accessor::Fast::XS';
 use strict;
 use warnings;
 use Perl6::Slurp;
+use Kanadzuchi::MTA::Google;
+use Kanadzuchi::MTA::qmail;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||A |||c |||c |||e |||s |||s |||o |||r |||s ||
@@ -47,6 +49,8 @@ __PACKAGE__->mk_accessors(
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 sub ENDOF() { qq(\n__THE_END_OF_THE_EMAIL__\n); }
+my $TransferAgents = __PACKAGE__->postulat();
+my $DefaultClasses = [ 'Google', 'qmail' ];
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -76,11 +80,93 @@ sub new
 	return( $class->SUPER::new( $argvs ) );
 }
 
-sub _breakit
+sub postulat
 {
 	# +-+-+-+-+-+-+-+-+
-	# |_|b|r|e|a|k|i|t|
+	# |p|o|s|t|u|l|a|t|
 	# +-+-+-+-+-+-+-+-+
+	#
+	# @Description	Require Kanadzuchi::Mbox::??::*
+	# @Param	<None>
+	# @Return	(Ref->Array) Loaded class names
+	# @See		etc/avalable-countries
+	#
+	#     agents: [ 'name-of-mta1', 'name-of-mta2', ... ]
+	#       * The key 'agents' does not exist: Load all of modules in Kanadzuchi::
+	#         Mbox::<CCTLD or ISO3166>::*.pm
+	#       * The key 'agents' is EMPTY: Does NOT load any moduels in Kanadzuchi::
+	#         Mbox::<CCTLD or ISO3166>::*.pm
+	#       * The key 'agents' has a value: Load only the module of its name in 
+	#         Kanadzuch::Mbox::<CCTLD or ISO3166>::<its name>.pm
+	my $class = shift();
+
+	require JSON::Syck;
+	$JSON::Syck::ImplicitTyping  = 1;
+	$JSON::Syck::Headless        = 1;
+	$JSON::Syck::ImplicitUnicode = 0;
+	$JSON::Syck::SingleQuote     = 0;
+	$JSON::Syck::SortKeys        = 0;
+
+	# Experimental implementation for the future.
+	my $libmboxroot = '__KANADZUCHILIB__/Kanadzuchi/MTA';
+	my $iso3166list = [ 'JP' ];
+	my $iso3166conf = '__KANADZUCHIETC__/available-countries';
+	my $countryconf = ( -r $iso3166conf && -s _ && -T _ ) ? JSON::Syck::LoadFile($iso3166conf) : {};
+	my $didfileload = keys %$countryconf ? 1 : 0;
+	my $listofclass = [];
+	my $acclassname = q();
+
+	EACH_COUNTRY: foreach my $code ( @$iso3166list )
+	{
+		# etc/avalable-countries does not exist, load all of modules in 
+		# Kanadzuchi/MTA/??/*.pm
+		my $directory = $libmboxroot.'/'.$code;
+		my $mtaoption = [];	# Require files in this array
+
+		# The directory does not exist or is not readable, or is not executable.
+		next(EACH_COUNTRY) unless( -d $directory && -r _ && -x _ );
+
+		if( $didfileload && exists( $countryconf->{ lc $code }->{'agents'} ) )
+		{
+			# The key 'agents' exists, check the value of the key
+			$mtaoption = $countryconf->{ lc $code }->{'agents'};
+
+			# agents: []
+			#   * The key 'agents' is EMPTY: Does NOT load any moduels in 
+			#     Kanadzuchi::MTA::<CCTLD or ISO3166>::*.pm
+			next(EACH_COUNTRY) unless( scalar @$mtaoption );
+
+			# agents: [ 'something', ... ]
+			#   * The key 'agents' has a value: Load only the module of its
+			#     name in Kanadzuch::MTA::<CCTLD or ISO3166>::<its name>.pm
+			map { $_ = lc $_.'.pm' } @$mtaoption;
+		}
+
+		opendir( my $dh, $directory );
+		READDIR: while( my $de = readdir($dh) )
+		{
+			my $fp = $directory.'/'.$de;
+			next(READDIR) if( $fp !~ m{[.]pm\z} || ! -f $fp || ! -r _ );
+			next(READDIR) if( scalar @$mtaoption && ! grep { lc($de) eq $_ } @$mtaoption );
+
+			$acclassname  = 'Kanadzuchi::MTA::'.$code.'::'.$de;
+			$acclassname =~ s{[.]pm\z}{};
+
+			eval { require $fp; };
+			push( @$listofclass, $acclassname ) unless $@;
+		}
+		closedir($dh);
+
+	} # End of foreach(EACH_COUNTRY)
+
+	return $listofclass;
+}
+
+sub breakit
+{
+	# +-+-+-+-+-+-+-+
+	# |b|r|e|a|k|i|t|
+	# +-+-+-+-+-+-+-+
 	#
 	# @Description	Break the header of message and return its body
 	# @Param <ref>	(Ref->Hash) Message entity.
@@ -90,19 +176,6 @@ sub _breakit
 	my $thismessage = shift() || return(q());
 	my $thebodypart = shift() || return(q());
 	my $theheadpart = $thismessage->{'head'};
-
-	my $parserclass = q();		# (String) Package|Class name
-	my $pseudofield = q();		# (String) Pseudo headers
-	my $fwdmesgbody = q();		# (String) message body of the forwarded one
-	my $newmesgbody = q();		# (String) New message body
-	my $isforwarded = 0;		# (Integer) Is forwarded message
-	my $isirregular = 0;		# (Integer) Is irregular bounce message 
-	my $irregularof = {
-		'aubykddi'	=> ( 1 << 0 ),
-		'accelmail'	=> ( 1 << 1 ),
-		'googlemail'	=> ( 1 << 2 ),
-		'djbqmail'	=> ( 1 << 3 ),
-	};
 
 	# Check whether or not the message is a bounce mail.
 	#  _____             _     _____                                _          _ 
@@ -115,122 +188,54 @@ sub _breakit
 	#  Get forwarded text if a subject begins from 'fwd:' or 'fw:'
 	if( lc( $theheadpart->{'subject'} ) =~ m{\A\s*fwd?:} )
 	{
-		$isforwarded |= 1;
-
 		# Break quoted strings, quote symbols(>)
-		$fwdmesgbody =  $$thebodypart;
-		$fwdmesgbody =~ s{\A.+?[>]}{>}s;
-		$fwdmesgbody =~ s{^[>]+[ ]}{}gm;
-		$fwdmesgbody =~ s{^[>]$}{}gm;
-		$newmesgbody =  $fwdmesgbody;
+		$$thebodypart =~ s{\A.+?[>]}{>}s;
+		$$thebodypart =~ s{^[>]+[ ]}{}gm;
+		$$thebodypart =~ s{^[>]$}{}gm;
 	}
 
-	#  ___                           _                              
-	# |_ _|_ __ _ __ ___  __ _ _   _| | __ _ _ __    __ _ _ __ ___  
-	#  | || '__| '__/ _ \/ _` | | | | |/ _` | '__|  / _` | '_ ` _ \ 
-	#  | || |  | | |  __/ (_| | |_| | | (_| | |    | (_| | | | | | |
-	# |___|_|  |_|  \___|\__, |\__,_|_|\__,_|_|     \__, |_| |_| |_|
-	#                    |___/                         |_|          
-	# Pre-Process eMail headers and body part of message which generated
-	# by qmail, see http://cr.yp.to/qmail.html
-	#   e.g.) Received: (qmail 12345 invoked for bounce); 29 Apr 2009 12:34:56 -0000
-	#         Subject: failure notice
-	if( lc($theheadpart->{'subject'}) eq 'failure notice' && 
-		grep { $_ =~ m{\A[(]qmail[ ]+\d+[ ]+invoked[ ]+for[ ]+bounce[)]} } @{ $theheadpart->{'received'} } ){
-
-		eval {
-			require Kanadzuchi::Mbox::qmail;
-			$parserclass = q(Kanadzuchi::Mbox::qmail);
-			$pseudofield .= $parserclass->reperit( $theheadpart, $thebodypart );
-			$isirregular |= $irregularof->{'djbqmail'} if( length( $pseudofield ) );
-		};
-	}
-
-	#  ___                           _                          
-	# |_ _|_ __ _ __ ___  __ _ _   _| | __ _ _ __    __ _ _   _ 
-	#  | || '__| '__/ _ \/ _` | | | | |/ _` | '__|  / _` | | | |
-	#  | || |  | | |  __/ (_| | |_| | | (_| | |    | (_| | |_| |
-	# |___|_|  |_|  \___|\__, |\__,_|_|\__,_|_|     \__,_|\__,_|
-	#                    |___/                                  
-	# Pre-Process eMail headers of NON-STANDARD bounce message
-	# au by KDDI(ezweb.ne.jp)
-	# Received: from ezweb.ne.jp (wmflb12na02.ezweb.ne.jp [222.15.69.197])
-	# Received: from nmomta.auone-net.jp ([aaa.bbb.ccc.ddd]) by ...
-	if( lc($theheadpart->{'from'}) =~ m{[<]?(?>postmaster[@]ezweb[.]ne[.]jp)[>]?} ||
-		( scalar @{ $theheadpart->{'received'} } &&
-			( grep { $_ =~ m{\Afrom[ ]ezweb[.]ne[.]jp[ ]} } @{ $theheadpart->{'received'} } ||
-			  grep { $_ =~ m{\Afrom[ ]\w+[.]auone-net[.]jp[ ]} } @{ $theheadpart->{'received'} } )
-		)
-	){
-
-		eval {
-			require Kanadzuchi::Mbox::aubyKDDI;
-			$parserclass = q(Kanadzuchi::Mbox::aubyKDDI);
-			$pseudofield .= $parserclass->reperit( $theheadpart, $thebodypart );
-			$isirregular |= $irregularof->{'aubykddi'} if( length( $pseudofield ) );
-		};
-	}
-
-	#  ___                           _                 _    __  __ 
-	# |_ _|_ __ _ __ ___  __ _ _   _| | __ _ _ __     / \  |  \/  |
-	#  | || '__| '__/ _ \/ _` | | | | |/ _` | '__|   / _ \ | |\/| |
-	#  | || |  | | |  __/ (_| | |_| | | (_| | |     / ___ \| |  | |
-	# |___|_|  |_|  \___|\__, |\__,_|_|\__,_|_|    /_/   \_\_|  |_|
-	#                    |___/                                     
-	# Pre-Process eMail headers of NON-STANDARD bounce message
-	# KLab's AccelMail, see http://www.klab.jp/am/
-	if( $theheadpart->{'x-amerror'} )
-	{
-		eval {
-			require Kanadzuchi::Mbox::KLab;
-			$parserclass  = q(Kanadzuchi::Mbox::KLab);
-			$pseudofield .= $parserclass->reperit( $theheadpart, q() );
-			$isirregular |= $irregularof->{'accelmail'} if( length( $pseudofield ) );
-		};
-	}
-
-	#  ___                           _               ____ __  __ 
-	# |_ _|_ __ _ __ ___  __ _ _   _| | __ _ _ __   / ___|  \/  |
-	#  | || '__| '__/ _ \/ _` | | | | |/ _` | '__| | |  _| |\/| |
-	#  | || |  | | |  __/ (_| | |_| | | (_| | |    | |_| | |  | |
-	# |___|_|  |_|  \___|\__, |\__,_|_|\__,_|_|     \____|_|  |_|
-	#                    |___/                                   
-	# Google Mail: GMail
-	# From: Mail Delivery Subsystem <mailer-daemon@googlemail.com>
-	# Received: from vw-in-f109.1e100.net [74.125.113.109] by ...
-	if( lc($theheadpart->{'from'}) =~ m{[<]?(?>mailer[-]daemon[@]googlemail[.]com)[>]?\z} ||
-		( scalar @{ $theheadpart->{'received'} } &&
-			grep { $_ =~ m{\Afrom[ ][^\s]+?[.]1e100[.]net[ ]} } @{ $theheadpart->{'received'} }
-		) ||
-		$theheadpart->{'x-failed-recipients'} ){
-
-		eval {
-			require Kanadzuchi::Mbox::Google;
-			$parserclass  = q(Kanadzuchi::Mbox::Google);
-			$pseudofield .= $parserclass->reperit( $theheadpart, $thebodypart );
-			$isirregular |= $irregularof->{'googlemail'} if( length( $pseudofield ) );
-		};
-	}
-
-
+	#  ____  _                  _               _   _____                          _   
+	# / ___|| |_ __ _ _ __   __| | __ _ _ __ __| | |  ___|__  _ __ _ __ ___   __ _| |_ 
+	# \___ \| __/ _` | '_ \ / _` |/ _` | '__/ _` | | |_ / _ \| '__| '_ ` _ \ / _` | __|
+	#  ___) | || (_| | | | | (_| | (_| | | | (_| | |  _| (_) | |  | | | | | | (_| | |_ 
+	# |____/ \__\__,_|_| |_|\__,_|\__,_|_|  \__,_| |_|  \___/|_|  |_| |_| |_|\__,_|\__|
+	#                                                                                  
 	# Pre-Process eMail headers of standard bounce message
-	if( $isirregular == 0 && $isforwarded == 0 )
+	return $$thebodypart if( $theheadpart->{'content-type'} && (
+				 $theheadpart->{'content-type'} =~ m{^multipart/report} ||
+				 $theheadpart->{'content-type'} =~ m{^multipart/mixed} ||
+				 $theheadpart->{'content-type'} =~ m{^message/delivery-status} ||
+				 $theheadpart->{'content-type'} =~ m{^message/rfc822} ||
+				 $theheadpart->{'content-type'} =~ m{^text/rfc822-headers} ) );
+
+
+	my $parserclass = q();		# (String) Package|Class name
+	my $pseudofield = q();		# (String) Pseudo headers
+	my $agentmodule = q();		# (String) Agent class name
+	my $isforwarded = 0;		# (Integer) Is forwarded message
+	my $isirregular = 0;		# (Integer) Is irregular bounce message 
+
+	# qmail and Gmail
+	foreach my $mta ( @$DefaultClasses )
 	{
-		return( q{} ) unless( $theheadpart->{'content-type'} );
-		return( q{} )
-			unless(	$theheadpart->{'content-type'} =~ m{^multipart/report} ||
-				$theheadpart->{'content-type'} =~ m{^multipart/mixed} ||
-				$theheadpart->{'content-type'} =~ m{^message/delivery-status} ||
-				$theheadpart->{'content-type'} =~ m{^message/rfc822} ||
-				$theheadpart->{'content-type'} =~ m{^text/rfc822-headers} );
-		return($$thebodypart);
-	}
-	else
-	{
-		return( $pseudofield.$fwdmesgbody ) if( $fwdmesgbody );
-		return( $pseudofield.$$thebodypart );
+		$agentmodule  = q|Kanadzuchi::MTA::|.$mta;
+		$pseudofield .= $agentmodule->reperit( $theheadpart, $thebodypart );
+		$isirregular  = length $pseudofield;
+		last() if( $pseudofield );
 	}
 
+	# Optionals
+	unless( $pseudofield )
+	{
+		foreach my $mod ( @$TransferAgents )
+		{
+			$pseudofield .= $mod->reperit( $theheadpart, $thebodypart );
+			$isirregular  = length $pseudofield;
+			last() if( $pseudofield );
+		}
+	}
+
+	return $pseudofield.$$thebodypart;
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -262,7 +267,7 @@ sub slurpit
 
 	eval {
 		# Slurp the mailbox, Convert from CRLF to LF,
-		@{$self->{'emails'}} =
+		@{ $self->{'emails'} } =
 			map( { s{\x0d\x0a}{\n}g; y{\x0d\x0a}{\n\n}; q(From ).$_; }
 				Perl6::Slurp::slurp( $file,
 					{
@@ -272,8 +277,11 @@ sub slurpit
 				)
 			);
 
-		$self->{'emails'}->[0] =~ s{\AFrom (.+)\z}{$1}s;
-		$self->{'emails'}->[ $#{$self->{'emails'}} ] .= ENDOF;
+		if( scalar @{ $self->{'emails'} } )
+		{
+			$self->{'emails'}->[0] =~ s{\AFrom (.+)\z}{$1}s;
+			$self->{'emails'}->[ $#{$self->{'emails'}} ] .= ENDOF;
+		}
 	};
 
 	return(0) if($@);
@@ -294,10 +302,15 @@ sub parseit
 	my $call = shift() || sub {};
 	my $ends = ENDOF;
 	my $seek = 0;
-	my $emailheader = {
-		'regular' => [ 'From', 'To', 'Date', 'Subject', 'Content-Type' ],
-		'irregular' => [ 'X-SPASIGN', 'X-AMERROR', 'X-Failed-Recipients' ],
-	};
+
+	my $agentclasses = [ map { 'Kanadzuchi::MTA::'.$_ } @$DefaultClasses ];
+	my $emailheaders = [ 'From', 'To', 'Date', 'Subject', 'Content-Type' ];
+	my $agentheaders = [];
+
+	# Load each agent's headers
+	map { push @$agentheaders, @{ $_->emailheaders() } } @$agentclasses;
+	map { push @$agentheaders, @{ $_->emailheaders() } } @$TransferAgents;
+
 
 	PARSE_EMAILS: while( my $_email = shift @{$self->{'emails'}} )
 	{
@@ -335,7 +348,7 @@ sub parseit
 
 		LINES: foreach my $_ln ( split( qq{\n}, $_head ) )
 		{
-			HEADERS: foreach my $_eh ( @{ $emailheader->{'regular'} }, @{ $emailheader->{'irregular'} } )
+			HEADERS: foreach my $_eh ( @$emailheaders, @$agentheaders )
 			{
 				next(HEADERS) unless( $_ln =~ m{\A$_eh[:][ ]*}i );
 				( $_mesg->{'head'}->{ lc($_eh) } ) = $_ln =~ m/\A${_eh}[:][ ]*(.+?)\z/i;
@@ -361,7 +374,7 @@ sub parseit
 		}
 
 		# 3. Rewrite the part of the message body
-		$_mesg->{'body'} = __PACKAGE__->_breakit( $_mesg, \$_body );
+		$_mesg->{'body'} = __PACKAGE__->breakit( $_mesg, \$_body );
 		$_head = q();
 
 
