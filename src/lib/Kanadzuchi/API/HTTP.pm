@@ -1,4 +1,4 @@
-# $Id: HTTP.pm,v 1.13 2010/06/10 10:28:37 ak Exp $
+# $Id: HTTP.pm,v 1.14 2010/06/25 19:35:30 ak Exp $
 # -Id: HTTP.pm,v 1.3 2009/10/06 00:36:49 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::
@@ -58,7 +58,7 @@ sub setup
 	$self->mode_param('x');
 	$self->run_modes( 
 		'Empty' => 'api_empty',
-		'Query' => 'api_query',
+		'Select' => 'api_select',
 	);
 }
 
@@ -147,11 +147,11 @@ sub api_empty
 	return();
 }
 
-sub api_query
+sub api_select
 {
-	# +-+-+-+-+-+-+-+-+-+
-	# |a|p|i|_|q|u|e|r|y|
-	# +-+-+-+-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+-+-+-+
+	# |a|p|i|_|s|e|l|e|c|t|
+	# +-+-+-+-+-+-+-+-+-+-+
 	#
 	# @Description	Send message token and return serialized result.
 	# @Param	None

@@ -1,4 +1,4 @@
-# $Id: Dispatch.pm,v 1.3 2010/06/10 10:28:37 ak Exp $
+# $Id: Dispatch.pm,v 1.4 2010/06/25 19:35:30 ak Exp $
 # -Id: Index.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Index.pm,v 1.3 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -33,7 +33,8 @@ my $Settings = {
 #
 my $DispatchTables = [
 	'empty'		=> { 'app' => 'API::HTTP', 'rm' => 'Empty' },
-	'query/:token?' => { 'app' => 'API::HTTP', 'rm' => 'Query' },
+	'query/:token?' => { 'app' => 'API::HTTP', 'rm' => 'Select' },
+	'select/:token?' => { 'app' => 'API::HTTP', 'rm' => 'Select' },
 ];
 
 my $DispatchArgsToNew = {
