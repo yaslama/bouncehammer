@@ -1,4 +1,4 @@
-# $Id: MasterTables.pm,v 1.15 2010/06/08 19:15:05 ak Exp $
+# $Id: MasterTables.pm,v 1.16 2010/06/28 13:18:31 ak Exp $
 # -Id: MasterTables.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: MasterTables.pm,v 1.7 2009/08/15 15:06:56 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -42,7 +42,7 @@ sub tablelist_ontheweb
 	my $bddr = $self->{'database'};
 	my $list = [];
 
-	my $templatef = 'mastertable.'.$self->{'language'}.'.html';
+	my $templatef = 'mastertable.html';
 	my $tableconf = $self->{'webconfig'}->{'database'}->{'table'};
 	my $tablename = lc $self->param('pi_tablename');
 	my $tableisro = $tableconf->{$tablename}->{'readonly'};
@@ -69,7 +69,7 @@ sub tablelist_ontheweb
 		'contentsname' => 'table',
 		'hascondition' => 0,
 		'tablecontents' => $list );
-	$self->tt_process($templatef);
+	return $self->tt_process($templatef);
 }
 
 sub tablectl_ontheweb
@@ -83,8 +83,8 @@ sub tablectl_ontheweb
 	my $self = shift();
 	my $bddr = $self->{'database'};
 
-	my $templatef = 'div-mastertable-contents.'.$self->{'language'}.'.html';
-	my $templatee = 'div-mastertable-error.'.$self->{'language'}.'.html';
+	my $templatef = 'div-mastertable-contents.html';
+	my $templatee = 'div-mastertable-error.html';
 	my $tablename = lc $self->param('pi_tablename');
 	my $tableconf = $self->{'webconfig'}->{'database'}->{'table'};
 	my $tableisro = $tableconf->{$tablename}->{'readonly'};
@@ -118,56 +118,37 @@ sub tablectl_ontheweb
 			$newmtdata->{'description'} = $cgidquery->param('newdesc');
 			$newmtdata->{'disabled'} = 0;
 
-			if( $tableisro )
-			{
-				# The table is read only table, Set error template
-				$tabrecord = [ { 
-					'name' => $newmtdata->{'name'},
-					'description' => q(Permission denied, The table is read only.), } ];
-				$templatef = $templatee;
-			}
-			else
-			{
-				# The table is writable
-				if( Kanadzuchi::RFC2822->is_domainpart($newmtdata->{'name'}) && $newmtdata->{'name'} =~ m{[.]} )
-				{
-					$currentid = $mastertab->getidbyname( $newmtdata->{'name'} );
-					if( $currentid )
-					{
-						# The record already exists, CANNOT INSERT
-						$tabrecord = [ { 
-							'id' => $currentid,
-							'name' => $newmtdata->{'name'},
-							'description' => q(Already exists), } ];
-						$templatef = $templatee;
-					}
-					else
-					{
-						# The record does not exist in the mastertable
-						$newmtdata->{'id'} = $mastertab->insert( $newmtdata );
+			# The table is read only table, Set error template
+			return $self->e( 'readonlytable' ) if( $tableisro );
 
-						if( $newmtdata->{'id'} )
-						{
-							$tabrecord = [ $newmtdata ];
-						}
-						else
-						{
-							# Failed to create
-							$tabrecord = [ { 
-								'name' => $newmtdata->{'name'},
-								'description' => q(Failed to create a new record), } ];
-							$templatef = $templatee;
-						}
-					}
+			# The table is writable
+			if( Kanadzuchi::RFC2822->is_domainpart($newmtdata->{'name'}) && $newmtdata->{'name'} =~ m{[.]} )
+			{
+				$currentid = $mastertab->getidbyname( $newmtdata->{'name'} );
+				return $self->e( 'alreadyexists', 'name: '.$newmtdata->{'name'} ) if( $currentid );
+
+				# The record does not exist in the mastertable
+				$newmtdata->{'id'} = $mastertab->insert( $newmtdata );
+
+				if( $newmtdata->{'id'} )
+				{
+					$tabrecord = [ $newmtdata ];
 				}
 				else
 				{
-					# Invalid key name
-					$tabrecord = [ { 
-						'name' => $newmtdata->{'name'},
-						'description' => 'Invalid name or not FQDN: ['.$newmtdata->{'name'}.']', } ];
-					$templatef = $templatee;
+					return $self->e( 'failedtocreate', [
+							'name: '.$newmtdata->{'name'},
+							'desciption: '.$newmtdata->{'description'}
+						] );
 				}
+			}
+			else
+			{
+				# Invalid key name
+				return $self->e('dataformaterror', [
+							'name: '.$newmtdata->{'name'},
+							'desciption: '.$newmtdata->{'description'}
+						] );
 			}
 
 			$self->tt_params(
@@ -186,38 +167,58 @@ sub tablectl_ontheweb
 			# | |_| |  __/| |_| / ___ \| | | |___ 
 			#  \___/|_|   |____/_/   \_\_| |_____|
 			#                                     
+			# The table is read only table, Set error template
 			$wherecond->{'id'} = $cgidquery->param('id');
 			$curmtdata = $mastertab->getentbyid($wherecond->{'id'});
 
-			if( exists($curmtdata->{'id'}) && $curmtdata->{'id'} )
+			if( $tableisro )
 			{
-				$newmtdata->{'name'} = $curmtdata->{'name'};
-				$newmtdata->{'description'} = $cgidquery->param('desc');
-				$newmtdata->{'disabled'} = $curmtdata->{'disabled'};
-
-				if( $mastertab->update( $newmtdata, $wherecond ) )
-				{
-					# Successfully UPDATEd
-					$tabrecord = [ {
-						'id' => $curmtdata->{'id'},
-						'name' => $newmtdata->{'name'},
-						'disabled' => $newmtdata->{'disabled'},
-						'description' => $newmtdata->{'description'}, } ];
-				}
-				else
-				{
-					# Failed to UPDATE
-					$templatef = $templatee;
-					$tabrecord = [ { 'name' => $curmtdata->{'name'}, 'description' => q(Failed to update), } ];
-				}
+				# The table is read only table, Set error template
+				$templatef = $templatee;
+				$tabrecord = [ { 
+					'head' => 'readonlytable',
+					'id' => $curmtdata->{'id'},
+					'name' => $curmtdata->{'name'}, 
+					'description' => $curmtdata->{'description'} } ];
 			}
 			else
 			{
-				# ID is empty
-				$templatef = $templatee;
-				$tabrecord = [ { 
-					'name' => $cgidquery->param('name'),
-					'description' => q(No ID in the query string, Failed), } ];
+				if( exists($curmtdata->{'id'}) && $curmtdata->{'id'} )
+				{
+					$newmtdata->{'name'} = $curmtdata->{'name'};
+					$newmtdata->{'description'} = $cgidquery->param('desc');
+					$newmtdata->{'disabled'} = $curmtdata->{'disabled'};
+
+					if( $mastertab->update( $newmtdata, $wherecond ) )
+					{
+						# Successfully UPDATEd
+						$tabrecord = [ {
+							'id' => $curmtdata->{'id'},
+							'name' => $newmtdata->{'name'},
+							'disabled' => $newmtdata->{'disabled'},
+							'description' => $newmtdata->{'description'}, } ];
+					}
+					else
+					{
+						# Failed to UPDATE
+						$templatef = $templatee;
+						$tabrecord = [ { 
+							'head' => 'failedtoupdate',
+							'id' => $curmtdata->{'id'},
+							'name' => $curmtdata->{'name'}, 
+							'description' => $curmtdata->{'description'} } ];
+					}
+				}
+				else
+				{
+					# ID is empty
+					$templatef = $templatee;
+					$tabrecord = [ { 
+						'head' => 'dataformaterror',
+						'id' => $cgidquery->param('id'),
+						'name' => $cgidquery->param('name'),
+						'description' => $cgidquery->param('desc'), } ];
+				}
 			}
 
 			$self->tt_params(
@@ -242,7 +243,7 @@ sub tablectl_ontheweb
 			my $willberemoved = {};
 			my $removedrecord = [];
 
-			$templatef = 'mastertable.'.$self->{'language'}.'.html';
+			$templatef = 'mastertable.html';
 			$paginated = Kanadzuchi::BdDR::Page->new(
 					'colnameorderby' => $cgidquery->param('colnameorderby') || 'id',
 					'resultsperpage' => $cgidquery->param('resultsperpage') || 10 );
@@ -262,8 +263,7 @@ sub tablectl_ontheweb
 						if( $tableisro )
 						{
 							# The table is read only
-							$errormessages .= 'Permission denied, The table is read only.';
-							$errormessages .= '(ID='.$theidwillberm.')';
+							$self->e('readonlytable', 'ID: #'.$theidwillberm );
 						}
 						else
 						{
@@ -275,22 +275,20 @@ sub tablectl_ontheweb
 							else
 							{
 								# Failed to remove
-								$errormessages .= 'Failed to remove the reocrd';
-								$errormessages .= '(ID='.$theidwillberm.')';
+								$self->e('failedtodelete', 'ID: #'.$theidwillberm );
 							}
 						}
 					}
 					else
 					{
 						# No such record
-						$errormessages .= 'No such record';
-						$errormessages .= '(ID='.$theidwillberm.')';
+						$self->e( 'nosuchrecord', 'ID: #'.$theidwillberm );
 					}
 				}
 				else
 				{
 					# Checkbox is not checked
-					$errormessages .= 'Checkbox is not checked';
+					$self->e( 'checkboxisoff' );
 				}
 			}
 
@@ -345,7 +343,7 @@ sub tablectl_ontheweb
 
 	} # End of if($table)
 
-	$self->tt_process($templatef);
+	return $self->tt_process($templatef);
 }
 
 1;

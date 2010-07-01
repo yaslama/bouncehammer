@@ -1,4 +1,4 @@
-# $Id: Profile.pm,v 1.9 2010/06/10 10:28:56 ak Exp $
+# $Id: Profile.pm,v 1.10 2010/06/28 13:18:31 ak Exp $
 # -Id: Profile.pm,v 1.2 2009/08/31 06:58:25 ak Exp -
 # -Id: Profile.pm,v 1.3 2009/08/17 06:54:30 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -28,7 +28,10 @@ sub profile_ontheweb
 	#
 	# @Description	Draw profile in HTML
 	my $self = shift();
-	my $file = 'profile.'.$self->{'language'}.'.html';
+	my $file = 'profile.html';
+	my $time = q();
+
+	eval { $time = qx|uptime|; };
 
 	$self->tt_params(
 		'sysconfig' => $self->{'sysconfig'},
@@ -36,12 +39,12 @@ sub profile_ontheweb
 		'systemname' => $Kanadzuchi::SYSNAME,
 		'sysconfpath' => $self->param('cf'),
 		'webconfpath' => $self->param('wf'),
-		'sysuptime' => qx(uptime),
+		'sysuptime' => $time,
 		'scriptengine' => $ENV{'MOD_PERL'} || 'CGI',
 		'serversoftware' => $ENV{'SERVER_SOFTWARE'} || 'Unknown',
 		'serverhost' => $ENV{'SERVER_NAME'}.':'.$ENV{'SERVER_PORT'},
 	);
-	$self->tt_process($file);
+	return $self->tt_process($file);
 }
 
 1;

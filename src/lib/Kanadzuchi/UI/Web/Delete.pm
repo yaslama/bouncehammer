@@ -1,4 +1,4 @@
-# $Id: Delete.pm,v 1.2 2010/06/21 10:19:28 ak Exp $
+# $Id: Delete.pm,v 1.3 2010/06/28 13:18:31 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::Web::
                                        
@@ -39,7 +39,7 @@ sub delete_ontheweb
 	# @Return
 	my $self = shift();
 	my $bddr = $self->{'database'};
-	my $file = 'div-result.'.$self->{'language'}.'.html';
+	my $file = 'div-result.html';
 	my $iter = undef();	# (K::Iterator) Iterator object
 	my $cond = {};		# (Ref->Hash) WHERE Condition
 
@@ -48,7 +48,7 @@ sub delete_ontheweb
 		'token' => $self->param('token') || $self->query->param('token') || q(),
 	};
 
-	return('Invalid record ID') unless($cond->{'id'});
+	return $self->e( 'invalidrecordid','ID: #'.$cond->{'id'} ) unless($cond->{'id'});
 	$iter = Kanadzuchi::Mail::Stored::BdDR->searchandnew( $bddr->handle(), $cond );
 
 	if( $iter->count() )
@@ -60,8 +60,7 @@ sub delete_ontheweb
 		my $btab = new Kanadzuchi::BdDR::BounceLogs::Table( 'handle' => $bddr->handle() );
 
 		$this = $iter->first();
-		return('No such record') unless( $this->id() );
-
+		return $self->e( 'nosuchrecord' ) unless( $this->id() );
 		if( $this->remove( $btab, $cdat ) )
 		{
 			$data = $this->damn();
@@ -74,13 +73,13 @@ sub delete_ontheweb
 		else
 		{
 			# Failed to remove
-			return('Failed');
+			return $self->e( 'failedtodelete', 'ID: #'.$cond->{'id'} );
 		}
 	}
 	else
 	{
 		# Failed to update
-		return('No such record in the database');
+		return $self->e( 'nosuchrecord' );
 	}
 }
 

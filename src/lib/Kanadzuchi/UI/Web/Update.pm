@@ -1,4 +1,4 @@
-# $Id: Update.pm,v 1.11 2010/06/22 12:59:44 ak Exp $
+# $Id: Update.pm,v 1.13 2010/06/28 13:18:31 ak Exp $
 # -Id: Update.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Update.pm,v 1.6 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -42,15 +42,16 @@ sub update_ontheweb
 	# @Return
 	my $self = shift();
 	my $bddr = $self->{'database'};
-	my $file = 'div-result.'.$self->{'language'}.'.html';
+	my $file = 'div-result.html';
 	my $iter = undef();	# (K::Iterator) Iterator object
 	my $cond = {};		# (Ref->Hash) WHERE Condition
+	my $isro = $self->{'webconfig'}->{'database'}->{'table'}->{'bouncelogs'}->{'readonly'};
 
 	$cond = {
 		'id' => $self->param('pi_id') || $self->query->param('id') || 0,
 		'token' => $self->param('token') || $self->query->param('token') || q(),
 	};
-	return('Invalid record ID') unless($cond->{'id'});
+	return $self->e('invalidrecordid', 'ID: #'.$cond->{'id'} ) unless($cond->{'id'});
 	$iter = Kanadzuchi::Mail::Stored::BdDR->searchandnew( $bddr->handle(), $cond );
 
 	if( $iter->count() )
@@ -64,7 +65,7 @@ sub update_ontheweb
 		my $btab = new Kanadzuchi::BdDR::BounceLogs::Table( 'handle' => $bddr->handle() );
 
 		$this = $iter->first();
-		return('No such record') unless( $this->id() );
+		return $self->e('nosuchrecord', 'ID: #'.$cond->{'id'}) unless( $this->id() );
 
 		$dont |= $self->query->param('hostgroup') eq '_' ? 1 : 0;
 		$dont |= $self->query->param('reason') eq '_' ? 2 : 0;
@@ -84,13 +85,12 @@ sub update_ontheweb
 		$data->{'updated'}  = $this->updated->ymd().'('.$this->updated->wdayname().') '.$this->updated->hms();
 		$data->{'bounced'}  = $this->bounced->ymd().'('.$this->bounced->wdayname().') '.$this->bounced->hms();
 		$data->{'bounced'} .= ' '.$this->timezoneoffset() if( $this->timezoneoffset() );
-
-		$self->tt_params( 'bouncemessages' => [ $data ], 'isupdated' => 1 );
-		$self->tt_process( $file );
+		$self->tt_params( 'bouncemessages' => [ $data ], 'isupdated' => 1, 'isreadonly' => $isro );
+		return $self->tt_process( $file );
 	}
 	else
 	{
-		return('No such record in the database');
+		return $self->e('nosuchrecord', 'ID: #'.$cond->{'id'});
 	}
 }
 

@@ -1,4 +1,4 @@
-# $Id: Dispatch.pm,v 1.4 2010/06/10 10:28:56 ak Exp $
+# $Id: Dispatch.pm,v 1.7 2010/07/01 16:46:27 ak Exp $
 # -Id: Index.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Index.pm,v 1.3 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -24,6 +24,9 @@ use warnings;
 my $Settings = {
 	'coreconfig'	=> '__KANADZUCHIETC__/bouncehammer.cf',
 	'webconfig'	=> '__KANADZUCHIETC__/webui.cf',
+	'neighborconfig'=> '__KANADZUCHIETC__/neighbor-domains',
+	'neighbors'	=> '__KANADZUCHIETC__/neighbor-domains',
+	'hostgroups'	=> '__KANADZUCHIETC__/avaiable-countries',
 	'template'	=> '__KANADZUCHIDATA__/template',
 };
 
@@ -37,10 +40,12 @@ my $DispatchTables = [
 	'token'		=> { 'app' => 'Web::Token',	'rm' => 'Token' },
 	'test'		=> { 'app' => 'Web::Test',	'rm' => 'Test' },
 	'test/parse'	=> { 'app' => 'Web::Test',	'rm' => 'Parse' },
-	'config'	=> { 'app' => 'Web::Config',	'rm' => 'Config' },
 	'profile'	=> { 'app' => 'Web::Profile',	'rm' => 'Profile' },
 	'summary'	=> { 'app' => 'Web::Summary',	'rm' => 'Summary' },
 	'update/:pi_id'	=> { 'app' => 'Web::Update',	'rm' => 'Update' },
+	'delete/:pi_id'	=> { 'app' => 'Web::Delete',	'rm' => 'Delete' },
+	# 'config/neighbor-domains' => { 'app' => 'Web::Config',	'rm' => 'Config' },
+	# 'config/available-countries' => { 'app' => 'Web::Config',	'rm' => 'Config' },
 
 	'search/recipient/:pi_recipient?/:pi_orderby?/:pi_page?/:pi_rpp?' => { 
 						'app' => 'Web::Search', 

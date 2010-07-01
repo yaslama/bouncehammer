@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.27 2010/06/22 13:00:20 ak Exp $
+# $Id: Search.pm,v 1.29 2010/06/28 13:18:31 ak Exp $
 # -Id: Search.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Search.pm,v 1.11 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -43,7 +43,7 @@ sub search_ontheweb
 	# @Return
 	my $self = shift();
 	my $bddr = $self->{'database'};
-	my $tmpl = q(search.).$self->{'language'}.q(.html);
+	my $tmpl = 'search.html';
 
 	my $wherecond = {};	# (Ref->Hash) WHERE Condition for sending query
 	my $errorsinq = {};	# (Ref->Hash) Parameter errors in the query
@@ -56,7 +56,7 @@ sub search_ontheweb
 	my $paginated = new Kanadzuchi::BdDR::Page();
 	my $bouncelog = new Kanadzuchi::BdDR::BounceLogs::Table('handle' => $bddr->handle());
 	my $cgiqueryp = $self->query();
-
+	my $readonlyx = $self->{'webconfig'}->{'database'}->{'table'}->{'bouncelogs'}->{'readonly'};
 
 	# Do not include a record that is disabled(=1)
 	$wherecond->{'disabled'} = 0;
@@ -407,6 +407,7 @@ sub search_ontheweb
 		my $logrecord = [];
 		my $iteratorr = Kanadzuchi::Mail::Stored::BdDR->searchandnew(
 					$bddr->handle(), $wherecond, $paginated );
+
 		while( my $o = $iteratorr->next() )
 		{
 			my $damnedobj = $o->damn();
@@ -422,9 +423,10 @@ sub search_ontheweb
 			'hascondition' => $advancedx,
 			'searchcondition' => $wherecond,
 			'encryptedforuri' => $encrypted,
+			'isreadonly' => $readonlyx,
 			'pagination' => $paginated,
-			'errorsinq' => $errorsinq, );
-		$self->tt_process($tmpl);
+			'errorsinq' => $errorsinq );
+		return $self->tt_process($tmpl);
 	}
 }
 

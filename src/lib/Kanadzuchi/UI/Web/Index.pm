@@ -1,4 +1,4 @@
-# $Id: Index.pm,v 1.5 2010/06/10 10:28:56 ak Exp $
+# $Id: Index.pm,v 1.6 2010/06/28 13:18:31 ak Exp $
 # -Id: Index.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Index.pm,v 1.3 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -30,8 +30,8 @@ sub index_ontheweb
 	# @Param	<None>
 	# @Return
 	my $self = shift();
-	my $file = 'index.'.$self->{language}.'.html';
-	$self->tt_process($file);
+	my $file = 'index.html';
+	return $self->tt_process($file);
 }
 
 1;

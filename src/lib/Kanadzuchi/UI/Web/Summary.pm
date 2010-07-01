@@ -1,4 +1,4 @@
-# $Id: Summary.pm,v 1.11 2010/06/06 14:25:07 ak Exp $
+# $Id: Summary.pm,v 1.12 2010/06/28 13:18:31 ak Exp $
 # -Id: Summary.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Summary.pm,v 1.1 2009/08/18 02:37:53 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -37,7 +37,7 @@ sub summary_ontheweb
 	#
 	# @Description	Draw summary in HTML
 	my $self = shift();
-	my $file = 'summary.'.$self->{'language'}.'.html';
+	my $file = 'summary.html';
 	my $bddr = $self->{'database'};
 
 	my $bouncelog = new Kanadzuchi::BdDR::BounceLogs::Table( 'handle' => $bddr->handle() );
@@ -73,7 +73,7 @@ sub summary_ontheweb
 		'tableconf' => $tableconf,
 		'tablesumm' => $tablesumm,
 	);
-	$self->tt_process($file);
+	return $self->tt_process($file);
 }
 
 1;

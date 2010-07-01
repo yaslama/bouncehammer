@@ -1,4 +1,4 @@
-# $Id: Token.pm,v 1.3 2010/03/01 23:42:12 ak Exp $
+# $Id: Token.pm,v 1.4 2010/06/28 13:18:31 ak Exp $
 # -Id: Digest.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Digest.pm,v 1.4 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -37,17 +37,19 @@ sub token_ontheweb
 	# @Param	<None>
 	# @Return
 	my $self = shift();
-	my $file = q(messagetoken.).$self->{'language'}.q(.html);
+	my $file = 'messagetoken.html';
 	my $q = $self->query();
 
 	if( defined($q->param('makenewtoken')) && $q->param('makenewtoken') == 1 )
 	{
-		$file = q(div-new-message-token.).$self->{'language'}.q(.html);
+		$file = 'div-new-message-token.html';
 		my $_sender = defined($q->param('addresser')) ? lc($q->param('addresser')) : q();
 		my $_recipt = defined($q->param('recipient')) ? lc($q->param('recipient')) : q();
-		my $_string = q(Failed to create);
+		my $_string = q();
+		return $self->e('missingargument') unless( $_sender && $_recipt );
 
-		$_string = Kanadzuchi::String->token( $_sender, $_recipt ) if( $_sender && $_recipt );
+		$_string = Kanadzuchi::String->token( $_sender, $_recipt );
+		return $self->e('failedtocreate') unless( $_string );
 
 		$self->tt_params( 
 			'addresser' => $_sender,
@@ -55,7 +57,7 @@ sub token_ontheweb
 			'token' => $_string );
 	}
 
-	$self->tt_process($file);
+	return $self->tt_process($file);
 }
 
 1;
