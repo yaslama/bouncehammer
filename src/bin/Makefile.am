@@ -1,9 +1,10 @@
-# $Id: Makefile.am,v 1.4 2010/06/08 03:15:20 ak Exp $
+# $Id: Makefile.am,v 1.5 2010/06/25 19:32:15 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/src/bin, is processed by 
 # automake to create Makefile.in.
 
-bin_SCRIPTS = databasectl datadumper logger mailboxparser messagetoken tablectl
+bin_SCRIPTS = databasectl datadumper logger mailboxparser \
+		messagetoken summarizer tablectl
 distdir = $(BUILDROOT)/dist/bin
 instdir = @bindir@
 
