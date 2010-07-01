@@ -1,18 +1,18 @@
 #!/usr/bin/perl
-# $Id: make-dummy-data.pl,v 1.1 2010/05/20 13:11:08 ak Exp $
+# $Id: make-dummy-data.pl,v 1.2 2010/06/25 19:17:58 ak Exp $
 use strict;
 use warnings;
 use Digest::MD5;
 use Time::Piece;
 
-my $howmanylines = shift() || 10;
 my $createdcount = 0;
-my $senderdomain = 'example.jp';
+my $howmanylines = shift() || 10; $howmanylines = 10 unless( $howmanylines =~ m{\A\d+\z} );
+my $senderdomain = shift() || 'example.jp'; $senderdomain = 'example.jp' unless( $senderdomain =~ m{\A\w+[.][a-zA-Z]{2,8}\z} );
 my $destinations = [
 		{ 'domain' => 'cubicroot.jp', 'hostgroup' => 'pc', 'provider' => 'various' },
 		{ 'domain' => 'bouncehammer.jp', 'hostgroup' => 'undefined', 'provider' => 'various' },
 		{ 'domain' => 'example.com', 'hostgroup' => 'reserved', 'provider' => 'rfc2606' },
-		{ 'domain' => 'example.ac.jp', 'hostgroup' => 'reserverd', 'provider' => 'reserved' },
+		{ 'domain' => 'example.ac.jp', 'hostgroup' => 'reserved', 'provider' => 'reserved' },
 		{ 'domain' => 'aol.com', 'hostgroup' => 'webmail', 'provider' => 'aol' },
 		{ 'domain' => 'msn.com', 'hostgroup' => 'webmail', 'provider' => 'microsoft' },
 		{ 'domain' => 'yahoo.com' ,'hostgroup' => 'webmail', 'provider' => 'yahoo' },
