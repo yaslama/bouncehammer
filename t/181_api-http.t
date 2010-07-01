@@ -1,4 +1,4 @@
-# $Id: 181_api-http.t,v 1.4 2010/06/22 07:17:16 ak Exp $
+# $Id: 181_api-http.t,v 1.5 2010/06/25 19:35:32 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -18,7 +18,7 @@ use Test::More ( tests => 1 );
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::API::HTTP|,
 	'methods' => [ 'cgiapp_init', 'setup', 'cgiapp_prerun', 'cgiapp_postrun',
-			'teardown', 'loadconfig', 'api_empty', 'api_query', 'exception' ],
+			'teardown', 'loadconfig', 'api_empty', 'api_select', 'exception' ],
 	'instance' => undef(),
 );
 

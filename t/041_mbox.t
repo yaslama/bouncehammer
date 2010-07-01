@@ -1,4 +1,4 @@
-# $Id: 041_mbox.t,v 1.3 2010/05/29 01:39:39 ak Exp $
+# $Id: 041_mbox.t,v 1.4 2010/07/01 13:04:25 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Kanadzuchi::Test;
 use Kanadzuchi::Mbox;
 use Time::Piece;
 use File::Copy;
-use Test::More ( tests => 1785 );
+use Test::More ( tests => 1788 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -20,7 +20,7 @@ use Test::More ( tests => 1785 );
 #
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::Mbox|,
-	'methods' => [ 'ENDOF', 'new', 'slurpit', 'parseit', '_breakit' ],
+	'methods' => [ 'ENDOF', 'new', 'postulat', 'slurpit', 'parseit', 'breakit' ],
 	'instance' => new Kanadzuchi::Mbox(),
 );
 my $NonEmailFiles = { 'binary' => [], 'text' => [] };
@@ -62,6 +62,11 @@ PARSE_EACH_MAILBOX: foreach my $f ( 'single-message.eml', 'double-messages.eml',
 		is( $object->greed(), 0, q{->greed = 0} );
 		is( $object->nmails(), 0, q{->nmails = 0} );
 		is( $object->nmesgs(), 0, q{->nmesgs = 0} );
+	}
+
+	POSTULAT: {
+		my $classes = $T->class->postulat();
+		isa_ok( $classes, q|ARRAY| );
 	}
 
 	SLURPIT: {

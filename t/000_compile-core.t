@@ -1,4 +1,4 @@
-# $Id: 000_compile-core.t,v 1.39 2010/06/22 07:17:15 ak Exp $
+# $Id: 000_compile-core.t,v 1.41 2010/07/01 13:03:41 ak Exp $
 use strict;
 use warnings;
 use lib qw(./t/lib ./dist/lib ./src/lib);
@@ -65,16 +65,18 @@ my $Modules = [ qw{
 	Kanadzuchi::Mail::Why::TooBig
 	Kanadzuchi::Mail::Why::UserUnknown
 	Kanadzuchi::Mbox
-	Kanadzuchi::Mbox::Google
-	Kanadzuchi::Mbox::KLab
-	Kanadzuchi::Mbox::aubyKDDI
-	Kanadzuchi::Mbox::qmail
 	Kanadzuchi::MIME::Parser
 	Kanadzuchi::Metadata
+	Kanadzuchi::MTA
+	Kanadzuchi::MTA::Google
+	Kanadzuchi::MTA::qmail
 	Kanadzuchi::RFC1893
 	Kanadzuchi::RFC2606
 	Kanadzuchi::RFC2822
 	Kanadzuchi::Statistics
+	Kanadzuchi::Statistics::Stored
+	Kanadzuchi::Statistics::Stored::BdDR
+	Kanadzuchi::Statistics::Stored::YAML
 	Kanadzuchi::String
 	Kanadzuchi::Time
 	Kanadzuchi::UI
@@ -84,6 +86,7 @@ my $Modules = [ qw{
 my $Optionals = [ qw{
 	Kanadzuchi::Archive::Bzip2
 	Kanadzuchi::Archive::Zip
+	Kanadzuchi::MTA::JP::aubyKDDI
 } ];
 
 plan( tests => scalar @$Modules );
