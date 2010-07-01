@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.1 2010/06/17 12:00:32 ak Exp $
+# $Id: WebMail.pm,v 1.2 2010/06/28 13:19:15 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::NZ::
                                                    
@@ -23,7 +23,7 @@ sub nominisexemplaria
 {
 	my $class = shift();
 	return {
-		# http://coolkiwi.com/
+		# Cool Kiwi http://coolkiwi.com/
 		'coolkiwi' => [
 			qr{\Acoolkiwi[.](?:co[.]nz|com)\z},
 		],

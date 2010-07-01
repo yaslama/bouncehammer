@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.2 2010/06/16 08:15:19 ak Exp $
+# $Id: WebMail.pm,v 1.3 2010/06/28 13:19:00 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::BR::
                                                    
@@ -24,6 +24,7 @@ sub nominisexemplaria
 {
 	my $class = shift();
 	return {
+		# BOL - O e-mail gratis do Brasil
 		# http://www.bol.uol.com.br/
 		'bol' => [
 			qr{\Abol[.]com[.]br\z},

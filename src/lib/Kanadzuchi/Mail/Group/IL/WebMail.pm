@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.2 2010/06/22 03:17:06 ak Exp $
+# $Id: WebMail.pm,v 1.3 2010/06/28 13:19:13 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::IL::
                                                    
@@ -25,6 +25,7 @@ sub nominisexemplaria
 	my $class = shift();
 	return {
 		# EXPERIMENTAL(NOT TESTED)
+		# Walla! Communications
 		# http://www.walla.co.il/
 		# http://en.wikipedia.org/wiki/Walla!
 		'walla' => [

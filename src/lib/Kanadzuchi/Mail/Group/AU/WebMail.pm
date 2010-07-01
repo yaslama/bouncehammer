@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.3 2010/06/17 12:00:31 ak Exp $
+# $Id: WebMail.pm,v 1.4 2010/06/28 13:18:55 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::AU::
                                                    
@@ -23,7 +23,7 @@ sub nominisexemplaria
 {
 	my $class = shift();
 	return {
-		# http://fastmail.fm/
+		# FastMail http://fastmail.fm/
 		'fastmail' => [
 			qr{\Afastmail[.](?:cn|com[.]au|es|fm|in|jp|net|to|us)\z},
 			qr{\A(?:fastmail|fmail)[.]co[.]uk\z},

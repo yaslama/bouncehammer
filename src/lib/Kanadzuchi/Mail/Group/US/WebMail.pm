@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.7 2010/06/17 18:02:02 ak Exp $
+# $Id: WebMail.pm,v 1.8 2010/06/28 13:19:20 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::US::
                                                    
@@ -35,7 +35,7 @@ sub nominisexemplaria
 		],
 
 		# http://www.inbox.com/
-		'inboxcom' => [
+		'inbox.com' => [
 			qr{\Ainbox[.]com\z},
 		],
 
@@ -52,7 +52,7 @@ sub nominisexemplaria
 		],
 
 		# http://www.mail.com/intl/
-		'mailcom' => [
+		'mail.com' => [
 			# 2-4 characters(.com)
 			qr{\A(?:dr|usa|asia|mail|oath|post|rome|skim|toke)[.]com\z},
 
@@ -147,10 +147,10 @@ sub classisnomina
 	return {
 		'bluetie'	=> 'Generic',
 		'gmx.com'	=> 'Generic',
-		'inboxcom'	=> 'Generic',
+		'inbox.com'	=> 'Generic',
 		'lavabit'	=> 'Generic',
 		'luxsci'	=> 'Generic',
-		'mailcom'	=> 'Generic',
+		'mail.com'	=> 'Generic',
 		'pobox'		=> 'Generic',
 	};
 }

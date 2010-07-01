@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.2 2010/06/16 08:15:23 ak Exp $
+# $Id: WebMail.pm,v 1.3 2010/06/28 13:19:04 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::CN::
                                                    
@@ -23,7 +23,7 @@ sub nominisexemplaria
 {
 	my $class = shift();
 	return {
-		# http://www.163.com/
+		# NetEase http://www.163.com/
 		'netease' => [
 			qr{\A(?:163|126|188)[.]com\z},
 			qr{\Avip[.]163[.]com\z},

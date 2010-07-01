@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.3 2010/06/16 08:15:25 ak Exp $
+# $Id: WebMail.pm,v 1.4 2010/06/28 13:19:06 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::CZ::
                                                    
@@ -24,6 +24,7 @@ sub nominisexemplaria
 {
 	my $class = shift();
 	return {
+		# Seznam, http://www.seznam.cz/
 		'seznam.cz' => [
 			qr{\A(?:seznam|email|post|spoluzaci|stream|firmy)[.]cz\z},
 		],

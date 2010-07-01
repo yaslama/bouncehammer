@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.3 2010/06/16 08:15:27 ak Exp $
+# $Id: WebMail.pm,v 1.4 2010/06/28 13:19:10 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::DE::
                                                    
@@ -24,7 +24,7 @@ sub nominisexemplaria
 {
 	my $class = shift();
 	return {
-		# http://www.gmx.net/
+		# GMX - http://www.gmx.net/
 		'gmx.de' => [
 			qr{\Agmx[.]de\z},
 		],
