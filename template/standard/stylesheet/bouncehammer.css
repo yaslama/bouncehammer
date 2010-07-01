@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.14 2010/06/23 07:36:21 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.16 2010/06/28 13:16:36 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -218,11 +218,11 @@ input.wide { /* Wide input field */
 }
 
 input.wide:focus {
-	border-color: #2ca9e1; /* Namari-iro */
+	border-color: #2ca9e1; /* Ama-iro */
 }
 
 span.flatbutton, input.flatbutton {
-	width: 64px;
+	width: 80px;
 	margin: 2px;
 	padding: 2px 4px;
 	color: #727171; /* Nibi-iro */
@@ -255,6 +255,16 @@ input.flatbutton {
 	margin: 2px;
 	padding: 2px 8px;
 	color: #595857; /* Sumi */
+}
+
+span.longflatbutton {
+	width: 108px;
+	height: 13px;
+	margin: 4px;
+	padding: 2px;
+	vertical-align: middle;
+	text-align: center;
+	display: block;
 }
 
 span.flatbutton:hover {
@@ -392,30 +402,38 @@ div.result {
 	padding: 0px;
 }
 
-div.result p.exception {
-	margin: 4px;
-	padding: 4px;
-	background: #e2041b; /* Shoujouhi */
-	color: #fffffc; /* Gofun-iro */
+/* Exception, Error */
+.excephead, .errorhead {
 	font-weight: bold;
+	margin: 4px 0;
+}
+.excephead { color: #e2041b; /* Shoujouhi */ }
+.errorhead { color: #d9333f; /* Beniaka */ }
+
+div.exception, div.errormessage {
+	margin: 4px 1px;
+	padding: 4px;
+	font-size: 11px;
+	background: #e83929; /* Masoo */
+	color: #fffffc; /* Gofun-iro */
+	border-color: #e2041b; /* Shoujouhi */
+	border-width: 1px;
+	border-style: solid;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;
 }
 
 div.errormessage {
-	margin: 4px 1px;
-	padding: 4px;
-	background: #e2041b; /* Shoujouhi */
-	color: #fffffc; /* Gofun-iro */
-	font-size: 11px;
-	font-weight: bold;
-	text-align: left;
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	-opera-border-radius: 4px;
+	background: #fdeff2; /* Usuzakura */
+	color: #281a14; /* Tetsuguro */
+	border-color: #e2041b; /* Shoujouhi */
 }
 
-/* Other text */
+div.exception p, div.errormessage p {
+	margin: 0;
+	padding: 0;
+}
+
 span.errortext		{ color: #cc0000; }
 

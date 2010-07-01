@@ -1,0 +1,110 @@
+[%- PROCESS "heads.tt" -%]
+[%- PROCESS "words.tt" -%]
+[%- PROCESS "terms.tt" -%]
+[%- PROCESS "hostgroup.tt" -%]
+[%- PROCESS "reason.tt" -%]
+[%- PROCESS "desc.tt" -%]
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% systemname %]/[% head.mastertable %]/[% titlename %]</title>
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+	[% INCLUDE bouncehammer.css %]
+	[% INCLUDE mastertable.css %]
+	[% INCLUDE reason.css %]
+	[% INCLUDE pagination.css %]
+	-->
+	</style>
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% head1title %]/[%- head.mastertable -%]/[% titlename %]</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[% INCLUDE "div-index.html" %]
+		</div>
+		<div id = 'East-Ward'>
+			[%- IF tablename == 'senderdomains' %]
+				[% INCLUDE "help-senderdomain.html" %]
+			[%- END -%]
+			[%- IF tablename == 'destinations' %]
+				[% INCLUDE "help-destination-domain.html" %]
+			[%- END -%]
+			[%- IF tablename == 'reasons' %]
+				[% INCLUDE "help-reason.html" %]
+			[%- END -%]
+			[%- IF tablename == 'hostgroups' %]
+				[% INCLUDE "help-hostgroup.html" %]
+			[%- END -%]
+		</div>
+
+		<div id = 'Central-Ward'>
+			<h2>[% head.mastertable %]([% titlename %])</h2>
+			<div class = 'pagination'>
+				[% INCLUDE "div-pagination.html" %]
+			</div>
+			<div class = 'result'>
+				<table class = 'tableheadings'>
+					<thead class = 'mastertable'><tr>
+						<th class = 'theID'>
+							<form action = '[% "${scriptname}/tables/${tablename}/sort/id" %]' method = 'POST' id = 'sortbyid'>
+								<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
+								<a href = "javascript:void(0);" onClick = "sortbyid.submit(); return(false);"
+									title = '[% word.sort %](ID)'>
+										[%- IF sortby == 'Id' -%]*[%- END -%][% word.id %] &#9652;</a>
+							</form>
+						</th>
+						<th class = 'theName'>
+							<form action = '[% "${scriptname}/tables/${tablename}/sort/${fieldname}" %]' method = 'POST' id = 'sortbyname'>
+								<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
+								<a href = "javascript:void(0);" onClick = "sortbyname.submit(); return(false);"
+									title = '[% word.sort %]([% fieldname %])'>
+									[%- IF sortby == fieldname -%]*[%- END -%][% word.${fieldname} %] &#9652;</a>
+							</form>
+						</th>
+						<th class = 'theDescription'>
+							<form action = '[% "${scriptname}/tables/${tablename}/sort/description" %]' method = 'POST' id = 'sortbydesc'>
+								<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
+								<a href = "javascript:void(0);" onClick = "sortbydesc.submit(); return(false);" 
+									title = '[% word.sort %]([% word.description %])'>
+									[%- IF sortby == 'description' -%]*[%- END -%][% word.description %]&#9652;</a>
+							</form>
+						</th>
+						<th class = 'theMethod'>&nbsp; </th>
+					</tr></thead>
+				</table>
+				[% INCLUDE "div-mastertable-contents.html" %]
+
+				<div id = 'here_is_old_record' class = 'mastertable'>
+					[% INCLUDE "div-mastertable-removed.html" %]
+				</div>
+
+				<div id = 'here_is_new_record' class = 'stored'></div>
+
+				[%- IF ( tablename == 'senderdomains' OR tablename == 'destinations' ) AND isreadonly == 0 -%]
+					[% INCLUDE "div-create-a-new-mastertable-record.html" %]
+					[% INCLUDE "div-delete-a-mastertable-record.html" %]
+				[%- END -%]
+				[%- INCLUDE "div-error.html" -%]
+			</div>
+			[%- IF pagination.resultsperpage > 10 AND pagination.count > 10 AND hascondition > 0 -%]
+				<div class = 'pagination'>
+					[% INCLUDE "div-pagination.html" %]
+				</div>
+			[%- END -%]
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+
+	</div>
+</body>
+</html>
+

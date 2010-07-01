@@ -1,0 +1,169 @@
+[%- SET showsearchcondition = 'none' -%]
+<div id = 'queryform'>
+	<form action = '[% scriptname %]/search/recipient' method = 'POST'>
+	<fieldset>
+		<legend>[%- desc.searchbyemail -%]</legend>
+		<input type = 'text' name = 'recipient' accesskey = '3' style = 'width: 405px;' class = 'wide'
+			placeholder = '[%- term.recipient -%](To)' autosave = '[% systemname %].recipient' results = '16' />
+		<input type = 'submit' value = '[%- word.search -%]' id = 'dosearch' accesskey = '4' class = 'flatbutton' />
+		<input type = 'reset' value = '[%- word.reset -%]' accesskey = '0' class = 'flatbutton' /><br />
+		<span class = 'shortdescription'>[%- desc.emptyaddress -%]</span>
+
+		<div style = 'margin: 8px 8px 4px 8px;'>
+			<a href = "javascript:void(0)" onClick = "toggleIt('search-condition');"
+				accesskey = '9'>[% word.searchcond %]</a>
+		</div>
+
+		<div id = 'search-condition' style = 'display: [% showsearchcondition %];'> 
+			<table>
+			<tbody>
+				<tr>
+					<td class = 'key'>[%- term.addresser -%]</td>
+					<td class = 'value'>
+						<input type = 'text' name = 'addresser' style = 'width: 288px;' class = 'wide'
+							placeholder = '[%- term.addresser -%](From)' autosave = '[% systemname %].addresser' 
+							results = '16' onChange = "checksa.innerHTML='&#9745; [%- word.use -%]';"/>
+					</td>
+					<td class = 'extra' id = 'checksa'></td>
+				</tr>
+				<tr>
+					<td class = 'key'>[%- term.senderdomain -%]</td>
+					<td class = 'value'>
+						<input type = 'text' name = 'senderdomain' style = 'width: 288px;' class = 'wide'
+							placeholder = '[%- term.senderdomain -%](From)' autosave = '[% systemname %].senderdomain' 
+							results = '16' onChange = "checksd.innerHTML='&#9745; [%- word.use -%]';"/>
+					</td>
+					<td class = 'extra' id = 'checksd'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>[%- term.destination -%]</td>
+					<td class = 'value'>
+						<input type = 'text' name = 'destination' style = 'width: 288px;' class = 'wide'
+							placeholder = '[%- term.destination -%](To)' autosave = '[% systemname %].destination' 
+							results = '16' onChange = "checkdd.innerHTML='&#9745; [%- word.use -%]';"/>
+					</td>
+					<td class = 'extra' id = 'checkdd'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>[%- term.reason -%]</td>
+					<td class = 'value'>
+						[% INCLUDE "select-reason.html" %]
+					</td>
+					<td class = 'extra' id = 'checkrw'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>[%- term.hostgroup -%]</td>
+					<td class = 'value'>
+						[%- INCLUDE "select-hostgroup.html" -%]
+					</td>
+					<td class = 'extra' id = 'checkhc'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>[%- term.provider -%]</td>
+					<td class = 'value'>
+						<input type = 'text' name = 'provider' style = 'width: 288px;' class = 'wide'
+							placeholder = '[%- term.provider -%]' autosave = '[% systemname %].provider' 
+							results = '16' onChange = "checkpn.innerHTML='&#9745; [%- word.use -%]';"/>
+					</td>
+					<td class = 'extra' id = 'checkpn'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>[%- term.token -%]</td>
+					<td class = 'value'>
+						<input type = 'text' name = 'token' results = '16' style = 'width: 288px;' class = 'wide'
+							placeholder = '[%- term.token -%](MD5)' autosave = '[% systemname %].token' 
+							onChange = "checkmd.innerHTML = '&#9745; [%- word.use -%]';"/>
+					</td>
+					<td class = 'extra' id = 'checkmd'></td>
+				</tr>
+
+
+				<tr>
+					<td class = 'key'>[%- term.bounced -%]</td>
+					<td class = 'value'>
+						[%- INCLUDE "select-howrecent.html" -%]
+					</td>
+					<td class = 'extra' id = 'checkbd'></td>
+				</tr>
+				
+				<tr>
+					<td class = 'key'>[%- word.sort -%]<br /><br />
+						&nbsp; <input type = 'checkbox' name = 'descend' /> [%- word.descending -%]
+					</td>
+					<td class = 'value'>
+					<fieldset style = 'border-width: 1px; line-height: 16px;'>
+						<legend>[%- word.column -%]</legend>
+						<span><input type = 'radio' name = 'orderby' value = 'id' checked /> ID</span> &nbsp; 
+						<span><input type = 'radio' name = 'orderby' value = 'addresser' /> [%- term.addresser -%]</span> &nbsp;
+						<span><input type = 'radio' name = 'orderby' value = 'recipient' /> [%- term.recipient -%]</span> &nbsp;
+						<span><input type = 'radio' name = 'orderby' value = 'senderdomain' /> [%- term.senderdomain -%]</span> &nbsp; <br />
+						<span><input type = 'radio' name = 'orderby' value = 'destination' /> [%- term.destination -%]</span> &nbsp; &nbsp;
+						<span><input type = 'radio' name = 'orderby' value = 'hostgroup' /> [%- term.hostgroup -%]</span> &nbsp;
+						<span><input type = 'radio' name = 'orderby' value = 'provider' /> [%- term.provider -%]</span> &nbsp; <br />
+						<span><input type = 'radio' name = 'orderby' value = 'reason' /> [%- term.reason -%]</span> &nbsp;
+						<span><input type = 'radio' name = 'orderby' value = 'bounced' /> [%- term.bounced -%]</span> &nbsp;
+						<span><input type = 'radio' name = 'orderby' value = 'updated' /> [%- term.updated -%]</span> &nbsp;
+						<span><input type = 'radio' name = 'orderby' value = 'frequency' /> [%- term.frequency -%]</span> &nbsp;
+					</fieldset>
+					</td>
+					<td class = 'extra' id = 'checkob'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>[%- word.results -%]/[%- word.page -%]</td>
+					<td class = 'value'>
+						<select name = 'resultsperpage' id = 'resultsperpage'>
+							[%- FOREACH RPP IN [10,25,50,75,100] -%]
+								<option value = '[%- RPP -%]' [%- IF RPP == 10 -%] selected [%- END -%]>
+									[% RPP %]
+								</option>
+							[%- END -%]
+						</select>
+						<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
+					</td>
+					<td class = 'extra'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>
+						&nbsp; <input type = 'checkbox' name = 'enabledownload' 
+							onChange = "
+								if( this.checked == true ){
+									disableIt('resultsperpage');
+									dosearch.value = 'Download';
+									enableIt('yamlff');
+									enableIt('jsonff');
+									enableIt('csvff');
+								}
+								else{
+									enableIt('resultsperpage');
+									dosearch.value = 'Search';
+									disableIt('yamlff');
+									disableIt('jsonff');
+									disableIt('csvff');
+								}"/> [% word.download %]
+					</td>
+					<td class = 'value'>
+						<fieldset id = 'fileformat' style = 'border-width: 1px;'>
+							<legend>[% word.fileformat %]</legend>
+							<span><input id = 'yamlff' type = 'radio' name = 'downloadformat' value = 'yaml' disabled checked />
+								YAML</span> &nbsp; &nbsp; 
+							<span><input id = 'jsonff' type = 'radio' name = 'downloadformat' value = 'json' disabled />
+								JSON</span> &nbsp; &nbsp; 
+							<span><input id = 'csvff' type = 'radio' name = 'downloadformat' value = 'csv' disabled />
+								CSV</span> &nbsp; &nbsp; 
+						</fieldset>
+					</td>
+					<td class = 'extra' id = 'checkff'></td>
+				</tr>
+			</tbody>
+			</table>
+		</div>
+	</fieldset>
+	</form>
+</div>

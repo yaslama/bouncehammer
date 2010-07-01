@@ -1,4 +1,4 @@
-/* $Id: testparse.css,v 1.3 2010/03/29 04:37:01 ak Exp $ */
+/* $Id: testparse.css,v 1.4 2010/06/28 13:16:36 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Record classes */
 #ChooseFile {
@@ -47,6 +47,7 @@ textarea.serialized {
 td.key { /* LHS */
 	margin: 2px 0;
 	padding: 2px 8px 2px 2px;
+	width: 64px;
 	font-weight: bold;
 	vertical-align: middle;
 	font-size: 11px;

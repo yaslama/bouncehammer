@@ -1,4 +1,4 @@
-/* $Id: summary.css,v 1.5 2010/06/23 07:36:21 ak Exp $ */
+/* $Id: summary.css,v 1.6 2010/06/28 13:16:36 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Summary classes */
 div.summary {
@@ -43,14 +43,14 @@ div.graph {
 	width: 320px;
 	border-width: 1px;
 	border-style: solid;
-	border-color: #727171; /* Nibi-iro */
+	border-color: #007bbb; /* Kompeki */
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;
 }
 
 div.graph div.used {
-	background: #727171; /* Nibi-iro */
+	background: #007bbb; /* Kompeki */
 	-webkit-border-radius: 4px 0 0 4px;
 	-moz-border-radius: 4px 0 0 4px;
 	-opera-border-radius: 4px 0 0 4px;

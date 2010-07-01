@@ -1,4 +1,4 @@
-/* $Id: pagination.css,v 1.4 2010/06/23 07:36:21 ak Exp $ */
+/* $Id: pagination.css,v 1.5 2010/06/25 19:19:06 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Pagination Classes */
 div.pagination {
@@ -14,20 +14,19 @@ div.pageindex {
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;
-	background-color: transparent;
 	background-image:
 		-moz-linear-gradient( 
 			top, 
-			rgba(64, 64, 64, 0.8), 
-			rgba(32, 32, 32, 0.8) 10%, 
-			rgba(16, 16, 16, 0.9)
+			rgba(128, 128, 128, 0.8), 
+			rgba(64, 64, 64, 0.8) 10%, 
+			rgba(32, 32, 32, 0.9)
 		);
 	background-image:
 		-webkit-gradient(
 			linear, left top, left bottom,
-			color-stop( 0, rgba(64, 64, 64, 0.8)),
-			color-stop( 50%, rgba(32, 32, 32, 0.8)),
-			color-stop( 90%, rgba(16, 16, 16, 0.9))
+			color-stop( 0, rgba(128, 128, 128, 0.8)),
+			color-stop( 50%, rgba(64, 64, 64, 0.8)),
+			color-stop( 90%, rgba(32, 32, 32, 0.9))
 		);
 }
 
@@ -77,6 +76,7 @@ div.pageindex .thispage {
 	-webkit-border-radius: 2px;
 	-moz-border-radius: 2px;
 	-opera-border-radius: 2px;
+	background: #eaf4fc; /* Geppaku */
 	background-image:
 		-moz-linear-gradient( 
 			top, 

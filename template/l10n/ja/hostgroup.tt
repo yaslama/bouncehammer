@@ -1,0 +1,13 @@
+[%# $Id: hostgroup.tt,v 1.1 2010/06/28 13:15:43 ak Exp $ -%]
+[%# Host Group definiations in English -%]
+[%- SET hostgroup = { 
+		'_'		=> '- 宛先分類を選択 -',
+		'undefined'	=> '未定義',
+		'reserved'	=> '予約済み',
+		'cellphone'	=> '携帯電話',
+		'smartphone'	=> 'スマートフォン',
+		'pc'		=> 'PC',
+		'webmail'	=> 'WebMail',
+		'neighbor'	=> 'ご近所',
+	}
+-%]

@@ -1,0 +1,18 @@
+[%# $Id: desc.tt,v 1.1 2010/06/28 13:15:42 ak Exp $ -%]
+[%# Short descriptions in English -%]
+[%- SET desc = { 
+		'searchbyemail'		=> '宛先のメールアドレスで検索',
+		'norecordinthedb'	=> '該当する記録がありません',
+		'emptyaddress'		=> '空の値で検索すると全ての記録が表示されます',
+		'downloadresults'	=> '検索結果をダウンロード',
+		'checktodelete'		=> '削除するにはチェックボックスをONにしてください',
+		'wholemessagetext'	=> 'メール本文全体',
+		'copyandpasteemail'	=> '下記のテキスト領域にメール内容を貼付けて下さい',
+		'insertafterparsing'	=> '解析後に結果をBounceLogsデータベースに登録する',
+		'senderdomainmustexist'	=> '発信者ドメインがSenderDomainsテーブルに登録されている必要があります',
+		'createanewrecord'	=> '新規作成',
+		'deletetherecord'	=> '削除する',
+		'selectonetodelete'	=> '削除対象を選択',
+		'integritywarning'	=> 'BounceLogsテーブルから外部キーとして参照されているSenderDomainsテーブルのデータを削除すると参照整合性が破壊されます'
+	}
+-%]

@@ -1,0 +1,18 @@
+[%# $Id: desc.tt,v 1.1 2010/06/28 13:15:39 ak Exp $ -%]
+[%# Short descriptions in English -%]
+[%- SET desc = { 
+		'searchbyemail'		=> 'Search by Recipient Address',
+		'emptyaddress'		=> 'E-mail address is empty, all data will be displayed.',
+		'downloadresults'	=> 'Download the results',
+		'checktodelete'		=> 'Check here to delete the record',
+		'wholemessagetext'	=> 'Whole Message Text',
+		'copyandpasteemail'	=> 'Copy &amp; paste into the following text area',
+		'insertafterparsing'	=> 'Insert the results into BounceLogs database after parsing.',
+		'senderdomainmustexist'	=> 'The sender domain must exist in the SenderDomains table.',
+		'createanewrecord'	=> 'Create a new record',
+		'deletetherecord'	=> 'Delete the record',
+		'selectonetodelete'	=> 'Select one to delete',
+		'integritywarning'	=> 'Deleting a record in the table that contains a value referred to
+					by a foreign key in BounceLogs table would break referential integrity.'
+	}
+-%]

@@ -1,0 +1,20 @@
+[%- SET isselected = '' -%]
+[%- IF B.id -%]
+	<select name = 'reason' id = 'reasons-of-[% B.id %]'
+	[%- IF isreadonly == 0 -%]
+		onChange = "enableIt('do-update-[% B.id %]');">
+	[%- ELSE -%]
+		disabled = 'disabled'>
+	[%- END -%]
+[%- ELSE -%]
+	<select name = 'reason' onChange = "checkrw.innerHTML = '&#9745; [% word.use %]';">
+[%- END -%]
+		[%- FOREACH r IN reason -%]
+			[%- IF r.key == B.reason -%]
+				[%- SET isselected = 'selected' -%]
+			[%- ELSE -%]
+				[%- SET isselected = '' -%]
+			[%- END -%]
+			<option value = '[% r.key %]' [%- isselected -%]>[% r.value %]</option>
+		[%- END -%]
+	</select>

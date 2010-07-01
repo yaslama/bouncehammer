@@ -1,0 +1,9 @@
+[%- PROCESS "error.tt" -%]
+[%- IF addresser AND recipient -%]
+	<div class = 'messagetoken'>
+		<div class = 'pair'>[% addresser %]:[% recipient %]</div>
+		<div class = 'token'>[% token %]</div>
+	</div>
+[%- ELSE -%]
+	[%- INCLUDE "div-error.html" -%]
+[%- END -%]

@@ -1,0 +1,10 @@
+<select name = 'howrecent' id = 'howrecent' onChange = "checkbd.innerHTML = '&#9745; [%- words.use -%]';">
+[%- FOREACH h IN howrecent -%]
+	[%- IF h.key == 0 -%]
+		[%- SET isselected = 'selected' -%]
+	[%- ELSE -%]
+		[%- SET isselected = '' -%]
+	[%- END -%]
+	<option value = '[% h.key %]' [%- isselected -%]>[% h.value %]</option>
+[%- END -%]
+</select>

@@ -1,0 +1,112 @@
+[%- PROCESS "words.tt" -%]
+[%- PROCESS "terms.tt" -%]
+[%- PROCESS "hostgroup.tt" -%]
+[%- PROCESS "reason.tt" -%]
+[%- PROCESS "desc.tt" -%]
+[%- PROCESS "error.tt" -%]
+[%- SET IFRAMEHEIGHT = 169 -%]
+[%- IF parsedmessages -%]
+	[%- SET IFRAMEHEIGHT = ( IFRAMEHEIGHT + ( parsedmessages + 600 ) ) %]
+[%- END -%]
+[% IF onlineparse == 1 %]
+<body style = 'margin: 0; padding: 0; width: 585px; text-align: left;' 
+	onLoad = "parent.document.getElementById('parseddata').style.height = '[% IFRAMEHEIGHT %]';
+			parent.document.getElementById('doparse').value = '[% word.parse %]';"
+	onAbort = "parent.document.getElementById('doparse').disabled = false;">
+	
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+	html { overflow-x: hidden; overflow-y: auto; margin: 0; padding: 0; }
+	[% INCLUDE bouncehammer.css %]
+	[% INCLUDE record.css %]
+	[% INCLUDE testparse.css %]
+	[% INCLUDE reason.css %]
+	-->
+	</style>
+
+	<h2>[% word.parseddata %]</h2>
+	<div class = 'result' style = 'margin: 0 0 0 2px; padding: 0;'>
+		<div class = 'upload-summary'>
+			<table>
+				<tbody>
+					<tr>
+						<td class = 'key'>[% word.datasource %]</td>
+						<td class = 'value'>[% parsedfilename %] </td>
+						<td class = 'extra'> </td>
+					</tr>
+
+					<tr>
+						<td class = 'key'>[% word.datasize %]</td>
+						<td class = 'value'>
+							[% IF parseerror == "toobig" %]
+								<span class = 'errortext'>[% error.exceedslimit %]</span>
+							[% ELSIF parseerror == "nottext" %]
+								? [% word.bytes %]
+							[% ELSE %]
+								[% word.about %] [% parsedfilesize %] [% word.bytes %]
+							[% END %]
+						</td>
+						<td class = 'extra'> </td>
+					</tr>
+
+					<tr>
+						<td class = 'key'>[% word.message %]</td>
+						<td class = 'value'>[% parsedmessages %] [% word.unitofrecs %]</td>
+						<td class = 'extra'> </td>
+					</tr>
+
+					[% IF onlineupdate == 1 AND parseerror == '' %]
+						<tr>
+							<td class = 'key'>[% word.registered %]</td>
+							<td class = 'value'>[% updateresult.insert %] [% word.unitofrecs %]</td>
+							<td class = 'extra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>[% word.updated %]</td>
+							<td class = 'value'>[% updateresult.update %] [% word.unitofrecs %]</td>
+							<td class = 'extra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>[% word.skipped %]</td>
+							<td class = 'value'>
+								[% error.nosenderdomain %]: [% updateresult.nofrom %],
+								[% error.toooldorsame %]: [% updateresult.tooold %],
+								[% error.iswhitelisted %]: [% updateresult.whited %],
+								[% error.exceedslimit %]: [% updateresult.exceed %]
+								[% error.failed %]: [% updateresult.failed %]
+							</td>
+							<td class = 'extra'></td>
+						</tr>
+					[% END %]
+				</tbody>
+			</table>
+		</div>
+
+		[%- IF parsedmessages -%]
+			[% IF outputformat == "html" %]
+				[% INCLUDE "div-result.html" %]
+			[% ELSE %]
+				<textarea name = 'serialized' id = 'serialized' class = 'serialized'
+					rows = '22' cols = '87' readonly = 'readonly'>[% parseddatatext %]</textarea>
+			[% END %]
+		[%- ELSE -%]
+			<h2 class = 'errorhead'>[%- error.error -%]</h2>
+			<div class = 'errormessage'>
+			[%- IF parseerror == "toobig" -%]
+				[% error.filesizetoobig %]
+			[%- ELSIF parseerror == "nottext" %]
+				[% error.isnotemail %]
+			[%- ELSE -%]
+				[% error.nobouncemessage %]
+			[%- END -%]
+			</div>
+		[%- END -%]
+	</div>
+</body>
+[% END %]

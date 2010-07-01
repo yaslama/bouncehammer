@@ -1,0 +1,14 @@
+[%# $Id: heads.tt,v 1.1 2010/06/28 13:15:43 ak Exp $ -%]
+[%# Headlines in Japanese -%]
+[%- SET head = { 
+		'datasummary'	=> '登録済みデータの概要',
+		'mastertable'	=> 'マスターテーブル',
+		'messagetoken'	=> 'トークン生成',
+		'parsingtest'	=> 'メール解析テスト',
+		'recorddetails'	=> '記録の詳細',
+		'search'	=> '検索',
+		'searchresults'	=> '検索結果',
+		'serverprof'	=> 'サーバ情報',
+		'systemprof'	=> 'システム情報',
+	}
+-%]

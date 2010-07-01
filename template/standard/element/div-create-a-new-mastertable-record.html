@@ -1,0 +1,39 @@
+[%- PROCESS "words.tt" -%]
+<div id = 'create_a_new_record' style = 'display: none;'>
+	[%- prototype.form_remote_tag( {
+			url => "${scriptname}/tables/${tablename}/create",
+			update => "here_is_new_record",
+			position => 'Before',
+			before => "disableIt('create_a_new_one');",
+			loaded => "newname.value = ''; newdesc.value = '';",
+		});
+	-%]
+	<table class = 'stored'>
+		<tbody class = 'mastertable'>
+			<tr>
+				<td class = 'theID'>
+					<strong>[% word.new %]</strong>
+					<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
+				</td>
+				<td class = 'theName'>
+					<input type = 'text' id = 'newname' name = 'newname'
+						class = 'rewritabletext newone' onChange = "enableIt('create_a_new_one');" />
+				</td>
+				<td class = 'theDescription'>
+					<input type = 'text' id = 'newdesc' name = 'newdesc'
+						class = 'rewritabletext newone' />
+				</td>
+				<td class = 'theMethod'>
+					<input type = 'submit' id = 'create_a_new_one' value = '[% word.create %]' 
+						class = 'flatbutton' disabled = 'disabled' />
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	</form>
+</div>
+<span class = 'flatbutton longflatbutton'
+	<a href = "javascript:void(0);" onClick = 'create_a_new_record.style.display = "block";'>
+		[%- desc.createanewrecord -%]
+	</a>
+</span>

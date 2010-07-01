@@ -1,0 +1,8 @@
+[%- PROCESS "error.tt" -%]
+[%- IF errorhead -%]
+<h3 class = 'errorhead'>[%- error.error -%]</h3>
+<div class = 'errormessage'>
+	<p>[%- error.${errorhead} -%]</p>
+	<p>[%- errorbody -%]</p>
+</div>
+[%- END -%]

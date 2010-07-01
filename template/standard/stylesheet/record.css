@@ -1,4 +1,4 @@
-/* $Id: record.css,v 1.5 2010/06/22 12:59:04 ak Exp $ */
+/* $Id: record.css,v 1.6 2010/06/25 19:19:06 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Record classes */
 div.record {
@@ -17,6 +17,16 @@ div.record .recordsummary {
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;
+}
+
+div.record .recordsummary:hover {
+	border-color: #2ca9e1; /* Ama-iro */
+	background: #f7fcfe; /* Unohana-iro */
+}
+
+div.record .recordsummary:hover h4 {
+	background: #a0d8ef; /* Sora-iro */
+	color: #383c3c; /* Youkan-iro */
 }
 
 div.record .isremoved
@@ -94,7 +104,7 @@ div.record td.key, div.record td.value, div.record td.extra {
 
 td.value, td.extra {
 	margin: 2px 0;
-	padding: 2px 0 2px 2px;
+	padding: 2px 0 2px 4px;
 	font-size: 11px;
 }
 
@@ -111,22 +121,31 @@ td.value-in-summary {
 	font-size: 11px;
 }
 
-span.token input {
-	width: 320px;
-	padding: 4px;
+input.selectable {
+	width: 370px;
+	margin: 0;
+	padding: 2px;
 	color: #524e4d; /* Keshizumi-iro */
-	background: #e5e4e6; /* Shiraumenezu */
+	background: inherit;
 	border-color: #d4dcd6;	/* Sobakiri-iro */
-	border-width: 0px;
+	border-width: 1px;
 	border-style: solid;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;
 }
 
+input.selectable:hover {
+	border-color: #2ca9e1; /* Ama-iro */
+}
+
 input.emailaddress {
 	width: 370px;
 	padding: 1px 2px 1px 0;
 	color: #524e4d; /* Keshizumi-iro */
+	background: inherit;
 	border-width: 0;
+	-webkit-border-radius: 1px;
+	-moz-border-radius: 1px;
+	-opera-border-radius: 1px;
 }

@@ -1,0 +1,22 @@
+[%# $Id: reason.tt,v 1.1 2010/06/28 13:15:40 ak Exp $ -%]
+[%# Reason names definiations in English -%]
+[%- SET reason = { 
+		'_'		=> '- Select Reason -',
+		'undefined'	=> 'Undefined',
+		'userunknown'	=> 'User Unknown',
+		'hostunknown'	=> 'Host Unknown',
+		'hasmoved'	=> 'Has Moved',
+		'filtered'	=> 'Filtered',
+		'suspend'	=> 'Suspended',
+		'mailboxfull'	=> 'Mailbox Full',
+		'exceedlimit'	=> 'Exceed Limit',
+		'systemfull'	=> 'Mail System Full',
+		'notaccept'	=> 'Not Accept',
+		'mesgtoobig'	=> 'Message Too Big',
+		'mailererror'	=> 'Unknown Mailer Error',
+		'securityerr'	=> 'Security Error',
+		'whitelisted'	=> 'Whitelisted',
+		'unstable'	=> 'Unstable',
+		'onhold'	=> 'On Hold',
+	}
+-%]

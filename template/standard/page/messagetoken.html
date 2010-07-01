@@ -1,0 +1,93 @@
+[%- PROCESS "heads.tt" -%]
+[%- PROCESS "words.tt" -%]
+[%- PROCESS "terms.tt" -%]
+[%- PROCESS "hostgroup.tt" -%]
+[%- PROCESS "reason.tt" -%]
+[%- PROCESS "desc.tt" -%]
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% systemname %]/[%- head.messagetoken %]</title>
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+	[% INCLUDE bouncehammer.css %]
+	[% INCLUDE record.css %]
+	[% INCLUDE messagetoken.css %]
+	-->
+	</style>
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% head1title %]/[%- head.messagetoken -%]</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[% INCLUDE "div-index.html" %]
+		</div>
+		<div id = 'East-Ward'>
+			[% INCLUDE "help-messagetoken.html" %]
+		</div>
+
+		<div id = 'Central-Ward'>
+			<h2>[%- term.token -%](MD5)</h2>
+			<div class = 'result'>
+				[%- prototype.form_remote_tag( {
+						url => "${scriptname}/token",
+						update => 'here_is_new_message_token',
+						position => 'Before',
+						before => "disableIt('make_token');",
+						loaded => "enableIt('make_token'); ra.value = ''; sa.value = '';",
+					});
+				-%]
+				<fieldset>
+					<table>
+					<tbody>
+						<tr>
+							<td class = 'key'>[%- term.addresser -%]</td>
+							<td class = 'value'>
+								<input type = 'text' name = 'addresser' style = 'width: 384px;' id = 'sa' class = 'wide'
+									placeholder = 'Sender(From) address' autosave = '[% systemname %].addresser' 
+									results = '16' onChange = "checksa.innerHTML='&#9745; [% word.use %]';"/>
+							</td>
+							<td class = 'extra' id = 'checksa'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>[%- term.recipient -%]</td>
+							<td class = 'value'>
+								<input type = 'text' name = 'recipient' style = 'width: 384px;' id = 'ra' class = 'wide'
+									placeholder = 'Recipient(To) Address' autosave = '[% systemname %].recipient'
+									results = '16' onChange = "checkra.innerHTML='&#9745; [% word.use %]';" />
+							</td>
+							<td class = 'extra' id = 'checkra'></td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>
+								<input type = 'hidden' name = 'makenewtoken' value = '1' />
+								<input type = 'submit' value = '[%- word.make -%]' id = 'make_token' class = 'flatbutton' />
+							</td>
+							<td class = 'value'> </td>
+							<td class = 'extra'> </td>
+						</tr>
+					</tbody>
+					</table>
+				</fieldset>
+				</form>
+			</div>
+			<div class = 'result'>
+				<div id = 'here_is_new_message_token'></div>
+			</div>
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+	</div>
+</body>
+</html>
+

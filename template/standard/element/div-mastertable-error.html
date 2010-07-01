@@ -1,0 +1,14 @@
+[%- PROCESS "words.tt" -%]
+[%- PROCESS "error.tt" -%]
+<table class = 'stored'>
+	<tbody class = 'mastertable'>
+	[% FOREACH R IN tablecontents %]
+		<tr class = 'errorstring'>
+			<td class = 'theID'><strong>[% R.id %]E</strong></td>
+			<td class = 'theName'>[% R.name %]</td>
+			<td class = 'theDescription'>[% error.${R.head} -%]: [% R.description %]</td>
+			<td class = 'theMethod'></td>
+		</tr>
+	[% END %]
+	</tbody>
+</table>

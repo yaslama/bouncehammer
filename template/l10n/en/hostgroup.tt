@@ -1,0 +1,13 @@
+[%# $Id: hostgroup.tt,v 1.1 2010/06/28 13:15:40 ak Exp $ -%]
+[%# Host Group definiations in English -%]
+[%- SET hostgroup = { 
+		'_'		=> '- Select Host Group -',
+		'undefined'	=> 'Undefined',
+		'reserved'	=> 'Reserved',
+		'cellphone'	=> 'Cellular Phones',
+		'smartphone'	=> 'Smartphones',
+		'pc'		=> 'PC',
+		'webmail'	=> 'WebMail',
+		'neighbor'	=> 'Neighbor',
+	}
+-%]

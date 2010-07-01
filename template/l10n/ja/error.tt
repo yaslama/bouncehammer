@@ -1,0 +1,27 @@
+[%# $Id: error.tt,v 1.1 2010/06/28 13:15:43 ak Exp $ -%]
+[%# Error Messages in Japanese -%]
+[%- SET error = {
+		'alreadyexists'		=> '既に同じデータが存在します',
+		'checkboxisoff'		=> 'チェックボックスがOffのままです',
+		'dataformaterror'	=> '不正なデータの形式です',
+		'error'			=> 'エラー',
+		'exceedslimit'		=> '許容サイズ超過',
+		'exception'		=> '例外',
+		'failed'		=> '失敗',
+		'failedtodelete'	=> '削除失敗',
+		'failedtocreate'	=> '生成失敗',
+		'failedtoupdate'	=> '更新失敗',
+		'filesizetoobig'	=> 'ファイルが大きすぎます',
+		'generic'		=> 'なんらかのエラー',
+		'invalidrecordid'	=> '無効なID',
+		'isnotemail'		=> 'フィアルは電子メールではないようです',
+		'iswhitelisted'		=> 'ホワイトリスト指定済',
+		'missingargument'	=> '引数が不足しています',
+		'nobouncemessage'	=> '電子メールはバウンスメールではないようです',
+		'norecordinthedb'	=> 'データベースに該当する記録がありません',
+		'nosenderdomain'	=> '発信者ドメインがありません',
+		'nosuchrecord'		=> '該当するデータがありません',
+		'readonlytable'		=> 'テーブルは読取専用',
+		'toooldorsame'		=> '古いまたは同じデータです',
+	}
+-%]

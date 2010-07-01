@@ -1,0 +1,141 @@
+[%- PROCESS "heads.tt" -%]
+[%- PROCESS "words.tt" -%]
+[%- PROCESS "terms.tt" -%]
+[%- PROCESS "hostgroup.tt" -%]
+[%- PROCESS "reason.tt" -%]
+[%- PROCESS "desc.tt" -%]
+[%- PROCESS "error.tt" -%]
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% systemname %]/[% head.parsingtest %]</title>
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+	[% INCLUDE bouncehammer.css %]
+	[% INCLUDE testparse.css %]
+	-->
+	</style>
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% head1title %]/[% head.parsingtest %]</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[% INCLUDE "div-index.html" %]
+		</div>
+		<div id = 'East-Ward'>
+			[% INCLUDE "help-parsed-message.html" %]
+			[% INCLUDE "help-senderdomain.html" %]
+			[% INCLUDE "help-recipient.html" %]
+			[% INCLUDE "help-frequency.html" %]
+			[% INCLUDE "help-diagnostic-code.html" %]
+			[% INCLUDE "help-messagetoken.html" %]
+			[% INCLUDE "help-bounced-at.html" %]
+			[% INCLUDE "help-updated-at.html" %]
+			[% INCLUDE "help-to-update-the-record.html" %]
+		</div>
+
+		<div id = 'Central-Ward'>
+
+			<div id = 'ChooseFile'>
+				<form action = '[% scriptname %]/test/parse' method = 'POST' target = 'parseddata' id = 'parseform'
+					enctype = 'multipart/form-data' 
+					onSubmit = " doparse.disabled = true; doparse.value = '[% word.parsing %]';
+					setTimeout( function(){ doparse.disabled = false; }, 8000 );
+					" >
+					<fieldset>
+						<legend>[%- word.parse -%]</legend>
+						<table>
+						<tbody>
+							<tr>
+								<td class = 'key'>[%- word.email -%]([%- word.mailbox -%])</td>
+								<td class = 'value'>
+									<input type = 'file' name = 'emailfile' class = 'emailfile'
+										onChange = "checkef.innerHTML = '&#9745; [% word.use %]';
+										doparse.disabled = false;" />&nbsp; 
+									[%- IF maxsize == 0 -%]
+										<strong> == [% word.unlimited %]</strong>
+									[%- ELSE -%]
+										<strong> &lt; [% maxsize %] [% word.bytes %]</strong>
+									[%- END -%]
+								</td>
+								<td class = 'extra' id = 'checkef'> </td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>
+									<a href = "javascript:void(0);" onClick = "toggleIt('emailtextarea');">
+										[% desc.wholemessagetext %] &gt;&gt;
+									</a>
+								</td>
+								<td class = 'value' >
+									[% desc.copyandpasteemail %]
+									<span class = 'flatbutton'>
+										<a href = "javascript:void(0);" onClick = "toggleIt('emailtextarea');">
+											[%- word.show -%]
+										</a>
+									</span><br />
+									<textarea name = 'emailtext' id = 'emailtextarea' onKeyUp = "doparse.disabled = false;"
+										onChange = "checket.innerHTML = '&#9745; [% word.use %]';"
+										class = 'emailtext' style = 'display: none;' rows = '24' cols = '48'></textarea>
+								</td>
+								<td class = 'extra' id = 'checket'> </td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>[% word.outputformat %]</td>
+								<td class = 'value'>
+									<span><input type = 'radio' name = 'format' value = 'html' checked /> HTML</span> &nbsp; 
+									<span><input type = 'radio' name = 'format' value = 'yaml' /> YAML</span> &nbsp; 
+									<span><input type = 'radio' name = 'format' value = 'json' /> JSON</span> &nbsp; 
+									<span><input type = 'radio' name = 'format' value = 'csv' /> CSV</span> &nbsp; 
+								</td>
+								<td class = 'extra' id = 'checkof'> </td>
+							</tr>
+
+							<tr>
+								<td class = 'key'>[% word.insertintodb %]</td>
+								<td class = 'value'>
+									<input type = 'checkbox' name = 'register' /> [% desc.insertafterparsing %]<br />
+									<span class = 'shortdescription'>[% desc.senderdomainmustexist %]</span>
+								</td>
+								<td class = 'extra'></td>
+							</tr>
+
+							<tr>
+								<td class = 'key' style = 'margin: 4px 0;'>
+									<br />
+									<input type = 'submit' id = 'doparse' value = '[% word.parse %]' 
+										class = 'flatbutton' disabled />
+								</td>
+								<td class = 'value'></td>
+								<td class = 'extra'>
+									<input type = 'hidden' name = 'parsenmessages' value = '10' />
+									<input type = 'reset' value = '[% word.reset %]' class = 'flatbutton' />
+								</td>
+							</tr>
+						</tbody>
+						</table>
+					</fieldset>
+				</form>
+			</div>
+
+			<div style = 'margin: 12px 0; padding: 0;'>
+				<iframe name = 'parseddata' id = 'parseddata' frameborder = '0' width = '605'
+					height = '1' marginheight = '0' marginwidth = '0' ></iframe>
+			</div>
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+
+	</div>
+</body>
+</html>
+

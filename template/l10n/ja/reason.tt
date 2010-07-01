@@ -1,0 +1,22 @@
+[%# $Id: reason.tt,v 1.1 2010/06/28 13:15:43 ak Exp $ -%]
+[%# Reason names definiations in English -%]
+[%- SET reason = { 
+		'_'		=> '- 差戻理由を選択 -',
+		'undefined'	=> '未定義',
+		'userunknown'	=> '宛先不明',
+		'hostunknown'	=> '不明なホスト',
+		'hasmoved'	=> '移転済み',
+		'filtered'	=> 'フィルタによる拒否',
+		'suspend'	=> '一時停止中',
+		'mailboxfull'	=> 'メールボックスいっぱい',
+		'exceedlimit'	=> 'メールサイズ上限超過',
+		'systemfull'	=> 'メールサーバ溢れ中',
+		'notaccept'	=> 'メールサーバ停止中',
+		'mesgtoobig'	=> 'メールが大きすぎる',
+		'mailererror'	=> 'メールプログラムエラー',
+		'securityerr'	=> 'セキュリティ上のエラー',
+		'whitelisted'	=> 'ホワイトリスト指定済み',
+		'unstable'	=> '不安定な受信者',
+		'onhold'	=> '差戻理由の決定を保留中',
+	}
+-%]

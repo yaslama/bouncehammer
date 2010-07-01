@@ -1,0 +1,14 @@
+[%# $Id: heads.tt,v 1.1 2010/06/28 13:15:39 ak Exp $ -%]
+[%# Headlines in English -%]
+[%- SET head = { 
+		'datasummary'	=> 'Data Summary',
+		'mastertable'	=> 'MasterTable',
+		'messagetoken'	=> 'Make Message Token',
+		'parsingtest'	=> 'Mail Parsing Test',
+		'recorddetails'	=> 'Record Details',
+		'search'	=> 'Search',
+		'searchresults'	=> 'Search Results',
+		'serverprof'	=> 'Server Profile',
+		'systemprof'	=> 'System Profile',
+	}
+-%]

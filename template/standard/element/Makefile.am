@@ -1,41 +1,28 @@
-# $Id: Makefile.am,v 1.2 2010/05/18 07:28:56 ak Exp $
+# $Id: Makefile.am,v 1.3 2010/06/28 13:16:14 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/template/standard/element,
 # is processed by automake to create Makefile.in.
 
 pkgdatadir = @datarootdir@/template/standard/element
-pkgdata_DATA = div-create-a-new-mastertable-record.en.html \
-	div-create-a-new-mastertable-record.ja.html \
-	div-delete-a-mastertable-record.en.html \
-	div-delete-a-mastertable-record.ja.html \
-	div-index.en.html \
-	div-index.ja.html \
-	div-mastertable-contents.en.html \
-	div-mastertable-contents.ja.html \
-	div-mastertable-error.en.html \
-	div-mastertable-error.ja.html \
-	div-mastertable-removed.en.html \
-	div-mastertable-removed.ja.html \
-	div-menubar.en.html \
-	div-menubar.ja.html \
-	div-new-message-token.en.html \
-	div-new-message-token.ja.html \
+pkgdata_DATA = \
+	div-create-a-new-mastertable-record.html \
+	div-delete-a-mastertable-record.html \
+	div-index.html \
+	div-mastertable-contents.html \
+	div-mastertable-error.html \
+	div-mastertable-removed.html \
+	div-menubar.html \
+	div-new-message-token.html \
 	div-pagefooter.html \
-	div-pagination.en.html \
-	div-pagination.ja.html \
-	div-result.en.html \
-	div-result.ja.html \
+	div-pagination.html \
+	div-result.html \
 	dtd-xhtml.html \
-	form-search-by-recipient.en.html \
-	form-search-by-recipient.ja.html \
-	form-search-query.en.html \
-	form-search-query.ja.html \
-	iframe-parseddata.en.html \
-	iframe-parseddata.ja.html \
+	form-search-by-recipient.html \
+	form-search-query.html \
+	iframe-parseddata.html \
 	meta-http-equiv.html \
-	select-hostgroup.en.html \
-	select-hostgroup.ja.html \
+	select-hostgroup.html \
+	select-howrecent.html \
 	select-language.html \
-	select-reason.en.html \
-	select-reason.ja.html
+	select-reason.html
 
