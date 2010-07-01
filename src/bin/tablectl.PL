@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: tablectl.PL,v 1.12 2010/06/08 19:16:51 ak Exp $
+# $Id: tablectl.PL,v 1.13 2010/06/25 19:34:06 ak Exp $
 # -Id: tablectl.PL,v 1.12 2010/02/21 20:09:01 ak Exp -
 # -Id: tablectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: tablectl.PL,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -45,7 +45,7 @@ my $Wcond = {};		# (Ref->Hash) Where condition
 my $CLIOPTION = {
 	'conf'		=> ( 1 << 0 ),
 	'test'		=> ( 1 << 1 ),
-	'usedb'		=> ( 1 << 2 ),
+	'database'	=> ( 1 << 2 ),
 	'list'		=> ( 1 << 3 ),
 	'insert'	=> ( 1 << 4 ),
 	'remove'	=> ( 1 << 5 ),
@@ -73,7 +73,7 @@ $Rdb = new Kanadzuchi::BdDR();
 try {
 	if( $Cmd->operation( parse_options() ) == 0 )
 	{
-		Kanadzuchi::Exception::Command->throw( '-text' => q(Try --help) );
+		Kanadzuchi::Exception::Command->throw( '-text' => 'Try --help' );
 	}
 
 	my $_load = $Zci->load( $Cmd->cf() );
@@ -92,12 +92,12 @@ otherwise {
 
 
 # Set signal handlers
-foreach my $__sig qw( INT QUIT TERM KILL )
+foreach my $sig qw( INT QUIT TERM KILL )
 {
-	$SIG{$__sig} = sub { $Cmd->catch_signal($__sig); };
+	$SIG{$sig} = sub { $Cmd->catch_signal($sig); };
 }
 
-if( $Cmd->operation & $Cmd->option->{'usedb'} )
+if( $Cmd->operation & $Cmd->option->{'database'} )
 {
 	#  _   _ ____  _____   ____  ____  
 	# | | | / ___|| ____| |  _ \| __ ) 
@@ -106,15 +106,15 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 	#  \___/|____/|_____| |____/|____/ 
 	#
 	try {
-		Kanadzuchi::Exception::Command->throw( '-text' => q{No table name} ) unless( $Alias );
+		Kanadzuchi::Exception::Command->throw( '-text' => 'No table name' ) unless( $Alias );
 
 		$Rdb->setup( $Zci->config->{'database'} );
-		Kanadzuchi::Exception::Database->throw( '-text' => q{Failed to connect DB} ) unless($Rdb->connect());
-		$Cmd->d(2,"Connecting to the database\n") if(defined($Rdb->handle()));
+		Kanadzuchi::Exception::Database->throw( '-text' => 'Failed to connect DB' ) unless $Rdb->connect();
+		$Cmd->d(2,"Connecting to the database\n") if(defined $Rdb->handle());
 
 		# Create master table object(Tab)
 		$Tab = new Kanadzuchi::BdDR::BounceLogs::Masters::Table( 'alias' => $Alias, 'handle' => $Rdb->handle() );
-		Kanadzuchi::Exception::Database->throw( '-text' => 'No such table' ) unless( defined($Tab) );
+		Kanadzuchi::Exception::Database->throw( '-text' => 'No such table' ) unless( defined $Tab );
 
 		( $Rdb->hostname() && $Rdb->port() )
 			? $Cmd->d(2,sprintf("Database host = %s:%d\n", $Rdb->hostname(),$Rdb->port()))
@@ -171,11 +171,12 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		{
 			$selectedrs = $Tab->search( $Wcond, $pagination );
 
-			PRINT_THE_LIST: while( my $r = shift(@$selectedrs) )
+			PRINT_THE_LIST: while( my $r = shift @$selectedrs )
 			{
-				if( defined($asciitable) )
+				if( defined $asciitable )
 				{
-					$asciitable->addRow( $r->{'id'}, $r->{$columnname}, $r->{'description'}, $r->{'disabled'} );
+					$asciitable->addRow( $r->{'id'}, $r->{'name'}, 
+								$r->{'description'}, $r->{'disabled'} );
 				}
 				else
 				{
@@ -190,7 +191,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 
 		} # End of while(RETRIEVE_THE_RESULTS)
 
-		if( defined($asciitable) && scalar @{ $asciitable->{'tbl_rows'} } )
+		if( defined $asciitable && scalar @{ $asciitable->{'tbl_rows'} } )
 		{
 			$asciitable->addRowLine();
 			printf( STDOUT "%s", $asciitable->draw() );
@@ -218,20 +219,21 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			# 
 			try {
 				# ID is not given , ID:0 is not valid
-				Kanadzuchi::Exception::Command->throw( '-text' => q{No or invalid ID} ) unless($Wcond->{'id'});
+				Kanadzuchi::Exception::Command->throw( 
+					'-text' => q{No or invalid ID} ) unless $Wcond->{'id'};
 
 				if( ! exists($Wcond->{'name'}) && ! exists($Wcond->{'description'}) && ! exists($Wcond->{'disabled'}) )
 				{
 					Kanadzuchi::Exception::Command->throw( '-text' =>
-						q{There are neither --name, --discription nor --disabled} );
+						'There are neither --name, --discription nor --disabled' );
 				}
 				elsif( exists($Wcond->{'name'}) && length($Wcond->{'name'}) == 0 )
 				{
 					Kanadzuchi::Exception::Command->throw( '-text' =>
-						q{The argument of --name is empty!} );
+						'The argument of --name is empty !' );
 				}
 
-				map { $newelement->{$_} = $Wcond->{$_} if( exists($Wcond->{$_}) ) } ( qw{name description disabled} )
+				map { $newelement->{$_} = $Wcond->{$_} if( exists $Wcond->{$_} ) } ( qw{name description disabled} )
 			}
 			catch Kanadzuchi::Exception::Command with {
 				$Cmd->exception(shift());
@@ -263,7 +265,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			try {
 				# ID is not given , ID:0 is not valid
 				Kanadzuchi::Exception::Command->throw( 
-					'-text' => q{No or invalid ID} ) unless($Wcond->{'id'});
+					'-text' => 'No or invalid ID' ) unless $Wcond->{'id'};
 			}
 			catch Kanadzuchi::Exception::Command with {
 				$Cmd->exception(shift());
@@ -296,7 +298,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 				if( ! exists($Wcond->{'name'}) )
 				{
 					Kanadzuchi::Exception::Command->throw( '-text' =>
-							q{There are no name with --name option} );
+							'There are no name with --name option' );
 				}
 
 				map { $newelement->{$_} = $Wcond->{$_} if( exists($Wcond->{$_}) ) } ( qw{name description disabled} )
@@ -342,75 +344,80 @@ sub parse_options
 	# @Return	n = Integer: operation value(24bit integer)
 
 	require Getopt::Long;
-	my $_operation = 0;
+	my $operation = 0;
 
 	# Variables for decide operation
 	my (
-		$_opt_conf,
-		$_opt_format,
-		$_opt_database,
-		$_opt_description,
-		$_opt_disabled,
-		$_opt_host,
-		$_opt_insert,
-		$_opt_id,
-		$_opt_list,
-		$_opt_name,
-		$_opt_port,
-		$_opt_remove,
-		$_opt_table,
-		$_opt_type,
-		$_opt_update,
-		$_opt_usedb,
-		$_opt_test,
-		$_opt_verbose,
+		$opt_conf,
+		$opt_description,
+		$opt_disabled,
+		$opt_format,
+		$opt_host,
+		$opt_id,
+		$opt_insert,
+		$opt_list,
+		$opt_name,
+		$opt_port,
+		$opt_remove,
+		$opt_table,
+		$opt_test,
+		$opt_type,
+		$opt_update,
+		$opt_database,
+		$opt_verbose,
 	);
 
 	# Relations of the option name and the option value
 	Getopt::Long::Configure( 'bundling', 'no_ignore_case' ); 
 	Getopt::Long::GetOptions(
-			'insert'	=> \$_opt_insert,
-			'conf=s'	=> \$_opt_conf,
-			'C=s'		=> \$_opt_conf,
-			'database=s'	=> \$_opt_database,
-			'format=s'	=> \$_opt_format,
-			'F=s'		=> \$_opt_format,
-			'host=s'	=> \$_opt_host,
-			'port=i'	=> \$_opt_port,
-			'type=s'	=> \$_opt_type,
-			'list'		=> \$_opt_list,
-			'remove'	=> \$_opt_remove,
-			'update'	=> \$_opt_update,
-			't=s'		=> \$_opt_table,
-			'table=s'	=> \$_opt_table,
-			'id=i'		=> \$_opt_id,
-			'name=s'	=> \$_opt_name,
-			'description=s'	=> \$_opt_description,
-			'disabled=i'	=> \$_opt_disabled,
-			'test'		=> \$_opt_test,
-			'T'		=> \$_opt_test,
+			'conf=s'	=> \$opt_conf,
+			'C=s'		=> \$opt_conf,
+			'test'		=> \$opt_test,
+			'T'		=> \$opt_test,
 			'help'		=> sub { help(); exit(0); },
 			'silent'	=> sub { $Cmd->silent(1); },
-			'verbose'	=> \$_opt_verbose,
-			'v+'		=> \$_opt_verbose,
+			'verbose'	=> \$opt_verbose,
+			'v+'		=> \$opt_verbose,
 			'version'	=> sub { printf(STDERR "%s\n", $Zci->version()); exit(0); },
+
+			# Output options
+			'format=s'	=> \$opt_format,
+			'F=s'		=> \$opt_format,
+			'list'		=> \$opt_list,
+
+			# Database options
+			'insert'	=> \$opt_insert,
+			'remove'	=> \$opt_remove,
+			'update'	=> \$opt_update,
+			'host=s'	=> \$opt_host,
+			'port=i'	=> \$opt_port,
+			'type=s'	=> \$opt_type,
+
+			# Table and column options
+			't=s'		=> \$opt_table,
+			'table=s'	=> \$opt_table,
+			'id=i'		=> \$opt_id,
+			'name=s'	=> \$opt_name,
+			'description=s'	=> \$opt_description,
+			'disabled=i'	=> \$opt_disabled,
+
 		);
 
 
 	# (verbose|debug) mode
-	$Cmd->debuglevel( ( $_opt_verbose ? $_opt_verbose : 0 ) - 1 );
+	$Cmd->debuglevel( ( $opt_verbose ? $opt_verbose : 0 ) - 1 );
 
 	# Specify Config File(YAML)
-	if( defined($_opt_conf) )
+	if( defined $opt_conf )
 	{
 		# Use specified config file(YAML)
-		$_operation |= $Cmd->option->{'conf'};
-		$Cmd->cf( new Path::Class::File($_opt_conf) );
+		$operation |= $Cmd->option->{'conf'};
+		$Cmd->cf( new Path::Class::File($opt_conf) );
 	}
-	elsif( $_opt_test )
+	elsif( $opt_test )
 	{
 		# Test mode,
-		$_operation |= $Cmd->option->{'test'};
+		$operation |= $Cmd->option->{'test'};
 		$Cmd->cf( new Path::Class::File('/dev/null'));
 	}
 	else
@@ -421,57 +428,58 @@ sub parse_options
 	}
 
 	# Table control
-	if( $_opt_list )
+	if( $opt_list )
 	{
-		$_operation |= $Cmd->option->{'usedb'}; 
-		$_operation |= $Cmd->option->{'list'};
+		$operation |= $Cmd->option->{'database'}; 
+		$operation |= $Cmd->option->{'list'};
 	}
-	elsif( $_opt_update )
+	elsif( $opt_update )
 	{
-		$_operation |= $Cmd->option->{'usedb'}; 
-		$_operation |= $Cmd->option->{'modify'}; 
-		$_operation |= $Cmd->option->{'update'};
+		$operation |= $Cmd->option->{'database'}; 
+		$operation |= $Cmd->option->{'modify'}; 
+		$operation |= $Cmd->option->{'update'};
 	}
-	elsif( $_opt_insert )
+	elsif( $opt_insert )
 	{
-		$_operation |= $Cmd->option->{'usedb'}; 
-		$_operation |= $Cmd->option->{'modify'}; 
-		$_operation |= $Cmd->option->{'insert'};
+		$operation |= $Cmd->option->{'database'}; 
+		$operation |= $Cmd->option->{'modify'}; 
+		$operation |= $Cmd->option->{'insert'};
 	}
-	elsif( $_opt_remove )
+	elsif( $opt_remove )
 	{
-		$_operation |= $Cmd->option->{'usedb'}; 
-		$_operation |= $Cmd->option->{'modify'}; 
-		$_operation |= $Cmd->option->{'remove'};
+		$operation |= $Cmd->option->{'database'}; 
+		$operation |= $Cmd->option->{'modify'}; 
+		$operation |= $Cmd->option->{'remove'};
 	}
 
 	# Select a table
-	$Alias = lc(substr($_opt_table,0,1)) if( $_opt_table );
+	$Alias = lc(substr($opt_table,0,1)) if( $opt_table );
+	$Alias = 'w' if( $Alias eq 'r' );
 
 	# Field, Column options
-	if( $_opt_id ){ $Wcond->{'id'} = int($_opt_id); }
-	if( $_opt_name ){ $Wcond->{'name'} = $_opt_name; }
-	if( $_opt_description ){ $Wcond->{'description'} = $_opt_description; }
-	if( defined($_opt_disabled) ){ $Wcond->{'disabled'} = $_opt_disabled ; }
+	if( $opt_id               ){ $Wcond->{'id'} = int($opt_id); }
+	if( $opt_name             ){ $Wcond->{'name'} = $opt_name; }
+	if( $opt_description      ){ $Wcond->{'description'} = $opt_description; }
+	if( defined $opt_disabled ){ $Wcond->{'disabled'} = $opt_disabled ; }
 
 	# Database spec option, Override values in the config file
-	if( $_opt_host ){ $Rdb->hostname($_opt_host); }
-	if( $_opt_type ){ $Rdb->dbtype($_opt_type); }
-	if( $_opt_port ){ $Rdb->port($_opt_port); }
+	if( $opt_host ){ $Rdb->hostname($opt_host); }
+	if( $opt_type ){ $Rdb->dbtype($opt_type); }
+	if( $opt_port ){ $Rdb->port($opt_port); }
 
-	if( $_opt_format )
+	if( $opt_format )
 	{
-		if(    substr($_opt_format,0,1) eq 'y' ){ $Fmt = q(yaml); }
-		elsif( substr($_opt_format,0,1) eq 'a' ){ $Fmt = q(asciitable); }
-		else{ $Fmt = q(yaml); }
+		if(    substr($opt_format,0,1) eq 'y' ){ $Fmt = 'yaml'; }
+		elsif( substr($opt_format,0,1) eq 'a' ){ $Fmt = 'asciitable'; }
+		else{ $Fmt = 'yaml'; }
 	}
 	else
 	{
 		# Default Log format is 'YAML' -Fy
-		$Fmt = q(yaml);
+		$Fmt = 'yaml';
 	}
 	# Check whether or not Required options are specified.
-	return($_operation);
+	return($operation);
 }
 
 sub help
@@ -489,7 +497,7 @@ sub help
 	printf( STDERR " * TABLE CONTROL OPTIONS\n" );
 	printf( STDERR "    -t, --table <t>       : Table name, ALWAYS REQUIRED.\n");
 	printf( STDERR "                            a = [A]ddressers, s = [S]enderDomains, d = [D]estinations\n");
-	printf( STDERR "                            h = [H]ostgroups, p = [P]roviders, w = Reasons([w]hy)\n");
+	printf( STDERR "                            h = [H]ostgroups, p = [P]roviders, r,w = [R]easons([w]hy)\n");
 	printf( STDERR "    --list                : Print the table contents as a list.\n");
 	printf( STDERR "    --update              : UPDATE specified records\n");
 	printf( STDERR "    --insert              : INSERT a new record\n");

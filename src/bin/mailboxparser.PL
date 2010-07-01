@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.35 2010/06/21 03:29:45 ak Exp $
+# $Id: mailboxparser.PL,v 1.36 2010/06/25 19:34:06 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -40,7 +40,6 @@ my $Bak;		# (String) Backup directory for the mailbox
 my $Fmt;		# (String) Output format
 my $Mbox;		# (Path::Class::File) Mailbox Object
 my $Mail = {
-	'stdin' => 0,
 	'files' => [],
 	'dirs' => [], };
 my $Skip = {
@@ -79,7 +78,7 @@ $Cmd = new Kanadzuchi::UI::CLI(
 try {
 	if( $Cmd->operation( parse_options() ) == 0 )
 	{
-		Kanadzuchi::Exception::Command->throw( '-text' => q(Try --help) );
+		Kanadzuchi::Exception::Command->throw( '-text' => 'Try --help' );
 	}
 
 	my $_load = $Zci->load( $Cmd->cf() );
@@ -97,9 +96,9 @@ otherwise {
 };
 
 # Set signal handlers
-foreach my $__sig qw( INT QUIT TERM KILL ALRM )
+foreach my $sig qw( INT QUIT TERM KILL ALRM )
 {
-	$SIG{$__sig} = sub { $Cmd->catch_signal($__sig); };
+	$SIG{$sig} = sub { $Cmd->catch_signal($sig); };
 }
 
 if( $Cmd->operation & $Cmd->option->{'parse'} )
@@ -132,7 +131,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	eval { alarm( ( $Zci->config->{'environment'}->{'timeout'} || 180 ) ) };
 
 	# Read from a Maildir and concatenate files in the directory
-	if( scalar(@{$Mail->{'dirs'}}) || scalar(@{$Mail->{'files'}}) )
+	if( scalar @{$Mail->{'dirs'}} || scalar @{$Mail->{'files'}} )
 	{
 		# Read from the directory(Maildir)
 		my $pseudofrom = q(From MAILER-DAEMON Sun Dec 31 23:59:59 2000).qq(\n);
@@ -164,7 +163,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		} # End of foreach(SEEK_EACH_DIRECTORY) 
 
 		$Cmd->d( 1, sprintf( "The number of files in the directories = %d\n", $filesindir )) if( $filesindir );
-		$Cmd->e('There is no valid email in the directories') unless( scalar(@{$Mail->{'files'}}) );
+		$Cmd->e('There is no valid email in the directories') unless( scalar @{$Mail->{'files'}} );
 
 
 
@@ -176,7 +175,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		my $md5digests = [];	# (Ref->Array) MD5 Digest hash values of each file
 
 		# Create progress bar object if it is verbose mode
-		if( scalar(@{$Mail->{'files'}}) && $Cmd->debuglevel > -1 )
+		if( scalar @{$Mail->{'files'}} && $Cmd->debuglevel > -1 )
 		{
 			eval { require Term::ProgressBar; };
 			$parseprogress = new Term::ProgressBar( { 
@@ -226,6 +225,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			read( $_eachmailfh, $mfcontents, -s $mf );
 			print( $mboxhandle $pseudofrom ) if( $first5char ne 'From ' );
 			print( $mboxhandle $mfcontents ) if( $mfcontents );
+
 			$_eachmailfh->close() if( $_eachmailfh );
 			$sizeofmailbox += -s $mf;
 			$howmanymboxes++;
@@ -247,7 +247,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 
 		} # End of foreach(SEEK_EACH_FILE)
 
-		if( defined($tmpmailbox) && defined($mboxhandle) )
+		if( defined $tmpmailbox && defined $mboxhandle )
 		{
 			push( @$chunksofemail, $tmpmailbox );
 			$mboxhandle->close() if( $mboxhandle );
@@ -309,7 +309,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			$parseprogress->message( $debugmessages ) if( $debugmessages );
 		}
 	}
-	push( @$chunksofemail, q|<STDIN>| ) unless( scalar(@$chunksofemail) );
+	push( @$chunksofemail, q|<STDIN>| ) unless( scalar @$chunksofemail );
 
 	my $howmanyemails = 0;		# (Integer) How many email messages
 	my $howmanybounce = 0;		# (Integer) How many bounce messages
@@ -367,7 +367,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		# |  __/ (_| | |  \__ \  __/ |   
 		# |_|   \__,_|_|  |___/\___|_|   
 		#                                
-		$mailboxparser->parseit( $progressbarcr ) || do{ $progressbarcr->(); next(); };
+		$mailboxparser->parseit( $progressbarcr ) || do { $progressbarcr->(); next(); };
 		$howmanybounce += $mailboxparser->nmesgs();
 
 		#  _____    _  _____   ___ _____ 
@@ -466,82 +466,88 @@ sub parse_options
 	# @Param	None
 	# @Return	n = Integer: operation value(24bit integer)
 	require Getopt::Long;
-	my $_operation = 0;
+	my $operation = 0;
 
 	# Variables for decide operation
 	my (
-		$_opt_batch,
-		$_opt_conf,
-		$_opt_format,
-		$_opt_greed,
-		$_opt_log,
-		$_opt_2way,
-		$_opt_outputdir,
-		$_opt_remove,
-		$_opt_truncate,
-		$_opt_backup,
-		$_opt_verbose,
-		$_opt_safe,	# Obsolete
-		$_opt_skip,
-		$_opt_skip_temperror,
-		$_opt_skip_norelaying,
-		$_opt_skip_mailererror,
-		$_opt_skip_hostunknown,
-		$_opt_test,
+		$opt_2way,
+		$opt_backup,
+		$opt_batch,
+		$opt_conf,
+		$opt_format,
+		$opt_greed,
+		$opt_log,
+		$opt_outputdir,
+		$opt_remove,
+		$opt_safe,	# Obsolete
+		$opt_skip,
+		$opt_skip_temperror,
+		$opt_skip_norelaying,
+		$opt_skip_mailererror,
+		$opt_skip_hostunknown,
+		$opt_test,
+		$opt_truncate,
+		$opt_verbose,
 	);
 
 	# Relations of the option name and the option value
 	Getopt::Long::Configure( 'bundling', 'no_ignore_case' ); 
 	Getopt::Long::GetOptions(
-			'2'		=> \$_opt_2way,
-			'two-way'	=> \$_opt_2way,
-			'B'		=> \$_opt_batch,
-			'batch'		=> \$_opt_batch,
-			'backup=s'	=> \$_opt_backup,
-			'conf=s'	=> \$_opt_conf,
-			'C=s'		=> \$_opt_conf,
-			'format=s'	=> \$_opt_format,
-			'F=s'		=> \$_opt_format,
-			'g'		=> \$_opt_greed,
-			'greed'		=> \$_opt_greed,
-			'log'		=> \$_opt_log,
-			'l'		=> \$_opt_log,
-			'output=s'	=> \$_opt_outputdir,
-			'o=s'		=> \$_opt_outputdir,
-			'remove'	=> \$_opt_remove,
-			'S'		=> \$_opt_safe,	# Obsolete
-			'safe'		=> \$_opt_safe,	# Obsolete
-			's'		=> \$_opt_skip,
-			'skip'		=> \$_opt_skip,
-			'skip-temperror'   => \$_opt_skip_temperror,
-			'skip-norelaying'  => \$_opt_skip_norelaying,
-			'skip-mailererror' => \$_opt_skip_mailererror,
-			'skip-hostunknown' => \$_opt_skip_hostunknown,
-			'test'		=> \$_opt_test,
-			'T'		=> \$_opt_test,
-			'truncate'	=> \$_opt_truncate,
+			'B'		=> \$opt_batch,
+			'batch'		=> \$opt_batch,
+			'conf=s'	=> \$opt_conf,
+			'C=s'		=> \$opt_conf,
+			'test'		=> \$opt_test,
+			'T'		=> \$opt_test,
 			'help'		=> sub { help(); exit(0); },
 			'silent'	=> sub { $Cmd->silent(1); },
-			'verbose'	=> \$_opt_verbose,
-			'v+'		=> \$_opt_verbose,
+			'verbose'	=> \$opt_verbose,
+			'v+'		=> \$opt_verbose,
 			'version'	=> sub { printf(STDERR "%s\n", $Zci->version()); exit(0); },
+
+			# Log file options
+			'2'		=> \$opt_2way,
+			'two-way'	=> \$opt_2way,
+			'output=s'	=> \$opt_outputdir,
+			'o=s'		=> \$opt_outputdir,
+			'log'		=> \$opt_log,
+			'l'		=> \$opt_log,
+			'format=s'	=> \$opt_format,
+			'F=s'		=> \$opt_format,
+
+			# Source file options
+			'backup=s'	=> \$opt_backup,
+			'remove'	=> \$opt_remove,
+			'truncate'	=> \$opt_truncate,
+
+			# Parser options
+			'g'		=> \$opt_greed,
+			'greed'		=> \$opt_greed,
+			'S'		=> \$opt_safe,	# Obsolete
+			'safe'		=> \$opt_safe,	# Obsolete
+			's'		=> \$opt_skip,
+			'skip'		=> \$opt_skip,
+			'skip-temperror'   => \$opt_skip_temperror,
+			'skip-norelaying'  => \$opt_skip_norelaying,
+			'skip-mailererror' => \$opt_skip_mailererror,
+			'skip-hostunknown' => \$opt_skip_hostunknown,
 		);
 
 
 	# (verbose|debug) mode
-	$Cmd->debuglevel( ( $_opt_verbose ? $_opt_verbose : 0 ) - 1 );
+	$Cmd->debuglevel( ( $opt_verbose ? $opt_verbose : 0 ) - 1 );
 
 	# Specify Config File(YAML)
-	if( defined($_opt_conf) )
+	if( defined $opt_conf )
 	{
 		# Use specified config file(YAML)
-		$_operation |= $Cmd->option->{'conf'};
-		$Cmd->cf( new Path::Class::File($_opt_conf) );
+		$operation |= $Cmd->option->{'conf'};
+		$Cmd->cf( new Path::Class::File($opt_conf) );
 	}
-	elsif( $_opt_test )
+	elsif( $opt_test )
 	{
 		# Test mode,
-		$_operation |= $Cmd->option->{'test'};
+		$operation |= $Cmd->option->{'test'};
 		$Cmd->cf( new Path::Class::File('/dev/null'));
 	}
 	else
@@ -553,11 +559,7 @@ sub parse_options
 
 	CHECK_MAIL_FILES_AND_DIRS:
 	{
-		if( scalar(@ARGV) == 0 || $ARGV[0] eq '-' )
-		{
-			$Mail->{'stdin'} = 1;
-			last(CHECK_MAIL_FILES_AND_DIRS);
-		}
+		last() if( scalar(@ARGV) == 0 || $ARGV[0] eq '-' );
 
 		my @_argvs = @ARGV;
 
@@ -573,23 +575,23 @@ sub parse_options
 		map { $_ =~ s{\A[ ]}{}g; $_ =~ s{[ ]\z}{}g; } @{ $Mail->{'files'} };
 		map { $_ =~ s{\A[ ]}{}g; $_ =~ s{[ ]\z}{}g; } @{ $Mail->{'dirs'}  };
 
-		if( $_opt_truncate || $_opt_remove )
+		if( $opt_truncate || $opt_remove )
 		{
-			$_operation |= $Cmd->option->{'truncate'} if( $_opt_truncate );
-			$_operation |= $Cmd->option->{'remove'} if( $_opt_remove );
+			$operation |= $Cmd->option->{'truncate'} if( $opt_truncate );
+			$operation |= $Cmd->option->{'remove'} if( $opt_remove );
 		}
-		elsif( defined($_opt_backup) && -d $_opt_backup && -r _ && -x _ && -w _ )
+		elsif( defined($opt_backup) && -d $opt_backup && -r _ && -x _ && -w _ )
 		{
-			$_operation |= $Cmd->option->{'backup'};
-			$Bak = $_opt_backup;
+			$operation |= $Cmd->option->{'backup'};
+			$Bak = $opt_backup;
 			require File::Copy;
 		}
 	}
 
 	# Output format options
-	if( $_opt_format )
+	if( $opt_format )
 	{
-		my $_1stcharacter = substr( $_opt_format, 0, 1 );
+		my $_1stcharacter = substr( $opt_format, 0, 1 );
 		$Fmt =  $_1stcharacter eq q(y) ? q(yaml) :
 			$_1stcharacter eq q(j) ? q(json) :
 			$_1stcharacter eq q(c) ? q(csv) :
@@ -601,42 +603,42 @@ sub parse_options
 		$Fmt = q(yaml);
 	}
 
-	if( $_opt_log || $_opt_2way )
+	if( $opt_log || $opt_2way )
 	{
 		# Log option
-		$_operation |= $Cmd->option->{'log'};
+		$operation |= $Cmd->option->{'log'};
 
-		if( $_opt_2way )
+		if( $opt_2way )
 		{
-			$_operation |= $Cmd->option->{'two-way'};
+			$operation |= $Cmd->option->{'two-way'};
 		}
-		elsif( $_opt_batch )
+		elsif( $opt_batch )
 		{
 			# Output results as a YAML in batch mode 
-			$_operation |= $Cmd->option->{'batch'};
+			$operation |= $Cmd->option->{'batch'};
 		}
 
-		if( defined($_opt_outputdir) && -d $_opt_outputdir && -r _ && -x _ )
+		if( defined($opt_outputdir) && -d $opt_outputdir && -r _ && -x _ )
 		{
-			$Out = $_opt_outputdir;
+			$Out = $opt_outputdir;
 		}
 	}
 
 	# Enable Parsing, greedily parse
-	if( $_opt_greed ){ $_operation |= $Cmd->option->{'greed'}; }
+	if( $opt_greed ){ $operation |= $Cmd->option->{'greed'}; }
 
 	# Skip by the reason 
-	if( $_opt_skip || $_opt_skip_temperror || $_opt_skip_norelaying 
-		|| $_opt_skip_mailererror || $_opt_skip_hostunknown ){
+	if( $opt_skip || $opt_skip_temperror || $opt_skip_norelaying 
+		|| $opt_skip_mailererror || $opt_skip_hostunknown ){
 
-		if( $_opt_skip || $_opt_skip_temperror   ){ $Skip->{'temperror'} = 1; }
-		if( $_opt_skip || $_opt_skip_norelaying  ){ $Skip->{'norelaying'} = 1; }
-		if( $_opt_skip || $_opt_skip_mailererror ){ $Skip->{'mailererror'} = 1; }
-		if( $_opt_skip || $_opt_skip_hostunknown ){ $Skip->{'hostunknown'} = 1; }
+		if( $opt_skip || $opt_skip_temperror   ){ $Skip->{'temperror'} = 1; }
+		if( $opt_skip || $opt_skip_norelaying  ){ $Skip->{'norelaying'} = 1; }
+		if( $opt_skip || $opt_skip_mailererror ){ $Skip->{'mailererror'} = 1; }
+		if( $opt_skip || $opt_skip_hostunknown ){ $Skip->{'hostunknown'} = 1; }
 	}
 
-	$_operation |= $Cmd->option->{'parse'};
-	return($_operation);
+	$operation |= $Cmd->option->{'parse'};
+	return($operation);
 }
 
 sub help
@@ -676,7 +678,7 @@ sub help
 	printf( STDERR "    -C, --conf <config> : Location of the configuration file used instead of \n");
 	printf( STDERR "                          __KANADZUCHIETC__/bouncehammer.cf .\n");
 	printf( STDERR "    -T, --test          : Test mode, same as ``-C /path/to/test-run.cf''\n");
-	printf( STDERR "    -F, --format <char> : Output(STDOUT only) format, the following are available.\n");
+	printf( STDERR "    -F, --format <char> : Output(STDOUT only) format, the followings are available.\n");
 	printf( STDERR "                          [y]aml = Default, [j]son, [c]sv and [a]sciitable\n");
 	printf( STDERR "    --silent            : Silent mode, All MESSAGES WILL NOT BE DISPLAYED.\n");
 	printf( STDERR "    -v, --verbose       : Run in verbose mode, -vv is more verbose, -vvv is more.\n");

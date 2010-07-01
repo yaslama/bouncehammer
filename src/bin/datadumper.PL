@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.15 2010/06/21 03:29:46 ak Exp $
+# $Id: datadumper.PL,v 1.16 2010/06/25 19:34:06 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -42,7 +42,7 @@ my $CLIOPTION = {
 	'conf'		=> ( 1 << 0 ),
 	'test'		=> ( 1 << 1 ),
 	'dump'		=> ( 1 << 2 ),
-	'usedb'		=> ( 1 << 3 ),
+	'database'	=> ( 1 << 3 ),
 	'count'		=> ( 1 << 4 ),
 	'comment'	=> ( 1 << 5 ),
 };
@@ -61,7 +61,7 @@ my $WhereCondition = {
 };
 
 # ORDER BY
-my $OrderBy = { 'column' => q(id), 'descend' => 0, };
+my $OrderBy = { 'column' => 'id', 'descend' => 0, };
 
 #  __  __    _    ___ _   _ 
 # |  \/  |  / \  |_ _| \ | |
@@ -82,7 +82,7 @@ $Rdb = new Kanadzuchi::BdDR();
 try {
 	if( $Cmd->operation( parse_options() ) == 0 )
 	{
-		Kanadzuchi::Exception::Command->throw( '-text' => q(Try --help) );
+		Kanadzuchi::Exception::Command->throw( '-text' => 'Try --help' );
 	}
 
 	my $_load = $Zci->load( $Cmd->cf() );
@@ -101,12 +101,12 @@ otherwise {
 
 
 # Set signal handlers
-foreach my $__sig qw( INT QUIT TERM KILL )
+foreach my $sig qw( INT QUIT TERM KILL )
 {
-	$SIG{$__sig} = sub { $Cmd->catch_signal($__sig); };
+	$SIG{$sig} = sub { $Cmd->catch_signal($sig); };
 }
 
-if( $Cmd->operation & $Cmd->option->{'usedb'} )
+if( $Cmd->operation & $Cmd->option->{'database'} )
 {
 	#  _   _ ____  _____   ____  ____    ______  _   _ __  __ ____  
 	# | | | / ___|| ____| |  _ \| __ )  / /  _ \| | | |  \/  |  _ \ 
@@ -132,13 +132,13 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 	# Set values to Kanadzuchi::BdDR object, Create data source name
 	try {
 		$Rdb->setup( $Zci->config->{'database'} );
-		Kanadzuchi::Exception::Database->throw( '-text' => q{Failed to connect DB} ) unless($Rdb->connect());
-		$Cmd->d(2,"Connecting to the database\n") if(defined($Rdb->handle()));
+		Kanadzuchi::Exception::Database->throw( '-text' => 'Failed to connect DB' ) unless $Rdb->connect();
+		$Cmd->d(2,"Connecting to the database\n") if( defined $Rdb->handle() );
 
 		# Create master table objects
 		$xntableobj = Kanadzuchi::BdDR::BounceLogs::Table->new( 'handle' => $Rdb->handle() );
 		Kanadzuchi::Exception::Database->throw( 
-			'-text' => 'Failed to create table objects' ) unless( $xntableobj );
+			'-text' => 'Failed to create table objects' ) unless $xntableobj;
 
 		( $Rdb->hostname() && $Rdb->port() )
 			? $Cmd->d(2,sprintf("Database host = %s:%d\n", $Rdb->hostname(),$Rdb->port()))
@@ -195,7 +195,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			$_str = $whereconds->{'hostgroup'};
 			$_xid = Kanadzuchi::Mail->gname2id($_str);
 			$_err = 'Unknown host group: '.$whereconds->{'hostgroup'}.'; try tablectl --list -tg';
-			Kanadzuchi::Exception::Command->throw( '-text' => $_err ) unless( $_xid );
+			Kanadzuchi::Exception::Command->throw( '-text' => $_err ) unless $_xid;
 		}
 
 		if( exists($whereconds->{'reason'}) && length($whereconds->{'reason'}) )
@@ -204,7 +204,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			$_str = $whereconds->{'reason'};
 			$_xid = Kanadzuchi::Mail->rname2id($_str);
 			$_err = 'Unknown reason: '.$whereconds->{'reason'}.'; try tablectl --list -tw';
-			Kanadzuchi::Exception::Command->throw( '-text' => $_err ) unless( $_xid );
+			Kanadzuchi::Exception::Command->throw( '-text' => $_err ) unless $_xid;
 		}
 	}
 	catch Kanadzuchi::Exception::Command with {
@@ -259,11 +259,11 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			DUMP_EACH_OBJECT: while( my $obj = $xniterator->next() )
 			{
 				push( @$dumpeddata, $obj );
-			} # End of while(DUMP_EACH_OBJECT)
+			}
 
 			# Create K::Log object and dump
 			my $kanazcilog = new Kanadzuchi::Log(
-						'count' => scalar(@$dumpeddata),
+						'count' => scalar @$dumpeddata,
 						'entities' => $dumpeddata,
 						'device' => q|STDOUT|,
 						'format' => $Fmt );
@@ -286,7 +286,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 				$kanazcilog->dumper();
 			}
 
-			last() unless($pagination->hasnext());
+			last() unless $pagination->hasnext();
 			$pagination->next();
 
 		} # End of while(SEACH_AND_NEW)
@@ -314,97 +314,101 @@ sub parse_options
 	# @Return	n = Integer: operation value(24bit integer)
 
 	require Getopt::Long;
-	my $_operation = 0;
+	my $operation = 0;
 
 	# Variables for decide operation
 	my (
-		$_opt_conf,
-		$_opt_host,
-		$_opt_port,
-		$_opt_type,
-		$_opt_count,
-		$_opt_format,
-		$_opt_addresser,
-		$_opt_recipient,
-		$_opt_senderdomain,
-		$_opt_destination,
-		$_opt_reason,
-		$_opt_provider,
-		$_opt_hostgroup,
-		$_opt_token,
-		$_opt_howrecent,
-		$_opt_orderby,
-		$_opt_orderbydesc,
-		$_opt_comment,
-		$_opt_alldata,
-		$_opt_test,
-		$_opt_verbose,
+		$opt_addresser,
+		$opt_alldata,
+		$opt_comment,
+		$opt_conf,
+		$opt_count,
+		$opt_destination,
+		$opt_format,
+		$opt_host,
+		$opt_hostgroup,
+		$opt_howrecent,
+		$opt_orderby,
+		$opt_orderbydesc,
+		$opt_port,
+		$opt_provider,
+		$opt_reason,
+		$opt_recipient,
+		$opt_senderdomain,
+		$opt_test,
+		$opt_token,
+		$opt_type,
+		$opt_verbose,
 	);
 
 	# Relations of the option name and the option value
 	Getopt::Long::Configure( 'bundling', 'no_ignore_case' ); 
 	Getopt::Long::GetOptions(
-			'conf=s'	=> \$_opt_conf,
-			'C=s'		=> \$_opt_conf,
-			'F=s'		=> \$_opt_format,
-			'format=s'	=> \$_opt_format,
-			'test'		=> \$_opt_test,
-			'T'		=> \$_opt_test,
+			'conf=s'	=> \$opt_conf,
+			'C=s'		=> \$opt_conf,
+			'test'		=> \$opt_test,
+			'T'		=> \$opt_test,
 			'help'		=> sub { help(); exit(0); },
 			'silent'	=> sub { $Cmd->silent(1); },
-			'verbose'	=> \$_opt_verbose,
-			'v+'		=> \$_opt_verbose,
+			'verbose'	=> \$opt_verbose,
+			'v+'		=> \$opt_verbose,
 			'version'	=> sub { printf(STDERR "%s\n", $Zci->version()); exit(0); },
 
 			# Database options
-			'host=s'	=> \$_opt_host,
-			'port=i'	=> \$_opt_port,
-			'type=s'	=> \$_opt_type,
+			'host=s'	=> \$opt_host,
+			'port=i'	=> \$opt_port,
+			'type=s'	=> \$opt_type,
 
 			# Where condition options
-			'a=s'		=> \$_opt_addresser,
-			'addresser=s'	=> \$_opt_addresser,
-			'r=s'		=> \$_opt_recipient,
-			'recipient=s'	=> \$_opt_recipient,
-			's=s'		=> \$_opt_senderdomain,
-			'senderdomain=s' => \$_opt_senderdomain,
-			'd=s'		=> \$_opt_destination,
-			'destination=s'	=> \$_opt_destination,
-			'w=s'		=> \$_opt_reason,
-			'reason=s'	=> \$_opt_reason,
-			'g=s'		=> \$_opt_hostgroup,
-			'hostgroup=s'	=> \$_opt_hostgroup,
-			'p=s'		=> \$_opt_provider,
-			'provider=s'	=> \$_opt_provider,
-			't=s'		=> \$_opt_token,
-			'token=s'	=> \$_opt_token,
-			'h=s'		=> \$_opt_howrecent,
-			'howrecent=s'	=> \$_opt_howrecent,
-			'o=s'		=> \$_opt_orderby,
-			'orderby=s'	=> \$_opt_orderby,
-			'O=s'		=> \$_opt_orderbydesc,
-			'orderbydesc=s'	=> \$_opt_orderbydesc,
-			'count'		=> \$_opt_count,
-			'comment'	=> \$_opt_comment,
-			'alldata'	=> \$_opt_alldata,
-			'A'		=> \$_opt_alldata,
+			'a=s'		=> \$opt_addresser,
+			'addresser=s'	=> \$opt_addresser,
+			'r=s'		=> \$opt_recipient,
+			'recipient=s'	=> \$opt_recipient,
+			's=s'		=> \$opt_senderdomain,
+			'senderdomain=s' => \$opt_senderdomain,
+			'd=s'		=> \$opt_destination,
+			'destination=s'	=> \$opt_destination,
+			'w=s'		=> \$opt_reason,
+			'reason=s'	=> \$opt_reason,
+			'g=s'		=> \$opt_hostgroup,
+			'hostgroup=s'	=> \$opt_hostgroup,
+			'p=s'		=> \$opt_provider,
+			'provider=s'	=> \$opt_provider,
+			't=s'		=> \$opt_token,
+			'token=s'	=> \$opt_token,
+			'h=s'		=> \$opt_howrecent,
+			'howrecent=s'	=> \$opt_howrecent,
+
+			# Order
+			'o=s'		=> \$opt_orderby,
+			'orderby=s'	=> \$opt_orderby,
+			'O=s'		=> \$opt_orderbydesc,
+			'orderbydesc=s'	=> \$opt_orderbydesc,
+
+			# Control and format options
+			'F=s'		=> \$opt_format,
+			'format=s'	=> \$opt_format,
+			'count'		=> \$opt_count,
+			'comment'	=> \$opt_comment,
+			'alldata'	=> \$opt_alldata,
+			'A'		=> \$opt_alldata,
 		);
 
 
 	# (verbose|debug) mode
-	$Cmd->debuglevel( ( $_opt_verbose ? $_opt_verbose : 0 ) - 1 );
+	$Cmd->debuglevel( ( $opt_verbose ? $opt_verbose : 0 ) - 1 );
 
 	# Specify Config File(YAML)
-	if( defined($_opt_conf) )
+	if( defined $opt_conf )
 	{
 		# Use specified config file(YAML)
-		$_operation |= $Cmd->option->{'conf'};
-		$Cmd->cf( new Path::Class::File($_opt_conf) );
+		$operation |= $Cmd->option->{'conf'};
+		$Cmd->cf( new Path::Class::File($opt_conf) );
 	}
-	elsif( $_opt_test )
+	elsif( $opt_test )
 	{
 		# Test mode,
-		$_operation |= $Cmd->option->{'test'};
+		$operation |= $Cmd->option->{'test'};
 		$Cmd->cf( new Path::Class::File('/dev/null'));
 	}
 	else
@@ -414,49 +418,49 @@ sub parse_options
 	}
 
 	# Database Statement
-	$_operation |= $Cmd->option->{'usedb'}; 
+	$operation |= $Cmd->option->{'database'}; 
 
-	$WhereCondition->{'token'} = $_opt_token || q();
-	$WhereCondition->{'reason'} = $_opt_reason || q();
-	$WhereCondition->{'bounced'} = $_opt_howrecent || q();
-	$WhereCondition->{'provider'} = $_opt_provider || q();
-	$WhereCondition->{'hostgroup'} = $_opt_hostgroup || q();
-	$WhereCondition->{'addresser'} = $_opt_addresser || q();
-	$WhereCondition->{'recipient'} = $_opt_recipient || q();
-	$WhereCondition->{'destination'} = $_opt_destination || q();
-	$WhereCondition->{'senderdomain'} = $_opt_senderdomain || q();
-	$WhereCondition->{'disabled'} = 0 unless( $_opt_alldata );
+	$WhereCondition->{'token'} = $opt_token || q();
+	$WhereCondition->{'reason'} = $opt_reason || q();
+	$WhereCondition->{'bounced'} = $opt_howrecent || q();
+	$WhereCondition->{'provider'} = $opt_provider || q();
+	$WhereCondition->{'hostgroup'} = $opt_hostgroup || q();
+	$WhereCondition->{'addresser'} = $opt_addresser || q();
+	$WhereCondition->{'recipient'} = $opt_recipient || q();
+	$WhereCondition->{'destination'} = $opt_destination || q();
+	$WhereCondition->{'senderdomain'} = $opt_senderdomain || q();
+	$WhereCondition->{'disabled'} = 0 unless( $opt_alldata );
 
 	# Order by (desc)
-	if( $_opt_orderby || $_opt_orderbydesc )
+	if( $opt_orderby || $opt_orderbydesc )
 	{
-		$OrderBy->{'column'} = $_opt_orderby || $_opt_orderbydesc;
-		$OrderBy->{'descend'} = 1 if( $_opt_orderbydesc );
+		$OrderBy->{'column'} = $opt_orderby || $opt_orderbydesc;
+		$OrderBy->{'descend'} = 1 if( $opt_orderbydesc );
 	}
 
 	# Database spec option, Override values in the config file
-	if( $_opt_host ){ $Rdb->hostname($_opt_host); }
-	if( $_opt_type ){ $Rdb->dbtype($_opt_type); }
-	if( $_opt_port ){ $Rdb->port($_opt_port); }
+	if( $opt_host ){ $Rdb->hostname($opt_host); }
+	if( $opt_type ){ $Rdb->dbtype($opt_type); }
+	if( $opt_port ){ $Rdb->port($opt_port); }
 
-	if( $_opt_count ){ $_operation |= $Cmd->option->{'count'}; }
-	if( $_opt_comment ){ $_operation |= $Cmd->option->{'comment'}; }
+	if( $opt_count ){ $operation |= $Cmd->option->{'count'}; }
+	if( $opt_comment ){ $operation |= $Cmd->option->{'comment'}; }
 
 	# Output format options
-	if( $_opt_format )
+	if( $opt_format )
 	{
-		my $_1stcharacter = substr( $_opt_format, 0, 1 );
-		$Fmt =  $_1stcharacter eq q(y) ? q(yaml) :
-			$_1stcharacter eq q(j) ? q(json) :
-			$_1stcharacter eq q(c) ? q(csv) : q(yaml);
+		my $_1stcharacter = substr( $opt_format, 0, 1 );
+		$Fmt =  $_1stcharacter eq 'y' ? 'yaml' :
+			$_1stcharacter eq 'j' ? 'json' :
+			$_1stcharacter eq 'c' ? q(csv) : 'yaml';
 	}
 	else
 	{
 		# Default Log format is 'YAML' -Fy
-		$Fmt = q(yaml);
+		$Fmt = 'yaml';
 	}
 
-	return($_operation);
+	return($operation);
 }
 
 sub help
@@ -499,7 +503,7 @@ sub help
 	printf( STDERR "    -C, --conf <config>        : Location of the configuration file used instead of \n");
 	printf( STDERR "                                 __KANADZUCHIETC__/bouncehammer.cf\n");
 	printf( STDERR "    -T, --test                 : Test mode, same as ``-C /path/to/test-run.cf''\n");
-	printf( STDERR "    -F, --format <char>        : Output format, the following are available.\n");
+	printf( STDERR "    -F, --format <char>        : Output format, the followings are available.\n");
 	printf( STDERR "                                 [y]aml = Default, [j]son, [c]sv and [a]sciitable\n");
 	printf( STDERR "    --silent                   : Silent mode, All MESSAGES WILL NOT BE DISPLAYED.\n");
 	printf( STDERR "    -v, --verbose              : Run in verbose mode, -vv is more verbose, -vvv is more.\n");
@@ -508,7 +512,7 @@ sub help
 	printf( STDERR "\n" );
 	printf( STDERR " * Examples\n" );
 	printf( STDERR "  %s --alldata --count\n", $Cmd->calledfrom() );
-	printf( STDERR "  %s -c cellphone -w filtered -h 1y\n", $Cmd->calledfrom() );
+	printf( STDERR "  %s -g cellphone -w filtered -h 1y\n", $Cmd->calledfrom() );
 	printf( STDERR "\n" );
 	return(1);
 }

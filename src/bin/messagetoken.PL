@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: messagetoken.PL,v 1.6 2010/04/24 06:13:33 ak Exp $
+# $Id: messagetoken.PL,v 1.7 2010/06/25 19:34:06 ak Exp $
 # -Id: messagetoken.PL,v 1.3 2010/02/21 20:09:01 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi:Command::
@@ -56,7 +56,7 @@ $Cmd = new Kanadzuchi::UI::CLI(
 try {
 	if( $Cmd->operation( parse_options() ) == 0 )
 	{
-		Kanadzuchi::Exception::Command->throw( '-text' => q(Try --help) );
+		Kanadzuchi::Exception::Command->throw( '-text' => 'Try --help' );
 	}
 
 	my $_load = $Zci->load( $Cmd->cf() );
@@ -75,9 +75,9 @@ otherwise {
 
 
 # Set signal handlers
-foreach my $__sig qw( INT QUIT TERM KILL )
+foreach my $sig qw( INT QUIT TERM KILL )
 {
-	$SIG{$__sig} = sub { $Cmd->catch_signal($__sig); };
+	$SIG{$sig} = sub { $Cmd->catch_signal($sig); };
 }
 
 if( $Cmd->operation & $Cmd->option->{'token'} )
@@ -103,8 +103,8 @@ if( $Cmd->operation & $Cmd->option->{'token'} )
 		$Cmd->abort();
 	};
 
-	my $addresser = Kanadzuchi::RFC2822->cleanup(lc($AaR->{'addresser'}));
-	my $recipient = Kanadzuchi::RFC2822->cleanup(lc($AaR->{'recipient'}));
+	my $addresser = Kanadzuchi::RFC2822->cleanup(lc $AaR->{'addresser'});
+	my $recipient = Kanadzuchi::RFC2822->cleanup(lc $AaR->{'recipient'});
 	my $mesgtoken = Kanadzuchi::String->token( $addresser, $recipient );
 
 	$Cmd->d( 1, sprintf("Addresser = %s\n", $addresser ) );
@@ -133,51 +133,53 @@ sub parse_options
 	# @Return	n = Integer: operation value(24bit integer)
 
 	require Getopt::Long;
-	my $_operation = 0;
+	my $operation = 0;
 
 	# Variables for decide operation
 	my (
-		$_opt_conf,
-		$_opt_test,
-		$_opt_addresser,
-		$_opt_recipient,
-		$_opt_verbose,
+		$opt_addresser,
+		$opt_conf,
+		$opt_recipient,
+		$opt_test,
+		$opt_verbose,
 	);
 
 	# Relations of the option name and the option value
 	Getopt::Long::Configure( 'bundling', 'no_ignore_case' ); 
 	Getopt::Long::GetOptions(
-			'a=s'		=> \$_opt_addresser,
-			'addresser=s'	=> \$_opt_addresser,
-			'r=s'		=> \$_opt_recipient,
-			'recipient=s'	=> \$_opt_recipient,
-			'C=s'		=> \$_opt_conf,
-			'conf=s'	=> \$_opt_conf,
+			'C=s'		=> \$opt_conf,
+			'conf=s'	=> \$opt_conf,
 			'help'		=> sub { help(); exit(0); },
-			'T'		=> \$_opt_test,
-			'test'		=> \$_opt_test,
+			'T'		=> \$opt_test,
+			'test'		=> \$opt_test,
 			'silent'	=> sub { $Cmd->silent(1); },
-			'verbose'	=> \$_opt_verbose,
-			'v+'		=> \$_opt_verbose,
+			'verbose'	=> \$opt_verbose,
+			'v+'		=> \$opt_verbose,
 			'version'	=> sub { printf(STDERR "%s\n", $Zci->version()); exit(0); },
+
+			# Data source options
+			'a=s'		=> \$opt_addresser,
+			'addresser=s'	=> \$opt_addresser,
+			'r=s'		=> \$opt_recipient,
+			'recipient=s'	=> \$opt_recipient,
 		);
 
 
 	# (verbose|debug) mode
-	$Cmd->debuglevel( ( $_opt_verbose ? $_opt_verbose : 0 ) - 1 );
+	$Cmd->debuglevel( ( $opt_verbose ? $opt_verbose : 0 ) - 1 );
 
 	# Specify Config File(YAML)	
-	if( defined($_opt_conf) )
+	if( defined $opt_conf )
 	{
 		# Use specified config file(YAML)
-		$_operation |= $Cmd->option->{'conf'};
-		$Cmd->cf( new Path::Class::File($_opt_conf) );
+		$operation |= $Cmd->option->{'conf'};
+		$Cmd->cf( new Path::Class::File($opt_conf) );
 	}
-	elsif( $_opt_test )
+	elsif( $opt_test )
 	{
 		# Test mode,
 		$Cmd->cf( new Path::Class::File('/dev/null'));
-		$_operation |= $Cmd->option->{'test'};
+		$operation |= $Cmd->option->{'test'};
 	}
 	else
 	{
@@ -188,22 +190,22 @@ sub parse_options
 
 	CHECK_ADDRESSER_AND_RECIPIENT: {
 
-		last() unless( defined($_opt_addresser) );
-		last() unless( defined($_opt_recipient) );
+		last() unless( defined $opt_addresser );
+		last() unless( defined $opt_recipient );
 
-		if( $_opt_addresser && $_opt_recipient )
+		if( $opt_addresser && $opt_recipient )
 		{
 			$AaR = {
-				'addresser' => $_opt_addresser,
-				'recipient' => $_opt_recipient,
+				'addresser' => $opt_addresser,
+				'recipient' => $opt_recipient,
 			};
-			$_operation |= $Cmd->option->{'token'};
+			$operation |= $Cmd->option->{'token'};
 		}
 	}
 
 	# Check whether or not Required options are specified.
 	return(0) unless( values(%$AaR) );
-	return($_operation);
+	return($operation);
 }
 
 sub help

@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.15 2010/06/19 09:44:52 ak Exp $
+# $Id: databasectl.PL,v 1.16 2010/06/25 19:34:06 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -37,13 +37,13 @@ my $Zci;		# (Kanadzuchi) System object
 my $Cmd;		# (Kanadzuchi::UI::CLI) Commadline object
 my $Rdb;		# (Kanadzuchi::BdDR) Database object
 my $Day;		# (Integer) The day (before|after), 0 = today, -1 = yesterday
-my $Lfs = [];		# (Ref->Array) Log files for INSERT or UPDATE
+my $Log = [];		# (Ref->Array) Log files for INSERT or UPDATE
 my $Cnd = {};		# (Ref->Hash) Where condition for --remove or --disable
 
 my $CLIOPTION = {
 	'conf'		=> ( 1 << 0 ),
 	'test'		=> ( 1 << 1 ),
-	'usedb'		=> ( 1 << 2 ),
+	'database'	=> ( 1 << 2 ),
 	'update'	=> ( 1 << 3 ),
 	'remove'	=> ( 1 << 4 ),
 	'force'		=> ( 1 << 5 ),
@@ -71,7 +71,7 @@ $Rdb = new Kanadzuchi::BdDR();
 try {
 	if( $Cmd->operation( parse_options() ) == 0 )
 	{
-		Kanadzuchi::Exception::Command->throw( '-text' => q(Try --help) );
+		Kanadzuchi::Exception::Command->throw( '-text' => 'Try --help' );
 	}
 
 	my $_load = $Zci->load( $Cmd->cf() );
@@ -90,12 +90,12 @@ otherwise {
 
 
 # Set signal handlers
-foreach my $__sig qw( INT QUIT TERM KILL )
+foreach my $sig qw( INT QUIT TERM KILL )
 {
-	$SIG{$__sig} = sub { $Cmd->catch_signal($__sig); };
+	$SIG{$sig} = sub { $Cmd->catch_signal($sig); };
 }
 
-if( $Cmd->operation & $Cmd->option->{'usedb'} )
+if( $Cmd->operation & $Cmd->option->{'database'} )
 {
 	#  _   _ ____  _____   ____  ____  
 	# | | | / ___|| ____| |  _ \| __ ) 
@@ -119,8 +119,8 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 	# Set values to Kanadzuchi::BdDR object, Create data source name
 	try {
 		$Rdb->setup( $Zci->config->{'database'} );
-		Kanadzuchi::Exception::Database->throw( '-text' => q{Failed to connect DB} ) unless($Rdb->connect());
-		$Cmd->d(2,"Connecting to the database\n") if(defined($Rdb->handle()));
+		Kanadzuchi::Exception::Database->throw( '-text' => 'Failed to connect DB' ) unless $Rdb->connect();
+		$Cmd->d(2,"Connecting to the database\n") if( defined $Rdb->handle() );
 
 		# Create master table objects
 		$xntableobj = Kanadzuchi::BdDR::BounceLogs::Table->new( 'handle' => $Rdb->handle() );
@@ -157,21 +157,21 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		my $theprogbar = undef();	# (Term::ProgressBar) Progress bar
 
 		# Create the log file name by the day(-t, -y, or -b option )
-		if( scalar(@$Lfs) == 0 && defined($Day) )
+		if( scalar(@$Log) == 0 && defined($Day) )
 		{
 			# Set the log file name
 			my $_theday = bless( (localtime() - ( $Day * 86400 )), q|Time::Piece| );
 			my $_thelog = new Path::Class::File( $Zci->get_logfile('r',{ 'data' => $_theday->ymd('-') }) );
-			push( @$Lfs, $_thelog );
+			push( @$Log, $_thelog );
 			$Cmd->d( 1, sprintf("Log file(date) = %s\n", $_thelog->stringify() ));
 		}
 
 		# Check the log files
-		if( scalar(@$Lfs) )
+		if( scalar(@$Log) )
 		{
 			try {
 				Kanadzuchi::Exception::File->throw(
-					'-text' => 'There is no log file' ) unless( grep { -s $_ && -r _ && -T _ } @$Lfs );
+					'-text' => 'There is no log file' ) unless( grep { -s $_ && -r _ && -T _ } @$Log );
 				alarm(0);
 
 				# Prepare the progress bar
@@ -182,11 +182,11 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 								'fh' => \*STDERR,
 								'ETA' => 'linear',
 								'name' => 'Check log files',
-								'count' => scalar @$Lfs } );
+								'count' => scalar @$Log } );
 				}
 
 				# Check the number of records in the log files
-				foreach my $f ( @$Lfs )
+				foreach my $f ( @$Log )
 				{
 					open( my $loghandle, q{<}, $f );
 					$sizeoflogs += -s $f;
@@ -202,7 +202,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		else
 		{
 			# Read parsed data from STDIN
-			push( @$Lfs, \*STDIN );
+			push( @$Log, \*STDIN );
 		}
 
 
@@ -242,12 +242,12 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 		{
 			$theprogbar = new Term::ProgressBar( { 
 						'fh' => \*STDERR,
-						'ETA' => q{linear},
+						'ETA' => 'linear',
 						'name' => '(UPDATE|INSERT)',
 						'count' => -t STDIN ? $thelinesof : $sizeoflogs } );
 		}
 
-		LOAD_EACH_FILE: while( my $logfileobj = shift(@$Lfs) )
+		LOAD_EACH_FILE: while( my $logfileobj = shift(@$Log) )
 		{
 			my $filehandle = undef();	# (GLOB) File handle of each log file
 			my $kanazciitr = undef();	# (Kanadzuchi::Iterator)
@@ -352,12 +352,12 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 					{
 						# INSERT this record INTO the database
 						$thisstatus = $parseddata->insert($xntableobj,$mastertabs,$tablecache);
-						$thisstatus ? $execstatus->{'insert'}++ : $execstatus->{'failed'}++;
+						( $thisstatus > 0 ) ? $execstatus->{'insert'}++ : $execstatus->{'failed'}++;
 					}
 					else
 					{
 						$thisstatus = $parseddata->update($xntableobj,$tablecache);
-						$thisstatus ? $execstatus->{'update'}++ : $execstatus->{'failed'}++;
+						( $thisstatus > 0 ) ? $execstatus->{'update'}++ : $execstatus->{'failed'}++;
 					}
 
 				} # End of while(READ_AND_UPDATE)
@@ -365,7 +365,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 			}
 			continue
 			{
-				$theprogbar->update( $loadedline ) if( defined($theprogbar) );
+				$theprogbar->update( $loadedline ) if( defined $theprogbar );
 			} # End of while(READ_EACH_FILE)
 
 			close($filehandle);
@@ -461,6 +461,7 @@ if( $Cmd->operation & $Cmd->option->{'usedb'} )
 
 			$Cmd->d( 1, sprintf( "WHERE id = %d\n", $Cnd->{'id'} ) ) if( $Cnd->{'id'} );
 			$Cmd->d( 1, sprintf( "WHERE token = '%s'\n", $Cnd->{'token'} ) ) if( $Cnd->{'token'} );
+
 			$wherecond = $Cnd;
 			$doesexist = $xntableobj->count( $wherecond );
 			Kanadzuchi::Exception::Data->throw( 
@@ -526,86 +527,89 @@ sub parse_options
 	# @Param	None
 	# @Return	n = Integer: operation value(24bit integer)
 	require Getopt::Long;
-	my $_operation = 0;
+	my $operation = 0;
 
 	# Variables for decide operation
 	my (
-		$_opt_batch,
-		$_opt_conf,
-		$_opt_file,
-		$_opt_host,
-		$_opt_port,
-		$_opt_type,
-		$_opt_disable,
-		$_opt_cleanup,
-		$_opt_update,
-		$_opt_force,
-		$_opt_remove,
-		$_opt_today,
-		$_opt_yesterday,
-		$_opt_before,
-		$_opt_test,
-		$_opt_verbose,
-		$_opt_id,
-		$_opt_token,
+		$opt_batch,
+		$opt_before,
+		$opt_cleanup,
+		$opt_conf,
+		$opt_disable,
+		$opt_file,
+		$opt_force,
+		$opt_host,
+		$opt_id,
+		$opt_port,
+		$opt_remove,
+		$opt_update,
+		$opt_test,
+		$opt_today,
+		$opt_token,
+		$opt_type,
+		$opt_yesterday,
+		$opt_verbose,
 	);
 
 	# Relations of the option name and the option value
 	Getopt::Long::Configure( 'bundling', 'no_ignore_case' ); 
 	Getopt::Long::GetOptions(
-			'B'		=> \$_opt_batch,
-			'batch'		=> \$_opt_batch,
-			'conf=s'	=> \$_opt_conf,
-			'C=s'		=> \$_opt_conf,
-			'cleanup'	=> \$_opt_cleanup,
-			'test'		=> \$_opt_test,
-			'T'		=> \$_opt_test,
+			'B'		=> \$opt_batch,
+			'batch'		=> \$opt_batch,
+			'conf=s'	=> \$opt_conf,
+			'C=s'		=> \$opt_conf,
+			'cleanup'	=> \$opt_cleanup,
+			'test'		=> \$opt_test,
+			'T'		=> \$opt_test,
 			'help'		=> sub { help(); exit(0); },
 			'silent'	=> sub { $Cmd->silent(1); },
-			'verbose'	=> \$_opt_verbose,
-			'v+'		=> \$_opt_verbose,
+			'verbose'	=> \$opt_verbose,
+			'v+'		=> \$opt_verbose,
 			'version'	=> sub { printf(STDERR "%s\n", $Zci->version()); exit(0); },
 
 			# Database options
-			'host=s'	=> \$_opt_host,
-			'port=i'	=> \$_opt_port,
-			'type=s'	=> \$_opt_type,
+			'host=s'	=> \$opt_host,
+			'port=i'	=> \$opt_port,
+			'type=s'	=> \$opt_type,
 
 			# Date options, require --update option, and Update options
-			'update'	=> \$_opt_update,
-			'U'		=> \$_opt_update,
-			'file=s'	=> \$_opt_file,
-			'f=s'		=> \$_opt_file,
-			'force'		=> \$_opt_force,
-			't'		=> \$_opt_today,
-			'today'		=> \$_opt_today,
-			'y'		=> \$_opt_yesterday,
-			'yesterday'	=> \$_opt_yesterday,
-			'b=i'		=> \$_opt_before,
-			'before=i'	=> \$_opt_before,
+			'update'	=> \$opt_update,
+			'U'		=> \$opt_update,
+			'file=s'	=> \$opt_file,
+			'f=s'		=> \$opt_file,
+			'force'		=> \$opt_force,
+			't'		=> \$opt_today,
+			'today'		=> \$opt_today,
+			'y'		=> \$opt_yesterday,
+			'yesterday'	=> \$opt_yesterday,
+			'b=i'		=> \$opt_before,
+			'before=i'	=> \$opt_before,
 
 			# Condition, for --remove and --diasble
-			'disable'	=> \$_opt_disable,
-			'remove'	=> \$_opt_remove,
-			'id=i'		=> \$_opt_id,
-			'token=s'	=> \$_opt_token,
+			'disable'	=> \$opt_disable,
+			'remove'	=> \$opt_remove,
+			'id=i'		=> \$opt_id,
+			'token=s'	=> \$opt_token,
 		);
 
 
 	# (verbose|debug) mode
-	$Cmd->debuglevel( ( $_opt_verbose ? $_opt_verbose : 0 ) - 1 );
+	$Cmd->debuglevel( ( $opt_verbose ? $opt_verbose : 0 ) - 1 );
+
+	# Output results as a YAML in batch mode 
+	$operation |= $Cmd->option->{'batch'} if($opt_batch);
 
 	# Specify Config File(YAML)	
-	if( defined($_opt_conf) )
+	if( defined $opt_conf )
 	{
 		# Use specified config file(YAML)
-		$_operation |= $Cmd->option->{'conf'};
-		$Cmd->cf( new Path::Class::File($_opt_conf) );
+		$operation |= $Cmd->option->{'conf'};
+		$Cmd->cf( new Path::Class::File($opt_conf) );
 	}
-	elsif( $_opt_test )
+	elsif( $opt_test )
 	{
 		# Test mode,
-		$_operation |= $Cmd->option->{'test'};
+		$operation |= $Cmd->option->{'test'};
 		$Cmd->cf( new Path::Class::File('/dev/null'));
 	}
 	else
@@ -615,59 +619,55 @@ sub parse_options
 	}
 
 	# Database Statement
-	if( $_opt_update )
+	if( $opt_update )
 	{
-		$_operation |= $Cmd->option->{'usedb'}; 
-		$_operation |= $Cmd->option->{'update'};
-		$_operation |= $Cmd->option->{'force'} if( $_opt_force );
+		$operation |= $Cmd->option->{'database'}; 
+		$operation |= $Cmd->option->{'update'};
+		$operation |= $Cmd->option->{'force'} if( $opt_force );
 	}
-	elsif( $_opt_remove || $_opt_disable )
+	elsif( $opt_remove || $opt_disable )
 	{
-		$_operation |= $Cmd->option->{'usedb'}; 
-		$_operation |= $Cmd->option->{'remove'} if( $_opt_remove);
-		$_operation |= $Cmd->option->{'disable'} if( $_opt_disable );
-		$Cnd->{'id'} = $_opt_id if( $_opt_id );
-		$Cnd->{'token'} = $_opt_token if( $_opt_token );
+		$operation |= $Cmd->option->{'database'}; 
+		$operation |= $Cmd->option->{'remove'} if( $opt_remove);
+		$operation |= $Cmd->option->{'disable'} if( $opt_disable );
+		$Cnd->{'id'} = $opt_id if( $opt_id );
+		$Cnd->{'token'} = $opt_token if( $opt_token );
 	}
 
 	# Clean up
-	if( $_opt_cleanup )
+	if( $opt_cleanup )
 	{
-		$_operation |= $Cmd->option->{'usedb'}; 
-		$_operation |= $Cmd->option->{'cleanup'};
+		$operation |= $Cmd->option->{'database'}; 
+		$operation |= $Cmd->option->{'cleanup'};
 	}
 
-	# Output results as a YAML in batch mode 
-	$_operation |= $Cmd->option->{'batch'} if($_opt_batch);
-
 	# Database spec option, Override values in the config file
-	if( $_opt_host ){ $Rdb->hostname($_opt_host); }
-	if( $_opt_type ){ $Rdb->dbtype($_opt_type); }
-	if( $_opt_port ){ $Rdb->port($_opt_port); }
+	if( $opt_host ){ $Rdb->hostname($opt_host); }
+	if( $opt_type ){ $Rdb->dbtype($opt_type); }
+	if( $opt_port ){ $Rdb->port($opt_port); }
 
 	DETECT_LOG_FILES: {
 
-		if( $_opt_today || $_opt_yesterday || $_opt_before )
+		if( $opt_today || $opt_yesterday || $opt_before )
 		{
 			# The day
-			$Day = 0 if( $_opt_today );
-			$Day = 1 if( $_opt_yesterday );
-			$Day = abs($_opt_before) if( defined($_opt_before) );
+			$Day = 0 if( $opt_today );
+			$Day = 1 if( $opt_yesterday );
+			$Day = abs($opt_before) if( defined $opt_before );
 			last(DETECT_LOG_FILES);
 		}
 
 		last(DETECT_LOG_FILES) if( scalar(@ARGV) == 0 || $ARGV[0] eq '-' );
 
 		my @_logfs = @ARGV;
-
 		map { $_ =~ y{[ ]}{}d; } @_logfs;
 		map { $_ =~ s{\A[ ]}{}g; $_ =~ s{[ ]\z}{}g; } @_logfs;
 
-		@$Lfs = map { Path::Class::File->new($_); } @_logfs;
+		@$Log = map { Path::Class::File->new($_); } @_logfs;
 	}
 
 	# Check whether or not Required options are specified.
-	return($_operation);
+	return($operation);
 }
 
 sub help
@@ -683,6 +683,7 @@ sub help
 	printf( STDERR "%s/%s %s\n", $Zci->myname(), $Cmd->calledfrom(), $Zci->version() );
 	printf( STDERR "Usage: %s -U [OPTIONS] file1 [, file2 [, file3 [,...]]]\n", $Cmd->calledfrom() );
 	printf( STDERR "Usage: cat file1 | %s -U [OPTIONS]\n", $Cmd->calledfrom() );
+	printf( STDERR "Usage: %s DELETE and DISABLE OPTIONS  \n", $Cmd->calledfrom() );
 	printf( STDERR "\n" );
 	printf( STDERR " * (UP)DATE OPTIONS\n" );
 	printf( STDERR "    -U, --update        : UPDATE or INSERT records in the database from the log file\n");

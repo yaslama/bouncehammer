@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.15 2010/05/25 04:48:22 ak Exp $
+# $Id: logger.PL,v 1.16 2010/06/25 19:34:06 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -38,7 +38,7 @@ use Path::Class::File::Lockable;
 my $Zci;		# (Kanadzuchi) System object
 my $Cmd;		# (Kanadzuchi::UI::CLI) Commandline object
 my $Bak;		# (String) Backup directory for the temp log.
-my $Arg = { 'stdin' => 0, 'files' => [], 'dirs' => [], };
+my $Arg = { 'files' => [], 'dirs' => [], };
 
 my $CLIOPTION = {
 	'conf'		=> ( 1 << 0 ),
@@ -68,7 +68,7 @@ $Cmd = new Kanadzuchi::UI::CLI(
 try {
 	if( $Cmd->operation( parse_options() ) == 0 )
 	{
-		Kanadzuchi::Exception::Command->throw( '-text' => q(Try --help) );
+		Kanadzuchi::Exception::Command->throw( '-text' => 'Try --help' );
 	}
 
 	my $_load = $Zci->load( $Cmd->cf() );
@@ -87,9 +87,9 @@ otherwise {
 
 
 # Set signal handlers
-foreach my $__sig qw( INT QUIT TERM KILL )
+foreach my $sig qw( INT QUIT TERM KILL )
 {
-	$SIG{$__sig} = sub { $Cmd->catch_signal($__sig); };
+	$SIG{$sig} = sub { $Cmd->catch_signal($sig); };
 }
 
 if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} + $Cmd->option->{'list'} ) )
@@ -154,7 +154,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 		$_md5digestv = Digest::MD5->new()->addfile($_f->openr())->hexdigest();
 		$_tmploglock = new Path::Class::File::Lockable($_f);
 
-		if( defined($hashoftmplog->{ $_md5digestv }) && -r $hashoftmplog->{ $_md5digestv } )
+		if( defined $hashoftmplog->{ $_md5digestv } && -r $hashoftmplog->{ $_md5digestv } )
 		{
 			# Temporary log file is now locked by mailboxparser?
 			next() if( $_tmploglock->locked() );
@@ -164,7 +164,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 			if( $Cmd->operation & $Cmd->option->{'remove'} )
 			{
 				eval { $_f->remove(); };
-				$Cmd->d(6,sprintf("Remove the log file(has same digest) = %s\n", $_eachtmplog )) unless($@);
+				$Cmd->d(6,sprintf("Remove the log file(has same digest) = %s\n", $_eachtmplog )) unless $@;
 			}
 			next();
 		}
@@ -231,7 +231,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 							'fh' => \*STDERR,
 							'ETA' => q(linear),
 							'name' => q{Load logs(}.$countofchunk.q{)},
-							'count' => scalar(@$tmplogsinhdd),
+							'count' => scalar @$tmplogsinhdd,
 				});
 		}
 
@@ -248,7 +248,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 			$sizeofloaded += -s $_f;
 			$pprogressbar->update() if( $pprogressbar );
 
-			next() unless( scalar(@$_tempstored) );
+			next() unless( scalar @$_tempstored );
 
 			LOAD_RECORDS_IN_TEMPLOG: foreach my $_o ( @$_tempstored )
 			{
@@ -420,7 +420,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 						{
 							# There are same records in the tmporary log and the regular log.
 							$howmanyskipd++;
-							shift(@$dataoftheday);
+							shift @$dataoftheday;
 							$_theheaddata = {};
 							$pprogressbar->update() if( $pprogressbar );
 						}
@@ -434,7 +434,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 								$_cacheofdata .= ${ Kanadzuchi::Metadata->to_string([$_theheaddata]) };
 								print( $_handleoftmp $_cacheofdata );
 								print( $_handleoftmp $_eachlogbuff );
-								shift(@$dataoftheday);
+								shift @$dataoftheday;
 								$_eachlogbuff = q();
 								$_cacheofdata = q();
 								$_theheaddata = {};
@@ -462,8 +462,8 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 					$_eachlogbuff = q();
 					$_cacheofdata = q();
 
-					$howmanydealt += scalar(@$dataoftheday);
-					if( defined($pprogressbar) && ! $_handleoflog )
+					$howmanydealt += scalar @$dataoftheday;
+					if( defined $pprogressbar && ! $_handleoflog )
 					{
 						$pprogressbar->update( $howmanydealt + $howmanyskipd );
 					}
@@ -507,7 +507,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 				foreach my $_eachtmpdata ( @$dataoftheday )
 				{
 					push( @$_writebuffer, $_eachtmpdata );
-					$_howmanybufd = scalar(@$_writebuffer);
+					$_howmanybufd = scalar @$_writebuffer;
 					$howmanydealt++;
 					$pprogressbar->update() if( $pprogressbar );
 
@@ -553,14 +553,14 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 				if( $Cmd->operation & $Cmd->option->{'truncate'} )
 				{
 					eval{ truncate($_t->stringify(),0); } unless( $_t->locked() );
-					$Cmd->d(3,"Failed to truncate temp log\n") if($@);
+					$Cmd->d(3,"Failed to truncate temp log\n") if $@;
 				}
 
 				# Remove the temp log
 				if( $Cmd->operation & $Cmd->option->{'remove'} )
 				{
 					eval{ $_t->remove(); } unless( $_t->locked() );
-					$Cmd->d(3,"Failed to remove temp log\n") if($@);
+					$Cmd->d(3,"Failed to remove temp log\n") if $@;
 				}
 
 			} # End of the loop(for())
@@ -620,62 +620,64 @@ sub parse_options
 	# @Return	n = Integer: operation value(24bit integer)
 
 	require Getopt::Long;
-	my $_operation = 0;
+	my $operation = 0;
 
 	# Variables for decide operation
 	my (
-		$_opt_backup,
-		$_opt_batch,
-		$_opt_conf,
-		$_opt_list,
-		$_opt_concatenate,
-		$_opt_merge,
-		$_opt_remove,
-		$_opt_test,
-		$_opt_truncate,
-		$_opt_verbose,
+		$opt_backup,
+		$opt_batch,
+		$opt_concatenate,
+		$opt_conf,
+		$opt_list,
+		$opt_merge,
+		$opt_remove,
+		$opt_test,
+		$opt_truncate,
+		$opt_verbose,
 	);
 
 	# Relations of the option name and the option value
 	Getopt::Long::Configure( 'bundling', 'no_ignore_case' ); 
 	Getopt::Long::GetOptions(
-			'backup=s'	=> \$_opt_backup,
-			'B'		=> \$_opt_batch,
-			'batch'		=> \$_opt_batch,
-			'conf=s'	=> \$_opt_conf,
-			'C=s'		=> \$_opt_conf,
-			'concatenate'	=> \$_opt_concatenate,
-			'c'		=> \$_opt_concatenate,
-			'list'		=> \$_opt_list,
-			'l'		=> \$_opt_list,
-			'merge'		=> \$_opt_merge,
-			'm'		=> \$_opt_merge,
-			'remove'	=> \$_opt_remove,
-			'test'		=> \$_opt_test,
-			'T'		=> \$_opt_test,
-			'truncate'	=> \$_opt_truncate,
+			'B'		=> \$opt_batch,
+			'batch'		=> \$opt_batch,
+			'conf=s'	=> \$opt_conf,
+			'C=s'		=> \$opt_conf,
+			'test'		=> \$opt_test,
+			'T'		=> \$opt_test,
 			'help'		=> sub { help(); exit(0); },
 			'silent'	=> sub { $Cmd->silent(1); },
-			'verbose'	=> \$_opt_verbose,
-			'v+'		=> \$_opt_verbose,
+			'verbose'	=> \$opt_verbose,
+			'v+'		=> \$opt_verbose,
 			'version'	=> sub { printf(STDERR "%s\n", $Zci->version()); exit(0); },
+
+			# Log file options
+			'backup=s'	=> \$opt_backup,
+			'concatenate'	=> \$opt_concatenate,
+			'c'		=> \$opt_concatenate,
+			'list'		=> \$opt_list,
+			'l'		=> \$opt_list,
+			'merge'		=> \$opt_merge,
+			'm'		=> \$opt_merge,
+			'remove'	=> \$opt_remove,
+			'truncate'	=> \$opt_truncate,
 		);
 
 
 	# (verbose|debug) mode
-	$Cmd->debuglevel( ( $_opt_verbose ? $_opt_verbose : 0 ) - 1 );
+	$Cmd->debuglevel( ( $opt_verbose ? $opt_verbose : 0 ) - 1 );
 
 	# Specify Config File(YAML)
-	if( defined($_opt_conf) )
+	if( defined $opt_conf )
 	{
 		# Use specified config file(YAML)
-		$_operation |= $Cmd->option->{'conf'};
-		$Cmd->cf( new Path::Class::File($_opt_conf) );
+		$operation |= $Cmd->option->{'conf'};
+		$Cmd->cf( new Path::Class::File($opt_conf) );
 	}
-	elsif( $_opt_test )
+	elsif( $opt_test )
 	{
 		# Test mode,
-		$_operation |= $Cmd->option->{'test'};
+		$operation |= $Cmd->option->{'test'};
 		$Cmd->cf( new Path::Class::File('/dev/null'));
 	}
 	else
@@ -689,7 +691,7 @@ sub parse_options
 	{
 		my @_argvs = @ARGV;
 
-		last() unless( scalar(@_argvs) );
+		last() unless( scalar @_argvs );
 		map { $_ =~ y{[ ]}{}d; } @_argvs;
 		my @_logfs = grep { -f $_ && -T _ && -r _ } @_argvs;
 		my @_logds = grep { -d $_ && -x _ && -r _ } @_argvs;
@@ -708,29 +710,29 @@ sub parse_options
 		push( @{ $Arg->{'dirs'}  }, @_logds );
 	}
 
-	if( $_opt_truncate || $_opt_remove )
+	if( $opt_truncate || $opt_remove )
 	{
-		$_operation |= $Cmd->option->{'truncate'} if( $_opt_truncate );
-		$_operation |= $Cmd->option->{'remove'} if( $_opt_remove );
+		$operation |= $Cmd->option->{'truncate'} if( $opt_truncate );
+		$operation |= $Cmd->option->{'remove'} if( $opt_remove );
 	}
-	elsif( defined($_opt_backup) && -d $_opt_backup && -r _ && -x _ && -w _ )
+	elsif( defined($opt_backup) && -d $opt_backup && -r _ && -x _ && -w _ )
 	{
-		$_operation |= $Cmd->option->{'backup'};
-		$Bak = $_opt_backup;
+		$operation |= $Cmd->option->{'backup'};
+		$Bak = $opt_backup;
 	}
 
 	# List
-	$_operation |= $Cmd->option->{'list'} if( $_opt_list );
+	$operation |= $Cmd->option->{'list'} if( $opt_list );
 
 	# Concatenate or Merge
-	if( $_opt_concatenate ){ $_operation |= $Cmd->option->{'concatenate'}; }
-	elsif( $_opt_merge ){ $_operation |= $Cmd->option->{'merge'}; }
+	if( $opt_concatenate ){ $operation |= $Cmd->option->{'concatenate'}; }
+	elsif( $opt_merge ){ $operation |= $Cmd->option->{'merge'}; }
 
 	# Output results as a YAML in batch mode 
-	$_operation |= $Cmd->option->{'batch'} if($_opt_batch);
+	$operation |= $Cmd->option->{'batch'} if($opt_batch);
 
 	# Check whether or not Required options are specified.
-	return($_operation);
+	return($operation);
 }
 
 sub help
