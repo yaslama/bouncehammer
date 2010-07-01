@@ -1,4 +1,4 @@
-# $Id: 116_bddr-bouncelogs.t,v 1.4 2010/06/22 07:17:16 ak Exp $
+# $Id: 116_bddr-bouncelogs.t,v 1.5 2010/06/25 19:27:08 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,15 +8,15 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 983 );
+use Test::More ( tests => 1313 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-my $Methods = [ 'new', 'is_validid', 'is_validcolumn', 'count', 'search',
-		'insert', 'update', 'disable', 'remove' ];
+my $Methods = [ 'new', 'is_validid', 'is_validcolumn', 'size', 'count',
+		'groupby', 'search', 'insert', 'update', 'disable', 'remove' ];
 
 my $Class = q|Kanadzuchi::BdDR::BounceLogs::Table|;
 my $Klass = q|Kanadzuchi::BdDR::BounceLogs|;
@@ -28,7 +28,7 @@ my $Klass = q|Kanadzuchi::BdDR::BounceLogs|;
 #
 
 SKIP: {
-	my $howmanyskips = 983;
+	my $howmanyskips = 1313;
 	eval { require DBI; }; skip( 'Because no DBI for testing', $howmanyskips ) if( $@ );
 	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $howmanyskips ) if( $@ );
 
@@ -129,6 +129,7 @@ SKIP: {
 		my $record = 2;		# + 2 example records
 		my $thisid = 0;
 		my $origin = {};
+		my $groupd = {};
 
 		$Page->resultsperpage(1e3);
 
@@ -143,6 +144,7 @@ SKIP: {
 
 			COUNT: {
 				is( $Btable->count(), $record, '->count() = '.$record );
+				is( $Btable->size(), $record, '->size() = '.$record );
 			}
 
 			SEARCH: {
@@ -193,13 +195,13 @@ SKIP: {
 
 
 			SEARCH_AGAIN1: {
-				is( $Btable->count( { 'disabled' => 1 } ), $record - 2, '->count(disabled) = '.$record );
+				is( $Btable->count( { 'disabled' => 1 } ), 1, '->count(disabled) = 1' );
 
 				$Page->resultsperpage(10);
 				$Page->set($record);
 
 				$entity = $Btable->search( { 'disabled' => 1 }, $Page );
-				is( scalar(@$entity), $record < 12 ? $record - 2 : 10 );
+				is( scalar(@$entity), 1 );
 			}
 
 			ENABLE: {
@@ -207,6 +209,33 @@ SKIP: {
 				ok( $thisid, '->update(disable=0,id='.$thisid.')' );
 			}
 
+			#$record--;
+		}
+
+
+		GROUP_BY: {
+			foreach my $column ( qw{senderdomain destination hostgroup provider reason addresser } )
+			{
+				$groupd = $Btable->groupby($column);
+				isa_ok( $groupd, q|ARRAY| );
+
+				foreach my $_e ( @$groupd )
+				{
+					like( $_e->{'name'}, qr{\A[a-z]}, 'name = '.$_e->{'name'} );
+					ok( ( $_e->{'size'} > -1 ), 'size = '.$_e->{'size'} );
+					ok( ( $_e->{'freq'} > 0 ), 'freq = '.$_e->{'freq'} );
+				}
+			}
+
+			CANNOT_AGGREGATE: {
+				$groupd = $Btable->groupby( 'token' );
+				isa_ok( $groupd, q|ARRAY| );
+				is( scalar( @$groupd ), 0 );
+			}
+		}
+
+		LOOP_FOR_DELETE: foreach my $_e ( @$Data )
+		{
 			REMOVE: {
 				if( ( $_e->{'id'} % 3 ) == 0 )
 				{
@@ -229,9 +258,6 @@ SKIP: {
 				$entity = $Btable->search( { 'token' => $_e->{'token'} }, $Page );
 				is( scalar(@$entity), 0, 'record = 0 (removed)' );
 			}
-
-			$record--;
-
 		}
 	}
 
