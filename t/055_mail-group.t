@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.28 2010/06/22 09:02:13 ak Exp $
+# $Id: 055_mail-group.t,v 1.29 2010/06/25 19:27:42 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -90,11 +90,11 @@ REQUIRE: {
 }
 
 METHODS: {
-	can_ok($BaseGrp, qw(reperit postult communisexemplar nominisexemplaria classisnomina));
+	can_ok($BaseGrp, qw(reperit postulat communisexemplar nominisexemplaria classisnomina));
 	foreach my $c ( keys(%$Classes) ){ can_ok( $Classes->{$c}, 'reperit' ) } 
 
 	LEGERE: {
-		my $loadedgr = $BaseGrp->postult();
+		my $loadedgr = $BaseGrp->postulat();
 
 		isa_ok( $loadedgr, q|ARRAY| );
 		foreach my $g ( @$loadedgr )
