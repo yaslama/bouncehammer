@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.17 2010/06/10 10:28:53 ak Exp $
+# $Id: CLI.pm,v 1.18 2010/06/28 13:18:28 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                       
@@ -264,6 +264,7 @@ sub d
 	defined(wantarray()) ? return($mesg) : printf( STDERR $mesg );
 	return(q{});
 }
+*debug = *d;
 
 sub e
 {
@@ -280,6 +281,7 @@ sub e
 	Carp::carp( qq{ ***error: $mesg} ) unless( $self->{'silent'} );
 	$self->abort();
 }
+*error = *e;
 
 sub catch_signal
 {
