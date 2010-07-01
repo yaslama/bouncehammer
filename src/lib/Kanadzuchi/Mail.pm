@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.27 2010/06/21 05:01:40 ak Exp $
+# $Id: Mail.pm,v 1.28 2010/06/25 19:23:38 ak Exp $
 # -Id: Message.pm,v 1.1 2009/08/29 07:32:59 ak Exp -
 # -Id: BounceMessage.pm,v 1.13 2009/08/21 02:43:14 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -104,7 +104,7 @@ my $ReasonWhy = {
 
 my $DomainCache = {};
 my $DomainParts = { 'addresser' => 'senderdomain', 'recipient' => 'destination' };
-my $LoadedGroup = Kanadzuchi::Mail::Group->postult();
+my $LoadedGroup = Kanadzuchi::Mail::Group->postulat();
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -293,11 +293,12 @@ sub id2gname
 	#
 	# @Description	Host group ID -> Host group name
 	# @Param <int>	(Integer) Host group ID
-	# @Return	(String) Host group name
-	#		(Enpty) Does not exist
+	# @Return	(String|Ref->Array) Host group name(s)
+	#		(Empty) Does not exist
 	my $class = shift();
 	my $theid = shift() || return q{};
-	return(keys(%$HostGroups)) if( $theid eq '@' );
+
+	return [ keys(%$HostGroups) ] if( $theid eq '@' );
 	return q{} unless( $theid );
 	return q{} unless( $theid =~ m{\A\d+\z} );
 	return( 
@@ -314,11 +315,12 @@ sub id2rname
 	#
 	# @Description	Reason ID -> the reason
 	# @Param <int>	(Integer) Reason ID
-	# @Return	(String) The reason
-	#		(Enpty) Does not exist
+	# @Return	(String|Ref->Array) The reason(s)
+	#		(Empty) Does not exist
 	my $class = shift();
 	my $theid = shift() || return q{};
-	return(keys(%$ReasonWhy)) if( $theid eq '@' );
+
+	return [ keys(%$ReasonWhy) ] if( $theid eq '@' );
 	return q{} unless( $theid );
 	return q{} unless( $theid =~ m{\A\d+\z} );
 	return( 
@@ -335,11 +337,11 @@ sub gname2id
 	#
 	# @Description	Host group name -> Host group ID
 	# @Param <str>	(String) Host group name
-	# @Return	(Integer) n = Host group ID
+	# @Return	(Integer|Ref->Array) n = Host group ID(s)
 	#		(Integer) 0 = Does not exist
 	my $class = shift();
 	my $gname = shift() || return(0);
-	return(values(%$HostGroups)) if( $gname eq '@' );
+	return [ values(%$HostGroups) ] if( $gname eq '@' );
 	return(0) unless( $gname );
 	return( $HostGroups->{$gname} || 0 );
 }
@@ -352,11 +354,11 @@ sub rname2id
 	#
 	# @Description	The reason -> reason ID
 	# @Param <str>	(String) The reason 
-	# @Return	(Integer) n = reason ID
+	# @Return	(Integer|Ref->Array) n = reason ID(s)
 	#		(Integer) 0 = Does not exist
 	my $class = shift();
 	my $rname = shift() || return(0);
-	return(values(%$ReasonWhy)) if( $rname eq '@' );
+	return [ values(%$ReasonWhy) ] if( $rname eq '@' );
 	return(0) unless( $rname );
 	return( $ReasonWhy->{$rname} || 0 );
 }
