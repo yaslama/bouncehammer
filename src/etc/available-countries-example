@@ -1,18 +1,26 @@
-# $Id: hostgroup-by-area-example,v 1.3 2010/06/22 07:17:54 ak Exp $
-# hostgroup-by-area:
-#   If you use this file, it should be saved as 'hostgroup-by-area' .
+# $Id: available-countires-example,v 1.3 2010/07/01 13:06:37 ak Exp $
+# available-countries:
+#   If you use this file, it should be saved as 'available-countries' .
 #   Kanadzuchi::Mail::Group reads this file as YAML for getting the parsed re-
 #   sults which  the host group and the provider  are correctly classified. If
 #   this file does not exist,  Kanadzuchi::Mail::Group load  all of modules in
 #   the directory Kanadzuchi/Mail/Group/<XX> .
 # ----------------------------------------------------------------------------
 # SYNOPSIS:
-#   AREACODE:
-#     HOSTGROUP: 1 or 0
-#       # 0 = Do not load the host group(by area) library, Then "hostgroup" is
+#   <CCTLD>:
+#     <HOSTGROUP>: 1 or 0
+#       * 0 = Do not load the host group(by area) library, Then "hostgroup" is
 #             "pc", "provider" is "various" in parsed results.
-#       # 1 = Load 'Kanadzuchi::Mail::Group::<AREACODE>::<HOSTGROUP>', Then it
-#             correctly classify host group and provider.
+#       * 1 = Load 'Kanadzuchi::Mail::Group::<CCTLD or ISO3166>::<HOSTGROUP>',
+#             Then it correctly classify host group and provider.
+#
+#     agents: [ 'name-of-mta1', 'name-of-mta2', ... ]
+#       * The key 'agents' does not exist: Load all of modules in Kanadzuchi::
+#         MTA::<CCTLD or ISO3166>::*.pm
+#       * The key 'agents' is EMPTY: Does NOT load any moduels in Kanadzuchi::
+#         MTA::<CCTLD or ISO3166>::*.pm
+#       * The key 'agents' has a value: Load only the module of its name in 
+#         Kanadzuch::MTA::<CCTLD or ISO3166>::<its name>.pm
 # ----------------------------------------------------------------------------
 #
 # Host groups which are used in Australia
@@ -69,10 +77,12 @@ ir:
 #   cellphone: NTT DoCoMo, au by KDDI, SoftBank Mobile.
 #   smartphone:iPhone, EMOBILE, WILLCOM, and such.
 #   webmail: auone.jp, dwmail.jp, goo.jp, livedoor.jp, and such.
+#   agents: [ 'mta1', 'mta2',... ]
 jp:
   cellphone: 1
   smartphone: 1
   webmail: 1
+  agents: [ 'aubykddi' ]
 
 # Host groups which are used in South Korea
 #   webmail: Daum(Hanmail), Empas
