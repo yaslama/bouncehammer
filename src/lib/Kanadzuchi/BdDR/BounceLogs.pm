@@ -1,4 +1,4 @@
-# $Id: BounceLogs.pm,v 1.9 2010/06/19 09:46:36 ak Exp $
+# $Id: BounceLogs.pm,v 1.10 2010/06/25 19:25:40 ak Exp $
 # -Id: BounceLogs.pm,v 1.9 2010/03/04 08:33:28 ak Exp -
 # -Id: BounceLogs.pm,v 1.1 2009/08/29 08:58:48 ak Exp -
 # -Id: BounceLogs.pm,v 1.6 2009/08/27 05:09:55 ak Exp -
@@ -174,7 +174,7 @@ sub search
 	# @Param <ref>	(Ref->Hash) Where Condition
 	# @Param <obj>	(Kanadzuchi::BdDR::Page) Pagination object
 	# @Param <flg>	(Integer) Flag, 1=Count only
-	# @Return	(Ref->Array) Array-ref of Hash references
+	# @Return	(Ref->Array) Hash references
 	my $self = shift();
 	my $cond = shift() || {};
 	my $page = shift() || new Kanadzuchi::BdDR::Page;
@@ -300,6 +300,91 @@ sub search
 	if( $@ ){ $self->{'error'}->{'string'} = $@; $self->{'error'}->{'count'}++; }
 	return($nrecords) if( $cflg );
 	return($data);
+}
+
+sub groupby
+{
+	# +-+-+-+-+-+-+-+
+	# |g|r|o|u|p|b|y|
+	# +-+-+-+-+-+-+-+
+	#
+	# @Description	Aggregate by specified column
+	# @Param <str>	(String) Column name
+	# @Return	(Ref->Array) Aggregated data
+	my $self = shift();
+	my $name = shift() || return {};
+	my $rset = undef();
+	my $mtab = q();
+	my $data = [];
+
+	my $iterator = undef();
+	my $xtobject = $self->{'object'};
+	return [] unless( grep { $name eq $_ }
+			( @{ $self->{'fields'}->{'join'} }, 'hostgroup', 'reason' ) );
+
+	eval {
+		if( $name eq 'hostgroup' || $name eq 'reason' )
+		{
+			my $_sqlx = 'SELECT '.$name.', ';
+			$_sqlx .= 'COUNT(token) AS x, ';
+			$_sqlx .= 'SUM(frequency) AS y ';
+			$_sqlx .= 'FROM '.$self->{'table'}.' GROUP BY '.$name;
+
+			$iterator = $xtobject->search_by_sql( $_sqlx );
+		}
+		else
+		{
+			my $_mtab = new Kanadzuchi::BdDR::BounceLogs::Masters::Table(
+						'alias' => $name.'s', 'handle' => $self->{'handle'} );
+			my $_ropt = {   'group' => { 'column' => $name },
+					'select' => [ 
+						'COUNT(token) AS x', 
+						'SUM(frequency) AS y', 
+					],
+				};
+
+			my $_rset = $xtobject->resultset( $_ropt );
+			my $_cond = sprintf( "%s.%s = %s.id", $self->{'table'}, $name, $_mtab->table() );
+			my $_join = { 'type' => 'inner', 'table' => $_mtab->table(), 'condition' => $_cond };
+
+			$_rset->add_select( $_mtab->table().'.'.$_mtab->field() => $name );
+			$_rset->add_join( $self->{'table'} => [ $_join ] );
+			$iterator = $_rset->retrieve(); 
+		}
+	};
+
+	if( $@ )
+	{
+		$self->{'error'}->{'string'} = $@;
+		$self->{'error'}->{'count'}++;
+		return [];
+	}
+
+	RETRIEVE: while( my $r = $iterator->next() )
+	{
+		push( @$data, { 'name' => $r->$name, 'size' => $r->x(), 'freq' => $r->y() } )
+	}
+	return $data;
+}
+
+sub size
+{
+	#+-+-+-+-+
+	#|s|i|z|e|
+	#+-+-+-+-+
+	#
+	# @Description	SELECT count(*) FROM t_bouncelogs;
+	# @Param	<None>
+	# @Return	(Integer) The number of records
+	my $self = shift();
+	my $size = 0;
+
+	eval{ $size = $self->search( {}, Kanadzuchi::BdDR::Page->new(), 1 ) };
+	return( $size ) unless( $@ );
+
+	$self->{'error'}->{'string'} = $@;
+	$self->{'error'}->{'count'}++;
+	return(0);
 }
 
 sub count
