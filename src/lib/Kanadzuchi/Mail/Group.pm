@@ -1,4 +1,4 @@
-# $Id: Group.pm,v 1.25 2010/06/22 03:16:24 ak Exp $
+# $Id: Group.pm,v 1.27 2010/07/01 13:18:09 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::
                                      
@@ -21,15 +21,23 @@ use warnings;
 sub communisexemplar {}
 sub nominisexemplaria {}
 sub classisnomina {}
-sub postult
+
+sub postulat
 {
-	# +-+-+-+-+-+-+-+
-	# |p|o|s|t|u|l|t|
-	# +-+-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+-+
+	# |p|o|s|t|u|l|a|t|
+	# +-+-+-+-+-+-+-+-+
 	#
 	# @Description	Require Kanadzuchi::Mail::Group::??::*
 	# @Param	<None>
 	# @Return	(Ref->Array) Loaded class names
+	# @See		etc/avalable-countries
+	#   <CCTLD>:
+	#     <HOSTGROUP>: 1 or 0
+	#       * 0 = Do not load the host group(by area) library, Then "hostgroup" is
+	#             "pc", "provider" is "various" in parsed results.
+	#       * 1 = Load 'Kanadzuchi::Mail::Group::<CCTLD or ISO3166>::<HOSTGROUP>',
+	#             Then it correctly classify host group and provider.
 	my $class = shift();
 
 	require JSON::Syck;
@@ -40,30 +48,30 @@ sub postult
 	$JSON::Syck::SortKeys        = 0;
 
 	# Experimental implementation for the future.
-	my $areakeylist = [ qw(AU BR CA CN CZ DE EG IN IL IR JP KR LV NO NZ RU SG TW UK US ZA) ];
-	my $groupbyarea = '__KANADZUCHIROOT__/etc/hostgroup-by-area';
-	my $loadedgroup = ( -r $groupbyarea && -s _ && -T _ ) ? JSON::Syck::LoadFile($groupbyarea) : {};
-	my $didfileload = keys %$loadedgroup ? 1 : 0;
+	my $iso3166list = [ qw(AU BR CA CN CZ DE EG IN IL IR JP KR LV NO NZ RU SG TW UK US ZA) ];
+	my $iso3166conf = '__KANADZUCHIROOT__/etc/available-countries';
+	my $countryconf = ( -r $iso3166conf && -s _ && -T _ ) ? JSON::Syck::LoadFile($iso3166conf) : {};
+	my $didfileload = keys %$countryconf ? 1 : 0;
 	my $areaclasses = [];
 	my $grclassname = q();
 	my $grclasspath = q();
 
-	foreach my $area ( @$areakeylist )
+	foreach my $code ( @$iso3166list )
 	{
 		foreach my $hgrp ( 'Cellphone', 'Smartphone', 'WebMail' )
 		{
-			next() if( $didfileload && ! $loadedgroup->{ lc($area) }->{ lc($hgrp) } );
-			$grclassname =  __PACKAGE__.'::'.$area.'::'.$hgrp;
+			next() if( $didfileload && ! $countryconf->{ lc($code) }->{ lc($hgrp) } );
+			$grclassname =  __PACKAGE__.'::'.$code.'::'.$hgrp;
 			$grclasspath =  $grclassname;
 			$grclasspath =~ y{:}{/}s;
 			$grclasspath .= '.pm';
 
 			eval { require $grclasspath; };
-			push( @$areaclasses, $grclassname ) unless( $@ );
+			push( @$areaclasses, $grclassname ) unless $@;
 		}
 	}
 
-	return($areaclasses);
+	return $areaclasses;
 }
 
 sub reperit
