@@ -1,4 +1,4 @@
-# $Id: Masters.pm,v 1.9 2010/06/19 09:46:38 ak Exp $
+# $Id: Masters.pm,v 1.10 2010/06/25 19:25:57 ak Exp $
 # -Id: Addressers.pm,v 1.4 2010/03/04 08:33:28 ak Exp -
 # -Id: Addressers.pm,v 1.4 2010/02/21 20:42:02 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -135,7 +135,7 @@ sub whichtable
 		$klass = 'Providers';
 	}
 
-	return($klass);
+	return $klass;
 }
 
 sub mastertables
@@ -149,7 +149,7 @@ sub mastertables
 	# @Param <ref>	(Ref->Array) Mastertable names to new()
 	# @Return	(Ref->Hash) K::BdDR::BounceLogs::Masters::Table Objects
 	my $class = shift();
-	my $mtdbh = shift() || return({});
+	my $mtdbh = shift() || return {};
 	my $mtabs = shift() || [];
 	my $alias = [ 'addressers', 'senderdomains', 'destinations',
 			'hostgroups', 'providers', 'reasons' ];
@@ -194,7 +194,7 @@ sub new
 		last();
 	}
 
-	return( $class->SUPER::new($argvs));
+	return $class->SUPER::new($argvs);
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
