@@ -1,4 +1,4 @@
-# $Id: Statistics.pm,v 1.6 2010/06/10 10:28:35 ak Exp $
+# $Id: Statistics.pm,v 1.7 2010/06/25 19:29:22 ak Exp $
 # -Id: Statistics.pm,v 1.1 2009/08/29 09:00:23 ak Exp -
 # -Id: Statistics.pm,v 1.1 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -22,6 +22,7 @@ use List::Util;
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 __PACKAGE__->mk_accessors(
+	'label',	# (String) Name of this statistics
 	'rounding',	# (Integer) Rounding digit, 1 = int(), 0 = Do Not Round
 	'unbiased',	# (Integer) Unbiased variance
 	'sample',	# (Ref->Array) Sample
@@ -40,7 +41,7 @@ sub new
 	#
 	# @Description	Wrapper method of new()
 	# @Param
-	# @Return	Kanadzuchi::Statistics Object
+	# @Return	(Kanadzuchi::Statistics) Object
 	my $class = shift();
 	my $argvs = { @_ };
 
@@ -48,7 +49,8 @@ sub new
 	$argvs->{'rounding'} = 4 unless( defined($argvs->{'rounding'}) );
 	$argvs->{'unbiased'} = 1 unless( defined($argvs->{'unbiased'}) );
 	$argvs->{'sample'} ||= [];
-	return( $class->SUPER::new($argvs) );
+	$argvs->{'label'} ||= q();
+	return $class->SUPER::new($argvs);
 }
 
 sub is_number
@@ -85,16 +87,17 @@ sub round
 	# @Param <num>	(Float) Number
 	# @Return	(Float) Rounded number
 	my $self = shift();
-	my $n = shift() || return(q{});
+	my $n = shift() || return q{};
 	my $p = 0;
 
-	return($n) if( $self->{'rounding'} == 0 );
-	return(int($n)) if( $self->{'rounding'} == 1 );
+	return $n if( $self->{'rounding'} == 0 );
+	return int($n) if( $self->{'rounding'} == 1 );
 
 	$p = 10 ** ( $self->{'rounding'} - 1 );
 	return( int( $n * $p + 0.5 ) / $p );
 }
 
+# Descriptive Statistics
 sub size
 {
 	# +-+-+-+-+
@@ -109,7 +112,7 @@ sub size
 	my $size = 0;
 
 	return(-1) unless( ref($smpl) eq q|ARRAY| );
-	return( scalar(@$smpl) );
+	return scalar(@$smpl);
 }
 
 sub mean
@@ -125,11 +128,12 @@ sub mean
 	my $smpl = shift() || $self->{'sample'};
 	my $mean = 0;
 
-	return(q{}) if( $self->size( $smpl ) < 1 );
+	return q{} if( $self->size( $smpl ) < 1 );
 	$mean = List::Util::sum( @{$smpl} ) / $self->size( $smpl );
-	return( $self->round( $mean ) );
+	return $self->round( $mean );
 }
 
+*var = *variance;
 sub variance
 {
 	# +-+-+-+-+-+-+-+-+
@@ -147,17 +151,17 @@ sub variance
 	my $rounding = $self->{'rounding'};
 	my $variance = 0;
 
-	return(q{}) if( $self->size( $smpl ) < 1 );
+	return q() if( $self->size( $smpl ) < 1 );
 
 	$self->{'rounding'} = 0;
 	$mean = $self->mean($smpl);
 	$self->{'rounding'} = $rounding;
-	return(q{}) unless( __PACKAGE__->is_number( $mean ) );
+	return q() unless( __PACKAGE__->is_number( $mean ) );
 
 	$diff = [ map { ( $_ - $mean ) ** 2 } @{$smpl} ];
 	$variance = List::Util::sum(@$diff) / ( $self->size($smpl) - $self->{'unbiased'} );
 
-	return( $self->round($variance) );
+	return $self->round($variance);
 }
 
 sub stddev
@@ -174,12 +178,12 @@ sub stddev
 	my $rounding = $self->{'rounding'};
 	my $variance = 0;
 
-	return(q{}) if( $self->size( $smpl ) < 1 );
+	return q() if( $self->size( $smpl ) < 1 );
 
 	$self->{'rounding'} = 0;
 	$variance = $self->variance( $smpl );
 	$self->{'rounding'} = $rounding;
-	return( $self->round( sqrt($variance) ) );
+	return  $self->round( sqrt($variance) );
 }
 
 sub max
@@ -194,8 +198,8 @@ sub max
 	my $self = shift();
 	my $smpl = shift() || $self->{'sample'};
 
-	return(q{}) if( $self->size( $smpl ) < 1 );
-	return( List::Util::max( @{$smpl} ) );
+	return q() if( $self->size( $smpl ) < 1 );
+	return List::Util::max( @{$smpl} );
 }
 
 sub min
@@ -210,8 +214,8 @@ sub min
 	my $self = shift();
 	my $smpl = shift() || $self->{'sample'};
 
-	return(q{}) if( $self->size( $smpl ) < 1 );
-	return( List::Util::min( @{$smpl} ) );
+	return q() if( $self->size( $smpl ) < 1 );
+	return List::Util::min( @{$smpl} );
 }
 
 sub quartile
@@ -232,13 +236,13 @@ sub quartile
 	my $qindex = 0;
 	my $remain = 0;
 
-	return(q{}) if( $self->size( $smpl ) < 1 );
+	return q() if( $self->size( $smpl ) < 1 );
 
 	$q = 2 if( $q < 1 || $q > 3 );
 	$sorted = [ sort { $a <=> $b } @{$smpl} ];
 	$qindex = 1 - ( 0.25 * $q ) + ( 0.25 * $q * $self->size( $smpl ) );
 	$remain = ( $qindex * 100 ) % 100;
-	return( $sorted->[$qindex-1] ) if( $remain == 0 );
+	return $sorted->[$qindex-1] if( $remain == 0 );
 
 	$qindex = int($qindex);
 	$remain = $remain / 100;
@@ -271,7 +275,7 @@ sub range
 	my $self = shift();
 	my $smpl = shift() || $self->{'sample'};
 
-	return(q{}) if( $self->size( $smpl ) < 1 );
+	return q() if( $self->size( $smpl ) < 1 );
 	return( List::Util::max( @{$smpl} ) - List::Util::min( @{$smpl} ) );
 }
 
