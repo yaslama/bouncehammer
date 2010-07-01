@@ -1,4 +1,4 @@
-# $Id: 020_statistics.t,v 1.2 2009/12/17 20:45:04 ak Exp $
+# $Id: 020_statistics.t,v 1.3 2010/06/25 19:29:20 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,8 +10,7 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Statistics;
 use List::Util;
-use Test::More ( tests => 136 );
-no warnings 'once';
+use Test::More ( tests => 142 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -22,7 +21,7 @@ my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::Statistics|,
 	'methods' => [
 		'new', 'is_number', 'round', 'size',
-		'mean', 'variance', 'stddev', 'max',
+		'mean', 'variance', 'stddev', 'max', 'var',
 		'min', 'quartile', 'median', 'range', ],
 	'instance' => new Kanadzuchi::Statistics(), );
 
@@ -101,8 +100,10 @@ METHODS: {
 
 		NORMAL_SAMPLES: {
 			# Normal
+			$object->label( 'Normal test' );
 			$object->sample( $RecurrenceRelations->{'Normal'} );
 
+			is( $object->label(), 'Normal test', $classx.q{->label(Normal test)} );
 			is( $object->size(), 10, $classx.q{->size(Normal)} );
 			is( $object->range(), 9, $classx.q{->range(Normal)} );
 			is( $object->mean(), 4.5, $classx.q{->mean(Normal)} );
@@ -121,8 +122,10 @@ METHODS: {
 
 		DESCEND_SAMPLES: {
 			# Descend
+			$object->label( 'Descending' );
 			$object->sample( $RecurrenceRelations->{'Descend'} );
 
+			is( $object->label(), 'Descending', $classx.q{->label(Descending)} );
 			is( $object->size(), 10, $classx.q{->size(Descend)} );
 			is( $object->range(), 9, $classx.q{->range(Descend)} );
 			is( $object->mean(), 4.5, $classx.q{->mean(Descend)} );
@@ -141,8 +144,10 @@ METHODS: {
 
 		CUBE_SAMPLES: {
 			# Cube
+			$object->label('Cube');
 			$object->sample( $RecurrenceRelations->{'Cube'} );
 
+			is( $object->label(), 'Cube', $classx.q{->label(Cube)} );
 			is( $object->size(), 12, $classx.q{->size(Cube)} );
 			is( $object->range(), 1727, $classx.q{->range(Cube)} );
 			is( $object->mean(), 507, $classx.q{->mean(Cube)} );
@@ -161,8 +166,10 @@ METHODS: {
 
 		FIBONACCI_SAMPLES: {
 			# Fibonacci
+			$object->label('Fibonacci');
 			$object->sample( $RecurrenceRelations->{'Fibonacci'} );
 
+			is( $object->label(), 'Fibonacci', $classx.q{->label(Fibonacci)} );
 			is( $object->size(), 17, $classx.q{->size(Fibonacci)} );
 			is( $object->range(), 987, $classx.q{->range(Fibonacci)} );
 			is( $object->mean(), 151.941, $classx.q{->mean(Fibonacci)} );
@@ -181,8 +188,10 @@ METHODS: {
 
 		FRIEDMAN_SAMPLES: {
 			# Friedman
+			$object->label( 'Friedman' );
 			$object->sample( $RecurrenceRelations->{'Friedman'} );
 
+			is( $object->label(), 'Friedman', $classx.q{->label(Friedman)} );
 			is( $object->size(), 16, $classx.q{->size(Friedman)} );
 			is( $object->range(), 999, $classx.q{->range(Friedman)} );
 			is( $object->mean(), 380.938, $classx.q{->mean(Friedman)} );
@@ -201,8 +210,10 @@ METHODS: {
 
 		SOPHIE_GERMAIN_SAMPLES: {
 			# SophieGermain
+			$object->label( 'SophieGermain' );
 			$object->sample( $RecurrenceRelations->{'SophieGermain'} );
 
+			is( $object->label(), 'SophieGermain', $classx.q{->label(SophieGermain)} );
 			is( $object->size(), 15, $classx.q{->size(SophieGermain)} );
 			is( $object->range(), 189, $classx.q{->range(SophieGermain)} );
 			is( $object->mean(), 75.067, $classx.q{->mean(SophieGermain)} );
