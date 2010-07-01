@@ -1,4 +1,4 @@
-# $Id: 504_bin-datadumper.t,v 1.14 2010/06/22 07:17:16 ak Exp $
+# $Id: 504_bin-datadumper.t,v 1.15 2010/06/25 19:22:00 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -46,7 +46,7 @@ SKIP: {
 			'database' => q(/tmp/bouncehammer-test.db),
 			'tempdir' => q(./.test),
 	);
-	my $File = '././examples/hammer.1970-01-01.ffffffff.000000.tmp';
+	my $File = './examples/hammer.1970-01-01.ffffffff.000000.tmp';
 	my $Yaml = undef();
 	my $Yobj = [];
 	my $Recs = 37;
