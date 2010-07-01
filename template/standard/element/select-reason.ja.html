@@ -19,11 +19,16 @@
 	}
 -%]
 [%- SET isselected = '' -%]
-[% IF B.id %]
-	<select name = 'reason' id = 'reasons-of-[% B.id %]' onChange = "enableIt('do-update-[% B.id %]');">
-[% ELSE %]
+[%- IF B.id -%]
+	<select name = 'reason' id = 'reasons-of-[% B.id %]'
+	[%- IF isreadonly == 0 -%]
+		onChange = "enableIt('do-update-[% B.id %]');">
+	[%- ELSE -%]
+		disabled = 'disabled'>
+	[%- END -%]
+[%- ELSE -%]
 	<select name = 'reason' onChange = "checkrw.innerHTML = '&#9745; 使用';">
-[% END %]
+[%- END -%]
 		[%- FOREACH r IN reasons -%]
 			[%- IF r.key == B.reason -%]
 				[%- SET isselected = 'selected' -%]

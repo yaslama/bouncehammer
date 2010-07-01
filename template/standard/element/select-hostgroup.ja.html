@@ -11,7 +11,12 @@
 -%]
 [%- SET isselected = '' -%]
 [% IF B.id %]
-	<select name = 'hostgroup' id = 'hostgroups-of-[% B.id %]' onChange = "enableIt('do-update-[% B.id %]');">
+	<select name = 'hostgroup' id = 'hostgroups-of-[% B.id %]' 
+	[%- IF isreadonly == 0 -%]
+		onChange = "enableIt('do-update-[% B.id %]');">
+	[%- ELSE -%]
+		disabled = 'disabled'>
+	[%- END -%]
 [% ELSE %]
 	<select name = 'hostgroup' onChange = "checkhc.innerHTML = '&#9745; 使用';">
 [% END %]
