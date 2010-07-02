@@ -398,42 +398,82 @@ X-Mailer: Apple Mail (2.752.2)
 
 --11AABBC.1165197897/lsean.ezweb.ne.jp--
 
+Delivered-To: test@example.org
+Received: by 10.231.195.34 with SMTP id ea34cs105842ibb;
+        Tue, 15 Jun 2010 21:57:48 -0700 (PDT)
+Received: by 10.141.105.20 with SMTP id h20mr6613320rvm.163.1276664268395;
+        Tue, 15 Jun 2010 21:57:48 -0700 (PDT)
+MIME-Version: 1.0
+Return-Path: <>
+Received: by 10.141.105.20 with SMTP id h20mr8803801rvm.163; Tue, 15 Jun 2010 
+	21:57:48 -0700 (PDT)
+From: Mail Delivery Subsystem <mailer-daemon@googlemail.com>
+To: test@example.org
+X-Failed-Recipients: text/plain; charset=ISO-
+Subject: Delivery Status Notification (Failure)
+Message-ID: <000e0cd13b1637145e04891e9067@google.com>
+Date: Wed, 16 Jun 2010 04:57:48 +0000
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-From MAILER-DAEMON  Sun Sep  7 21:40:07 2008
-Return-Path: <MAILER-DAEMON>
-Received: from ezweb.ne.jp (wmflb12na02.ezweb.ne.jp [222.15.69.197])
-        by mx1.example.jp (R8/cf) with ESMTP id m87Ce7Ih030073
-        for <user@example.or.jp>; Sun, 7 Sep 2008 21:40:07 +0900
-Received: from wfilter115 (wfilter115-a0 [172.26.26.68])
-        by wsmtpr24.ezweb.ne.jp (EZweb Mail) with ESMTP id EF283A071
-        for <user@example.or.jp>; Sun,  7 Sep 2008 21:40:12 +0900 (JST)
-MIME-Virsion: 1.0
-Content-Type: text/plain; charset=iso-2022-jp
-From: <Postmaster@ezweb.ne.jp>
-To: <user@example.or.jp>
-Subject: Mail System Error - Returned Mail
-X-SPASIGN: NG
-Message-Id: <20080907124012.EF283A071@wsmtpr24.ezweb.ne.jp>
-Date: Sun,  7 Sep 2008 21:40:12 +0900 (JST)
-X-UID: 748                                       
-Content-Length: 151
-Status: RO
+Delivery to the following recipient failed permanently:
 
-<this-message-rejected-by-the-domain-filter@ezweb.ne.jp>
+     userunknown@cubicroot.jp
 
-Each of the following recipients was rejected by a remote mail server.
----------------------------------------------------
-Received: from mta-022.smtp.outgoing.example.co.jp (host [192.0.2.22])
-        by lsean.ezweb.ne.jp (EZweb Mail) with SMTP id 12ABCD8
-        for <this-message-rejected-by-the-domain-filter@ezweb.ne.jp>; Sun,  7 Sep 2008 21:40:11 +0900 (JST)
-From: user@example.or.jp
-To: this-message-rejected-by-the-domain-filter@ezweb.ne.jp
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-2022-JP
+Technical details of permanent failure:=20
+Google tried to deliver your message, but it was rejected by the recipient =
+domain. We recommend contacting the other email provider for further inform=
+ation about the cause of this error. The error that the other server return=
+ed was: 550 550 5.1.1 <userunknown@cubicroot.jp>... User Unknown (state 14)=
+.
+
+----- Original message -----
+
+Received: by 10.141.105.20 with SMTP id h20mr6613300rvm.163.1276664266943;
+        Tue, 15 Jun 2010 21:57:46 -0700 (PDT)
+Return-Path: <test@example.org>
+Received: from [10.11.12.13] by mx.google.com with ESMTPS id 
+	i19sm6559194rvn.11.2010.06.15.21.57.45
+        (version=3DTLSv1/SSLv3 cipher=3DRC4-MD5);
+        Tue, 15 Jun 2010 21:57:46 -0700 (PDT)
+Message-Id: <55FE89E5-D269-4DDF-82E9-6F9D8CD6A67C@gmail.com>
+From: test <test@example.org>
+To: userunknown@cubicroot.jp
+Content-Type: text/plain; charset=3DUS-ASCII; format=3Dflowed
 Content-Transfer-Encoding: 7bit
-Subject: TEST
-Message-Id: <20080907124011.12ABCD8@lsean.ezweb.ne.jp>
-Date: Sun,  7 Sep 2008 21:40:11 +0900 (JST)
+Mime-Version: 1.0 (Apple Message framework v936)
+Subject: TEST2
+Date: Wed, 16 Jun 2010 13:57:43 +0900
+X-Mailer: Apple Mail (2.936)
+
+test2
+
+
+
+From MAILER-DAEMON Mon Mar 30 08:20:12 2009
+Received: (qmail 3622 invoked for bounce); 30 Mar 2009 08:18:21 -0000
+Date: 30 Mar 2009 08:18:21 -0000
+From: MAILER-DAEMON@example.co.jp
+To: root@psuketarozaemon.jp
+Subject: failure notice
+
+Hi. This is the qmail-send program at mta.example.co.jp
+I'm afraid I wasn't able to deliver your message to the following addresses.
+This is a permanent error; I've given up. Sorry it didn't work out.
+
+<userunknown@example.com>:
+192.0.2.135 does not like recipient.
+Remote host said: 550 5.1.1 <userunknown@example.com>... User Unknown
+Giving up on 192.0.2.135.
+
+--- Below this line is a copy of the message.
+
+Return-Path: <root@example.co.jp>
+Received: (qmail 3620 invoked by uid 0); 30 Mar 2009 08:18:19 -0000
+Date: 30 Mar 2009 08:18:19 -0000
+Message-ID: <20090330081819.3619.qmail@mta.example.co.jp>
+From: root@example.co.jp
+to: userunknown@example.com
 
 
 From MAILER-DAEMON Mon Apr 27 19:07:12 2009
