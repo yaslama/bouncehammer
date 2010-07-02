@@ -1,4 +1,4 @@
-# $Id: 063_mail-stored-bddr.t,v 1.6 2010/07/02 00:06:48 ak Exp $
+# $Id: 063_mail-stored-bddr.t,v 1.7 2010/07/02 09:00:28 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -12,7 +12,7 @@ use Kanadzuchi::Test::Mail;
 use Kanadzuchi::Mail::Stored::BdDR;
 use Kanadzuchi::Metadata;
 use Time::Piece;
-use Test::More ( tests => 711 );
+use Test::More ( tests => 710 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -62,7 +62,7 @@ PREPROCESS: {
 
 
 SKIP: {
-	my $howmanyskips = 702;
+	my $howmanyskips = 701;
 	eval { require DBI; }; skip( 'Because no DBI for testing', $howmanyskips ) if( $@ );
 	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $howmanyskips ) if( $@ );
 

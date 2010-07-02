@@ -1,4 +1,4 @@
-# $Id: 506_bin-messagetoken.t,v 1.2 2010/07/02 00:06:49 ak Exp $
+# $Id: 506_bin-messagetoken.t,v 1.3 2010/07/02 09:00:28 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,10 +7,10 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 44 );
+use Test::More ( tests => 43 );
 
 SKIP: {
-	my $howmanyskips = 44;
+	my $howmanyskips = 43;
 	eval{ require IPC::Cmd; }; 
 	skip( 'Because no IPC::Cmd for testing', $howmanyskips ) if($@);
 

@@ -1,4 +1,4 @@
-# $Id: 061_mail-stored-yaml.t,v 1.8 2010/07/02 00:06:48 ak Exp $
+# $Id: 061_mail-stored-yaml.t,v 1.9 2010/07/02 09:00:28 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Kanadzuchi::Test;
 use Kanadzuchi::Test::Mail;
 use Kanadzuchi::Mail::Stored::YAML;
 use JSON::Syck;
-use Test::More ( tests => 1435 );
+use Test::More ( tests => 1430 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -149,7 +149,7 @@ CONSTRUCTORS: {
 
 SKIP: {
 	my $BdDR = undef();
-	my $Skip = 1392;
+	my $Skip = 1387;
 	my $Btab = undef();
 	my $Mtab = {};
 	my $Cdat = undef();
@@ -197,7 +197,7 @@ SKIP: {
 	DATA_OBJECT: {
 		$Yobj = $T->class->loadandnew($F);
 		isa_ok( $Yobj, q|Kanadzuchi::Iterator| );
-		is( $Yobj->count(), 38, '->count() = 38' );
+		is( $Yobj->count(), 37, '->count() = 37' );
 	}
 
 	BUILD_DATABASE: {

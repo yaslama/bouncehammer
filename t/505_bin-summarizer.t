@@ -1,4 +1,4 @@
-# $Id: 505_bin-summarizer.t,v 1.14 2010/07/02 00:06:49 ak Exp $
+# $Id: 505_bin-summarizer.t,v 1.15 2010/07/02 09:00:28 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,10 +7,10 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 171 );
+use Test::More ( tests => 170 );
 
 SKIP: {
-	my $howmanyskips = 171;
+	my $howmanyskips = 170;
 	eval{ require IPC::Cmd; }; 
 	skip( 'Because no IPC::Cmd for testing', $howmanyskips ) if($@);
 
@@ -26,6 +26,7 @@ SKIP: {
 	require Kanadzuchi::BdDR::BounceLogs::Masters;
 	require Kanadzuchi::Mail::Stored::YAML;
 	require JSON::Syck;
+	require File::Copy;
 
 	#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 	# ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -49,7 +50,7 @@ SKIP: {
 	my $File = './examples/hammer.1970-01-01.ffffffff.000000.tmp';
 	my $Yaml = undef();
 	my $Yobj = [];
-	my $Recs = 38;
+	my $Recs = 37;
 
 	my $Tset = [
 		{
@@ -94,6 +95,15 @@ SKIP: {
 		$Btab = Kanadzuchi::BdDR::BounceLogs::Table->new('handle'=>$BdDR->handle());
 		$Mtab = Kanadzuchi::BdDR::BounceLogs::Masters::Table->mastertables($BdDR->handle());
 	}
+	
+	#COPY: {
+	#	$Test->tempdir->mkpath() unless( -e $Test->tempdir->stringify() );
+	#	$Kana->load($Test->config());
+	#	File::Copy::copy( q{../examples/}.File::Basename::basename($Test->output()),
+	#				$Test->tempdir().q{/}.File::Basename::basename($Test->output()) );
+	#	File::Copy::copy( $Test->output(), $Test->output.q{.bak} ) if( -s $Test->output() );
+	#	File::Copy::copy( $Test->output().q{.bak}, $Test->output() ) if( -s $Test->output().q{.bak} );
+	#}
 
 	LOAD_THE_LOG: {
 		$Yaml = JSON::Syck::LoadFile($Test->output());
@@ -103,6 +113,7 @@ SKIP: {
 	}
 
 	PREPROCESS: {
+
 		ok( $Test->environment(), q{->environment()} );
 		ok( $Test->syntax(), q{->syntax()} );
 		ok( $Test->version(), q{->version()} );
