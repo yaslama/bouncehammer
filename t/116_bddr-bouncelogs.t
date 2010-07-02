@@ -1,4 +1,4 @@
-# $Id: 116_bddr-bouncelogs.t,v 1.5 2010/06/25 19:27:08 ak Exp $
+# $Id: 116_bddr-bouncelogs.t,v 1.6 2010/07/02 00:06:48 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 1313 );
+use Test::More ( tests => 1343 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -28,7 +28,7 @@ my $Klass = q|Kanadzuchi::BdDR::BounceLogs|;
 #
 
 SKIP: {
-	my $howmanyskips = 1313;
+	my $howmanyskips = 1343;
 	eval { require DBI; }; skip( 'Because no DBI for testing', $howmanyskips ) if( $@ );
 	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $howmanyskips ) if( $@ );
 
@@ -95,7 +95,7 @@ SKIP: {
 	PREPARE: {
 		$JSON = JSON::Syck::LoadFile( $File );
 		isa_ok( $JSON, q|ARRAY|, 'Load file = '.$File );
-		is( scalar(@$JSON), 37, 'Loaded records = 37' );
+		is( scalar(@$JSON), 38, 'Loaded records = 38' );
 
 		foreach my $_j ( @$JSON )
 		{
@@ -120,7 +120,7 @@ SKIP: {
 			} );
 		}
 
-		is( scalar(@$Data), 37, 'Converted data = 37' );
+		is( scalar(@$Data), 38, 'Converted data = 38' );
 	}
 
 	EACH_METHODS: {

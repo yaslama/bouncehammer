@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.12 2010/05/17 00:01:01 ak Exp $
+# $Id: CLI.pm,v 1.13 2010/07/02 00:06:51 ak Exp $
 # Kanadzuchi::Test::
                       
   ####  ##     ####   
@@ -77,7 +77,6 @@ sub logfiles
 	my $files = [
 		{ file => 'hammer.2008-08-20.log', entity => 1, },
 		{ file => 'hammer.2008-08-28.log', entity => 1, },
-		{ file => 'hammer.2008-09-07.log', entity => 1, },
 		{ file => 'hammer.2008-09-17.log', entity => 1, },
 		{ file => 'hammer.2008-09-18.log', entity => 1, },
 		{ file => 'hammer.2008-09-20.log', entity => 2, },
@@ -89,6 +88,7 @@ sub logfiles
 		{ file => 'hammer.2009-02-10.log', entity => 1, },
 		{ file => 'hammer.2009-03-05.log', entity => 1, },
 		{ file => 'hammer.2009-03-11.log', entity => 1, },
+		{ file => 'hammer.2009-03-30.log', entity => 1, },
 		{ file => 'hammer.2009-04-16.log', entity => 1, },
 		{ file => 'hammer.2009-04-18.log', entity => 1, },
 		{ file => 'hammer.2009-04-27.log', entity => 7, },

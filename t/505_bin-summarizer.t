@@ -1,4 +1,4 @@
-# $Id: 505_bin-summarizer.t,v 1.13 2010/06/25 19:32:17 ak Exp $
+# $Id: 505_bin-summarizer.t,v 1.14 2010/07/02 00:06:49 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,10 +7,10 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 170 );
+use Test::More ( tests => 171 );
 
 SKIP: {
-	my $howmanyskips = 170;
+	my $howmanyskips = 171;
 	eval{ require IPC::Cmd; }; 
 	skip( 'Because no IPC::Cmd for testing', $howmanyskips ) if($@);
 
@@ -49,7 +49,7 @@ SKIP: {
 	my $File = './examples/hammer.1970-01-01.ffffffff.000000.tmp';
 	my $Yaml = undef();
 	my $Yobj = [];
-	my $Recs = 37;
+	my $Recs = 38;
 
 	my $Tset = [
 		{
@@ -99,7 +99,7 @@ SKIP: {
 		$Yaml = JSON::Syck::LoadFile($Test->output());
 
 		isa_ok( $Yaml, q|ARRAY|, $Test->output.q{: load ok} );
-		is( scalar(@$Yaml), $Recs , $Test->output.q{ have }.$Recs.q{ records} );
+		is( scalar(@$Yaml), $Recs, $Test->output.q{ have }.$Recs.q{ records} );
 	}
 
 	PREPROCESS: {
@@ -125,7 +125,7 @@ SKIP: {
 			DATA_OBJECT: {
 				$Yobj = Kanadzuchi::Mail::Stored::YAML->loadandnew($File);
 				isa_ok( $Yobj, q|Kanadzuchi::Iterator| );
-				is( $Yobj->count(), 37, '->count() = 37' );
+				is( $Yobj->count(), $Recs, '->count() = '.$Recs );
 			}
 
 			INSERT: {

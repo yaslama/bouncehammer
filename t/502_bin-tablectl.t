@@ -1,4 +1,4 @@
-# $Id: 502_bin-tablectl.t,v 1.14 2010/06/22 07:17:16 ak Exp $
+# $Id: 502_bin-tablectl.t,v 1.15 2010/07/02 00:06:49 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 1661 );
+use Test::More ( tests => 1643 );
 
 
 SKIP: {
-	my $Skip = 1661;	# How many skips
+	my $Skip = 1643;	# How many skips
 	eval{ require IPC::Cmd; }; 
 	skip('Because no IPC::Cmd for testing',$Skip) if($@);
 

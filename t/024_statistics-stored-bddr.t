@@ -1,4 +1,4 @@
-# $Id: 024_statistics-stored-bddr.t,v 1.1 2010/06/25 19:29:20 ak Exp $
+# $Id: 024_statistics-stored-bddr.t,v 1.2 2010/07/02 00:06:48 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,7 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Statistics::Stored::BdDR;
 use List::Util;
-use Test::More ( tests => 597 );
+use Test::More ( tests => 598 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -43,7 +43,7 @@ PREPROCESS: {
 # 5 tests
 
 SKIP: {
-	my $howmanyskips = 592;
+	my $howmanyskips = 593;
 	eval { require DBI; }; skip( 'Because no DBI for testing', $howmanyskips ) if( $@ );
 	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $howmanyskips ) if( $@ );
 
@@ -97,13 +97,13 @@ SKIP: {
 		{
 			$Rval = $_y->insert( $Btab, $Mtab, $Cdat );
 			$Rval = $_y->update( $Btab, $Cdat ) unless( $Rval );
-			if( $_y->senderdomain ne 'example.org' )
+			if( $_y->senderdomain eq 'example.org' )
 			{
-				ok( $Rval, '->insert() or ->update() test data = '.$_y->recipient->address() );
+				is( $Rval, 0, '->insert() or ->update() = 0; test data = '.$_y->recipient->address() );
 			}
 			else
 			{
-				is( $Rval, 0, '->insert() or ->update() = 0; test data = '.$_y->recipient->address() );
+				ok( $Rval, '->insert() or ->update() test data = '.$_y->recipient->address() );
 			}
 		}
 	}

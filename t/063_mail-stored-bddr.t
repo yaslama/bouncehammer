@@ -1,4 +1,4 @@
-# $Id: 063_mail-stored-bddr.t,v 1.5 2010/06/22 07:17:15 ak Exp $
+# $Id: 063_mail-stored-bddr.t,v 1.6 2010/07/02 00:06:48 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -12,7 +12,7 @@ use Kanadzuchi::Test::Mail;
 use Kanadzuchi::Mail::Stored::BdDR;
 use Kanadzuchi::Metadata;
 use Time::Piece;
-use Test::More ( tests => 708 );
+use Test::More ( tests => 711 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -62,7 +62,7 @@ PREPROCESS: {
 
 
 SKIP: {
-	my $howmanyskips = 699;
+	my $howmanyskips = 702;
 	eval { require DBI; }; skip( 'Because no DBI for testing', $howmanyskips ) if( $@ );
 	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $howmanyskips ) if( $@ );
 
@@ -218,7 +218,7 @@ SKIP: {
 		$Cond = { 'bounced' => { '>' => 1234568000 } };
 		$Page->reset();
 		$Page->set( $Btab->count( $Cond ) );
-		is( $Page->count(), 24, '->count() = 24 by bounced > 1234568000' );
+		is( $Page->count(), 25, '->count() = 25 by bounced > 1234568000' );
 
 		while(1)
 		{

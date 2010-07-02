@@ -1,4 +1,4 @@
-# $Id: 503_bin-databasectl.t,v 1.10 2010/06/22 07:17:16 ak Exp $
+# $Id: 503_bin-databasectl.t,v 1.11 2010/07/02 00:06:49 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -195,8 +195,8 @@ SKIP: {
 
 			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'}->{'mastertables'};
 			is( $thisent->{'addressers'}, 2, '(1) cache->matertables->addressers = 2' );
-			is( $thisent->{'senderdomains'}, 19, '(1) cache->matertables->senderdomains = 19' );
-			is( $thisent->{'destinations'}, 14, '(1) cache->matertables->destinations = 14' );
+			is( $thisent->{'senderdomains'}, 20, '(1) cache->matertables->senderdomains = 20' );
+			is( $thisent->{'destinations'}, 13, '(1) cache->matertables->destinations = 13' );
 			is( $thisent->{'providers'}, 24, '(1) cache->matertables->providers = 24' );
 		}
 
@@ -239,16 +239,16 @@ SKIP: {
 			$thisent = $yamlobj->{'status'};
 			is( $thisent->{'record'}, $Recs, '(3) status->record = '.$Recs );
 			is( $thisent->{'insert'}, 0, '(3) status->insert = 0' );
-			is( $thisent->{'update'}, 18, '(3) status->update = 18' );
+			is( $thisent->{'update'}, 19, '(3) status->update = 19' );
 
 			$thisent = $yamlobj->{'status'}->{'skipped'};
 			is( $thisent->{'no-senderdomain'}, 1, '(3) skipped->no-senderdomain = 1' );
-			is( $thisent->{'too-old-or-same'}, 18, '(3) skipped->too-old-or-same = 18' );
+			is( $thisent->{'too-old-or-same'}, 17, '(3) skipped->too-old-or-same = 17' );
 			is( $thisent->{'is-whitelisted'}, 0, '(3) skipped->is-whitelisted = 0' );
 			is( $thisent->{'exceeds-limit'}, 0, '(3) skipped->exceeds-limit = 0' );
 
 			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'};
-			is( $thisent->{'bouncelogs'}, 54, '(3) cache->bouncelogs = 54' );
+			is( $thisent->{'bouncelogs'}, 55, '(3) cache->bouncelogs = 55' );
 
 			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'}->{'mastertables'};
 			is( $thisent->{'addressers'}, 0, '(3) cache->matertables->addressers = 0' );

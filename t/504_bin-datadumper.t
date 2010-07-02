@@ -1,4 +1,4 @@
-# $Id: 504_bin-datadumper.t,v 1.15 2010/06/25 19:22:00 ak Exp $
+# $Id: 504_bin-datadumper.t,v 1.16 2010/07/02 00:06:49 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,11 +7,11 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 426 );
+use Test::More ( tests => 427 );
 
 
 SKIP: {
-	my $Skip = 426;	# How many skips
+	my $Skip = 427;	# How many skips
 	eval{ require IPC::Cmd; }; 
 	skip('Because no IPC::Cmd for testing',$Skip) if($@);
 
@@ -81,7 +81,7 @@ SKIP: {
 		{
 			'name' => 'Dump by HostGroup',
 			'option' => ' --hostgroup cellphone',
-			'count' => 13,
+			'count' => 12,
 		},
 		{
 			'name' => 'Dump by Provider',
@@ -91,7 +91,7 @@ SKIP: {
 		{
 			'name' => 'Dump by Reason',
 			'option' => ' --reason filtered',
-			'count' => 5,
+			'count' => 4,
 		},
 		{
 			'name' => 'Dump by Message Token',
@@ -161,7 +161,7 @@ SKIP: {
 			DATA_OBJECT: {
 				$Yobj = Kanadzuchi::Mail::Stored::YAML->loadandnew($File);
 				isa_ok( $Yobj, q|Kanadzuchi::Iterator| );
-				is( $Yobj->count(), 37, '->count() = 37' );
+				is( $Yobj->count(), 38, '->count() = 38' );
 			}
 
 			INSERT: {

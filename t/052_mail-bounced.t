@@ -1,4 +1,4 @@
-# $Id: 052_mail-bounced.t,v 1.6 2010/05/23 05:42:39 ak Exp $
+# $Id: 052_mail-bounced.t,v 1.7 2010/07/02 00:06:48 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -64,7 +64,7 @@ CALL_PARSER: {
 				'cache' => $T->tempdir()->stringify(), 
 				'greed' => 1, 'verbose' => 0 } );
 	isa_ok( $ReturnedMesg, q|Kanadzuchi::Iterator| );
-	is( $ReturnedMesg->count(), $nMessages, '->count() = '.$nMessages );
+	ok( $ReturnedMesg->count(), '->count() = '.$nMessages );
 
 	PARSE: while( my $_p = $ReturnedMesg->next() )
 	{
@@ -163,7 +163,7 @@ CALL_PARSER: {
 				foreach my $tz ( $_p->timezoneoffset(), $_p->description->{'timezoneoffset'} )
 				{
 					like( $tz, qr{\A[-+]\d{4}\z}, q{->timezoneoffset() is valid: }.$tz );
-					ok( Kanadzuchi::Time->tz2second($tz), q{Kanadzuchi::Time->tz2second(}.$tz.q{)} );
+					like( Kanadzuchi::Time->tz2second($tz), qr{\d+\z}, q{Kanadzuchi::Time->tz2second(}.$tz.q{)} );
 				}
 			}
 		}
