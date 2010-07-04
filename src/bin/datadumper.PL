@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.16 2010/06/25 19:34:06 ak Exp $
+# $Id: datadumper.PL,v 1.17 2010/07/04 23:47:56 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -477,7 +477,7 @@ sub help
 	printf( STDERR "Usage: %s [OPTIONS] \n", $Cmd->calledfrom() );
 	printf( STDERR "\n" );
 	printf( STDERR " * QUERY OPTIONS\n" );
-	printf( STDERR "    -A, --alldata              : Show all data: include a record that is disabled(=1)\n");
+	printf( STDERR "    -A, --alldata              : Show all data: include the record that is disabled(=1)\n");
 	printf( STDERR "    -a, --addresser <str>      : Sender address(Addresser), see tablectl -ta --list\n");
 	printf( STDERR "    -r, --recipient <str>      : Recipient address\n");
 	printf( STDERR "    -s, --senderdomain <str>   : Sender domain name, see tablectl -ts --list\n");
