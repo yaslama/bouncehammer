@@ -1,4 +1,4 @@
-# $Id: Kanadzuchi.pm,v 1.24 2010/06/21 10:14:05 ak Exp $
+# $Id: Kanadzuchi.pm,v 1.25 2010/07/02 10:37:24 ak Exp $
 # -Id: TheHammer.pm,v 1.4 2009/09/01 23:19:41 ak Exp -
 # -Id: Herculaneum.pm,v 1.13 2009/08/27 05:09:23 ak Exp -
 # -Id: Version.pm,v 1.35 2009/08/27 05:09:29 ak Exp -
@@ -269,8 +269,8 @@ sub get_logfile
 			# Temporary Log file name
 			while(1)
 			{
-				$_rand = $$ + int(rand() * 10);
 				$_time = $time->epoch();
+				$_rand = $$ + int(rand() * 1e1);
 				$file = sprintf("%s/%s.%s.%08x.%06x.%s", 
 						$lopt->{'output'}, $logf->{'prefix'}, $lopt->{'date'},
 						$_time, $_rand, $logf->{'suffix'} );
@@ -282,8 +282,8 @@ sub get_logfile
 			# Log file name for the fallback
 			while(1)
 			{
-				$_rand = ( 2 ** 24 - 1 ) ^ $$ - int(rand() * 10);
-				$_time = ~$time->epoch();
+				$_time = $time->epoch() / 2;
+				$_rand = $$ + int(rand() * 1e2);
 				$file = sprintf("%s/%s.%s.%08x.%06x.%s", 
 						$lopt->{'output'}, $logf->{'prefix'}, $lopt->{'date'},
 						$_time, $_rand, $logf->{'suffix'} );
@@ -295,8 +295,8 @@ sub get_logfile
 			# Log file name for mergence
 			while(1)
 			{
-				$_rand = ( 2 ** 24 - 1 ) ^ $$ / 2;
 				$_time = $time->epoch() / 10;
+				$_rand = $$ + int(rand() * 1e3);
 				$file = sprintf("%s/%s.%s.%08x.%06x.%s", 
 						$lopt->{'output'}, $logf->{'prefix'}, $lopt->{'date'},
 						$_time, $_rand, $logf->{'suffix'} );

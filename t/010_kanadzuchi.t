@@ -1,4 +1,4 @@
-# $Id: 010_kanadzuchi.t,v 1.4 2010/04/15 08:40:41 ak Exp $
+# $Id: 010_kanadzuchi.t,v 1.5 2010/07/02 10:37:26 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -118,10 +118,10 @@ METHODS: {
 			$flog = $object->get_logfile('f',{ 'output' => './examples', 'date' => $d } );
 			$mlog = $object->get_logfile('m',{ 'output' => '/', 'date' => $d } );
 
-			ok( $object->is_logfile($tlog), $classx.q|->get_logfile = |.$tlog );
-			ok( $object->is_logfile($rlog), $classx.q|->get_logfile = |.$rlog );
-			ok( $object->is_logfile($flog), $classx.q|->get_logfile = |.$flog );
-			ok( $object->is_logfile($mlog), $classx.q|->get_logfile = |.$mlog );
+			ok( $object->is_logfile($tlog), $classx.q|->is_logfile = |.$tlog );
+			ok( $object->is_logfile($rlog), $classx.q|->is_logfile = |.$rlog );
+			ok( $object->is_logfile($flog), $classx.q|->is_logfile = |.$flog );
+			ok( $object->is_logfile($mlog), $classx.q|->is_logfile = |.$mlog );
 		}
 
 	}
