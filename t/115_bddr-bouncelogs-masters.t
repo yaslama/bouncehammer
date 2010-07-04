@@ -1,4 +1,4 @@
-# $Id: 115_bddr-bouncelogs-masters.t,v 1.5 2010/06/22 13:55:24 ak Exp $
+# $Id: 115_bddr-bouncelogs-masters.t,v 1.6 2010/07/02 10:36:37 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -73,7 +73,6 @@ SKIP: {
 
 	EACH_TABLE: {
 		require Kanadzuchi;
-		require Kanadzuchi::Test::CLI;
 		require Kanadzuchi::RFC2822;
 		require Kanadzuchi::Time;
 		require JSON::Syck;
