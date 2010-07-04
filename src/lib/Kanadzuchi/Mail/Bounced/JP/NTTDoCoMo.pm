@@ -1,4 +1,4 @@
-# $Id: NTTDoCoMo.pm,v 1.2 2010/06/10 10:28:47 ak Exp $
+# $Id: NTTDoCoMo.pm,v 1.3 2010/07/04 23:48:40 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Bounced::
                                                                   
@@ -38,11 +38,11 @@ sub is_filtered
 	# @Return	(Integer) 1 = is filtered recipient
 	#		(Integer) 0 = is not filtered recipient.
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
 	my $subj = 'filtered';
 	my $isfi = 0;
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
 		$isfi = 1 if( $self->{'reason'} eq $subj );
 	}
@@ -59,8 +59,25 @@ sub is_filtered
 		{
 			$isfi = 1;
 		}
+		else
+		{
+			eval { 
+				require Kanadzuchi::Mail::Why::Filtered; 
+				require Kanadzuchi::Mail::Why::UserUnknown; 
+			};
+			my $flib = q|Kanadzuchi::Mail::Why::Filtered|;
+			my $ulib = q|Kanadzuchi::Mail::Why::UserUnknown|;
+			my $diag = $self->{'diagnosticcode'};
+
+			if( $self->{'smtpcommand'} eq 'DATA' 
+				&& ( $flib->habettextu($diag) || $ulib->habettextu($diag) ) ){
+
+				$isfi = 1;
+			}
+		}
 	}
-	return($isfi);
+
+	return $isfi;
 }
 
 sub is_userunknown
@@ -75,11 +92,11 @@ sub is_userunknown
 	#		(Integer) 0 = is not unknown user.
 	# @See		http://www.ietf.org/rfc/rfc2822.txt
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
 	my $subj = 'userunknown';
 	my $isuu = 0;
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
 		$isuu = 1 if( $self->{'reason'} eq $subj );
 	}
@@ -96,8 +113,19 @@ sub is_userunknown
 		{
 			$isuu = 1;
 		}
+		else
+		{
+			eval { require Kanadzuchi::Mail::Why::UserUnknown; };
+			my $ulib = q|Kanadzuchi::Mail::Why::UserUnknown|;
+			my $diag = $self->{'diagnosticcode'};
+
+			if( $self->{'smtpcommand'} eq 'RCPT' && $ulib->habettextu($diag) )
+			{
+				$isuu = 1;
+			}
+		}
 	}
-	return($isuu);
+	return $isuu;
 }
 
 sub is_mailboxfull
@@ -112,13 +140,13 @@ sub is_mailboxfull
 	#		(Integer) 0 = Mailbox is not full
 	# @See		http://www.ietf.org/rfc/rfc2822.txt
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
-	my $diag = $self->{'diagnosticcode'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
+	my $diag = $self->{'diagnosticcode'} || return 0;
 	my $subj = 'mailboxfull';
 	my $ismf = 0;
 	my $rxmf = qr{[Tt]oo much mail data}o;
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
 		$ismf = 1 if( $self->{'reason'} eq $subj );
 	}
@@ -130,7 +158,7 @@ sub is_mailboxfull
 			$ismf = 1;
 		}
 	}
-	return($ismf);
+	return $ismf;
 }
 
 sub is_toobigmesg
@@ -145,13 +173,13 @@ sub is_toobigmesg
 	#		(Integer) 0 = is not
 	# @See		http://www.ietf.org/rfc/rfc2822.txt
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
-	my $diag = $self->{'diagnosticcode'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
+	my $diag = $self->{'diagnosticcode'} || return 0;
 	my $subj = 'mesgtoobig';
 	my $istb = 0;
 	my $rxtb = qr{552[ ]Message[ ]size[ ]exceeds[ ]maximum[ ]value}o;
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
 		$istb = 1 if( $self->{'reason'} eq $rxtb );
 	}
@@ -172,7 +200,7 @@ sub is_toobigmesg
 			}
 		}
 	}
-	return($istb);
+	return $istb;
 }
 
 1;

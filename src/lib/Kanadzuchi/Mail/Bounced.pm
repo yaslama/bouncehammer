@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.21 2010/06/19 09:47:32 ak Exp $
+# $Id: Bounced.pm,v 1.22 2010/07/04 23:48:36 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -29,6 +29,15 @@ use Kanadzuchi::Iterator;
 use Kanadzuchi::MIME::Parser;
 use Time::Piece;
 
+#  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
+# ||A |||c |||c |||e |||s |||s |||o |||r |||s ||
+# ||__|||__|||__|||__|||__|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
+#
+__PACKAGE__->mk_accessors(
+	'smtpcommand',		# (String) SMTP Command which returns error
+);
+
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
@@ -46,7 +55,7 @@ sub eatit
 	# @Param <ref>	(Ref->Code) Callback code for each loop
 	# @Return	(Ref->Array) K::M::Bounced::* objects
 	my $class = shift();
-	my $mailx = shift() || return(new Kanadzuchi::Iterator());
+	my $mailx = shift() || return Kanadzuchi::Iterator->new();
 	my $confx = shift() || { 'verbose' => 0 };
 	my $callb = shift() || sub { };
 	my $count = 0;
@@ -56,7 +65,7 @@ sub eatit
 	my $mesgpieces = [];		# (Ref->Array) hold $thisobjects
 	my $bouncemesg = {};		# (Ref->Hash) Pre-Construct headers
 
-	return( Kanadzuchi::Iterator->new() ) unless( ref($mailx) eq q|Kanadzuchi::Mbox| );
+	return Kanadzuchi::Iterator->new() unless( ref($mailx) eq q|Kanadzuchi::Mbox| );
 	$mimeparser = new Kanadzuchi::MIME::Parser();
 
 	MIMEPARSER: while( my $_entity = shift @{$mailx->messages} )
@@ -205,9 +214,20 @@ sub eatit
 			$tempheader->{'diagnosticcode'} =  $mimeparser->getit('Diagnostic-Code') || q{};
 			$tempheader->{'diagnosticcode'} =~ y{`"'\r\n}{}d;	# Drop quotation marks and CR/LF
 			$tempheader->{'diagnosticcode'} =~ y{ }{}s;		# Squeeze spaces
-			chomp($tempheader->{'diagnosticcode'});
+			chomp $tempheader->{'diagnosticcode'};
 
 			$bouncemesg->{'diagnosticcode'} = $tempheader->{'diagnosticcode'};
+		}
+
+		# __  __    ____  __  __ _____ ____        ____                                          _ 
+		# \ \/ /   / ___||  \/  |_   _|  _ \      / ___|___  _ __ ___  _ __ ___   __ _ _ __   __| |
+		#  \  /____\___ \| |\/| | | | | |_) |____| |   / _ \| '_ ` _ \| '_ ` _ \ / _` | '_ \ / _` |
+		#  /  \_____|__) | |  | | | | |  __/_____| |__| (_) | | | | | | | | | | | (_| | | | | (_| |
+		# /_/\_\   |____/|_|  |_| |_| |_|         \____\___/|_| |_| |_|_| |_| |_|\__,_|_| |_|\__,_|
+		#                                                                                          
+		unless( $bouncemesg->{'smtpcommand'} )
+		{
+			$bouncemesg->{'smtpcommand'} = $mimeparser->getit('X-SMTP-Command') || q{};
 		}
 
 		#  ____    _  _____ _____ 
@@ -227,7 +247,7 @@ sub eatit
 							|| $mimeparser->getit('Resent-Date')
 							|| q();
 			next() unless( $tempheader->{'arrivaldate'} );
-			chomp($tempheader->{'arrivaldate'});
+			chomp $tempheader->{'arrivaldate'};
 
 			# Check strange Date header
 			if( $tempheader->{'arrivaldate'} =~ m{\A\s*\d{1,2}\s*[A-Z][a-z]{2}\s*\d{4}\s*.+\z} )
@@ -253,7 +273,7 @@ sub eatit
 				$bouncemesg->{'timezoneoffset'} = $2;
 				$tempoffset = Kanadzuchi::Time->tz2second($bouncemesg->{'timezoneoffset'});
 				$bouncemesg->{'arrivaldate'} =~ s{[ ]+\z}{}g;
-				chomp($bouncemesg->{'arrivaldate'});
+				chomp $bouncemesg->{'arrivaldate'};
 			}
 			else
 			{
@@ -269,7 +289,7 @@ sub eatit
 		#
 		# Set hash values to the object.
 		# Keys: rcpt,send,date, and stat are required to processing.
-		next() if( $bouncemesg->{'addresser'}->address =~ m{[@]localhost.localdomain\z} );
+		next() if( $bouncemesg->{'addresser'}->address =~ m{[@]localhost[.]localdomain\z} );
 		eval{
 			$tempstring = Time::Piece->strptime( $bouncemesg->{'arrivaldate'}, q{%a, %d %b %Y %T} );
 			$tempstring = Time::Piece->new() unless( ref($tempstring) eq q|Time::Piece| );
@@ -278,6 +298,7 @@ sub eatit
 		$thisobject = __PACKAGE__->new(
 				'addresser' => $bouncemesg->{'addresser'},
 				'recipient' => $bouncemesg->{'recipient'},
+				'smtpcommand' => $bouncemesg->{'smtpcommand'},
 				'deliverystatus' => $bouncemesg->{'deliverystatus'},
 				'diagnosticcode' => $bouncemesg->{'diagnosticcode'},
 				'timezoneoffset' => $bouncemesg->{'timezoneoffset'},
@@ -297,7 +318,7 @@ sub eatit
 
 	} # End of while(MIMEPARSER)
 
-	return( Kanadzuchi::Iterator->new($mesgpieces) );
+	return Kanadzuchi::Iterator->new($mesgpieces);
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -327,7 +348,7 @@ sub tellmewhy
 	elsif( $self->is_securityerror() ){ $rwhy = 'securityerr'; }
 	elsif( $self->is_mailererror()   ){ $rwhy = 'mailererror'; }
 	elsif( $self->is_onhold()        ){ $rwhy = 'onhold'; }
-	else{ $rwhy = $self->is_somethingelse() ? $self->{'reason'} : 'undefined'; }
+	else{  $rwhy = $self->is_somethingelse() ? $self->{'reason'} : 'undefined'; }
 	return($rwhy);
 }
 
@@ -342,11 +363,11 @@ sub is_filtered
 	# @Return	(Integer) 1 = is filtered recipient
 	#		(Integer) 0 = is not filtered recipient.
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
 	my $subj = 'filtered';
 	my $isfi = 0;
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
 		$isfi = 1 if( $self->{'reason'} eq $subj );
 	}
@@ -362,10 +383,10 @@ sub is_filtered
 		}
 		else
 		{
-			eval { use Kanadzuchi::Mail::Why::Filtered; };
+			eval { require Kanadzuchi::Mail::Why::Filtered; };
 			my $flib = q|Kanadzuchi::Mail::Why::Filtered|;
 
-			if( $stat == 513 || $flib->habettextu($self->{diagnosticcode}) )
+			if( $stat == 513 || $flib->habettextu($self->{'diagnosticcode'}) )
 			{
 				# PC/spam filter
 				#   Status: 5.1.3
@@ -376,7 +397,8 @@ sub is_filtered
 			}
 		}
 	}
-	return($isfi);
+
+	return $isfi;
 }
 
 sub is_userunknown
@@ -391,11 +413,11 @@ sub is_userunknown
 	#		(Integer) 0 = is not unknown user.
 	# @See		http://www.ietf.org/rfc/rfc2822.txt
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
 	my $subj = 'userunknown';
 	my $isuu = 0;
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
 		$isuu = 1 if( $self->{'reason'} eq $subj );
 	}
@@ -406,8 +428,8 @@ sub is_userunknown
 		my $dicode = $self->{'diagnosticcode'};
 
 		eval {
-			use Kanadzuchi::Mail::Why::UserUnknown; 
-			use Kanadzuchi::Mail::Why::RelayingDenied; 
+			require Kanadzuchi::Mail::Why::UserUnknown; 
+			require Kanadzuchi::Mail::Why::RelayingDenied; 
 		};
 
 		if( $stat == Kanadzuchi::RFC1893->standardcode($subj) )
@@ -438,7 +460,8 @@ sub is_userunknown
 			}
 		}
 	}
-	return($isuu);
+
+	return $isuu;
 }
 
 sub is_hostunknown
@@ -453,11 +476,11 @@ sub is_hostunknown
 	#		(Integer) 0 = is not unknown host.
 	# @See		http://www.ietf.org/rfc/rfc2822.txt
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
 	my $subj = 'hostunknown';
 	my $ishu = 0;
 
-	if( defined($self->{reason}) && length($self->{reason}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
 		$ishu = 1 if( $self->{reason} eq $subj );
 	}
@@ -478,11 +501,11 @@ sub is_hostunknown
 			my $hclass = q|Kanadzuchi::Mail::Why::HostUnknown|;
 			my $dicode = $self->{'diagnosticcode'};
 
-			eval { use Kanadzuchi::Mail::Why::HostUnknown; };
+			eval { require Kanadzuchi::Mail::Why::HostUnknown; };
 			$ishu = 1 if( $hclass->habettextu($dicode) );
 		}
 	}
-	return($ishu);
+	return $ishu;
 }
 
 sub is_mailboxfull
@@ -497,11 +520,11 @@ sub is_mailboxfull
 	#		(Integer) 0 = Mailbox is not full
 	# @See		http://www.ietf.org/rfc/rfc2822.txt
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
 	my $subj = 'mailboxfull';
 	my $ismf = 0;
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
 		$ismf = 1 if( $self->{'reason'} eq $subj );
 	}
@@ -527,12 +550,12 @@ sub is_mailboxfull
 		{
 			my $mclass = q|Kanadzuchi::Mail::Why::MailboxFull|;
 			my $dicode = $self->{'diagnosticcode'};
-			eval { use Kanadzuchi::Mail::Why::MailboxFull; };
+			eval { require Kanadzuchi::Mail::Why::MailboxFull; };
 
 			$ismf = 1 if( $mclass->habettextu($dicode) );
 		}
 	}
-	return($ismf);
+	return $ismf;
 }
 
 sub is_exceedlimit
@@ -547,11 +570,11 @@ sub is_exceedlimit
 	#		(Integer) 0 = is not
 	# @See		http://www.ietf.org/rfc/rfc2822.txt
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
 	my $subj = 'exceedlimit';
 	my $isxl = 0;
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
 		$isxl = 1 if( $self->{'reason'} eq $subj );
 	}
@@ -571,12 +594,12 @@ sub is_exceedlimit
 		{
 			my $bclass = q|Kanadzuchi::Mail::Why::ExceedLimit|;
 			my $dicode = $self->{'diagnosticcode'};
-			eval { use Kanadzuchi::Mail::Why::ExceedLimit; };
+			eval { require Kanadzuchi::Mail::Why::ExceedLimit; };
 
 			$isxl = 1 if( $bclass->habettextu($dicode) );
 		}
 	}
-	return($isxl);
+	return $isxl;
 }
 
 sub is_toobigmesg
@@ -591,11 +614,11 @@ sub is_toobigmesg
 	#		(Integer) 0 = is not
 	# @See		http://www.ietf.org/rfc/rfc2822.txt
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
 	my $subj = 'mesgtoobig';
 	my $istb = 0;
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
 		$istb = 1 if( $self->{'reason'} eq $subj );
 	}
@@ -613,14 +636,14 @@ sub is_toobigmesg
 		}
 		else
 		{
-			my $bclass = q|Kanadzuchi::Mail::Why::TooBig|;
+			my $bclass = q|Kanadzuchi::Mail::Why::MesgTooBig|;
 			my $dicode = $self->{'diagnosticcode'};
-			eval { use Kanadzuchi::Mail::Why::TooBig; };
+			eval { require Kanadzuchi::Mail::Why::MesgTooBig; };
 
 			$istb = 1 if( $bclass->habettextu($dicode) );
 		}
 	}
-	return($istb);
+	return $istb;
 }
 
 sub is_norelaying
@@ -637,9 +660,9 @@ sub is_norelaying
 	my $self = shift();
 	my $isnr = 0;
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
-		return(0) if( $self->{'reason'} ne 'securityerr' && $self->{'reason'} ne 'undefined' );
+		return 0 if( $self->{'reason'} ne 'securityerr' && $self->{'reason'} ne 'undefined' );
 	}
 
 	my $rclass = q|Kanadzuchi::Mail::Why::RelayingDenied|;
@@ -648,7 +671,7 @@ sub is_norelaying
 	eval { use Kanadzuchi::Mail::Why::RelayingDenied; };
 
 	$isnr = 1 if( $rclass->habettextu($dicode) );
-	return($isnr);
+	return $isnr;
 }
 
 sub is_securityerror
@@ -663,11 +686,11 @@ sub is_securityerror
 	#		(Integer) 0 = is not
 	# @See		http://www.ietf.org/rfc/rfc2822.txt
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
 	my $subj = 'securityerr';
 	my $isse = 0;
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
 		$isse = 1 if( $self->{'reason'} eq $subj );
 	}
@@ -682,7 +705,7 @@ sub is_securityerror
 			$isse = 1;
 		}
 	}
-	return($isse);
+	return $isse;
 }
 
 sub is_mailererror
@@ -697,13 +720,13 @@ sub is_mailererror
 	#		(Integer) 0 = is not
 	# @See		http://www.ietf.org/rfc/rfc2822.txt
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
 	my $diag = $self->{'diagnosticcode'} || q();
 	my $subj = 'mailererror';
 	my $isme = 0;
 	my $rxme = qr{x[-]unix[;][ ]\d{1,3}};
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
 		$isme = 1 if( $self->{'reason'} eq $subj );
 	}
@@ -714,7 +737,7 @@ sub is_mailererror
 			$isme = 1;
 		}
 	}
-	return($isme);
+	return $isme;
 }
 
 sub is_somethingelse
@@ -728,10 +751,10 @@ sub is_somethingelse
 	# @Return	(Integer) 1 = Something else
 	#		(Integer) 0 = Unknown reason...
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
 	my $diag = q();
 	my $else = q();
-	return(1) if( $self->{'reason'} );
+	return 1 if( $self->{'reason'} );
 
 	foreach my $c ( 'temporary', 'permanent' )
 	{
@@ -773,8 +796,8 @@ sub is_somethingelse
 	$self->{'reason'} ||= $else;
 	$self->{'description'}->{'diagnosticcode'} ||= $diag;
 
-	return(1) if( $self->{'reason'} );
-	return(0);
+	return 1 if( $self->{'reason'} );
+	return 0;
 }
 
 sub is_onhold
@@ -788,16 +811,16 @@ sub is_onhold
 	# @Return	(Integer) 1 = The reason is on hold
 	#		(Integer) 0 = is not
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
 	my $subj = 'onhold';
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
-		return(1) if( $self->{'reason'} eq $subj );
+		return 1 if( $self->{'reason'} eq $subj );
 	}
 
-	return(1) if( $stat == Kanadzuchi::RFC1893->standardcode($subj) );
-	return(0);
+	return 1 if( $stat == Kanadzuchi::RFC1893->standardcode($subj) );
+	return 0;
 }
 
 sub is_permerror
@@ -811,9 +834,9 @@ sub is_permerror
 	# @Returns	(Integer) 1 = is permanent error message
 	#		(Integer) 0 = is NOT permanent error message
 	my $self = shift();
-	return(0) if( ! defined($self->{'deliverystatus'}) );
-	return(1) if( int($self->{'deliverystatus'} / 100 ) == 5 );
-	return(0);
+	return 0 if( ! defined($self->{'deliverystatus'}) );
+	return 1 if( int($self->{'deliverystatus'} / 100 ) == 5 );
+	return 0;
 }
 
 sub is_temperror
@@ -827,9 +850,9 @@ sub is_temperror
 	# @Returns	(Integer) 1 = is Temporary error message
 	#		(Integer) 0 = is NOT temp error message
 	my $self = shift();
-	return(0) if( ! defined($self->{'deliverystatus'}) );
-	return(1) if( int($self->{'deliverystatus'} / 100 ) == 4 );
-	return(0);
+	return 0 if( ! defined($self->{'deliverystatus'}) );
+	return 1 if( int($self->{'deliverystatus'} / 100 ) == 4 );
+	return 0;
 }
 
 1;

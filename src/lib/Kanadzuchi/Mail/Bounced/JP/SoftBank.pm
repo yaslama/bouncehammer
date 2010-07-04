@@ -1,4 +1,4 @@
-# $Id: SoftBank.pm,v 1.2 2010/06/10 10:28:47 ak Exp $
+# $Id: SoftBank.pm,v 1.3 2010/07/04 23:48:40 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Bounced::JP::
                                                         
@@ -29,11 +29,11 @@ sub is_filtered
 	# @Return	(Integer) 1 = is filtered recipient
 	#		(Integer) 0 = is not filtered recipient.
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
 	my $subj = 'filtered';
 	my $isfi = 0;
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
 		$isfi = 1 if( $self->{'reason'} eq $subj );
 	}
@@ -50,8 +50,24 @@ sub is_filtered
 		{
 			$isfi = 1;
 		}
+		else
+		{
+			eval { 
+				require Kanadzuchi::Mail::Why::Filtered; 
+				require Kanadzuchi::Mail::Why::UserUnknown; 
+			};
+			my $flib = q|Kanadzuchi::Mail::Why::Filtered|;
+			my $ulib = q|Kanadzuchi::Mail::Why::UserUnknown|;
+			my $diag = $self->{'diagnosticcode'};
+
+			if( $self->{'smtpcommand'} eq 'DATA' 
+				&& ( $flib->habettextu($diag) || $ulib->habettextu($diag) ) ){
+
+				$isfi = 1;
+			}
+		}
 	}
-	return($isfi);
+	return $isfi;
 }
 
 sub is_userunknown
@@ -66,13 +82,13 @@ sub is_userunknown
 	#		(Integer) 0 = is not unknown user.
 	# @See		http://www.ietf.org/rfc/rfc2822.txt
 	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return(0);
+	my $stat = $self->{'deliverystatus'} || return 0;
 	my $diag = $self->{'diagnosticcode'} || q();
 	my $subj = 'userunknown';
 	my $isuu = 0;
 	my $rxuu = qr{550[ ]Invalid[ ]recipient[:][ ][<].+[>]}o;
 
-	if( defined($self->{'reason'}) && length($self->{'reason'}) )
+	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
 		$isuu = 1 if( $self->{'reason'} eq $subj );
 	}
@@ -89,8 +105,19 @@ sub is_userunknown
 		{
 			$isuu = 1;
 		}
+		else
+		{
+			eval { require Kanadzuchi::Mail::Why::UserUnknown; };
+			my $ulib = q|Kanadzuchi::Mail::Why::UserUnknown|;
+			my $diag = $self->{'diagnosticcode'};
+
+			if( $self->{'smtpcommand'} eq 'RCPT' && $ulib->habettextu($diag) )
+			{
+				$isuu = 1;
+			}
+		}
 	}
-	return($isuu);
+	return $isuu;
 }
 
 1;
