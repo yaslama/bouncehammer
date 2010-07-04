@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.1 2010/03/01 21:00:06 ak Exp $
+# $Id: Makefile.am,v 1.2 2010/07/04 23:46:53 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/Mail/Why,
 # is processed by automake to create Makefile.in.
@@ -6,7 +6,7 @@
 distdir = $(BUILDROOT)/dist/lib/Kanadzuchi/Mail/Why
 pkgdatadir = @libdir@/Kanadzuchi/Mail/Why
 pkgdata_DATA = ExceedLimit.pm Filtered.pm HostUnknown.pm MailboxFull.pm \
-	Makefile.am RelayingDenied.pm SystemFull.pm TooBig.pm UserUnknown.pm
+	Makefile.am RelayingDenied.pm SystemFull.pm MesgTooBig.pm UserUnknown.pm
 
 all-am:
 	test -d $(distdir) || mkdir -p $(distdir)

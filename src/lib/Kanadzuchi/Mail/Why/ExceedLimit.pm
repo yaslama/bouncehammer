@@ -1,4 +1,4 @@
-# $Id: ExceedLimit.pm,v 1.6 2010/06/16 12:57:49 ak Exp $
+# $Id: ExceedLimit.pm,v 1.7 2010/07/04 23:46:52 ak Exp $
 # -Id: ExceedLimit.pm,v 1.1 2009/08/29 07:33:28 ak Exp -
 # -Id: ExceedLimit.pm,v 1.1 2009/05/04 05:17:05 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -23,7 +23,7 @@ sub exemplaria
 {
 	my $class = shift();
 	return [
-		qr(was automatically rejected: Quota exceeded),
+		qr{was automatically rejected: Quota exceeded},
 	];
 }
 
