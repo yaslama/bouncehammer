@@ -1,4 +1,4 @@
-# $Id: 000_compile-core.t,v 1.41 2010/07/01 13:03:41 ak Exp $
+# $Id: 000_compile-core.t,v 1.42 2010/07/04 23:47:13 ak Exp $
 use strict;
 use warnings;
 use lib qw(./t/lib ./dist/lib ./src/lib);
@@ -62,14 +62,16 @@ my $Modules = [ qw{
 	Kanadzuchi::Mail::Why::MailboxFull
 	Kanadzuchi::Mail::Why::RelayingDenied
 	Kanadzuchi::Mail::Why::SystemFull
-	Kanadzuchi::Mail::Why::TooBig
+	Kanadzuchi::Mail::Why::MesgTooBig
 	Kanadzuchi::Mail::Why::UserUnknown
 	Kanadzuchi::Mbox
 	Kanadzuchi::MIME::Parser
 	Kanadzuchi::Metadata
 	Kanadzuchi::MTA
 	Kanadzuchi::MTA::Google
+	Kanadzuchi::MTA::Postfix
 	Kanadzuchi::MTA::qmail
+	Kanadzuchi::MTA::Sendmail
 	Kanadzuchi::RFC1893
 	Kanadzuchi::RFC2606
 	Kanadzuchi::RFC2822
