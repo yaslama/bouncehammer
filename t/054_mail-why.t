@@ -1,4 +1,4 @@
-# $Id: 054_mail-why.t,v 1.4 2010/06/16 12:57:51 ak Exp $
+# $Id: 054_mail-why.t,v 1.5 2010/07/04 23:47:24 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 525 );
+use Test::More ( tests => 521 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -21,7 +21,7 @@ my $Classes = {
         'mailboxfull'	=> q(Kanadzuchi::Mail::Why::MailboxFull),
         'relayingdenied'=> q(Kanadzuchi::Mail::Why::RelayingDenied),
         'systemfull'	=> q(Kanadzuchi::Mail::Why::SystemFull),
-        'msgtoobig'	=> q(Kanadzuchi::Mail::Why::TooBig),
+        'msgtoobig'	=> q(Kanadzuchi::Mail::Why::MesgTooBig),
         'userunknown'	=> q(Kanadzuchi::Mail::Why::UserUnknown),
 };
 
@@ -50,7 +50,7 @@ my $Strings = {
 		q{553 sorry, that domain isn't in my list of allowed rcpthosts (#5.7.1)},
 	],
         'systemfull'	=> [ q(Requested mail action aborted: exceeded storage allocation) ],
-        'msgtoobig'	=> [
+        'mesgtoobig'	=> [
 		q(Message size exceeds fixed maximum message size),
 		q(Message size exceeds fixed limit),
 		q(Message size exceeds maximum value),
@@ -68,7 +68,6 @@ my $Strings = {
 		q(Sorry, No mailbox here by that name),
 		q(Mailbox not present),
 		q(Requested action not taken: Mailbox unavailable),
-		q(Recipient rejected: Mailbox would exceed maximum allowed storage),
 		q(Recipient is not local),
 		q(Unknown address),
 		q(Unknown recipient),
