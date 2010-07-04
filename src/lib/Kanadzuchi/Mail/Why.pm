@@ -1,4 +1,4 @@
-# $Id: Why.pm,v 1.7 2010/06/16 12:57:47 ak Exp $
+# $Id: Why.pm,v 1.8 2010/07/04 23:46:50 ak Exp $
 # -Id: Pattern.pm,v 1.1 2009/08/29 07:33:13 ak Exp -
 # -Id: Pattern.pm,v 1.3 2009/05/29 08:22:25 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -21,7 +21,7 @@ my $Exemplaria = {
 	'MailboxFull' => [],
 	'RelayingDenied' => [],
 	'SystemFull' => [],
-	'TooBig' => [],
+	'MesgTooBig' => [],
 	'UserUnknown' => [],
 };
 
@@ -41,7 +41,7 @@ sub habettextu
 	# @Return	(Integer) 1 = included
 	# @Return	(Integer) 0 = not
 	my $class = shift();
-	my $etext = shift() || return(0);
+	my $etext = shift() || return 0;
 	my $klass = $class; $klass =~ s{\A.+::}{};
 
 	unless( scalar @{ $Exemplaria->{ $klass } } )
@@ -49,8 +49,8 @@ sub habettextu
 		$Exemplaria->{ $klass } = $class->exemplaria();
 	}
 
-	return(1) if( grep { lc($etext) =~ $_ } @{ $Exemplaria->{$klass} } );
-	return(0);
+	return 1 if( grep { lc($etext) =~ $_ } @{ $Exemplaria->{$klass} } );
+	return 0;
 }
 
 1;
