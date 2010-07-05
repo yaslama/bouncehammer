@@ -1,4 +1,4 @@
-# $Id: qmail.pm,v 1.1 2010/07/01 12:53:45 ak Exp $
+# $Id: qmail.pm,v 1.2 2010/07/04 23:45:50 ak Exp $
 # Kanadzuchi::MTA::
                          ##  ###    
   #####  ##  ##  ####         ##    
@@ -13,6 +13,8 @@ package Kanadzuchi::MTA::qmail;
 # The qmail-send Bounce Message Format (QSBMF) http://cr.yp.to/proto/qsbmf.txt
 # QSBMF IS NOT COMPATIBLE WITH RFC 1894 http://www.ietf.org/rfc/rfc1894.txt
 use base 'Kanadzuchi::MTA';
+use strict;
+use warnings;
 use Kanadzuchi::RFC1893;
 use Kanadzuchi::RFC2822;
 
@@ -39,14 +41,14 @@ my $RxQSBMF = {
 my $RxSMTPError = {
 	'greet' => qr{\AConnected[ ]to[ ].+[ ]but[ ]greeting[ ]failed[.]\z}o,
 	'helo' => qr{\AConnected[ ]to[ ].+[ ]but[ ]my[ ]name[ ]was[ ]rejected[.]\z}o,
-	'mailfrom' => qr{\AConnected[ ]to[ ].+[ ]but[ ]sender[ ]was[ ]rejected[.]\z}o,
-	'rcptto' => qr{\A.+[ ]does[ ]not[ ]like[ ]recipient[.]\z}o,
+	'mail' => qr{\AConnected[ ]to[ ].+[ ]but[ ]sender[ ]was[ ]rejected[.]\z}o,
+	'rcpt' => qr{\A.+[ ]does[ ]not[ ]like[ ]recipient[.]\z}o,
 	'data' => qr{\A.+[ ]failed[ ]on[ ]DATA[ ]command[.]\z}o,
 	'payload' => qr{\A.+[ ]failed[ ]after[ ]I[ ]sent[ ]the[ ]message[.]\z}o,
 };
 
 my $RxConnError = {
-	'nohost' => qr{\ASorry[,][ ]I[ ]couldn[']t[ ]find[ ]any[ ]host[ ]named[ ]}o,
+	'conn' => qr{\ASorry[,][ ]I[ ]couldn[']t[ ]find[ ]any[ ]host[ ]named[ ]}o,
 	# 'nomxrr' => qr{\ASorry[,][ ]I[ ]couldn[']t[ ]find[ ]a[ ]mail[ ]exchanger[ ]or[ ]IP[ ]address}o,
 	# 'ambimx' => qr{\ASorry[.][ ]Although I[']m listed as a best[-]preference MX or A for that host[,]}o,
 };
@@ -56,19 +58,6 @@ my $RxConnError = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub emailheaders
-{
-	# +-+-+-+-+-+-+-+-+-+-+-+-+
-	# |e|m|a|i|l|h|e|a|d|e|r|s|
-	# +-+-+-+-+-+-+-+-+-+-+-+-+
-	#
-	# @Description	Required email headers
-	# @Param 	<None>
-	# @Return	(Ref->Array) Header names
-	my $class = shift();
-	return [];
-}
-
 sub reperit
 {
 	# +-+-+-+-+-+-+-+
@@ -96,67 +85,70 @@ sub reperit
 	return q() unless( lc($mhead->{'subject'}) eq 'failure notice' );
 	return q() unless( grep { $_ =~ m{\A[(]qmail[ ]+\d+[ ]+invoked[ ]+for[ ]+bounce[)]} } @{ $mhead->{'received'} } );
 
-	my $se5xx = { 'mailfrom' => 0, 'rcptto' => 0, 'data' => 0, 'payload' => 0, };
-	my $ce5xx = { 'nohost' => 0, };
-	my $error = { 'conn' => 0, 'smtp' => 0, };
+	my $xflag = 0;		# (Integer) Flag, 1 = is qmail
+	my $pstat = 500;	# (Integer) Pseudo status value
+	my $phead = q();	# (String) Pseudo email header
+	my $pbody = q();	# (String) Pseudo body part
+	my $xsmtp = q();	# (String) SMTP Command in transcript of session
 
-	my $phead = q();
-	my $pstat = 500;
-	my $qmail = 0;		# qmail ?
-
+	my $smtperror = { 'mail' => 0, 'rcpt' => 0, 'data' => 0, 'payload' => 0 };
+	my $connerror = { 'conn' => 0 };
+	my $errortype = { 'smtp' => 0, 'conn' => 0 };
 	my $rhostsaid = q();	# Remote host said: ...
 	my $sorrythat = q();	# Sorry, ....
 	my $rcptintxt = q();	# Recipient address in message body
 	my $statintxt = q();	# #n.n.n Status code in message body
 
-	EACH_LINE: foreach my $_qb ( split( qq{\n}, $$mbody ) )
+	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
-		if( ! $qmail && $_qb =~ $RxQSBMF->{'begin'} )
+		if( $xflag == 0 && $el =~ $RxQSBMF->{'begin'} )
 		{
-			$qmail = 1;
+			$xflag |= 1;
 			next();
 		}
 
 		# The line which begins with the string 'Remote host said:'
-		unless( $error->{'smtp'} )
+		unless( $errortype->{'smtp'} )
 		{
-			SMTP_ERROR: foreach my $_se ( keys(%$se5xx) )
+			SMTP_ERROR: foreach my $_se ( keys(%$smtperror) )
 			{
-				if( $_qb =~ $RxSMTPError->{$_se} )
+				if( $el =~ $RxSMTPError->{$_se} )
 				{
-					$se5xx->{$_se} = 1;
-					$error->{smtp} = 1;
+					$smtperror->{$_se} = 1;
+					$errortype->{smtp} = 1;
+					$xsmtp = uc $_se;
 					last();
 				}
 			}
 		}
 
 		# The line which begins with the string 'Sorry,...'
-		if( ! $error->{'conn'} && $_qb =~ $RxQSBMF->{'sorry'} )
+		if( ! $errortype->{'conn'} && $el =~ $RxQSBMF->{'sorry'} )
 		{
-			CONN_ERROR: foreach my $_ce ( keys(%$ce5xx) )
+			CONN_ERROR: foreach my $_ce ( keys(%$connerror) )
 			{
-				if( $_qb =~ $RxConnError->{$_ce} )
+				if( $el =~ $RxConnError->{$_ce} )
 				{
-					$error->{$_ce} = 1;
-					$error->{conn} = 1;
+					$connerror->{$_ce} = 1;
+					$errortype->{conn} = 1;
+					$xsmtp = uc $_ce;
 					last()
 				}
 			}
 		}
 
 		# Get a mail address from the recipient paragraph.
-		$rcptintxt = $1 if( $rcptintxt eq q() && $_qb =~ m{\A[<](.+[@].+)[>][:]\z} );
-		$statintxt = $1 if( $statintxt eq q() && $_qb =~ m{[ ][(][#](\d[.]\d[.]\d)[)]\z} );
-		$rhostsaid = $1 if( $error->{'smtp'} && $_qb =~ m{\ARemote[ ]host[ ]said:[ ]*(.+)\z} );
-		$sorrythat = $1 if( $error->{'conn'} && $_qb =~ m{\A(Sorry[,][ ].*)\z} );
+		$rcptintxt = $1 if( $rcptintxt eq q() && $el =~ m{\A[<](.+[@].+)[>][:]\z} );
+		$statintxt = $1 if( $statintxt eq q() && $el =~ m{[ ][(][#](\d[.]\d[.]\d)[)]\z} );
+		$rhostsaid = $1 if( $errortype->{'smtp'} && $el =~ m{\ARemote[ ]host[ ]said:[ ]*(.+)\z} );
+		$sorrythat = $1 if( $errortype->{'conn'} && $el =~ m{\A(Sorry[,][ ].*)\z} );
 	}
 
 	# Return if it does not include the line begins with 'Hi. This is the qmail...'
-	return q() unless( $qmail );
+	return q() unless( $xflag );
 
 
-	if( $error->{'smtp'} || $error->{'conn'} )
+	if( $errortype->{'smtp'} || $errortype->{'conn'} )
 	{
 		# Add the pseudo Content-Type header if it does not exist.
 		$mhead->{'content-type'} ||= q(message/delivery-status);
@@ -169,7 +161,7 @@ sub reperit
 		# Add the text that 'Remote host said' or 'Sorry,...' into Diagnostic-Code header.
 		$phead .= q(Diagnostic-Code: ).($rhostsaid || $sorrythat).qq(\n);
 
-		if( $error->{'smtp'} && $rhostsaid )
+		if( $errortype->{'smtp'} && $rhostsaid )
 		{
 			if( $rhostsaid =~ m{\A\d{3}[-\s](\d[.]\d[.]\d)[ ]} )
 			{
@@ -183,12 +175,12 @@ sub reperit
 			}
 			else
 			{
-				if( $se5xx->{'rcptto'} )
+				if( $smtperror->{'rcptto'} )
 				{
 					# RCPT TO: <who@example.jp> ... REJECTED
 					$pstat = Kanadzuchi::RFC1893->internalcode('userunknown');
 				}
-				elsif( $se5xx->{'payload'} )
+				elsif( $smtperror->{'payload'} )
 				{
 					# Rejected after DATA command
 					$pstat = Kanadzuchi::RFC1893->internalcode('filtered');
@@ -197,12 +189,14 @@ sub reperit
 				$phead .= q(Status: ).Kanadzuchi::RFC1893->int2code($pstat).qq(\n);
 			}
 		}
-		elsif( $error->{'conn'} && $statintxt )
+		elsif( $errortype->{'conn'} && $statintxt )
 		{
 			$phead .= q(Status: ).$statintxt.qq(\n);
 		}
 	}
 
+	$xsmtp ||= 'CONN';
+	$phead  .= __PACKAGE__->xsmtpcommand().$xsmtp.qq(\n);
 	return $phead;
 }
 

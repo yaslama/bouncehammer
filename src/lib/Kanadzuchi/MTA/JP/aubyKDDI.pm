@@ -1,4 +1,4 @@
-# $Id: aubyKDDI.pm,v 1.1 2010/07/01 12:57:53 ak Exp $
+# $Id: aubyKDDI.pm,v 1.2 2010/07/04 23:46:02 ak Exp $
 # -Id: aubyKDDI.pm,v 1.1 2009/08/29 08:50:38 ak Exp -
 # -Id: aubyKDDI.pm,v 1.1 2009/07/31 09:04:51 ak Exp -
 # Kanadzuchi::MTA::JP::
@@ -12,7 +12,24 @@
                         ####                                
 package Kanadzuchi::MTA::JP::aubyKDDI;
 use base 'Kanadzuchi::MTA';
+use strict;
+use warnings;
 use Kanadzuchi::RFC1893;
+
+#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
+# ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
+# ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
+#
+my $RxEzweb = {
+	'disable' => qr{\AThe[ ]user[(]s[)][ ]account[ ]is[ ]disabled[.]\z},
+	'limited' => qr{\AThe[ ]user[(]s[)][ ]account[ ]is[ ]temporarily[ ]limited[.]\z},
+	'timeout' => qr{\AThe[ ]following[ ]recipients[ ]did[ ]not[ ]receive[ ]this[ ]message:\z},
+};
+my $RxauOne = {
+	'auone' => qr{\AYour[ ]mail[ ]sent[ ]on[:][ ][A-Z][a-z]{2}[,]},
+	'error' => qr{\A\s+Could[ ]not[ ]be[ ]delivered[ ]to[:][ ]},
+};
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -77,39 +94,34 @@ sub reperit
 		my $icode = q();	# (String) Internal error code
 		my $etype = { 'userunknown' => 'permanent', 'suspended' => 'temporary', 'onhold' => 'permanent' };
 		my $error = { 'disable' => 0, 'limited' => 0, 'timeout' => 0 };
-		my $rxezw = {
-			'disable' => qr{\AThe[ ]user[(]s[)][ ]account[ ]is[ ]disabled[.]\z},
-			'limited' => qr{\AThe[ ]user[(]s[)][ ]account[ ]is[ ]temporarily[ ]limited[.]\z},
-			'timeout' => qr{\AThe[ ]following[ ]recipients[ ]did[ ]not[ ]receive[ ]this[ ]message:\z},
-		};
 
 		# Bounced from ezweb.ne.jp
-		EACH_LINE: foreach my $_ln ( split( qq{\n}, $$mbody ) )
+		EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 		{
-			next() if( ! $ezweb && $_ln !~ m{\AThe[ ]} );
+			next() if( ! $ezweb && $el !~ m{\AThe[ ]} );
 
 			foreach my $__e ( qw{disable limited timeout} )
 			{
-				next() unless( $_ln =~ $rxezw->{$__e} );
+				next() unless( $el =~ $RxEzweb->{$__e} );
 
-				$diagn .= $_ln;
+				$diagn .= $el;
 				$ezweb  = 1;
 				$error->{$__e} = 1;
 				last();
 			}
 
-			next() unless( $_ln =~ m{\A[<]} );
+			next() unless( $el =~ m{\A[<]} );
 
 			if( $error->{'disable'} )
 			{
 				# The user(s) account is disabled.
-				if( $_ln =~ m{\A[<](.+[@].+)[>]\z} )
+				if( $el =~ m{\A[<](.+[@].+)[>]\z} )
 				{
 					# The recipient may be unpaid user...?
 					$icode = 'suspended';
 					$frcpt = $1;
 				}
-				elsif( $_ln =~ m{\A[<](.+[@].+)[>][:]\s*.+\s*user[ ]unknown} )
+				elsif( $el =~ m{\A[<](.+[@].+)[>][:]\s*.+\s*user[ ]unknown} )
 				{
 					# Unknown user
 					$icode = 'userunknown';
@@ -120,7 +132,7 @@ sub reperit
 			{
 				# THIS BLOCK IS NOT TESTED
 				# Destination host many be down ...?
-				if( $_ln =~ m{\A[<](.+[@].+)[>]\z} )
+				if( $el =~ m{\A[<](.+[@].+)[>]\z} )
 				{
 					$icode = 'suspended';
 					$frcpt = $1;
@@ -129,7 +141,7 @@ sub reperit
 			elsif( $error->{'limited'} )
 			{
 				# THIS BLOCK IS NOT TESTED
-				if( $_ln =~ m{\A[<](.+[@].+)[>]\z} )
+				if( $el =~ m{\A[<](.+[@].+)[>]\z} )
 				{
 					$icode = 'suspended';
 					$frcpt = $1;
@@ -162,41 +174,34 @@ sub reperit
 		my $auone = 0;		# (Boolean) Flag, Set 1 if the line begins with the string 'Your mail sent on: ...'
 		my $error = 0;		# (Boolean) Flag, Set 1 if the line begins with the string 'Could not be delivered to..'
 		my $diagn = q();	# (String) Pseudo-Diagnostic-Code:
-		my $rxau1 = {
-			'auone' => qr{\AYour[ ]mail[ ]sent[ ]on[:][ ][A-Z][a-z]{2}[,]},
-			'error' => qr{\A\s+Could[ ]not[ ]be[ ]delivered[ ]to[:][ ]},
-		};
-		my $rxerr = {
-			'mailboxfull' => qr{\A\s+As[ ]their[ ]mailbox[ ]is[ ]full[.]\z}
-		};
 
 		# Bounced from auone-net.jp
-		EACH_LINE: foreach my $_ln ( split( qq{\n}, $$mbody ) )
+		EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 		{
 			# The line which begins with the string 'Your mail sent on: ...'
-			if( ! $auone && $_ln =~ $rxau1->{'auone'} )
+			if( ! $auone && $el =~ $RxauOne->{'auone'} )
 			{
-				$diagn .= $_ln;
+				$diagn .= $el;
 				$auone  = 1;
 				next();
 			}
-			elsif( ! $error && $_ln =~ $rxau1->{'error'} )
+			elsif( ! $error && $el =~ $RxauOne->{'error'} )
 			{
-				$diagn .= ' '.$_ln;
+				$diagn .= ' '.$el;
 				$error  = 1;
 				next();
 			}
 
 			next() if( ! $auone || ! $error );
 
-			if( $_ln =~ $rxerr->{'mailboxfull'} )
+			if( $el =~ qr{\A\s+As[ ]their[ ]mailbox[ ]is[ ]full[.]\z} )
 			{
 				# Your mail sent on: Thu, 29 Apr 2010 11:04:47 +0900 
 				#     Could not be delivered to: <******@**.***.**>
 				#     As their mailbox is full.
 				$pstat  = Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode('mailboxfull','temporary'));
 				$phead .= q(Status: ).$pstat.qq(\n);
-				$phead .= q(Diagnostic-Code: ).$diagn.' '.$_ln.qq(\n);
+				$phead .= q(Diagnostic-Code: ).$diagn.' '.$el.qq(\n);
 				last();
 			}
 		}

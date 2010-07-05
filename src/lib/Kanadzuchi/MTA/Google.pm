@@ -1,4 +1,4 @@
-# $Id: Google.pm,v 1.1 2010/07/01 12:53:45 ak Exp $
+# $Id: Google.pm,v 1.2 2010/07/04 23:45:49 ak Exp $
 # -Id: Google.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: Google.pm,v 1.1 2009/07/31 09:04:38 ak Exp -
 # Kanadzuchi::MTA::
@@ -12,6 +12,8 @@
                       #####                
 package Kanadzuchi::MTA::Google;
 use base 'Kanadzuchi::MTA';
+use strict;
+use warnings;
 use Kanadzuchi::RFC1893;
 use Kanadzuchi::RFC2822;
 
@@ -50,7 +52,6 @@ sub reperit
 	my $class = shift();
 	my $mhead = shift() || return q();
 	my $mbody = shift() || return q();
-	my $phead = q();
 
 	#   ____                 _ _ 
 	#  / ___|_ __ ___   __ _(_) |
@@ -78,32 +79,34 @@ sub reperit
 	return q() unless( $mhead->{'from'} =~ m{[@]googlemail[.]com[>]?\z} );
 	return q() unless( $mhead->{'subject'} =~ m{Delivery[ ]Status[ ]Notification} );
 
-	my $gmail = 0;		# Flag, is Gmail or not.
-	my $state = 0;		# (state xx).
-	my $frcpt = q();	# X-Final-Recipients: header or email address in the body.
-	my $dcode = q();	# Diagnostic-Code: header or error text.
-	my $bodyb = q();	# Boby part for rewriting
-	my $error = 'onhold';	# Error reason: userunknown, filtered, mailboxfull...
-	my $dstat = q();	# Pseudo D.S.N.
+	my $xflag = 0;		# (Integer) Flag, is Gmail or not.
+	my $state = 0;		# (Integer) (state xx).
+	my $phead = q();	# (String) Pusedo header
+	my $pbody = q();	# (String) Boby part for rewriting
+	my $pstat = q();	# (String) Pseudo D.S.N.
+	my $frcpt = q();	# (String) X-Final-Recipients: header or email address in the body.
+	my $dcode = q();	# (String) Diagnostic-Code: header or error text.
+	my $error = 'onhold';	# (String) Error reason: userunknown, filtered, mailboxfull...
+	my $xsmtp = q();	# (String) SMTP Command in transcript of session
 
-	$phead .= sprintf("Date: %s\n", $mhead->{'date'} );
-	$phead .= sprintf("From: %s\n", $mhead->{'to'} );
+	$phead .= sprintf( "Date: %s\n", $mhead->{'date'} );
+	$phead .= sprintf( "From: %s\n", $mhead->{'to'} );
 	$frcpt  = $1 if( lc($mhead->{'x-failed-recipients'}) =~ m{\A[ ]?(.+[@].+)[ ]*\z} );
 
-	EACH_LINE: foreach my $_gl ( split( qq{\n}, $$mbody ) )
+	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
-		next() if( $_gl =~ m{\A\z} );
+		next() if( $el =~ m{\A\z} );
 
-		if( ! $gmail && ( $_gl =~ $RxPermGmail || $_gl =~ $RxTempGmail ) )
+		if( $xflag == 0 && ( $el =~ $RxPermGmail || $el =~ $RxTempGmail ) )
 		{
 			# The line match with 'Delivery to the following...'
-			$gmail = 1;
+			$xflag |= 1;
 			next();
 		}
-		next() unless( $gmail );
+		next() unless( $xflag );
 
 		# ^Irecipient-address-here@example.jp
-		if( $gmail && $_gl =~ m{\A\s+([^\s]+[@][^\s]+)\z} )
+		if( ( $xflag & 1 ) && $el =~ m{\A\s+([^\s]+[@][^\s]+)\z} )
 		{
 			my $_rcpt = $1;
 			my $_2822 = q|Kanadzuchi::RFC2822|;
@@ -112,23 +115,23 @@ sub reperit
 			next();
 		}
 
-		$_gl =~ s{=\z}{}g;
-		$bodyb .= $_gl if( $_gl =~ m{\A\w} );
+		$el =~ s{=\z}{}g;
+		$pbody .= $el if( $el =~ m{\A\w} );
 
-		last() if( $_gl =~ m{[(]state[ ]\d+[)][.]} );
-		last() if( $_gl =~ m{\A\s*[-][-]+} || $_gl =~ m{\A[.]\z} );
+		last() if( $el =~ m{[(]state[ ]\d+[)][.]} );
+		last() if( $el =~ m{\A\s*[-][-]+} || $el =~ m{\A[.]\z} );
 	}
 
-	$bodyb =~ s{\A.+$RxErrorHead }{};
-	$state =  $1 if( $bodyb =~ m{[(]state[ ](\d+)[)][.]} );
-	$dstat =  $1 if( $bodyb =~ m{[(][#](\d[.]\d[.]\d)[)]} );
+	$pbody =~ s{\A.+$RxErrorHead }{};
+	$pstat =  $1 if( $pbody =~ m{[(][#](\d[.]\d[.]\d)[)]} );
+	$state =  $1 if( $pbody =~ m{[(]state[ ](\d+)[)][.]} );
 
-	if( $bodyb =~ m{\d{3}[ ]\d{3}[ ](\d[.]\d[.]\d)[ ][<](.+?)[>]:?(.+)\z} )
+	if( $pbody =~ m{\d{3}[ ]\d{3}[ ](\d[.]\d[.]\d)[ ][<](.+?)[>]:?(.+)\z} )
 	{
 		# There is D.S.N. code in the body part.
 		# 550 550 5.1.1 <userunknown@example.jp>... User Unknown (state 14).
 		# 450 450 4.2.2 <mailboxfull@example.jp>... Mailbox Full (state 14).
-		$dstat ||= $1;
+		$pstat ||= $1;
 		$frcpt ||= $2;
 		$dcode = $3;
 	}
@@ -145,13 +148,13 @@ sub reperit
 		}
 
 
-		if( $bodyb =~ m{\d{3}[ ]\d{3}[ ][<](.+?)[>]:[ ](User unknown.+)\z} )
+		if( $pbody =~ m{\d{3}[ ]\d{3}[ ][<](.+?)[>]:[ ](User unknown.+)\z} )
 		{
 			# 550 550 <userunknown@example.com>: User unknown (state 14).
 			$frcpt ||= $1;
 			$dcode = $2;
 		}
-		elsif( $bodyb =~ m{\d{3}[ ]\d{3}[ ](.+)[ ]([^\s]+[@][^\s]+)[ ](.+)\z} )
+		elsif( $pbody =~ m{\d{3}[ ]\d{3}[ ](.+)[ ]([^\s]+[@][^\s]+)[ ](.+)\z} )
 		{
 			# 550 550 Unknown user is-user-unknown@example.ne.jp (state 14).
 			# 550 550 Unknown user filtered-address@example.ne.jp (state 18).
@@ -167,11 +170,13 @@ sub reperit
 	}
 
 	return q() unless( $frcpt );
-	$dstat ||= Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode($error));
-	$phead .= q(Diagnostic-Code: SMTP; ).qq($dcode\n);
-	$phead .= q(Status: ).qq($dstat\n);
-	$phead .= q(Final-Recipient: rfc822; ).qq($frcpt\n);
-	$phead .= q(To: ).qq($frcpt\n);
+	$pstat ||= Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode($error));
+	$xsmtp  = $state == 14 ? 'RCPT' : $state == 18 ? 'DATA' : 'CONN';
+	$phead .= __PACKAGE__->xsmtpcommand().$xsmtp.qq(\n);
+	$phead .=  q(Diagnostic-Code: SMTP; ).qq($dcode\n);
+	$phead .=  q(Status: ).qq($pstat\n);
+	$phead .=  q(Final-Recipient: rfc822; ).qq($frcpt\n);
+	$phead .=  q(To: ).qq($frcpt\n);
 	return $phead;
 }
 
