@@ -1,4 +1,4 @@
-# $Id: Postfix.pm,v 1.1 2010/07/04 23:45:50 ak Exp $
+# $Id: Postfix.pm,v 1.2 2010/07/05 02:27:04 ak Exp $
 # Kanadzuchi::MTA::
                                                
  #####                  ##    ###  ##          
@@ -39,8 +39,8 @@ sub reperit
 	# @Param <ref>	(Ref->String) Message body
 	# @Return	(String) Pseudo header content
 	my $class = shift();
-	my $mhead = shift() || return();
-	my $mbody = shift() || return();
+	my $mhead = shift() || return q();
+	my $mbody = shift() || return q();
 
 	#  ____           _    __ _      
 	# |  _ \ ___  ___| |_ / _(_)_  __
@@ -76,7 +76,9 @@ sub reperit
 		if( ( $xflag & 1 ) && ! ( $xflag & 4 ) )
 		{
 			# <recipient@example.com>: host mx.example.com [102.0.2.3] said:
-			$xflag |= 2 if( $el =~ m{\A[<].+[@].+[>]:} );
+			# <recipient@example.net> (expanded from <user@example.net>): host ...
+			# $xflag |= 2 if( $el =~ m{\A[<].+[@].+[>][:]} || $el =~ m{\A[<].+[@].+[>] [(]expanded from} );
+			$xflag |= 2 if( $el =~ m{\A[<].+[@].+[>][:]?} );
 			$rhostsaid .= $el if( $xflag == 3 && $rhostsaid !~ m{ command[)]\z} );
 
 			# Reporting-MTA: dns; mx.example.jp

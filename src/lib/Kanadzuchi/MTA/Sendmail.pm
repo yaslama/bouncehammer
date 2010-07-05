@@ -1,4 +1,4 @@
-# $Id: Sendmail.pm,v 1.1 2010/07/04 23:45:50 ak Exp $
+# $Id: Sendmail.pm,v 1.2 2010/07/05 02:27:04 ak Exp $
 # Kanadzuchi::MTA::
                                                           
   #####                    ##                  ##  ###    
@@ -41,8 +41,8 @@ sub reperit
 	# @Param <ref>	(Ref->String) Message body
 	# @Return	(String) Pseudo header content
 	my $class = shift();
-	my $mhead = shift() || return();
-	my $mbody = shift() || return();
+	my $mhead = shift() || return q();
+	my $mbody = shift() || return q();
 
 	return q() unless( $mhead->{'subject'} eq 'Postmaster notify: see transcript for details' );
 	return q() unless( $mhead->{'from'} =~ m{\AMail Delivery Subsystem} );
