@@ -7,7 +7,7 @@ Content-Type: multipart/report;report-type="delivery-status";
 	boundary="dsn_3515f7bf_7322_4156_955a_79f259d066b4"
 Date: Thu, 08 Feb 2007 18:39:28 +0900
 Sender: MAILER-DAEMON@example.jp
-From: MAILER-DAEMON@example.jp
+From: Mail Delivery Subsystem <MAILER-DAEMON@example.jp>
 To: bouncehammer@cubicroot.jp
 Subject: Returned mail: see transcript for details
 Message-ID: <20070208183928119774.1ded@000E0C83C14F>
