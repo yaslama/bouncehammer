@@ -1,4 +1,4 @@
-# $Id: Dispatch.pm,v 1.7 2010/07/01 16:46:27 ak Exp $
+# $Id: Dispatch.pm,v 1.8 2010/07/07 01:05:24 ak Exp $
 # -Id: Index.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Index.pm,v 1.3 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -44,8 +44,7 @@ my $DispatchTables = [
 	'summary'	=> { 'app' => 'Web::Summary',	'rm' => 'Summary' },
 	'update/:pi_id'	=> { 'app' => 'Web::Update',	'rm' => 'Update' },
 	'delete/:pi_id'	=> { 'app' => 'Web::Delete',	'rm' => 'Delete' },
-	# 'config/neighbor-domains' => { 'app' => 'Web::Config',	'rm' => 'Config' },
-	# 'config/available-countries' => { 'app' => 'Web::Config',	'rm' => 'Config' },
+	'config/:pi_cf' => { 'app' => 'Web::Config',	'rm' => 'Config' },
 
 	'search/recipient/:pi_recipient?/:pi_orderby?/:pi_page?/:pi_rpp?' => { 
 						'app' => 'Web::Search', 
@@ -71,6 +70,9 @@ my $DispatchTables = [
 	'tables/:pi_tablename/delete' => { 
 				'app' => 'Web::MasterTables',
 				'rm'  => 'TableControl' },
+	'aggregate/:pi_tablename' => {
+				'app' => 'Web::Aggregate',
+				'rm'  => 'Aggregate' },
 ];
 
 my $DispatchArgsToNew = {

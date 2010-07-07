@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.18 2010/06/28 13:18:28 ak Exp $
+# $Id: Web.pm,v 1.19 2010/07/07 01:03:54 ak Exp $
 # -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
 # -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -116,17 +116,18 @@ sub setup
 	$self->error_mode('exception');
 	$self->mode_param('x');
 	$self->run_modes( 
-		'Test'		=> 'test_ontheweb',
-		'Parse'		=> 'parse_ontheweb',
-		'Index'		=> 'index_ontheweb',
-		'Token'		=> 'token_ontheweb',
-		'Search'	=> 'search_ontheweb',
-		'Update'	=> 'update_ontheweb',
+		'Aggregate'	=> 'aggregate_ontheweb',
 		'Delete'	=> 'delete_ontheweb',
+		'Index'		=> 'index_ontheweb',
+		'Parse'		=> 'parse_ontheweb',
 		'Profile'	=> 'profile_ontheweb',
+		'Search'	=> 'search_ontheweb',
 		'Summary'	=> 'summary_ontheweb',
-		'TableList'	=> 'tablelist_ontheweb',
 		'TableControl'	=> 'tablectl_ontheweb',
+		'TableList'	=> 'tablelist_ontheweb',
+		'Test'		=> 'test_ontheweb',
+		'Token'		=> 'token_ontheweb',
+		'Update'	=> 'update_ontheweb',
 	);
 }
 

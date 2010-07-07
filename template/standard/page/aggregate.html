@@ -1,0 +1,131 @@
+[%- PROCESS "heads.tt" -%]
+[%- PROCESS "words.tt" -%]
+[%- PROCESS "terms.tt" -%]
+[%- PROCESS "reason.tt" -%]
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% systemname %]/[% head.aggregatedby %]/[% term.${columnname} %]</title>
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+		[% INCLUDE bouncehammer.css %]
+		[% INCLUDE aggregate.css %]
+		[% IF columnname == 'reason' %][% INCLUDE reason.css %][% END %]
+	-->
+	</style>
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% head1title %]/[% head.aggregatedby %]/[% term.${columnname} %]</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[% INCLUDE "div-index.html" %]
+		</div>
+		<div id = 'East-Ward'>
+			[%- IF columnname == 'addresser' %]
+				[% INCLUDE "help-addresser.html" %]
+			[%- END -%]
+			[%- IF columnname == 'senderdomain' %]
+				[% INCLUDE "help-senderdomain.html" %]
+			[%- END -%]
+			[%- IF columnname == 'destination' %]
+				[% INCLUDE "help-destination-domain.html" %]
+			[%- END -%]
+			[%- IF columnname == 'reason' %]
+				[% INCLUDE "help-reason.html" %]
+			[%- END -%]
+			[%- IF columnname == 'hostgroup' %]
+				[% INCLUDE "help-hostgroup.html" %]
+			[%- END -%]
+			[%- IF columnname == 'provider' %]
+				[% INCLUDE "help-provider.html" %]
+			[%- END -%]
+		</div>
+
+		<div id = 'Central-Ward'>
+			[%- IF columnname -%]
+			[%- SET scale = 240 -%]
+			<h2>[% head.aggregatedby %]([% term.${columnname} %])</h2>
+			<div class = 'aggregation'>
+				<table>
+					<thead><tr>
+						<th> &nbsp; </th>
+						<th>[% word.numofrecs %]</th>
+						<th>[% term.freq %]</th>
+						<th>[% word.graph %]([% word.numofrecs %])</th>
+						<th>[% word.ratio %]</th>
+					</tr><thead>
+					<tbody>
+					[%- FOREACH E IN aggregated -%]
+					<tr>
+						<td class = 'name'>
+							[%- IF columnname == 'reason' -%]
+								<div class = 'reason [% E.name %]' title = '[% reason.${E.name} %]'>[% E.name %]</div>
+							[%- ELSE -%]
+								[% E.name %]
+							[%- END -%]
+						</td>
+						<td class = 'numeral'>[% E.size %]</td>
+						<td class = 'numeral'>[% E.freq %]</td>
+						<td class = 'graph'>
+							[%- SET width = E.ratio * scale %]
+							<div class = 'bargraph'>
+								<div class = 'used' style = 'width: [% width %]px;'>&nbsp;</div>
+							</div>
+						</td>
+						<td class = 'numeral'>[%- E.ratio * 100 -%] %</td>
+					</tr>
+					[%- END -%]
+					</tbody>
+				</table>
+			</div>
+
+			<h2>[% head.descriptivestat %]([% term.${columnname} %])</h2>
+			<div class = 'aggregation'>
+				<table>
+					<thead><tr>
+						<th> &nbsp; </th>
+						<th>[% word.numofrecs %]</th>
+						<th>[% term.freq %]</th>
+						<th>[% word.graph %]([% word.numofrecs %])</th>
+						<th>[% word.ratio %]</th>
+					</tr></thead>
+					<tbody>
+					[%- FOREACH X IN [ 'sum', 'min', 'mean', 'max', 'stddev' ] -%]
+					<tr>
+						<td class = 'name'>[% word.$X %]</td>
+						<td class = 'numeral'>[% summarized.size.$X %]</td>
+						<td class = 'numeral'>[% summarized.freq.$X %]</td>
+						<td class = 'graph'>
+							[%- SET width = summarized.size.$X / summarized.size.sum * scale -%]
+							<div class = 'bargraph'>
+								<div class = 'used' style = 'width: [% width %]px;'>&nbsp;</div>
+							</div>
+						</td>
+						<td class = 'numeral'>
+							&nbsp;
+							[%- IF X == 'sum' -%]100.00 %[%- END -%]
+						</td>
+					</tr>
+					[%- END -%]
+					</tbody>
+				</table>
+			</div>
+			[%- ELSE -%]
+				[%- INCLUDE "div-error.html" -%]
+			[%- END -%]
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+
+	</div>
+</body>
+</html>
+
