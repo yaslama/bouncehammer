@@ -1,4 +1,4 @@
-# $Id: Statistics.pm,v 1.7 2010/06/25 19:29:22 ak Exp $
+# $Id: Statistics.pm,v 1.8 2010/07/07 01:04:26 ak Exp $
 # -Id: Statistics.pm,v 1.1 2009/08/29 09:00:23 ak Exp -
 # -Id: Statistics.pm,v 1.1 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -66,10 +66,10 @@ sub is_number
 	my $class = shift();
 	my $n = shift();
 
-	return(1) if( $n =~ m{\A[-+]?\d+\z} );			# Integer
-	return(1) if( $n =~ m{\A[-+]?\d+[.]\d+\z} );		# Float
-	return(1) if( $n =~ m{\A[-+]?\d+[Ee][-+]?\d+\z} );	# Float(e)
-	return(0);
+	return 1 if( $n =~ m{\A[-+]?\d+\z} );			# Integer
+	return 1 if( $n =~ m{\A[-+]?\d+[.]\d+\z} );		# Float
+	return 1 if( $n =~ m{\A[-+]?\d+[Ee][-+]?\d+\z} );	# Float(e)
+	return 0;
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -94,7 +94,7 @@ sub round
 	return int($n) if( $self->{'rounding'} == 1 );
 
 	$p = 10 ** ( $self->{'rounding'} - 1 );
-	return( int( $n * $p + 0.5 ) / $p );
+	return int( $n * $p + 0.5 ) / $p;
 }
 
 # Descriptive Statistics
@@ -111,8 +111,26 @@ sub size
 	my $smpl = shift() || $self->{'sample'};
 	my $size = 0;
 
-	return(-1) unless( ref($smpl) eq q|ARRAY| );
+	return -1 unless( ref($smpl) eq q|ARRAY| );
 	return scalar(@$smpl);
+}
+
+sub sum
+{
+	# +-+-+-+
+	# |s|u|m|
+	# +-+-+-+
+	#
+	# @Description	Sum
+	# @Param <ref>	(Ref->Array) Array of sample(optional)
+	# @Return	(Float) Sum
+	my $self = shift();
+	my $smpl = shift() || $self->{'sample'};
+	my $summ = 0;
+
+	return q() unless( ref($smpl) eq q|ARRAY| );
+	$summ = List::Util::sum( @$smpl );
+	return $self->round( $summ );
 }
 
 sub mean
@@ -128,8 +146,8 @@ sub mean
 	my $smpl = shift() || $self->{'sample'};
 	my $mean = 0;
 
-	return q{} if( $self->size( $smpl ) < 1 );
-	$mean = List::Util::sum( @{$smpl} ) / $self->size( $smpl );
+	return q() if( $self->size( $smpl ) < 1 );
+	$mean = List::Util::sum( @$smpl ) / $self->size( $smpl );
 	return $self->round( $mean );
 }
 
@@ -158,7 +176,7 @@ sub variance
 	$self->{'rounding'} = $rounding;
 	return q() unless( __PACKAGE__->is_number( $mean ) );
 
-	$diff = [ map { ( $_ - $mean ) ** 2 } @{$smpl} ];
+	$diff = [ map { ( $_ - $mean ) ** 2 } @$smpl ];
 	$variance = List::Util::sum(@$diff) / ( $self->size($smpl) - $self->{'unbiased'} );
 
 	return $self->round($variance);
@@ -199,7 +217,7 @@ sub max
 	my $smpl = shift() || $self->{'sample'};
 
 	return q() if( $self->size( $smpl ) < 1 );
-	return List::Util::max( @{$smpl} );
+	return List::Util::max( @$smpl );
 }
 
 sub min
@@ -215,7 +233,7 @@ sub min
 	my $smpl = shift() || $self->{'sample'};
 
 	return q() if( $self->size( $smpl ) < 1 );
-	return List::Util::min( @{$smpl} );
+	return List::Util::min( @$smpl );
 }
 
 sub quartile
@@ -239,14 +257,14 @@ sub quartile
 	return q() if( $self->size( $smpl ) < 1 );
 
 	$q = 2 if( $q < 1 || $q > 3 );
-	$sorted = [ sort { $a <=> $b } @{$smpl} ];
+	$sorted = [ sort { $a <=> $b } @$smpl ];
 	$qindex = 1 - ( 0.25 * $q ) + ( 0.25 * $q * $self->size( $smpl ) );
 	$remain = ( $qindex * 100 ) % 100;
 	return $sorted->[$qindex-1] if( $remain == 0 );
 
 	$qindex = int($qindex);
 	$remain = $remain / 100;
-	return( $sorted->[$qindex-1] + ( $remain * ( $sorted->[$qindex] - $sorted->[$qindex-1] ) ) );
+	return $sorted->[$qindex-1] + ( $remain * ( $sorted->[$qindex] - $sorted->[$qindex-1] ) );
 }
 
 sub median
@@ -260,7 +278,7 @@ sub median
 	# @Return	(Float) Median
 	my $self = shift();
 	my $smpl = shift() || $self->{'sample'};
-	return( $self->quartile( 2, $smpl ) );
+	return $self->quartile( 2, $smpl );
 }
 
 sub range
@@ -276,7 +294,7 @@ sub range
 	my $smpl = shift() || $self->{'sample'};
 
 	return q() if( $self->size( $smpl ) < 1 );
-	return( List::Util::max( @{$smpl} ) - List::Util::min( @{$smpl} ) );
+	return List::Util::max( @$smpl ) - List::Util::min( @$smpl );
 }
 
 1;

@@ -1,4 +1,4 @@
-# $Id: 020_statistics.t,v 1.3 2010/06/25 19:29:20 ak Exp $
+# $Id: 020_statistics.t,v 1.4 2010/07/07 01:04:35 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,7 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Statistics;
 use List::Util;
-use Test::More ( tests => 142 );
+use Test::More ( tests => 151 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -20,7 +20,7 @@ use Test::More ( tests => 142 );
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::Statistics|,
 	'methods' => [
-		'new', 'is_number', 'round', 'size',
+		'new', 'is_number', 'round', 'size', 'sum',
 		'mean', 'variance', 'stddev', 'max', 'var',
 		'min', 'quartile', 'median', 'range', ],
 	'instance' => new Kanadzuchi::Statistics(), );
@@ -68,7 +68,6 @@ METHODS: {
 
 	ROUND: {
 		# round();
-
 		is( $object->round(3.14), 3.14, $classx.q{->round(3.14)} );
 		is( $object->round(3.141), 3.141, $classx.q{->round(3.141)} );
 		is( $object->round(3.1415), 3.142, $classx.q{->round(3.142)} );
@@ -105,6 +104,7 @@ METHODS: {
 
 			is( $object->label(), 'Normal test', $classx.q{->label(Normal test)} );
 			is( $object->size(), 10, $classx.q{->size(Normal)} );
+			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{'Normal'}}), q{->sum(Normal test)} );
 			is( $object->range(), 9, $classx.q{->range(Normal)} );
 			is( $object->mean(), 4.5, $classx.q{->mean(Normal)} );
 			is( $object->median(), 4.5, $classx.q{->median(Normal)} );
@@ -127,6 +127,7 @@ METHODS: {
 
 			is( $object->label(), 'Descending', $classx.q{->label(Descending)} );
 			is( $object->size(), 10, $classx.q{->size(Descend)} );
+			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{'Descend'}}), q{->sum(Decend)} );
 			is( $object->range(), 9, $classx.q{->range(Descend)} );
 			is( $object->mean(), 4.5, $classx.q{->mean(Descend)} );
 			is( $object->median(), 4.5, $classx.q{->median(Descend)} );
@@ -149,6 +150,7 @@ METHODS: {
 
 			is( $object->label(), 'Cube', $classx.q{->label(Cube)} );
 			is( $object->size(), 12, $classx.q{->size(Cube)} );
+			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{'Cube'}}), q{->sum(Cube)} );
 			is( $object->range(), 1727, $classx.q{->range(Cube)} );
 			is( $object->mean(), 507, $classx.q{->mean(Cube)} );
 			is( $object->median(), 279.5, $classx.q{->median(Cube)} );
@@ -171,6 +173,7 @@ METHODS: {
 
 			is( $object->label(), 'Fibonacci', $classx.q{->label(Fibonacci)} );
 			is( $object->size(), 17, $classx.q{->size(Fibonacci)} );
+			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{'Fibonacci'}}), q{->sum(Fibonacci)} );
 			is( $object->range(), 987, $classx.q{->range(Fibonacci)} );
 			is( $object->mean(), 151.941, $classx.q{->mean(Fibonacci)} );
 			is( $object->median(), 21, $classx.q{->median(Fibonacci)} );
@@ -193,6 +196,7 @@ METHODS: {
 
 			is( $object->label(), 'Friedman', $classx.q{->label(Friedman)} );
 			is( $object->size(), 16, $classx.q{->size(Friedman)} );
+			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{'Friedman'}}), q{->sum(Freidman)} );
 			is( $object->range(), 999, $classx.q{->range(Friedman)} );
 			is( $object->mean(), 380.938, $classx.q{->mean(Friedman)} );
 			is( $object->median(), 252.5, $classx.q{->median(Friedman)} );
@@ -215,6 +219,7 @@ METHODS: {
 
 			is( $object->label(), 'SophieGermain', $classx.q{->label(SophieGermain)} );
 			is( $object->size(), 15, $classx.q{->size(SophieGermain)} );
+			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{'SophieGermain'}}), q{->sum(SophieGermain)} );
 			is( $object->range(), 189, $classx.q{->range(SophieGermain)} );
 			is( $object->mean(), 75.067, $classx.q{->mean(SophieGermain)} );
 			is( $object->median(), 53, $classx.q{->median(SophieGermain)} );
@@ -237,6 +242,7 @@ METHODS: {
 				$object->sample([]);
 
 				is( $object->size(), 0, $classx.q{->size(Empty)} );
+				is( $object->sum(), q(), $classx.q{->sum(Empty)} );
 				is( $object->range(), q(), $classx.q{->range(Empty)} );
 				is( $object->mean(), q(), $classx.q{->mean(Empty)} );
 				is( $object->median(), q(), $classx.q{->median(Empty)} );
@@ -253,6 +259,7 @@ METHODS: {
 				$object->sample(q{});
 
 				is( $object->size(), -1, $classx.q{->size(Null)} );
+				is( $object->sum(), q(), $classx.q{->sum(Null)} );
 				is( $object->range(), q(), $classx.q{->range(Null)} );
 				is( $object->mean(), q(), $classx.q{->mean(Null)} );
 				is( $object->median(), q(), $classx.q{->median(Null)} );
@@ -269,6 +276,7 @@ METHODS: {
 				$object->sample(undef());
 
 				is( $object->size(), -1, $classx.q{->size(undef())} );
+				is( $object->sum(), q(), $classx.q{->sum(undef())} );
 				is( $object->range(), q(), $classx.q{->range(undef())} );
 				is( $object->mean(), q(), $classx.q{->mean(undef())} );
 				is( $object->median(), q(), $classx.q{->median(undef())} );
