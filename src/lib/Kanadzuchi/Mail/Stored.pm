@@ -1,4 +1,4 @@
-# $Id: Stored.pm,v 1.7 2010/06/10 10:28:44 ak Exp $
+# $Id: Stored.pm,v 1.8 2010/07/07 01:06:26 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -55,7 +55,7 @@ sub damn
 
 	map { $damn->{$_} = $self->{$_} if( exists($self->{$_}) ) } ( 'id', 'disabled' );
 	map { $damn->{$_} = $self->{$_}->epoch() if( ref($self->{$_}) eq q|Time::Piece| ) } ( 'updated' );
-	return($damn);
+	return $damn;
 }
 
 sub insert
@@ -71,8 +71,8 @@ sub insert
 	# @Return	 (Integer) n = The ID of created object
 	#		 (Integer) 0 = Failed to INSERT
 	my $self = shift();
-	my $xtable = shift() || return(0);
-	my $mtable = shift() || return(0);
+	my $xtable = shift() || return 0;
+	my $mtable = shift() || return 0;
 	my $tcache = shift() || undef();
 
 	my $mtcols = $xtable->fields->{'join'};
@@ -80,7 +80,7 @@ sub insert
 	my $xcache = {};	# Cached data for transaction table
 	my $nudata = 0;		# The ID of Inserted record
 	my $tcdata = q();	# Temporary cache data
-	my $xalias = lc($xtable->alias());
+	my $xalias = lc $xtable->alias();
 	my $malias = q();
 
 	# Get the value of transaction table from cache
@@ -88,12 +88,12 @@ sub insert
 	{
 		# Old data will not be inserted
 		$xcache = $tcache->getit( $xalias, $self->{'token'} );
-		return( $xcache->{'id'} ) if( $xcache->{'id'} );
+		return $xcache->{'id'} if( $xcache->{'id'} );
 
 		# Get the value of each mastertable from cache
 		GETIT_FROM_CACHE: foreach my $_mt ( @$mtcols )
 		{
-			$malias = lc($mtable->{$_mt.'s'}->alias());
+			$malias = lc $mtable->{$_mt.'s'}->alias();
 			$tcdata = $_mt eq 'addresser' ? $self->{$_mt}->address() : $self->{$_mt};
 			$mcache->{$_mt} = $tcache->getit( $malias, $tcdata );
 		}
@@ -104,7 +104,7 @@ sub insert
 	{
 		unless( $mcache->{$_mt} )
 		{
-			$malias = lc($mtable->{$_mt.'s'}->alias());
+			$malias = lc $mtable->{$_mt.'s'}->alias();
 			$tcdata = $_mt eq 'addresser' ? $self->{$_mt}->address() : $self->{$_mt};
 			$mcache->{$_mt} = $mtable->{$malias}->getidbyname( $tcdata );
 
@@ -121,7 +121,7 @@ sub insert
 	}
 
 	# Do not INSERT if the senderdomain does not exist in the database.
-	return(0) unless($mcache->{'senderdomain'});
+	return 0 unless($mcache->{'senderdomain'});
 
 	$nudata = $xtable->insert( {
 			'addresser'	=> $mcache->{'addresser'},
@@ -137,15 +137,15 @@ sub insert
 			'description'	=> ${ Kanadzuchi::Metadata->to_string($self->{'description'}) },
 		} );
 
-	return(0) if( $nudata == 0 );
-	return($nudata) unless( $tcache );
+	return 0 if( $nudata == 0 );
+	return $nudata unless( $tcache );
 
 	# Set data into cache
 	$xcache = { 'id' => $nudata, 'bounced' => $self->{'bounced'}->epoch(),
 			'frequency' => 1, 'reason' => $self->{'reason'},
 			'hostgroup' => $self->{'hostgroup'} };
 	$tcache->setit( $xalias, $self->{'token'}, $xcache );
-	return($nudata);
+	return $nudata;
 }
 
 sub update
@@ -161,14 +161,14 @@ sub update
 	#		(Integer)  0 = No data to UPDATE in the db || Failed to UPDATE
 	#		(Integer) -1 = New data is too old or same
 	my $self = shift();
-	my $xtable = shift() || return(0);
-	my $tcache = shift() || return(0);
+	my $xtable = shift() || return 0;
+	my $tcache = shift() || return 0;
 
 	my $isnew1 = 0;		# (Integer) Flag, 1 = the data is newer than the DB's one
 	my $xcache = {};	# (Ref->Hash) Cached data
 	my $nucond = {};	# (Ref->Hash) Where condition for UPDATE
 	my $nudata = {};	# (Ref->Hash) New data to UPDATE
-	my $xalias = lc($xtable->alias());
+	my $xalias = lc $xtable->alias();
 
 	# Get the value of transaction table from cache
 	$xcache = $tcache->getit( $xalias, $self->{'token'} );
@@ -176,7 +176,7 @@ sub update
 	unless( $xcache->{'id'} )
 	{
 		# There is no data to update in the database.
-		return(0) unless( $self->findbytoken($xtable,$tcache) );
+		return 0 unless( $self->findbytoken($xtable,$tcache) );
 
 		# Get the value of transaction table from cache, Again
 		$xcache = $tcache->getit( $xalias, $self->{'token'} );
@@ -194,8 +194,8 @@ sub update
 	$nudata->{'bounced'} = $self->{'bounced'} if( $isnew1 );
 	$nudata->{'updated'} = new Time::Piece();
 
-	return(0) if( keys(%$nudata) == 1 );			# No key except 'updated'
-	return(0) unless( $xtable->update($nudata,$nucond) );	# UPDATE new data
+	return 0 if( keys(%$nudata) == 1 );			# No key except 'updated'
+	return 0 unless( $xtable->update($nudata,$nucond) );	# UPDATE new data
 
 	# Set new data into cache
 	foreach my $_f ( 'reason', 'hostgroup' )
@@ -206,7 +206,7 @@ sub update
 	$xcache->{'frequency'}++;
 	$xcache->{'bounced'} = $isnew1 ? $nudata->{'bounced'}->epoch() : $self->{'bounced'}->epoch();
 	$tcache->setit( $xalias, $self->{'token'}, $xcache );
-	return(1);
+	return 1;
 }
 
 sub findbytoken
@@ -221,8 +221,8 @@ sub findbytoken
 	# @Return	(Integer) 1 = Find the record
 	#		(Integer) 0 = The message token not found
 	my $self = shift();
-	my $xtable = shift() || return(0);
-	my $tcache = shift() || return(0);
+	my $xtable = shift() || return 0;
+	my $tcache = shift() || return 0;
 	my $xcache = {};
 	my $xalias = lc($xtable->alias());
 
@@ -254,10 +254,10 @@ sub findbytoken
 	{
 		$xtable->error->{'string'} = $@;
 		$xtable->error->{'count'}++;
-		return(0);
+		return 0;
 	}
-	return(0) unless( $xcache->{'id'} );
-	return(1);
+	return 0 unless( $xcache->{'id'} );
+	return 1;
 }
 
 1;

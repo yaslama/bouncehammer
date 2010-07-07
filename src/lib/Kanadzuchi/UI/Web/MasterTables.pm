@@ -1,4 +1,4 @@
-# $Id: MasterTables.pm,v 1.16 2010/06/28 13:18:31 ak Exp $
+# $Id: MasterTables.pm,v 1.17 2010/07/07 01:05:25 ak Exp $
 # -Id: MasterTables.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: MasterTables.pm,v 1.7 2009/08/15 15:06:56 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -45,7 +45,8 @@ sub tablelist_ontheweb
 	my $templatef = 'mastertable.html';
 	my $tableconf = $self->{'webconfig'}->{'database'}->{'table'};
 	my $tablename = lc $self->param('pi_tablename');
-	my $tableisro = $tableconf->{$tablename}->{'readonly'};
+	my $asacolumn = $tablename; $asacolumn =~ s{s\z}{};
+	my $tableisro = $tableconf->{$tablename}->{'readonly'} || 0;
 	my $wherecond = {};
 	my $mastertab = new Kanadzuchi::BdDR::BounceLogs::Masters::Table( 
 				'alias' => $tablename, 'handle' => $bddr->handle() );
@@ -63,8 +64,9 @@ sub tablelist_ontheweb
 		'sortby' => $paginated->colnameorderby(),
 		'titlename' => ucfirst $tablename,
 		'tablename' => $tablename,
+		'asacolumn' => $asacolumn,
 		'fieldname' => $mastertab->field(),
-		'isreadonly' => $tableconf->{$tablename}->{'readonly'},
+		'isreadonly' => $tableisro,
 		'pagination' => $paginated,
 		'contentsname' => 'table',
 		'hascondition' => 0,
@@ -87,7 +89,7 @@ sub tablectl_ontheweb
 	my $templatee = 'div-mastertable-error.html';
 	my $tablename = lc $self->param('pi_tablename');
 	my $tableconf = $self->{'webconfig'}->{'database'}->{'table'};
-	my $tableisro = $tableconf->{$tablename}->{'readonly'};
+	my $tableisro = $tableconf->{$tablename}->{'readonly'} || 0;
 	my $mastertab = new Kanadzuchi::BdDR::BounceLogs::Masters::Table(
 				'alias' => $tablename, 'handle' => $bddr->handle() );
 

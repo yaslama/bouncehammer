@@ -1,4 +1,4 @@
-# $Id: RFC2822.pm,v 1.10 2010/06/11 00:05:57 ak Exp $
+# $Id: RFC2822.pm,v 1.11 2010/07/07 01:06:21 ak Exp $
 # -Id: RFC2822.pm,v 1.1 2009/08/29 08:52:03 ak Exp -
 # -Id: RFC2822.pm,v 1.6 2009/05/29 08:22:21 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -160,11 +160,13 @@ sub cleanup
 	my $class = shift();
 	my $email = shift();
 
-	chomp($email);			# Remove CR/LF
-	$email =~ s{\A\s+}{}g;		# Remove spaces in the head
-	$email =~ s{\s+\z}{}g;		# Remove spaces in the tail
-	$email =~ s{\Amailto:}{}g;	# Remove 'mailto' schema
-	$email =~ y{[]<>()'";: }{}d;	# Remove brackets and quotations
+	chomp($email);				# Remove CR/LF
+	$email =~ s{\A\s+}{}g;			# Remove spaces in the head
+	$email =~ s{\s+\z}{}g;			# Remove spaces in the tail
+	$email =~ s{\Amailto:}{}g;		# Remove 'mailto' schema
+	$email =~ s{\A.+[<](.+)[>]\z}{$1}g;	# Remove Comment block1
+	$email =~ s{\A[<](.+)[>].+\z}{$1}g;	# Remove Comment block2
+	$email =~ y{[]<>()'";: }{}d;		# Remove brackets and quotations
 	return($email);
 }
 

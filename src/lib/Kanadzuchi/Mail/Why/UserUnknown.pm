@@ -1,4 +1,4 @@
-# $Id: UserUnknown.pm,v 1.7 2010/07/04 23:46:53 ak Exp $
+# $Id: UserUnknown.pm,v 1.8 2010/07/07 01:06:29 ak Exp $
 # -Id: UserUnknown.pm,v 1.1 2009/08/29 07:33:28 ak Exp -
 # -Id: UserUnknown.pm,v 1.2 2009/05/11 08:22:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -24,7 +24,7 @@ sub exemplaria
 	my $class = shift();
 	return [
 		qr{[#]5[.]1[.]1 bad address},
-		qr{550 Invalid recipient:},
+		qr{invalid recipient:},
 		qr{no such mailbox},
 		qr{no such user here},
 		qr{no such user!},

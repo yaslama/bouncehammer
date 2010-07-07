@@ -1,4 +1,4 @@
-# $Id: Summary.pm,v 1.12 2010/06/28 13:18:31 ak Exp $
+# $Id: Summary.pm,v 1.13 2010/07/07 01:05:25 ak Exp $
 # -Id: Summary.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Summary.pm,v 1.1 2009/08/18 02:37:53 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -52,8 +52,7 @@ sub summary_ontheweb
 		'capacity'	=> $maxrecord ? sprintf("%0.4f", $numofrecs / $maxrecord ) : 0,
 	};
 
-	# Count the number of records in SenderDoamins table
-	foreach my $mt ( 's', 'd' )
+	foreach my $mt ( 'a', 's', 'd' )
 	{
 		my $mtobj = new Kanadzuchi::BdDR::BounceLogs::Masters::Table( 
 					'alias' => $mt, 'handle' => $bddr->handle() );
@@ -62,6 +61,8 @@ sub summary_ontheweb
 		my $maxrr = $tableconf->{$tname}->{'maxrecords'};
 		my $ratio = $maxrr ? sprintf( "%0.4f", $count / $maxrr ) : 0;
 
+		map { $tableconf->{ $tname }->{$_} = 0 
+			unless defined $tableconf->{$tname}->{$_} } qw( readonly maxrecords );
 		$tablesumm->{ $tname } = {
 				'capacity' => $ratio,
 				'screenname' => $mtobj->alias(),

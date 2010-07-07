@@ -1,4 +1,4 @@
-# $Id: SoftBank.pm,v 1.3 2010/07/04 23:48:40 ak Exp $
+# $Id: SoftBank.pm,v 1.4 2010/07/07 01:06:27 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Bounced::JP::
                                                         
@@ -86,7 +86,7 @@ sub is_userunknown
 	my $diag = $self->{'diagnosticcode'} || q();
 	my $subj = 'userunknown';
 	my $isuu = 0;
-	my $rxuu = qr{550[ ]Invalid[ ]recipient[:][ ][<].+[>]}o;
+	my $rxuu = qr{550[ ]Invalid[ ]recipient[:][ ][<].+[>]};
 
 	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
@@ -109,10 +109,11 @@ sub is_userunknown
 		{
 			eval { require Kanadzuchi::Mail::Why::UserUnknown; };
 			my $ulib = q|Kanadzuchi::Mail::Why::UserUnknown|;
-			my $diag = $self->{'diagnosticcode'};
 
-			if( $self->{'smtpcommand'} eq 'RCPT' && $ulib->habettextu($diag) )
-			{
+			if( $self->{'smtpcommand'} eq 'RCPT' &&
+					( $diag =~ $rxuu || $ulib->habettextu($diag) ) ){
+
+				warn 'Hoge';
 				$isuu = 1;
 			}
 		}

@@ -1,4 +1,4 @@
-# $Id: Address.pm,v 1.6 2010/06/11 00:05:57 ak Exp $
+# $Id: Address.pm,v 1.7 2010/07/07 01:06:21 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                    
@@ -48,7 +48,7 @@ sub new
 	my $class = shift();
 	my $argvs = { @_ }; 
 
-	return(undef()) unless( defined($argvs->{'address'}) );
+	return undef() unless( defined($argvs->{'address'}) );
 
 	if( $argvs->{'address'} =~ m{\A([^@]+)[@]([^@]+)\z} )
 	{
@@ -57,11 +57,11 @@ sub new
 
 		map { $_ =~ y{`'"<>}{}d } %$argvs;
 		$argvs->{'address'} = $argvs->{'user'}.q{@}.$argvs->{'host'};
-		return( $class->SUPER::new($argvs));
+		return $class->SUPER::new($argvs);
 	}
 	else
 	{
-		return(undef());
+		return undef();
 	}
 }
 
@@ -75,18 +75,18 @@ sub parse
 	# @Param <ref>	(Ref->Array) text include any email address
 	# @Return	(Ref->Array) K::Address Objects in the array
 	my $class = shift();
-	my $argvs = shift() || return(undef());
+	my $argvs = shift() || return undef();
 	my $email = undef();
 	my $aobjs = [];
 
-	return( [] ) unless( ref($argvs) eq q|ARRAY| );
+	return [] unless( ref($argvs) eq q|ARRAY| );
 
-	PARSE_ARRAY: foreach my $a ( @$argvs )
+	PARSE_ARRAY: foreach my $x ( @$argvs )
 	{
-		next() unless( defined($a) );
-		next() unless( $a =~ m{[@]} );
+		next() unless( defined($x) );
+		next() unless( $x =~ m{[@]} );
 
-		PARSE_ADDRESS: foreach my $e ( Email::AddressParser->parse($a) )
+		PARSE_ADDRESS: foreach my $e ( Email::AddressParser->parse($x) )
 		{
 			next(PARSE_ADDRESS) unless( $e->address() );
 			$email = __PACKAGE__->new( 'address' => $e->address() );
@@ -95,7 +95,7 @@ sub parse
 		}
 	}
 
-	return( $aobjs );
+	return $aobjs;
 }
 
 1;

@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.22 2010/07/04 23:48:36 ak Exp $
+# $Id: Bounced.pm,v 1.23 2010/07/07 01:06:25 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -109,7 +109,7 @@ sub eatit
 
 			# There is no recipient address, skip.
 			next(MIMEPARSER) unless( @$tempemails );
-			map { $_ =~ y{`'"()<>\r\n$}{}d; $_ =~ y{ }{,}; $_ =~ s{;.+\z}{}g; } @$tempemails;
+			map{ $_ = Kanadzuchi::RFC2822->cleanup($_) } @$tempemails;
 
 			RECIPIENTS: foreach my $_e ( @{ Kanadzuchi::Address->parse($tempemails) } )
 			{
@@ -161,13 +161,14 @@ sub eatit
 			}
 
 			next(MIMEPARSER) unless( @$tempemails );
-			map { $_ =~ y{`'"()<>\r\n$}{}d; $_ =~ y{ }{,}; $_ =~ s{;.+\z}{}g; } @$tempemails;
+			map{ $_ = Kanadzuchi::RFC2822->cleanup($_) } @$tempemails;
 
 			ADDRESSER: foreach my $_e ( @{ Kanadzuchi::Address->parse($tempemails) } )
 			{
 				if( Kanadzuchi::RFC2822->is_emailaddress($_e->address()) )
 				{
-					next() if( $_e->address() eq $bouncemesg->{'recipient'}->address() );
+					# Skip if the addresser equals the recipient
+					#next() if( $_e->address() eq $bouncemesg->{'recipient'}->address() );
 					next() if( Kanadzuchi::RFC2822->is_mailerdaemon($_e->address()) );
 
 					if( Kanadzuchi::RFC2822->is_subaddress($_e->address()) )
@@ -200,6 +201,7 @@ sub eatit
 			# Convert from (string)'5.1.2' to (int)512;
 			$tempheader->{'deliverystatus'} =~ y{0-9}{}dc;
 			next() unless( $tempheader->{'deliverystatus'} );
+			next() unless( $tempheader->{'deliverystatus'} / 100 > 3 );
 			$bouncemesg->{'deliverystatus'} = int($tempheader->{'deliverystatus'});
 		}
 

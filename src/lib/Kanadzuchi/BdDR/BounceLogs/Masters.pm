@@ -1,4 +1,4 @@
-# $Id: Masters.pm,v 1.10 2010/06/25 19:25:57 ak Exp $
+# $Id: Masters.pm,v 1.11 2010/07/07 01:06:24 ak Exp $
 # -Id: Addressers.pm,v 1.4 2010/03/04 08:33:28 ak Exp -
 # -Id: Addressers.pm,v 1.4 2010/02/21 20:42:02 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -107,7 +107,7 @@ sub whichtable
 	# @Param <str>	(String) Table alias or symbol character
 	# @Return	(String) MasterTable class name
 	my $class = shift();
-	my $alias = lc(shift()) || return(undef());
+	my $alias = lc(shift()) || return undef();
 	my $klass = q();
 
 	if( $alias eq 'addressers' || $alias eq 'a' )
@@ -118,7 +118,7 @@ sub whichtable
 	{
 		$klass = 'SenderDomains';
 	}
-	elsif( $alias eq 'reasons' || $alias eq 'w' )
+	elsif( $alias eq 'reasons' || $alias eq 'w' || $alias eq 'r' )
 	{
 		$klass = 'Reasons';
 	}
