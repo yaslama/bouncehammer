@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.17 2010/07/07 01:03:05 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.18 2010/07/07 09:05:53 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -307,6 +307,11 @@ ul.index li.item, ul.index li.itemgroup {
 	margin: 2px 0;
 	padding: 2px 2px 2px 8px;
 	display: block;
+}
+
+li.itemgroup {
+	color: #44617b; /* Kon-nezu */
+	font-weight: bold;
 }
 
 ul.index li.item:hover,
