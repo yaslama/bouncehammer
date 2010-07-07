@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.16 2010/06/25 19:34:06 ak Exp $
+# $Id: databasectl.PL,v 1.17 2010/07/07 01:07:12 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -161,7 +161,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		{
 			# Set the log file name
 			my $_theday = bless( (localtime() - ( $Day * 86400 )), q|Time::Piece| );
-			my $_thelog = new Path::Class::File( $Zci->get_logfile('r',{ 'data' => $_theday->ymd('-') }) );
+			my $_thelog = new Path::Class::File( $Zci->get_logfile('r',{ 'date' => $_theday->ymd('-') }) );
 			push( @$Log, $_thelog );
 			$Cmd->d( 1, sprintf("Log file(date) = %s\n", $_thelog->stringify() ));
 		}
@@ -275,7 +275,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 					$execstatus->{'exceed'}++;
 					next();
 				}
-				
+
 				# Read JSON string from the log
 				$jsonstring = $_; chomp($jsonstring);
 				$kanazciitr = Kanadzuchi::Mail::Stored::YAML->loadandnew(\$jsonstring);
@@ -286,6 +286,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 					$thismtoken = $parseddata->token();
 					$thismepoch = $parseddata->bounced->epoch();
 					$thiscached = $tablecache->getit( $xntabalias, $thismtoken );
+					$execinsert = 0;
 
 					if( exists($thiscached->{'bounced'}) )
 					{
@@ -352,12 +353,13 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 					{
 						# INSERT this record INTO the database
 						$thisstatus = $parseddata->insert($xntableobj,$mastertabs,$tablecache);
+					warn 'INSERT'.$thisstatus;
 						( $thisstatus > 0 ) ? $execstatus->{'insert'}++ : $execstatus->{'failed'}++;
 					}
 					else
 					{
 						$thisstatus = $parseddata->update($xntableobj,$tablecache);
-						( $thisstatus > 0 ) ? $execstatus->{'update'}++ : $execstatus->{'failed'}++;
+						( $thisstatus == 1 ) ? $execstatus->{'update'}++ : $execstatus->{'failed'}++;
 					}
 
 				} # End of while(READ_AND_UPDATE)

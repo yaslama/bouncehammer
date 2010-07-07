@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: summarizer.PL,v 1.6 2010/06/25 19:32:15 ak Exp $
+# $Id: summarizer.PL,v 1.7 2010/07/07 01:08:00 ak Exp $
 # -Id: summarizer.PL,v 1.13 2010/02/22 05:09:01 ak Exp -
 # -Id: summarizer.PL,v 1.2 2009/10/06 09:10:32 ak Exp -
 # -Id: summarizer.PL,v 1.3 2009/08/27 05:09:59 ak Exp -
@@ -146,7 +146,7 @@ if( $Cmd->operation & $Cmd->option->{'aggregate'} )
 		{
 			# Set the log file name
 			my $_theday = bless( (localtime() - ( $Day * 86400 )), q|Time::Piece| );
-			my $_thelog = new Path::Class::File( $Zci->get_logfile('r',{ 'data' => $_theday->ymd('-') }) );
+			my $_thelog = new Path::Class::File( $Zci->get_logfile('r',{ 'date' => $_theday->ymd('-') }) );
 			push( @$Log, $_thelog );
 		}
 
@@ -283,8 +283,6 @@ if( $Cmd->operation & $Cmd->option->{'aggregate'} )
 			}
 		}
 	}
-
-
 
 }
 
