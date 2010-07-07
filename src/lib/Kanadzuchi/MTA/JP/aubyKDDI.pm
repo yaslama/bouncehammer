@@ -1,4 +1,4 @@
-# $Id: aubyKDDI.pm,v 1.2 2010/07/04 23:46:02 ak Exp $
+# $Id: aubyKDDI.pm,v 1.3 2010/07/07 05:42:04 ak Exp $
 # -Id: aubyKDDI.pm,v 1.1 2009/08/29 08:50:38 ak Exp -
 # -Id: aubyKDDI.pm,v 1.1 2009/07/31 09:04:51 ak Exp -
 # Kanadzuchi::MTA::JP::
@@ -68,17 +68,20 @@ sub reperit
 
 	# Pre-Process eMail headers of NON-STANDARD bounce message
 	# au by KDDI(ezweb.ne.jp)
+	# Subject: Mail System Error - Returned Mail
+	# From: <Postmaster@ezweb.ne.jp>
 	# Received: from ezweb.ne.jp (wmflb12na02.ezweb.ne.jp [222.15.69.197])
 	# Received: from nmomta.auone-net.jp ([aaa.bbb.ccc.ddd]) by ...
 	#
-	$isau1++ if( lc($mhead->{'from'}) =~ m{[<]?(?>postmaster[@]ezweb[.]ne[.]jp)[>]?} );
+	$isau1++ if( lc $mhead->{'from'} =~ m{[<]?(?>postmaster[@]ezweb[.]ne[.]jp)[>]?} );
+	$isau1++ if( $mhead->{'subject'} eq 'Mail System Error - Returned Mail' );
 	return q() unless( $isau1 || scalar @{ $mhead->{'received'} } );
+
 	$isau1++ if( grep { $_ =~ m{\Afrom[ ]ezweb[.]ne[.]jp[ ]} } @{ $mhead->{'received'} } ||
 			grep { $_ =~ m{\Afrom[ ]\w+[.]auone-net[.]jp[ ]} } @{ $mhead->{'received'} } );
 	return q() unless( $isau1 );
 
-
-	if( ( $mhead->{'content-type'} =~ m{\Atext/plain} ) && ( $mhead->{'x-spasign'} eq q{NG} ) )
+	if( $mhead->{'x-spasign'} eq 'NG' )
 	{
 		# Content-Type: text/plain; ..., X-SPASIGN: NG (spamghetti, au by KDDI)
 		# Filtered recipient returns message that include 'X-SPASIGN' header
@@ -86,7 +89,8 @@ sub reperit
 		$phead .= q(Status: ).$pstat.qq(\n);
 
 	}
-	elsif( grep { $_ =~ m{\Afrom[ ]ezweb[.]ne[.]jp[ ]} } @{ $mhead->{'received'} } )
+
+	if( grep { $_ =~ m{\Afrom[ ]ezweb[.]ne[.]jp[ ]} } @{ $mhead->{'received'} } )
 	{
 		my $ezweb = 0;		# (Boolean) Flag, Set 1 if the line begins with the string 'The user(s) account is disabled.'
 		my $diagn = q();	# (String) Pseudo-Diagnostic-Code:

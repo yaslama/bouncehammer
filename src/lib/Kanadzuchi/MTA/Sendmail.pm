@@ -1,4 +1,4 @@
-# $Id: Sendmail.pm,v 1.2 2010/07/05 02:27:04 ak Exp $
+# $Id: Sendmail.pm,v 1.3 2010/07/07 05:42:03 ak Exp $
 # Kanadzuchi::MTA::
                                                           
   #####                    ##                  ##  ###    
@@ -44,12 +44,11 @@ sub reperit
 	my $mhead = shift() || return q();
 	my $mbody = shift() || return q();
 
-	return q() unless( $mhead->{'subject'} eq 'Postmaster notify: see transcript for details' );
+	return q() unless( $mhead->{'subject'} =~ m{see transcript for details\z} );
 	return q() unless( $mhead->{'from'} =~ m{\AMail Delivery Subsystem} );
 
 	my $xflag = 0;		# (Integer) Flag, 1 = is Sendmail, 2 = ...While talking..., 4 = Reporting MTA
 	my $phead = q();	# (String) Pseudo email header
-	my $pbody = q();	# (String) Pseudo body part
 	my $xsmtp = q();	# (String) SMTP Command in transcript of session
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
@@ -61,34 +60,31 @@ sub reperit
 			next();
 		}
 
-		if( ( $xflag & 1 ) && ! ( $xflag & 4 ) )
+		if( $xflag == 1 )
 		{
 			# ... while talking to mta.example.org.:
-			do { $xflag |= 2; next(); } if( $el =~ m{\A[.]+ while talking to .+[:]\z} );
+			$xflag |= 2 if( $el =~ m{\A[.]+ while talking to .+[:]\z} );
+			next();
+		}
+
+		if( $xflag == 3 )
+		{
+			# ... while talking to mta.example.jp.:
+			# >>> DATA
+			# <<< 550 Unknown user recipient@example.jp
+			# 554 5.0.0 Service unavailable
+			$xsmtp = $1 if( length($xsmtp) == 0 && $el =~ m{\A[>]{3}[ ]([A-Z]{4})[ ]} );
 
 			# Reporting-MTA: dns; mx.example.jp
 			# Received-From-MTA: DNS; x1x2x3x4.dhcp.example.ne.jp
 			# Arrival-Date: Wed, 29 Apr 2009 16:03:18 +0900
-			#
-			do { $xflag |= 4; next(); } if( $el =~ m{\AReporting-MTA: } );
-
+			last() if( $el =~ m{\AReporting-MTA: } );
 		}
-
-		if( ( $xflag & 2 ) && length($xsmtp) == 0 )
-		{
-			# ... while talking to mfsmax.docomo.ne.jp.:
-			# >>> DATA
-			# <<< 550 Unknown user ellesan-osuzaru1976-01-04@docomo.ne.jp
-			# 554 5.0.0 Service unavailable
-			$xsmtp = $1 if( $el =~ m{\A[>]{3}[ ]([A-Z]{4})[ ]} );
-		}
-
-		$pbody .= $el.qq(\n) if( $xflag & 7 );
 	}
 
 	$xsmtp ||= 'CONN';
 	$phead  .= __PACKAGE__->xsmtpcommand().$xsmtp.qq(\n);
-	return $phead.$pbody;
+	return $phead;
 }
 
 1;

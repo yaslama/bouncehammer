@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.17 2010/07/07 01:07:12 ak Exp $
+# $Id: databasectl.PL,v 1.18 2010/07/07 05:41:51 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -353,7 +353,6 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 					{
 						# INSERT this record INTO the database
 						$thisstatus = $parseddata->insert($xntableobj,$mastertabs,$tablecache);
-					warn 'INSERT'.$thisstatus;
 						( $thisstatus > 0 ) ? $execstatus->{'insert'}++ : $execstatus->{'failed'}++;
 					}
 					else

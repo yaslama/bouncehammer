@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.19 2010/07/04 23:48:19 ak Exp $
+# $Id: Mbox.pm,v 1.20 2010/07/07 05:42:01 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -178,6 +178,11 @@ sub breakit
 	my $thismessage = shift() || return(q());
 	my $thebodypart = shift() || return(q());
 	my $theheadpart = $thismessage->{'head'};
+	my $contenttype = [ 
+		qr{\Amultipart/(?:report|mixed)},
+		qr{\Amessage/(?:delivery-status|rfc822)},
+		qr{\Atext/rfc822-headers},
+	];
 
 	# Check whether or not the message is a bounce mail.
 	#  _____             _     _____                                _          _ 
@@ -203,13 +208,9 @@ sub breakit
 	# |____/ \__\__,_|_| |_|\__,_|\__,_|_|  \__,_| |_|  \___/|_|  |_| |_| |_|\__,_|\__|
 	#                                                                                  
 	# Pre-Process eMail headers of standard bounce message
-	#return $$thebodypart if( $theheadpart->{'content-type'} && (
-	#			 $theheadpart->{'content-type'} =~ m{^multipart/report} ||
-	#			 $theheadpart->{'content-type'} =~ m{^multipart/mixed} ||
-	#			 $theheadpart->{'content-type'} =~ m{^message/delivery-status} ||
-	#			 $theheadpart->{'content-type'} =~ m{^message/rfc822} ||
-	#			 $theheadpart->{'content-type'} =~ m{^text/rfc822-headers} ) );
-
+	#return $$thebodypart if( $theheadpart->{'content-type'} && 
+	#			grep { $theheadpart->{'content-type'} =~ $_ } @$contenttype );
+	#
 	my $parserclass = q();		# (String) Package|Class name
 	my $pseudofield = q();		# (String) Pseudo headers
 	my $agentmodule = q();		# (String) Agent class name
@@ -258,8 +259,8 @@ sub slurpit
 
 	unless( ref($file) eq q|SCALAR| )
 	{
-		return(0) if( $file =~ m{[\n\r]} || $file =~ m{[\x00-\x1f\x7f]} );
-		return(0) if(
+		return 0 if( $file =~ m{[\n\r]} || $file =~ m{[\x00-\x1f\x7f]} );
+		return 0 if(
 			! ( -f $file && -T _ && -s _ ) &&
 			! ( ref($file) eq q|GLOB| && -T $file ) );
 	}
@@ -285,9 +286,9 @@ sub slurpit
 		}
 	};
 
-	return(0) if($@);
+	return 0 if $@;
 	$self->{'nmails'} = scalar( @{$self->{'emails'}} );
-	return( $self->{'nmails'} );
+	return $self->{'nmails'};
 }
 
 sub parseit
@@ -342,6 +343,7 @@ sub parseit
 		# 1. Set the content in UNIX From_ Line
 		$_mesg->{'from'} = $_from;
 		$_mesg->{'head'}->{'received'} = [];
+		$_mesg->{'head'}->{'subject'} = q();
 
 		# 2. Parse email headers
 		my $__continued = 0;	# Flag; Continued from the previous line.
@@ -352,7 +354,7 @@ sub parseit
 			HEADERS: foreach my $_eh ( @$emailheaders, @$agentheaders )
 			{
 				next(HEADERS) unless( $_ln =~ m{\A$_eh[:][ ]*}i );
-				( $_mesg->{'head'}->{ lc($_eh) } ) = $_ln =~ m/\A${_eh}[:][ ]*(.+?)\z/i;
+				( $_mesg->{'head'}->{ lc $_eh } ) = $_ln =~ m/\A${_eh}[:][ ]*(.+?)\z/i;
 			}
 
 			# Get and concatenate 'Received:' headers
@@ -450,7 +452,7 @@ sub parseit
 	} # End of while(PARSE_EMAILS)
 
 	$self->{'emails'} = [];
-	return( $self->{'nmesgs'} );
+	return $self->{'nmesgs'};
 }
 
 1;
