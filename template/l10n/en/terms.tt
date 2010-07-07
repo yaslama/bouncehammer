@@ -1,4 +1,4 @@
-[%# $Id: terms.tt,v 1.1 2010/06/28 13:15:40 ak Exp $ -%]
+[%# $Id: terms.tt,v 1.2 2010/07/07 01:02:57 ak Exp $ -%]
 [%# Terms in English -%]
 [%- SET term = { 
 		'bouncelogs'	=> 'BounceLogs',
@@ -10,6 +10,7 @@
 		'hostgroup'	=> 'Host Group',
 		'provider'	=> 'Provider',
 		'reason'	=> 'Reason',
+		'freq'		=> 'Freq.',
 		'frequency'	=> 'Frequency',
 		'token'		=> 'Message Token',
 		'bounced'	=> 'Bounced at',

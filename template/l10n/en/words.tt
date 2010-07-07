@@ -1,4 +1,4 @@
-[%# $Id: words.tt,v 1.1 2010/06/28 13:15:40 ak Exp $ -%]
+[%# $Id: words.tt,v 1.2 2010/07/07 01:02:57 ak Exp $ -%]
 [%# Words in English -%]
 [%- SET word = { 
 		'about'		=> 'About',
@@ -38,6 +38,7 @@
 		'file'		=> 'File',
 		'fileformat'	=> 'File Format',
 		'format'	=> 'Format',
+		'graph'		=> 'Graph',
 		'headsup'	=> 'Heads Up!',
 		'host'		=> 'Host',
 		'hostname'	=> 'Hostname',
@@ -48,11 +49,16 @@
 		'mailbox'	=> 'Mailbox',
 		'make'		=> 'Make',
 		'making'	=> 'Making...',
+		'max'		=> 'Max.',
+		'mean'		=> 'Mean',
 		'message'	=> 'Message',
+		'min'		=> 'Min.',
 		'name'		=> 'Name',
 		'new'		=> 'New',
 		'next'		=> 'Next',
 		'number'	=> 'Number',
+		'numofrecs'	=> 'Records',
+		'numoftimes'	=> 'Times',
 		'output'	=> 'Output',
 		'outputformat'	=> 'Output Format',
 		'page'		=> 'Page',
@@ -62,6 +68,7 @@
 		'port'		=> 'Port',
 		'previous'	=> 'Prev.',
 		'profile'	=> 'Profile',
+		'ratio'		=> 'Ratio',
 		'readonly'	=> 'Read Only',
 		'record'	=> 'Record',
 		'register'	=> 'Register',
@@ -80,6 +87,8 @@
 		'skipped'	=> 'Skipped',
 		'software'	=> 'Software',
 		'sort'		=> 'Sort',
+		'stddev'	=> 'Std. Deviation',
+		'sum'		=> 'Sum',
 		'summary'	=> 'Summary',
 		'switchlang'	=> 'Switch',
 		'system'	=> 'System',

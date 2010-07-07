@@ -22,12 +22,14 @@
 	[%- ELSE -%]
 		[%- SET pp_start = ( currentpagenum - ( pagesintheline / 2 ) ) -%]
 	[%- END -%]
+	[%- IF pp_start < 1 -%][%- SET pp_start = 1 -%][%- END -%]
 
 	[%- IF lastpagenumber > ( pp_start + ( pagesintheline / 2 ) ) -%]
 		[%- SET pp_endby = pp_start + pagesintheline -%]
 	[%- ELSE -%]
 		[%- SET pp_endby = lastpagenumber -%]
 	[%- END -%]
+	[%- IF pp_endby > lastpagenumber -%][%- SET pp_endby = lastpagenumber -%][%- END -%]
 
 [%- ELSE -%]
 	[%- SET pp_start = 1 -%]

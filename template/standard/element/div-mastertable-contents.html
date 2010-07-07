@@ -1,6 +1,6 @@
 [%- PROCESS "words.tt" -%]
 [%- FOREACH R IN tablecontents -%]
-	[%- IF tablename == 'senderdomains' or tablename == 'destinations' -%]
+	[%- IF tablename == 'senderdomains' OR tablename == 'destinations' OR tablename == 'addressers' -%]
 		[%- prototype.form_remote_tag( {
 				url => "${scriptname}/tables/${tablename}/update",
 				update => "mtr-${R.id}",

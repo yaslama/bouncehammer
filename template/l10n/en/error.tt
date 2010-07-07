@@ -1,4 +1,4 @@
-[%# $Id: error.tt,v 1.1 2010/06/28 13:15:39 ak Exp $ -%]
+[%# $Id: error.tt,v 1.2 2010/07/07 01:02:57 ak Exp $ -%]
 [%# Error Messages in English -%]
 [%- SET error = { 
 		'alreadyexists'		=> 'The name already exists',
@@ -13,6 +13,7 @@
 		'failedtoupdate'	=> 'Failed to update',
 		'filesizetoobig'	=> 'File size too big',
 		'generic'		=> 'Something wrong',
+		'invalidname'		=> 'Invalid Name',
 		'invalidrecordid'	=> 'Invalid record ID',
 		'isnotemail'		=> 'File is not email(text) file',
 		'iswhitelisted'		=> 'Is Whitelisted',

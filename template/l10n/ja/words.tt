@@ -1,4 +1,4 @@
-[%# $Id: words.tt,v 1.1 2010/06/28 13:15:43 ak Exp $ -%]
+[%# $Id: words.tt,v 1.2 2010/07/07 01:02:59 ak Exp $ -%]
 [%# Words in Japanese -%]
 [%- SET word = { 
 		'about'		=> '約',
@@ -38,6 +38,7 @@
 		'file'		=> 'ファイル',
 		'fileformat'	=> 'ファイル形式',
 		'format'	=> '形式',
+		'graph'		=> 'グラフ',
 		'headsup'	=> '注意!',
 		'host'		=> 'ホスト',
 		'hostname'	=> 'ホスト名',
@@ -48,11 +49,16 @@
 		'mailbox'	=> 'メールボックス',
 		'make'		=> '生成',
 		'making'	=> '生成中...',
+		'max'		=> '最大値',
+		'mean'		=> '平均値',
 		'message'	=> 'メッセージ',
+		'min'		=> '最小値',
 		'name'		=> '名前',
 		'new'		=> '新',
 		'next'		=> '次',
 		'number'	=> '数',
+		'numofrecs'	=> '件数',
+		'numoftimes'	=> '回数',
 		'output'	=> '出力',
 		'outputformat'	=> '出力形式',
 		'page'		=> '頁',
@@ -62,6 +68,7 @@
 		'port'		=> 'ポート',
 		'previous'	=> '前',
 		'profile'	=> '情報',
+		'ratio'		=> '割合',
 		'readonly'	=> '読取専用',
 		'record'	=> '記録',
 		'register'	=> '登録',
@@ -80,6 +87,8 @@
 		'skipped'	=> '省略済',
 		'software'	=> 'ソフトウェア',
 		'sort'		=> '並替え',
+		'stddev'	=> '標準偏差',
+		'sum'		=> '合計',
 		'summary'	=> '概要',
 		'switchlang'	=> '切換',
 		'system'	=> 'システム',

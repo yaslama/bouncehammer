@@ -1,7 +1,9 @@
-[%# $Id: heads.tt,v 1.1 2010/06/28 13:15:39 ak Exp $ -%]
+[%# $Id: heads.tt,v 1.2 2010/07/07 01:02:57 ak Exp $ -%]
 [%# Headlines in English -%]
 [%- SET head = { 
+		'aggregatedby'	=> 'Aggregated By',
 		'datasummary'	=> 'Data Summary',
+		'descriptivestat' => 'Descriptive Statistics',
 		'mastertable'	=> 'MasterTable',
 		'messagetoken'	=> 'Make Message Token',
 		'parsingtest'	=> 'Mail Parsing Test',

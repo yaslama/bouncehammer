@@ -1,15 +1,27 @@
 <ul class = 'index'>
 	<li class = 'item'><a href = '[% scriptname %]/index'>[% head.search %]</a></li>
 	<li class = 'item'><a href = '[% scriptname %]/test'>[% head.parsingtest %]</a></li>
+	<li class = 'item'><a href = '[% scriptname %]/token'>[% head.messagetoken %]</a></li>
 
+	<hr class = 'flatline' />
 	<li class = 'itemgroup'>[% head.mastertable %]</li>
+	<li class = 'subitem'> <a href = '[% scriptname %]/tables/addressers/list'>[% term.addresser %]</a></li>
 	<li class = 'subitem'> <a href = '[% scriptname %]/tables/senderdomains/list'>[% term.senderdomain %]</a></li>
 	<li class = 'subitem'> <a href = '[% scriptname %]/tables/destinations/list'>[% term.destination %]</a></li>
 	<li class = 'subitem'> <a href = '[% scriptname %]/tables/reasons/list'>[% term.reason %]</a></li>
 	<li class = 'subitem'> <a href = '[% scriptname %]/tables/hostgroups/list'>[% term.hostgroup %]</a></li>
 	<li class = 'subitem'> <a href = '[% scriptname %]/tables/providers/list'>[% term.provider %]</a></li>
 
-	<li class = 'item'><a href = '[% scriptname %]/token'>[% head.messagetoken %]</a></li>
+	<hr class = 'flatline' />
 	<li class = 'item'><a href = '[% scriptname %]/summary'>[% head.datasummary %]</a></li>
+	<li class = 'itemgroup'>[% head.aggregatedby %]</li>
+	<li class = 'subitem'> <a href = '[% scriptname %]/aggregate/addresser'>[% term.addresser %]</a></li>
+	<li class = 'subitem'> <a href = '[% scriptname %]/aggregate/senderdomain'>[% term.senderdomain %]</a></li>
+	<li class = 'subitem'> <a href = '[% scriptname %]/aggregate/destination'>[% term.destination %]</a></li>
+	<li class = 'subitem'> <a href = '[% scriptname %]/aggregate/reason'>[% term.reason %]</a></li>
+	<li class = 'subitem'> <a href = '[% scriptname %]/aggregate/hostgroup'>[% term.hostgroup %]</a></li>
+	<li class = 'subitem'> <a href = '[% scriptname %]/aggregate/provider'>[% term.provider %]</a></li>
+
+	<hr class = 'flatline' />
 	<li class = 'item'><a href = '[% scriptname %]/profile'>[% head.systemprof %]</a></li>
 </ul>

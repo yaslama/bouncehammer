@@ -7,7 +7,7 @@
 [% INCLUDE "dtd-xhtml.html" %]
 <head>
 	[% INCLUDE "meta-http-equiv.html" %]
-	<title>[% systemname %]/[% head.mastertable %]/[% titlename %]</title>
+	<title>[% systemname %]/[% head.mastertable %]/[% term.$asacolumn %]</title>
 	[% prototype.define_javascript_functions %]
 	<script type = 'text/javascript'>
 		[% INCLUDE bouncehammer.js %]
@@ -23,7 +23,7 @@
 </head>
 <body>
 	<div id = 'ThePage'>
-		<h1>[% head1title %]/[%- head.mastertable -%]/[% titlename %]</h1>
+		<h1>[% head1title %]/[%- head.mastertable -%]/[% term.$asacolumn %]</h1>
 		<div id = 'North-Ward'>
 			[% INCLUDE "div-menubar.html" %]
 		</div>
@@ -31,6 +31,9 @@
 			[% INCLUDE "div-index.html" %]
 		</div>
 		<div id = 'East-Ward'>
+			[%- IF tablename == 'addressers' %]
+				[% INCLUDE "help-addresser.html" %]
+			[%- END -%]
 			[%- IF tablename == 'senderdomains' %]
 				[% INCLUDE "help-senderdomain.html" %]
 			[%- END -%]
@@ -43,10 +46,13 @@
 			[%- IF tablename == 'hostgroups' %]
 				[% INCLUDE "help-hostgroup.html" %]
 			[%- END -%]
+			[%- IF tablename == 'providers' %]
+				[% INCLUDE "help-provider.html" %]
+			[%- END -%]
 		</div>
 
 		<div id = 'Central-Ward'>
-			<h2>[% head.mastertable %]([% titlename %])</h2>
+			<h2>[% head.mastertable %]/[% term.$asacolumn %]([% titlename %])</h2>
 			<div class = 'pagination'>
 				[% INCLUDE "div-pagination.html" %]
 			</div>
@@ -88,7 +94,9 @@
 
 				<div id = 'here_is_new_record' class = 'stored'></div>
 
-				[%- IF ( tablename == 'senderdomains' OR tablename == 'destinations' ) AND isreadonly == 0 -%]
+				[%- IF ( tablename == 'senderdomains' OR tablename == 'destinations' OR tablename == 'addressers' ) 
+					AND isreadonly == 0 -%]
+
 					[% INCLUDE "div-create-a-new-mastertable-record.html" %]
 					[% INCLUDE "div-delete-a-mastertable-record.html" %]
 				[%- END -%]

@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.16 2010/06/28 13:16:36 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.17 2010/07/07 01:03:05 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -48,9 +48,6 @@
 #Central-Ward {
 	margin: 0 128px 0 144px;
 	padding: 8px 8px;
-	border-style: dotted;
-	border-width: 0 0 0 1px;
-	border-color: #d4dcd6;	/* Sobakiri-iro */
 	z-index: 20;
 }
 
@@ -436,4 +433,10 @@ div.exception p, div.errormessage p {
 }
 
 span.errortext		{ color: #cc0000; }
+hr.flatline {
+	border-color: #d4dcd6;	/* Sobakiri-iro */
+	border-style: solid;
+	border-width: 1px 0 0 0;
+	height: 1px;
+}
 

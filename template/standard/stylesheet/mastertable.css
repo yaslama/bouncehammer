@@ -1,4 +1,4 @@
-/* $Id: mastertable.css,v 1.6 2010/06/23 07:36:21 ak Exp $ */
+/* $Id: mastertable.css,v 1.7 2010/07/07 01:03:05 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Master table classes */
 table.stored {
@@ -40,9 +40,9 @@ tbody.mastertable tr td {
 	padding: 2px 0 2px 2px;
 	text-align: left;
 	vertical-align: middle;
-	border-color: #afafb0; /* Gin-nezu */
+	border-color: #dcdddd; /* Shiro-nezu */
 	border-width: 0 0 1px 0;
-	border-style: dotted;
+	border-style: solid;
 }
 
 .mastertable .theID {

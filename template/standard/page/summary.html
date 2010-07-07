@@ -25,7 +25,11 @@
 		<div id = 'West-Ward'>
 			[% INCLUDE "div-index.html" %]
 		</div>
-		<div id = 'East-Ward'> </div>
+		<div id = 'East-Ward'>
+			[% INCLUDE "help-addresser.html" %]
+			[% INCLUDE "help-senderdomain.html" %]
+			[% INCLUDE "help-destination-domain.html" %]
+		</div>
 
 		<div id = 'Central-Ward'>
 
@@ -71,7 +75,7 @@
 						<tr>
 							<td class = 'key'>[% word.capacity %]</td>
 							<td class = 'value'>
-								[% SET capacitywidth = tablesumm.bouncelogs.capacity * 320 %]
+								[% SET capacitywidth = tablesumm.bouncelogs.capacity * 368 %]
 								<div class = 'graph'>
 									<div class = 'used' style = 'width: [% capacitywidth %]px;'>&nbsp;
 									</div>
@@ -89,19 +93,20 @@
 				</table>
 			</div>
 
-			[% FOREACH T IN [ 'senderdomains','destinations' ] %]
-				<h2>[% tablesumm.${T}.screenname %] [% word.table %]
-					[%- IF tableconf.${T}.readonly > 0 -%]([% word.readonly %])[%- END -%]</h2>
+			[%- FOREACH T IN [ 'addresser', 'senderdomain','destination' ] -%]
+				[%- SET M = T _ 's' -%]
+				<h2>[% term.$T %] [% word.table %]/[% tablesumm.${M}.screenname %]
+					[%- IF tableconf.${M}.readonly > 0 -%]([% word.readonly %])[%- END -%]</h2>
 				<div class = 'summary'>
 					<table>
 						<tbody>
 							<tr>
 								<td class = 'key'>[% word.upperlimit %]</td>
 								<td class = 'value'>
-									[% IF tableconf.${T}.maxrecords == 0 %]
+									[% IF tableconf.${M}.maxrecords == 0 %]
 										[% word.unlimited %]
 									[% ELSE %]
-										[% tableconf.${T}.maxrecords.chunk(-3).join(',') %] [% word.unitofrecs %]
+										[% tableconf.${M}.maxrecords.chunk(-3).join(',') %] [% word.unitofrecs %]
 									[% END %]
 								</td>
 								<td class = 'extra'></td>
@@ -110,7 +115,7 @@
 							<tr>
 								<td class = 'key'>[% word.used %]</td>
 								<td class = 'value'>
-									[% tablesumm.${T}.totalentries.chunk(-3).join(',') %]
+									[% tablesumm.${M}.totalentries.chunk(-3).join(',') %]
 									[% word.unitofrecs %]
 								</td>
 								<td class = 'extra'></td>
@@ -119,10 +124,10 @@
 							<tr>
 								<td class = 'key'>[% word.available %]</td>
 								<td class = 'value'>
-									[% IF tableconf.${T}.maxrecords == 0 %]
+									[% IF tableconf.${M}.maxrecords == 0 %]
 										[% word.unlimited %]
 									[% ELSE %]
-										[% SET available = tableconf.${T}.maxrecords - tablesumm.${T}.totalentries %]
+										[% SET available = tableconf.${M}.maxrecords - tablesumm.${M}.totalentries %]
 										[% available.chunk(-3).join(',') %] [% word.unitofrecs %]
 									[% END %]
 								</td>
@@ -132,17 +137,17 @@
 							<tr>
 								<td class = 'key'>[% word.capacity %]</td>
 								<td class = 'value'>
-									[% SET capacitywidth = tablesumm.${T}.capacity * 320 %]
+									[% SET capacitywidth = tablesumm.${M}.capacity * 320 %]
 									<div class = 'graph'>
 										<div class = 'used' style = 'width: [% capacitywidth %]px;'>&nbsp;
 										</div>
 									</div>
 								</td>
 								<td class = 'extra'>
-									[% IF tableconf.${T}.maxrecords == 0 %]
+									[% IF tableconf.${M}.maxrecords == 0 %]
 										[% word.unlimited %]
 									[% ELSE %]
-										[% tablesumm.${T}.capacity * 100 %] %
+										[% tablesumm.${M}.capacity * 100 %] %
 									[% END %]
 								</td>
 							</tr>
