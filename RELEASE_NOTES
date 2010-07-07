@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.64 2010/06/10 09:41:15 ak Exp $
+ $Id: RELEASE_NOTES,v 1.66 2010/07/07 06:16:11 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -14,12 +14,71 @@
 -----------------------------------------------------------------------
 
 -----------------------------------------------------------------------
-2.3.4/2.0.0	2010/xx/yy
+2.4.0/2.0.0	2010/07/0x
+
+  New functionality:
+    * New command line tool bin/summarizer: it aggregate records in log
+      files or in the database.
+    * New options of bin/databasectl: --disable, --remove, --token, and
+      --id .
+    * New output format option of bin/mailboxparser and bin/datadumper:
+      -Fc print data as a CSV format.
+    * Now support removing a record on the WebUI.
+    * Now support showing aggregated data on the WebUI.
+    * Enhance the classification of WebMail: support 750+ mail domains,
+      40+ providers, and 20+ countries.
 
   Assorted improvements and code cleanup:
+    * Improved analytical accuracy for bounce messages  via Google Mail
+      (Gmail) and Postfix.
     * New make target uninstall-old-files: for removing files which are
       removed or renamed at old version.
+    * Two archiving modules:  IO::Compress::Zip and IO::Compress::Bzip2
+      are now optional module.
+    * A little improvement of WebUI/Template and CSS.
 
+  Fixed bugs:
+    * Fixed an issue that bin/mailboxparser cannot parse the email file
+      which include spaces in its file name.
+    * Fixed an issue that progress bar does not finish when bin/mailbox
+      parser parses non-bounce message file with -v option.
+    * Fixed an issue that pagination of search results  on WebUI/Search
+      does not work correctly.
+    * Fixed an issue that bin/tablectl does not display the record cor-
+      rectly in ascii table format.
+    * Fixed an issue that make test fails at 64-bit Operating system.
+    * Fixed an issue that date options( -y, --yesterday, -b, --before )
+      of bin/databasectl does not work.
+
+  New files:
+    * etc/available-countries
+    * lib/Kanadzuchi/Mail/Group/??/WebMail.pm
+    * lib/Kanadzuchi/Mail/Group/UK/Smartphone.pm
+    * lib/Kanadzuchi/MTA.pm
+    * lib/Kanadzuchi/MTA/Google.pm
+    * lib/Kanadzuchi/MTA/Postfix.pm
+    * lib/Kanadzuchi/MTA/qmail.pm
+    * lib/Kanadzuchi/MTA/Sendmail.pm
+    * lib/Kanadzuchi/MTA/JP/aubyKDDI.pm
+    * lib/Kanadzuchi/Statistics/Stored.pm
+    * lib/Kanadzuchi/Statistics/Stored/BdDR.pm
+    * lib/Kanadzuchi/Statistics/Stored/YAML.pm
+    * lib/Kanadzuchi/UI/Web/Aggregate.pm
+    * share/sql/mastertable-many-providers.sql
+    * share/template/l10n/en/*.{tt,html}
+    * share/template/l10n/ja/*.{tt,html}
+    * share/template/standard/aggregate.html
+    * share/template/stylesheet/aggregate.css
+    * t/023_statistics-stored.t
+    * t/024_statistics-stored-bddr.t
+    * t/025_statistics-stored-yaml.t
+    * t/505_bin-summarizer.t
+
+  Removed files:
+    * lib/Kanadzuchi/Mbox/*.pm
+    * share/template/standard/element/*.{en,ja}.html
+    * share/template/standard/help/*.html
+    * share/template/standard/page/*.{en,ja}.html
 
 -----------------------------------------------------------------------
 2.3.3/2.0.0	2010/06/09
