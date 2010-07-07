@@ -1,4 +1,4 @@
-# $Id: Kanadzuchi.pm,v 1.25 2010/07/02 10:37:24 ak Exp $
+# $Id: Kanadzuchi.pm,v 1.26 2010/07/07 11:21:35 ak Exp $
 # -Id: TheHammer.pm,v 1.4 2009/09/01 23:19:41 ak Exp -
 # -Id: Herculaneum.pm,v 1.13 2009/08/27 05:09:23 ak Exp -
 # -Id: Version.pm,v 1.35 2009/08/27 05:09:29 ak Exp -
@@ -72,7 +72,7 @@ sub new
 		'user' => $>, 
 		'config' => {}, };
 
-	return( $class->SUPER::new( $argvs ) );
+	return $class->SUPER::new( $argvs );
 }
 
 sub is_exception
@@ -187,7 +187,7 @@ sub load
 	{
 		# Test mode
 		require Kanadzuchi::Config::TestRun;
-		$self->{'config'} = $Kanadzuchi::Config::TestRun::Configuration;
+		$self->{'config'} = Kanadzuchi::Config::TestRun->configuration();
 	}
 
 	return($exception) if( $exception );
@@ -237,12 +237,12 @@ sub get_logfile
 	# @Param <opt>	(Ref->Hash) File name options
 	# @Return	(String) Log file name
 	my $self = shift();
-	my $type = shift() || q(temp);
+	my $type = shift() || 'temp';
 	my $lopt = shift() || { 'date' => q(), 'output' => q() };
 
-	my $char = substr(lc($type),0,1) || q(t);
+	my $char = substr(lc($type),0,1) || 't';
 	my $conf = $self->{'config'};
-	my $time = bless(localtime(),'Time::Piece');
+	my $time = bless( localtime(), q|Time::Piece| );
 	my $logf = $conf->{'file'}->{'storage'};
 	my $file = q();
 
@@ -305,7 +305,7 @@ sub get_logfile
 		}
 	}
 
-	return($file);
+	return $file;
 }
 
 1;

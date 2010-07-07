@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.36 2010/06/25 19:34:06 ak Exp $
+# $Id: mailboxparser.PL,v 1.37 2010/07/07 11:21:33 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -39,9 +39,7 @@ my $Out;		# (String) Output directory for temp log
 my $Bak;		# (String) Backup directory for the mailbox
 my $Fmt;		# (String) Output format
 my $Mbox;		# (Path::Class::File) Mailbox Object
-my $Mail = {
-	'files' => [],
-	'dirs' => [], };
+my $Mail = { 'files' => [], 'dirs' => [], };
 my $Skip = {
 	'temperror'	=> 0,
 	'norelaying'	=> 0,
@@ -314,9 +312,9 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	my $howmanyemails = 0;		# (Integer) How many email messages
 	my $howmanybounce = 0;		# (Integer) How many bounce messages
 	my $howmanyparsed = 0;		# (Integer) How many parsed messages
-	my $parseroptions = {		# (Ref->Hash) Options of K::M::Bounced->eatit()
-			'verbose' => $Cmd->debuglevel(), 
-			'skip' => $Skip, };
+
+	# (Ref->Hash) Options of K::M::Bounced->eatit()
+	my $parseroptions = { 'verbose' => $Cmd->debuglevel(), 'skip' => $Skip, };
 
 	PARSE_CHUNKS_OF_EMAIL: while( my $Mbox = shift @$chunksofemail )
 	{

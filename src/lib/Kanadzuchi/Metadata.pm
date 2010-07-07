@@ -1,4 +1,4 @@
-# $Id: Metadata.pm,v 1.13 2010/06/10 10:28:35 ak Exp $
+# $Id: Metadata.pm,v 1.14 2010/07/07 11:21:37 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                         
@@ -40,7 +40,7 @@ sub to_string
 	# @Param	(Integer) 1 = JSON format [ {...} ]
 	# @Return	(Ref->Scalar) Serialized data or undef()
 	my $class  = shift();
-	my $object = shift() || return(q{});
+	my $object = shift() || return q();
 	my $isjson = shift() || 0;
 	my $string = q();
 	my $arrayr = [];
@@ -61,7 +61,7 @@ sub to_string
 		}
 
 		# Set the number of elements in $arrayr
-		$arrayc = scalar(@$arrayr);
+		$arrayc = scalar @$arrayr;
 
 		# Print left square bracket character for the format JSON
 		$string .= '[ ' if( $isjson && ( $arrayc > 1 || $retaar ) );
@@ -83,8 +83,8 @@ sub to_string
 		$string =~ s{,\z}{ ]} if( $isjson && ( $arrayc > 1 || $retaar ) );
 	};
 
-	return(\q()) if($@);
-	return(\$string);
+	return \q() if($@);
+	return \$string;
 }
 
 sub to_object
@@ -97,7 +97,7 @@ sub to_object
 	# @Param	(Ref->Scalar|Path::Class::File|Path string to file) YAML parsable string or file
 	# @Return	(Ref->Array) Object
 	my $class  = shift();
-	my $string = shift() || return([]);
+	my $string = shift() || return [];
 	my $object = [];
 	my $strref = q();
 	my $objref = q();
@@ -142,11 +142,11 @@ sub to_object
 
 		$objref = ref($object);
 	};
-	return([]) if($@);
+	return [] if($@);
 
-	return([$object]) if( $objref eq q|HASH| );
-	return( $object ) if( $objref eq q|ARRAY| );
-	return([]);
+	return [$object] if( $objref eq q|HASH| );
+	return $object if( $objref eq q|ARRAY| );
+	return [];
 }
 
 sub mergesort
@@ -159,12 +159,12 @@ sub mergesort
 	# @Param	(Ref->Array) Unsorted list
 	# @Return	(Ref->Array) Sorted list
 	my $class = shift();
-	my $array = shift() || return([]);
+	my $array = shift() || return [];
 	my( $lhsln, $rhsln, $wshed );
 	my $lhsar = [];
 	my $rhsar = [];
 
-	return($array) if( scalar(@$array) < 2 );
+	return $array if( scalar(@$array) < 2 );
 	$wshed = int( scalar(@$array)/2 );
 
 	@$lhsar = map { $array->[$_] } ( 0 .. $wshed - 1 );
@@ -190,7 +190,7 @@ sub mergesort
 			push( @$newar, $rhsar->[$y++] );
 		}
 	}
-	return($newar);
+	return $newar;
 }
 
 1;

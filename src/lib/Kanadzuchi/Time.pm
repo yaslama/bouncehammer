@@ -1,4 +1,4 @@
-# $Id: Time.pm,v 1.5 2010/06/10 10:28:36 ak Exp $
+# $Id: Time.pm,v 1.6 2010/07/07 11:21:38 ak Exp $
 # -Id: Time.pm,v 1.1 2009/08/29 09:13:56 ak Exp -
 # -Id: Time.pm,v 1.5 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -19,12 +19,12 @@ use warnings;
 # ||__|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub BASE_D() { 86400 }		# 1 day = 86400 sec
-sub BASE_Y() { 365.2425 }	# 1 year = 365.2425 days
-sub BASE_L() { 29.53059 }	# 1 lunar month = 29.53059 days
-sub CONST_P(){ 4 * atan2(1,1) }	# PI, 3.1415926535
-sub CONST_E(){ exp(1) }		# e, Napier's constant
-sub TZ_OFFSET(){ 54000 }	# Max time zone offset, 54000 seconds
+sub BASE_D()    { 86400 }		# 1 day = 86400 sec
+sub BASE_Y()    { 365.2425 }		# 1 year = 365.2425 days
+sub BASE_L()    { 29.53059 }		# 1 lunar month = 29.53059 days
+sub CONST_P()   { 4 * atan2(1,1) }	# PI, 3.1415926535
+sub CONST_E()   { exp(1) }		# e, Napier's constant
+sub TZ_OFFSET() { 54000 }		# Max time zone offset, 54000 seconds
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -88,8 +88,8 @@ sub to_second
 	my $class = shift();
 	my $digit = shift() || return(0);
 	my $t_sec = 0;
-	my @unitc = keys(%$UnitOfTime);
-	my @mathc = keys(%$MathematicalConstant);
+	my @unitc = keys %$UnitOfTime;
+	my @mathc = keys %$MathematicalConstant;
 
 	if( $digit =~ m{\A(\d+|\d+[.]\d+)([@unitc])?\z}o )
 	{
@@ -106,7 +106,7 @@ sub to_second
 		$t_sec = 0;
 	}
 
-	return($t_sec);
+	return $t_sec;
 }
 
 sub tz2second
@@ -120,7 +120,7 @@ sub tz2second
 	# @Return	(Integer) n  = seconds
 	#		(undef) invalid format
 	my $class = shift();
-	my $tzstr = shift() || return(undef());
+	my $tzstr = shift() || return undef();
 	my $digit = {};
 	my $tzsec = 0;
 
@@ -134,14 +134,14 @@ sub tz2second
 		$tzsec += ( $digit->{'hour-10'} * 10 + $digit->{'hour-01'} ) * 3600;
 		$tzsec += ( $digit->{'minutes'} * 60 );
 		$tzsec *= -1 if( $digit->{'operator'} eq q{-} );
-		return( undef() ) if( abs($tzsec) > TZ_OFFSET );
+		return undef() if( abs($tzsec) > TZ_OFFSET );
 	}
 	else
 	{
-		return( undef() );
+		return undef();
 	}
 	
-	return($tzsec);
+	return $tzsec;
 }
 
 sub second2tz
@@ -156,18 +156,18 @@ sub second2tz
 	my $class = shift();
 	my $tzsec = shift() || 0;
 	my $digit = { 'operator' => q(+) };
-	my $tzstr = q{};
+	my $tzstr = q();
 
-	return(q{+0000}) unless($tzsec);
-	return(q{}) if( ref($tzsec) );			# Some object
-	return(q{}) if( abs($tzsec) > TZ_OFFSET );	# UTC+14 + 1(DST?)
+	return q(+0000) unless($tzsec);
+	return q() if( ref($tzsec) );			# Some object
+	return q() if( abs($tzsec) > TZ_OFFSET );	# UTC+14 + 1(DST?)
 	$digit->{'operator'} = q{-} if( $tzsec < 0 );
 
 	$digit->{'hours'} = int( abs($tzsec) / 3600 );
 	$digit->{'minutes'} = int( ( abs($tzsec) % 3600 ) / 60 );
 	$tzstr = sprintf( "%s%02d%02d", $digit->{'operator'}, $digit->{'hours'}, $digit->{'minutes'} );
 
-	return($tzstr);
+	return $tzstr;
 }
 
 sub monthname
@@ -183,8 +183,8 @@ sub monthname
 	my $class = shift();
 	my $fname = shift() || 0;
 	my $keyis = $fname ? 'Full' : 'Abbr';
-	return( @{$MonthName->{$keyis}} ) if( wantarray() );
-	return( $MonthName->{$keyis} );
+	return @{ $MonthName->{$keyis} } if wantarray();
+	return $MonthName->{ $keyis };
 }
 
 sub dayofweek
@@ -200,8 +200,8 @@ sub dayofweek
 	my $class = shift();
 	my $fname = shift() || 0;
 	my $keyis = $fname ? 'Full' : 'Abbr';
-	return( @{$DayOfWeek->{$keyis}} ) if( wantarray() );
-	return( $DayOfWeek->{$keyis} );
+	return @{ $DayOfWeek->{$keyis} } if wantarray();
+	return $DayOfWeek->{ $keyis };
 }
 
 sub hourname
@@ -217,8 +217,8 @@ sub hourname
 	my $class = shift();
 	my $fname = shift() || 1;
 	my $keyis = $fname ? 'Full' : 'Abbr';
-	return( @{$HourName->{$keyis}} ) if( wantarray() );
-	return( $HourName->{$keyis} );
+	return @{ $HourName->{$keyis} } if wantarray();
+	return $HourName->{ $keyis };
 }
 
 1;

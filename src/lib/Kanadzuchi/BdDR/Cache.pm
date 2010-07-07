@@ -1,4 +1,4 @@
-# $Id: Cache.pm,v 1.4 2010/06/21 09:52:57 ak Exp $
+# $Id: Cache.pm,v 1.5 2010/07/07 11:21:42 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::BdDR::
                                     
@@ -39,7 +39,7 @@ sub new
 	# @Return	Kanadzuchi::BdDR::Page Object
 	my $class = shift();
 	my $argvs = { 'cache' => {}, 'count' => {} };
-	return($class->SUPER::new($argvs));
+	return $class->SUPER::new($argvs);
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -58,12 +58,12 @@ sub getit
 	# @Param <key>	(String) Key string
 	# @Return	(String|Integer) Value
 	my $self = shift();
-	my $ctab = shift() || return(undef());
-	my $name = shift() || return(undef());
+	my $ctab = shift() || return undef();
+	my $name = shift() || return undef();
 	my $data = $self->{'cache'}->{$ctab}->{$name};
 
 	$self->{'count'}->{$ctab}++ if( defined($data) );
-	return($data);
+	return $data;
 }
 
 sub setit
@@ -78,12 +78,12 @@ sub setit
 	# @Param <val>	(String) Value
 	# @Return	(K::B::Cache) This object
 	my $self = shift();
-	my $ctab = shift() || return($self);
-	my $thek = shift() || return($self);
+	my $ctab = shift() || return $self;
+	my $thek = shift() || return $self;
 	my $thev = shift();
 
 	$self->{'cache'}->{$ctab}->{$thek} = $thev;
-	return($self);
+	return $self;
 }
 
 sub purgeit
@@ -97,12 +97,13 @@ sub purgeit
 	# @Param <key>	(String) Key
 	# @Return	(K::B::Cache) This object
 	my $self = shift();
-	my $ctab = shift() || return($self);
-	my $thek = shift() || return($self);
+	my $ctab = shift() || return $self;
+	my $thek = shift() || return $self;
 
 	delete $self->{'cache'}->{$ctab}->{$thek};
 	$self->{'count'}->{$ctab}-- unless( defined $self->{'cache'}->{$ctab}->{$thek} );
-	return($self);
+	return $self;
 }
+
 1;
 __END__

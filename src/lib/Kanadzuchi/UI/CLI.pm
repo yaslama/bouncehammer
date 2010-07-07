@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.18 2010/06/28 13:18:28 ak Exp $
+# $Id: CLI.pm,v 1.19 2010/07/07 11:21:55 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                       
@@ -71,14 +71,14 @@ sub new
 
 	DEFAULT_VALUES: {
 		$argvs->{'startedat'} = new Time::Piece();
-		$argvs->{'processid'} = $$ unless( defined($argvs->{'processid'}) );
-		$argvs->{'operation'} = 0 unless( defined($argvs->{'operation'}) );
-		$argvs->{'debuglevel'} = 0 unless( defined($argvs->{'debuglevel'}) );
+		$argvs->{'processid'} = $$ unless defined($argvs->{'processid'});
+		$argvs->{'operation'} = 0 unless defined($argvs->{'operation'});
+		$argvs->{'debuglevel'} = 0 unless defined($argvs->{'debuglevel'});
 		$argvs->{'calledfrom'} = File::Basename::basename([caller()]->[1]);
-		$argvs->{'option'} = {} unless( defined($argvs->{'option'}) );
-		$argvs->{'silent'} = 0 unless( defined($argvs->{'silent'}) );
+		$argvs->{'option'} = {} unless defined($argvs->{'option'});
+		$argvs->{'silent'} = 0 unless defined($argvs->{'silent'});
 
-		last() unless( defined($argvs->{'cf'}) );
+		last() unless defined($argvs->{'cf'});
 		last() if( ref($argvs->{'cf'}) eq q|Path::Class::File| );
 
 		if( $argvs->{'cf'} !~ m{[\x00-\x1f\x7f]}  && -e $argvs->{'cf'} )
@@ -88,7 +88,7 @@ sub new
 		}
 	}
 
-	return( $class->SUPER::new($argvs) );
+	return $class->SUPER::new($argvs);
 }
 
 sub is_machine
@@ -119,7 +119,7 @@ sub init
 	#
 	# @Description	Initialize Kanadzuchi object
 	# @Param	<None>
-	# @Return	(Integer) 1 = Successfully initialized
+	# @Return	(Kanadzuchi::UI::CLI) This object = Successfully initialized
 	#		exit(1) = Failed to initialize.
 	my $self = shift();
 	my $dzci = shift();
@@ -209,7 +209,7 @@ sub init
 	$self->d(2,sprintf( "Temporary directory = %s\n", $self->{'tmpdir'} ) );
 	$self->d(1,sprintf( "Debug level = %d\n", $self->{'debuglevel'} ));
 
-	return(1);
+	return $self;
 }
 
 sub batchstatus
@@ -224,7 +224,7 @@ sub batchstatus
 	my $self = shift();
 	my $stat = shift();
 	my $time = Time::Piece->new();
-	my $load = qx(uptime); chomp($load);
+	my $load = qx(uptime); chomp $load;
 
 	# Block style YAML(is not JSON) format
 	printf( STDOUT qq|--- # %s %s command status\n|, $self->{'startedat'}->ymd('-'), $self->{'calledfrom'} );
@@ -255,14 +255,14 @@ sub d
 	# @Return	(String) Empty or debug message
 	my $self = shift();
 	my $dlev = shift() || 0;
-	my $argv = shift() || return(q{});
+	my $argv = shift() || return q();
 	my $mesg = q();
 
-	return(q{}) if( $self->{'silent'} || $self->{'debuglevel'} < $dlev );
+	return q() if( $self->{'silent'} || $self->{'debuglevel'} < $dlev );
 
 	$mesg = sprintf( qq{ *debug%d: %s}, $dlev, $argv );
-	defined(wantarray()) ? return($mesg) : printf( STDERR $mesg );
-	return(q{});
+	defined wantarray() ? return($mesg) : printf( STDERR $mesg );
+	return q();
 }
 *debug = *d;
 
@@ -277,7 +277,7 @@ sub e
 	# @Return	<None>
 	# @See		abort(), DESTROY()
 	my $self = shift();
-	my $mesg = shift() || return(q{});
+	my $mesg = shift() || return q();
 	Carp::carp( qq{ ***error: $mesg} ) unless( $self->{'silent'} );
 	$self->abort();
 }
@@ -381,7 +381,7 @@ sub exception
 	my $eobj = shift();
 	my $head = q{E};
 
-	eval{ $head ||= $eobj->head(); };
+	eval { $head ||= $eobj->head(); };
 	unless( $self->{'silent'} )
 	{
 		printf( STDERR qq{ ***error: [%s] %s [%s:%d]\n}, 

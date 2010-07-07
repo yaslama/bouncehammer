@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.23 2010/07/07 01:06:25 ak Exp $
+# $Id: Bounced.pm,v 1.24 2010/07/07 11:21:50 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -77,7 +77,7 @@ sub eatit
 
 		# Initialize for this loop
 		$mimeparser->parseit( \$_entity->{'body'} );
-		next() unless( $mimeparser->count() );
+		next() unless $mimeparser->count();
 		$bouncemesg = {};
 		$callb->();
 
@@ -108,8 +108,8 @@ sub eatit
 			}
 
 			# There is no recipient address, skip.
-			next(MIMEPARSER) unless( @$tempemails );
-			map{ $_ = Kanadzuchi::RFC2822->cleanup($_) } @$tempemails;
+			next(MIMEPARSER) unless @$tempemails;
+			map { $_ = Kanadzuchi::RFC2822->cleanup($_) } @$tempemails;
 
 			RECIPIENTS: foreach my $_e ( @{ Kanadzuchi::Address->parse($tempemails) } )
 			{
@@ -123,7 +123,7 @@ sub eatit
 			$tempheader->{'recipient'} ||= $tempheader->{'expanded'} 
 							? Kanadzuchi::Address->new($tempheader->{'expanded'})
 							: q();
-			next(MIMEPARSER) unless( $tempheader->{'recipient'} );
+			next(MIMEPARSER) unless $tempheader->{'recipient'};
 			$bouncemesg->{'recipient'} = $tempheader->{'recipient'};
 		}
 
@@ -160,8 +160,8 @@ sub eatit
 						) if( ! @$tempemails && $mailx->greed() );
 			}
 
-			next(MIMEPARSER) unless( @$tempemails );
-			map{ $_ = Kanadzuchi::RFC2822->cleanup($_) } @$tempemails;
+			next(MIMEPARSER) unless @$tempemails;
+			map { $_ = Kanadzuchi::RFC2822->cleanup($_) } @$tempemails;
 
 			ADDRESSER: foreach my $_e ( @{ Kanadzuchi::Address->parse($tempemails) } )
 			{
@@ -184,7 +184,7 @@ sub eatit
 
 			$tempheader->{'addresser'} ||= $tempheader->{'subaddress'};
 			$tempheader->{'expanded'} = Kanadzuchi::RFC2822->expand_subaddress($tempheader->{'subaddress'});
-			next(MIMEPARSER) unless( $tempheader->{'addresser'} );
+			next(MIMEPARSER) unless $tempheader->{'addresser'};
 			$bouncemesg->{'addresser'} = $tempheader->{'addresser'};
 		}
 
@@ -213,11 +213,11 @@ sub eatit
 		#
 		unless( $bouncemesg->{'diagnosticcode'} )
 		{
-			$tempheader->{'diagnosticcode'} =  $mimeparser->getit('Diagnostic-Code') || q{};
+			$tempheader->{'diagnosticcode'} =  $mimeparser->getit('Diagnostic-Code') || q();
 			$tempheader->{'diagnosticcode'} =~ y{`"'\r\n}{}d;	# Drop quotation marks and CR/LF
 			$tempheader->{'diagnosticcode'} =~ y{ }{}s;		# Squeeze spaces
-			chomp $tempheader->{'diagnosticcode'};
 
+			chomp $tempheader->{'diagnosticcode'};
 			$bouncemesg->{'diagnosticcode'} = $tempheader->{'diagnosticcode'};
 		}
 
@@ -229,7 +229,7 @@ sub eatit
 		#                                                                                          
 		unless( $bouncemesg->{'smtpcommand'} )
 		{
-			$bouncemesg->{'smtpcommand'} = $mimeparser->getit('X-SMTP-Command') || q{};
+			$bouncemesg->{'smtpcommand'} = $mimeparser->getit('X-SMTP-Command') || q();
 		}
 
 		#  ____    _  _____ _____ 
@@ -248,20 +248,23 @@ sub eatit
 							|| $mimeparser->getit('Posted')
 							|| $mimeparser->getit('Resent-Date')
 							|| q();
-			next() unless( $tempheader->{'arrivaldate'} );
+			next() unless $tempheader->{'arrivaldate'};
 			chomp $tempheader->{'arrivaldate'};
 
 			# Check strange Date header
-			if( $tempheader->{'arrivaldate'} =~ m{\A\s*\d{1,2}\s*[A-Z][a-z]{2}\s*\d{4}\s*.+\z} )
-			{
+			if( $tempheader->{'arrivaldate'} =~ 
+				m{\A\s*\d{1,2}\s*[A-Z][a-z]{2}\s*\d{4}\s*.+\z} ){
+
 				# qmail's Date header, 'Date: 29 Apr 2009 01:39:00 -0000'
 				$tempheader->{'arrivaldate'} = q(Thu, ).$tempheader->{'arrivaldate'};
 			}
-			elsif( $tempheader->{'arrivaldate'} =~ m{\A\s*(\d{4})[-](\d\d)[-](\d\d)[ ](\d\d:\d\d:\d\d)[ ](.\d{4})\z} )
-			{
+			elsif( $tempheader->{'arrivaldate'} =~ 
+				m{\A\s*(\d{4})[-](\d\d)[-](\d\d)[ ](\d\d:\d\d:\d\d)[ ](.\d{4})\z} ){
+
 				# Mail.app(MacOS X)'s faked Bounce, Arrival-Date: 2010-06-18 17:17:52 +0900
 				$tempheader->{'arrivaldate'} =
-					sprintf("Thu, %d %s %s %s %s", $3, [Time::Piece->mon_list()]->[$2-1], $1, $4, $5 );
+					sprintf("Thu, %d %s %s %s %s", $3, 
+							[Time::Piece->mon_list()]->[$2-1], $1, $4, $5 );
 			}
 
 			if( $tempheader->{'arrivaldate'} =~ m{\A\s*(.+)\s*([-+]\d{4}).*\z} )
@@ -351,7 +354,7 @@ sub tellmewhy
 	elsif( $self->is_mailererror()   ){ $rwhy = 'mailererror'; }
 	elsif( $self->is_onhold()        ){ $rwhy = 'onhold'; }
 	else{  $rwhy = $self->is_somethingelse() ? $self->{'reason'} : 'undefined'; }
-	return($rwhy);
+	return $rwhy;
 }
 
 sub is_filtered

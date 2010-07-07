@@ -1,4 +1,4 @@
-# $Id: Iterator.pm,v 1.2 2010/06/10 10:28:35 ak Exp $
+# $Id: Iterator.pm,v 1.3 2010/07/07 11:21:37 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                    
@@ -44,7 +44,7 @@ sub new
 
 	$argvs->{'data'} = ref($array) eq q|ARRAY| ? $array : [];
 	$argvs->{'count'} = scalar @{ $argvs->{'data'} };
-	return( $class->SUPER::new($argvs));
+	return $class->SUPER::new($argvs);
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -63,7 +63,7 @@ sub reset
 	# @Return	(Kanadzuchi::Iterator) This ojbect
 	my $self = shift();
 	$self->{'position'} = 0;
-	return($self);
+	return $self;
 }
 
 sub flush
@@ -79,7 +79,7 @@ sub flush
 	$self->{'data'} = [];
 	$self->{'count'} = 0;
 	$self->{'position'} = 0;
-	return($self);
+	return $self;
 }
 
 sub first
@@ -93,8 +93,8 @@ sub first
 	# @Return	First entity
 	my $self = shift();
 	$self->{'position'} = 0;
-	return($self->{'data'}->[0]) if( $self->{'count'} );
-	return(undef());
+	return $self->{'data'}->[0] if( $self->{'count'} );
+	return undef();
 }
 
 sub hasnext
@@ -125,12 +125,12 @@ sub next
 	my $xpos = $self->{'position'} + 1;
 	my $next = undef();
 
-	return(undef()) if( $xpos > $self->{'count'} );
-	return($self->first()) if( $xpos < 0 );
+	return undef() if( $xpos > $self->{'count'} );
+	return $self->first() if( $xpos < 0 );
 
 	$next = $self->{'data'}->[ $self->{'position'} ];
 	$self->{'position'} = $xpos;
-	return($next);
+	return $next;
 }
 
 sub prev
@@ -146,12 +146,12 @@ sub prev
 	my $xpos = $self->{'position'} - 1;
 	my $prev = undef();
 
-	return(undef()) if( $xpos > $self->{'count'} );
-	return($self->first()) if( $xpos < 0 );
+	return undef() if( $xpos > $self->{'count'} );
+	return $self->first() if( $xpos < 0 );
 
 	$prev = $self->{'data'}->[ $self->{'position'} ];
 	$self->{'position'} = $xpos;
-	return($prev);
+	return $prev;
 }
 
 sub all
@@ -164,7 +164,7 @@ sub all
 	# @Param	<None>
 	# @Return	(Ref->Array) All of the data
 	my $self = shift();
-	return($self->{'data'});
+	return $self->{'data'};
 }
 
 

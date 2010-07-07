@@ -1,4 +1,4 @@
-# $Id: BdDR.pm,v 1.2 2010/05/16 23:58:16 ak Exp $
+# $Id: BdDR.pm,v 1.3 2010/07/07 11:21:37 ak Exp $
 # -Id: RDB.pm,v 1.9 2010/03/04 08:31:40 ak Exp -
 # -Id: Database.pm,v 1.2 2009/08/29 19:01:14 ak Exp -
 # -Id: Database.pm,v 1.7 2009/08/13 07:13:28 ak Exp -
@@ -64,7 +64,7 @@ sub new
 	$argvs->{'autocommit'} = 1;
 	$argvs->{'raiseerror'} = 1;
 	$argvs->{'printerror'} = 0;
-	return($class->SUPER::new($argvs));
+	return $class->SUPER::new($argvs);
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -82,24 +82,24 @@ sub setup
 	# @Param <ref>	(ref->Kanadzuchi) config->{database}
 	# @Return	(Kanadzuchi::BdDR) This object
 	my $self = shift();
-	my $conf = shift() || return($self);
+	my $conf = shift() || return $self;
 
 	if( ref($conf) eq q|HASH| )
 	{
 		# Set values to Kanadzuchi::BdDR object
-		foreach my $_v ( 'hostname', 'port', 'dbtype' )
+		foreach my $v ( 'hostname', 'port', 'dbtype' )
 		{
-			$self->{$_v} = $conf->{$_v} unless( defined($self->{$_v}) );
+			$self->{$v} = $conf->{$v} unless defined($self->{$v});
 		}
 
-		$self->{'dbname'}   = $conf->{'dbname'} || q(:memory:);
-		$self->{'dbtype'} ||= q(SQLite);
+		$self->{'dbname'}   = $conf->{'dbname'} || ':memory:';
+		$self->{'dbtype'} ||= 'SQLite';
 		$self->{'username'} = $conf->{'username'} || undef();
 		$self->{'password'} = $conf->{'password'} || undef();
 
 		# Make the data source name
-		my $ty = lc( $self->{'dbtype'} );
-		my $ch = length($ty) == 1 ? substr( $ty, 0, 1 ) : q(x);
+		my $ty = lc $self->{'dbtype'};
+		my $ch = length($ty) == 1 ? substr( $ty, 0, 1 ) : 'x';
 		my( $dr, $db, $ds, $pt );
 
 		if( $ty =~ m{(?>(?:postgre(?>(?:s|sql))|pgsql))} || $ch eq 'p' )
@@ -124,7 +124,7 @@ sub setup
 			# Unsupported database type
 			$self->{'dbname'} = q();
 			$self->{'datasn'} = q();
-			return($self);
+			return $self;
 		}
 
 		if( defined($self->{'hostname'}) && defined($pt) )
@@ -143,7 +143,7 @@ sub setup
 		$self->{'datasn'} = $ds;
 	}
 
-	return($self);
+	return $self;
 }
 
 sub connect
@@ -157,7 +157,7 @@ sub connect
 	# @Return	(DBI::db) Database handle
 	#		(undef) Failed to connect
 	my $self = shift();
-	my $dsnx = $self->{'datasn'} || return(undef());
+	my $dsnx = $self->{'datasn'} || return undef();
 	my $dopt = {};
 
 	eval { 
@@ -167,13 +167,14 @@ sub connect
 			'PrintError' => $self->{'printerror'},
 		};
 
-		$self->{'handle'} = DBI->connect( $dsnx, $self->{'username'}, $self->{'password'}, $dopt );
+		$self->{'handle'} = DBI->connect( 
+			$dsnx, $self->{'username'}, $self->{'password'}, $dopt );
 	};
-	return( $self->{'handle'} ) unless($@);
+	return( $self->{'handle'} ) unless $@;
 
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
-	return(undef());
+	return undef();
 }
 
 sub disconnect
@@ -194,7 +195,7 @@ sub disconnect
 		$self->{'handle'} = undef();
 	};
 
-	return(1) unless($@);
+	return(1) unless $@;
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
 	return(0);
@@ -210,7 +211,7 @@ sub DESTROY
 	# @Param 	<None>
 	# @Return	(Integer) 1
 	my $self = shift();
-	return($self->disconnect());
+	return $self->disconnect();
 }
 
 1;

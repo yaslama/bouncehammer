@@ -1,4 +1,4 @@
-# $Id: BounceLogs.pm,v 1.10 2010/06/25 19:25:40 ak Exp $
+# $Id: BounceLogs.pm,v 1.11 2010/07/07 11:21:42 ak Exp $
 # -Id: BounceLogs.pm,v 1.9 2010/03/04 08:33:28 ak Exp -
 # -Id: BounceLogs.pm,v 1.1 2009/08/29 08:58:48 ak Exp -
 # -Id: BounceLogs.pm,v 1.6 2009/08/27 05:09:55 ak Exp -
@@ -118,7 +118,7 @@ sub new
 	$argvs->{'object'} = $argvs->{'handle'}
 				? $klass->new( { 'dbh' => $argvs->{'handle'} } )
 				: undef();
-	return( $class->SUPER::new($argvs));
+	return $class->SUPER::new($argvs);
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -239,11 +239,11 @@ sub search
 
 			if( $_c eq 'hostgroup' )
 			{
-				$wherecnd->{$_c} = Kanadzuchi::Mail->gname2id($cond->{$_c}) unless( $cond->{$_c} =~ m{\A\d+\z} );
+				$wherecnd->{$_c} = Kanadzuchi::Mail->gname2id($cond->{$_c}) unless $cond->{$_c} =~ m{\A\d+\z};
 			}
 			elsif( $_c eq 'reason' )
 			{
-				$wherecnd->{$_c} = Kanadzuchi::Mail->rname2id($cond->{$_c}) unless( $cond->{$_c} =~ m{\A\d+\z} );
+				$wherecnd->{$_c} = Kanadzuchi::Mail->rname2id($cond->{$_c}) unless $cond->{$_c} =~ m{\A\d+\z};
 			}
 			elsif( $_c eq 'bounced' || $_c eq 'updated' || $_c eq 'frequency' )
 			{
@@ -258,7 +258,7 @@ sub search
 
 		COLUMNS_IN_MASTERTABLE: foreach my $_c ( @$joincols )
 		{
-			next() unless( defined($cond->{$_c}) );
+			next() unless defined($cond->{$_c});
 			$mtab = $mtobject->{ $_c.'s' };
 			$rset->add_where( $mtab->table().'.'.$mtab->field() => lc($cond->{$_c}) );
 		}
@@ -297,9 +297,13 @@ sub search
 		}
 	};
 
-	if( $@ ){ $self->{'error'}->{'string'} = $@; $self->{'error'}->{'count'}++; }
-	return($nrecords) if( $cflg );
-	return($data);
+	if( $@ )
+	{
+		$self->{'error'}->{'string'} = $@; 
+		$self->{'error'}->{'count'}++;
+	}
+	return $nrecords if $cflg;
+	return $data;
 }
 
 sub groupby
@@ -380,7 +384,7 @@ sub size
 	my $size = 0;
 
 	eval{ $size = $self->search( {}, Kanadzuchi::BdDR::Page->new(), 1 ) };
-	return( $size ) unless( $@ );
+	return $size unless $@;
 
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
@@ -400,10 +404,10 @@ sub count
 	my $self = shift();
 	my $cond = shift() || {};
 	my $page = shift() || new Kanadzuchi::BdDR::Page;
-	my $nofr = 0;
+	my $size = 0;
 
-	eval{ $nofr = $self->search( $cond, $page, 1 ) };
-	return( $nofr ) unless( $@ );
+	eval{ $size = $self->search( $cond, $page, 1 ) };
+	return $size unless $@;
 
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
@@ -429,7 +433,7 @@ sub insert
 		$that = $self->{'object'}->insert( $self->{'table'}, $data );
 		$nuid = $that->get_column('id') if( defined($that) );
 	};
-	return($nuid) unless($@);
+	return $nuid unless $@;
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
 	return(0);
@@ -455,7 +459,7 @@ sub update
 	eval {
 		$stat = $self->{'object'}->update( $self->{'table'}, $data, $cond );
 	};
-	return($stat) unless($@);
+	return $stat unless $@;
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
 	return(0);
@@ -479,7 +483,7 @@ sub remove
 	eval {
 		$stat = $self->{'object'}->delete( $self->{'table'}, $cond );
 	};
-	return($stat) unless($@);
+	return $stat unless $@;
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
 	return(0);
@@ -499,7 +503,7 @@ sub disable
 	my $self = shift();
 	my $cond = shift() || return(0);
 	return(0) if( ! $self->is_validid($cond->{'id'}) && ! $cond->{'token'} );
-	return($self->update( { 'disabled' => 1 }, $cond ) );
+	return $self->update( { 'disabled' => 1 }, $cond );
 }
 
 1;

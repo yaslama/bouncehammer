@@ -1,4 +1,4 @@
-# $Id: RFC1893.pm,v 1.4 2010/06/11 00:05:57 ak Exp $
+# $Id: RFC1893.pm,v 1.5 2010/07/07 11:21:37 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                 
@@ -85,11 +85,11 @@ sub int2code
 	# @Return	(String) D.S.N.
 	#		(String) Empty = Invalid number
 	my $class = shift();
-	my $intsc = shift() || return(q{});
-	my $dsnsc = q{};
+	my $intsc = shift() || return q();
+	my $dsnsc = q();
 
 	$dsnsc = $1.q{.}.$2.q{.}.$3 if( $intsc =~ m{\A([245])(\d)(\d)\z} );
-	return($dsnsc);
+	return $dsnsc;
 }
 
 sub standardcode

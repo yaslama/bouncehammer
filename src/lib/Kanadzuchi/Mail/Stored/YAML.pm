@@ -1,4 +1,4 @@
-# $Id: YAML.pm,v 1.12 2010/06/10 10:28:50 ak Exp $
+# $Id: YAML.pm,v 1.13 2010/07/07 11:21:53 ak Exp $
 # -Id: Serialized.pm,v 1.8 2009/12/31 16:30:13 ak Exp -
 # -Id: Serialized.pm,v 1.2 2009/10/06 09:11:18 ak Exp -
 # -Id: Serialized.pm,v 1.12 2009/07/16 09:05:42 ak Exp -
@@ -31,13 +31,13 @@ sub load
 	# @Param <ref>	(Ref->String|File) Serialized data(YAML|JSON)
 	# @Return	(Ref->Array) Array-ref of Hash references
 	my $class = shift();
-	my $sdata = shift() || return([]);
+	my $sdata = shift() || return [];
 	my $jsons = undef();	# JSON::Syck object(array)
 	my $strct = [];
 
 	eval { $jsons = Kanadzuchi::Metadata->to_object( $sdata ); };
-	return([]) if( $@ );
-	return([]) if( ref($jsons) ne q|ARRAY| );
+	return [] if( $@ );
+	return [] if( ref($jsons) ne q|ARRAY| );
 
 	my $structures = [];
 	my $eachrecord = {};
@@ -54,7 +54,7 @@ sub load
 		$eachrecord->{'diagnosticcode'} ||= $descrfield->{'diagnosticcode'};
 		push( @$structures, $eachrecord );
 	}
-	return($structures);
+	return $structures;
 }
 
 sub loadandnew
@@ -67,13 +67,13 @@ sub loadandnew
 	# @Param <str>	(String) Serialized data(YAML|JSON)
 	# @Return	(Ref->Array) Kanadzuchi::Mail::Stored::YAML
 	my $class = shift();
-	my $sdata = shift() || return([]);
+	my $sdata = shift() || return [];
 
 	my $structures = $class->load($sdata);
 	my $newobjects = [];
 
 	map { push( @$newobjects, __PACKAGE__->new(%$_) ) } @$structures;
-	return( Kanadzuchi::Iterator->new($newobjects) );
+	return Kanadzuchi::Iterator->new($newobjects);
 }
 
 1;

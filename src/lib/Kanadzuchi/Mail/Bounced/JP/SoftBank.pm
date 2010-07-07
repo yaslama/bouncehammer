@@ -1,4 +1,4 @@
-# $Id: SoftBank.pm,v 1.4 2010/07/07 01:06:27 ak Exp $
+# $Id: SoftBank.pm,v 1.5 2010/07/07 06:15:30 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Bounced::JP::
                                                         
@@ -113,7 +113,6 @@ sub is_userunknown
 			if( $self->{'smtpcommand'} eq 'RCPT' &&
 					( $diag =~ $rxuu || $ulib->habettextu($diag) ) ){
 
-				warn 'Hoge';
 				$isuu = 1;
 			}
 		}

@@ -1,4 +1,4 @@
-# $Id: Statistics.pm,v 1.8 2010/07/07 01:04:26 ak Exp $
+# $Id: Statistics.pm,v 1.9 2010/07/07 09:06:18 ak Exp $
 # -Id: Statistics.pm,v 1.1 2009/08/29 09:00:23 ak Exp -
 # -Id: Statistics.pm,v 1.1 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -33,6 +33,7 @@ __PACKAGE__->mk_accessors(
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+sub NA { 'NA' }
 sub new
 {
 	# +-+-+-+
@@ -87,9 +88,10 @@ sub round
 	# @Param <num>	(Float) Number
 	# @Return	(Float) Rounded number
 	my $self = shift();
-	my $n = shift() || return q{};
+	my $n = shift();
 	my $p = 0;
 
+	return NA() unless( $self->is_number($n) );
 	return $n if( $self->{'rounding'} == 0 );
 	return int($n) if( $self->{'rounding'} == 1 );
 
@@ -126,11 +128,10 @@ sub sum
 	# @Return	(Float) Sum
 	my $self = shift();
 	my $smpl = shift() || $self->{'sample'};
-	my $summ = 0;
 
-	return q() unless( ref($smpl) eq q|ARRAY| );
-	$summ = List::Util::sum( @$smpl );
-	return $self->round( $summ );
+	return NA() unless( ref($smpl) eq q|ARRAY| );
+	return NA() if( $self->size( $smpl ) < 1 );
+	return $self->round( List::Util::sum( @$smpl ) );
 }
 
 sub mean
@@ -146,7 +147,9 @@ sub mean
 	my $smpl = shift() || $self->{'sample'};
 	my $mean = 0;
 
-	return q() if( $self->size( $smpl ) < 1 );
+	return NA() unless( ref($smpl) eq q|ARRAY| );
+	return NA() if( $self->size( $smpl ) < 1 );
+
 	$mean = List::Util::sum( @$smpl ) / $self->size( $smpl );
 	return $self->round( $mean );
 }
@@ -169,12 +172,14 @@ sub variance
 	my $rounding = $self->{'rounding'};
 	my $variance = 0;
 
-	return q() if( $self->size( $smpl ) < 1 );
+	return NA() unless( ref($smpl) eq q|ARRAY| );
+	return NA() if( $self->size( $smpl ) < 1 );
 
 	$self->{'rounding'} = 0;
 	$mean = $self->mean($smpl);
 	$self->{'rounding'} = $rounding;
-	return q() unless( __PACKAGE__->is_number( $mean ) );
+
+	return NA() unless( __PACKAGE__->is_number( $mean ) );
 
 	$diff = [ map { ( $_ - $mean ) ** 2 } @$smpl ];
 	$variance = List::Util::sum(@$diff) / ( $self->size($smpl) - $self->{'unbiased'} );
@@ -196,12 +201,14 @@ sub stddev
 	my $rounding = $self->{'rounding'};
 	my $variance = 0;
 
-	return q() if( $self->size( $smpl ) < 1 );
+	return NA() unless( ref($smpl) eq q|ARRAY| );
+	return NA() if( $self->size( $smpl ) < 1 );
 
 	$self->{'rounding'} = 0;
 	$variance = $self->variance( $smpl );
 	$self->{'rounding'} = $rounding;
-	return  $self->round( sqrt($variance) );
+
+	return $self->round( sqrt($variance) );
 }
 
 sub max
@@ -216,7 +223,8 @@ sub max
 	my $self = shift();
 	my $smpl = shift() || $self->{'sample'};
 
-	return q() if( $self->size( $smpl ) < 1 );
+	return NA() unless( ref($smpl) eq q|ARRAY| );
+	return NA() if( $self->size( $smpl ) < 1 );
 	return List::Util::max( @$smpl );
 }
 
@@ -232,7 +240,8 @@ sub min
 	my $self = shift();
 	my $smpl = shift() || $self->{'sample'};
 
-	return q() if( $self->size( $smpl ) < 1 );
+	return NA() unless( ref($smpl) eq q|ARRAY| );
+	return NA() if( $self->size( $smpl ) < 1 );
 	return List::Util::min( @$smpl );
 }
 
@@ -254,7 +263,8 @@ sub quartile
 	my $qindex = 0;
 	my $remain = 0;
 
-	return q() if( $self->size( $smpl ) < 1 );
+	return NA() unless( ref($smpl) eq q|ARRAY| );
+	return NA() if( $self->size( $smpl ) < 1 );
 
 	$q = 2 if( $q < 1 || $q > 3 );
 	$sorted = [ sort { $a <=> $b } @$smpl ];
@@ -293,7 +303,8 @@ sub range
 	my $self = shift();
 	my $smpl = shift() || $self->{'sample'};
 
-	return q() if( $self->size( $smpl ) < 1 );
+	return NA() unless( ref($smpl) eq q|ARRAY| );
+	return NA() if( $self->size( $smpl ) < 1 );
 	return List::Util::max( @$smpl ) - List::Util::min( @$smpl );
 }
 

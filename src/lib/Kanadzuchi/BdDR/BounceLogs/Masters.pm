@@ -1,4 +1,4 @@
-# $Id: Masters.pm,v 1.11 2010/07/07 01:06:24 ak Exp $
+# $Id: Masters.pm,v 1.12 2010/07/07 11:21:44 ak Exp $
 # -Id: Addressers.pm,v 1.4 2010/03/04 08:33:28 ak Exp -
 # -Id: Addressers.pm,v 1.4 2010/02/21 20:42:02 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -154,7 +154,7 @@ sub mastertables
 	my $alias = [ 'addressers', 'senderdomains', 'destinations',
 			'hostgroups', 'providers', 'reasons' ];
 	$mtabs = $alias unless( scalar(@$mtabs) );
-	return({ map { $_ => $class->new( 'alias' => $_, 'handle' => $mtdbh ) } @$mtabs });
+	return { map { $_ => $class->new( 'alias' => $_, 'handle' => $mtdbh ) } @$mtabs };
 }
 
 sub new
@@ -180,7 +180,7 @@ sub new
 
 	# Check table alias
 	my $alias = $class->whichtable($argvs->{'alias'});
-	return(undef()) unless( $alias );
+	return undef() unless $alias;
 
 	foreach my $t ( keys(%$tfmap) )
 	{
@@ -251,16 +251,16 @@ sub count
 	#		undef       = Failed to connect
 	my $self = shift();
 	my $cond = shift() || {};
-	my $nofr = 0;
+	my $size = 0;
 
 	eval {
 		# Set column name, other condition, and send query
 		my $_cond = {};
 		map { $_cond->{$_} = $cond->{$_} if( defined($cond->{$_}) ) } (qw{id disabled description});
 		$_cond->{ $self->{'field'} } = $cond->{'name'} if( defined($cond->{'name'}) );
-		$nofr = $self->{'object'}->count( $self->{'table'}, 'id', $_cond );
+		$size = $self->{'object'}->count( $self->{'table'}, 'id', $_cond );
 	};
-	return( $nofr ) unless( $@ );
+	return $size unless $@;
 
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
@@ -289,7 +289,7 @@ sub getidbyname
 		$anid = defined($_row1) ? $_row1->get_column('id') : 0;
 	};
 
-	return( $anid ) unless($@);
+	return $anid unless $@;
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
 	return(0);
@@ -306,10 +306,11 @@ sub getnamebyid
 	# @Return	(String) '' = Failed or not found
 	#		(String) value of 'name' field
 	my $self = shift();
-	my $anid = shift() || return(q{});
+	my $anid = shift() || return q();
 	my $name = q();
 
-	return(q{}) unless( $self->is_validid($anid) );
+	return q() unless( $self->is_validid($anid) );
+
 	eval {
 		my $_tobj = $self->{'object'};
 		my $_tsql = sprintf( "SELECT %s FROM %s WHERE id = :id", $self->{'field'}, $self->{'table'} );
@@ -317,10 +318,11 @@ sub getnamebyid
 		my $_row1 = defined($_iter) ? $_iter->first() : undef();
 		$name = defined($_row1) ? $_row1->get_column($self->{'field'}) : q();
 	};
-	return( $name ) unless($@);
+
+	return $name unless $@;
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
-	return( q{} );
+	return q();
 }
 
 sub getentbyid
@@ -333,10 +335,10 @@ sub getentbyid
 	# @Param <id>	(Integer) ID
 	# @Return	(Ref->Hash) Entity
 	my $self = shift();
-	my $anid = shift() || return({});
+	my $anid = shift() || return {};
 	my $trow = {};
 
-	return({}) unless( $self->is_validid($anid) );
+	return {} unless( $self->is_validid($anid) );
 
 	eval {
 		my $_tobj = $self->{'object'};
@@ -352,10 +354,10 @@ sub getentbyid
 		}
 	};
 
-	return($trow) unless($@);
+	return $trow unless $@;
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
-	return({});
+	return {};
 }
 
 sub search
@@ -373,8 +375,8 @@ sub search
 	my $page = shift() || new Kanadzuchi::BdDR::Page();
 	my $recs = [];
 
-	return([]) unless( ref($cond) eq q|HASH| );
-	return([]) unless( ref($page) eq q|Kanadzuchi::BdDR::Page| );
+	return [] unless( ref($cond) eq q|HASH| );
+	return [] unless( ref($page) eq q|Kanadzuchi::BdDR::Page| );
 
 	eval {
 		my $_qopt = $page->to_hashref();
@@ -399,11 +401,11 @@ sub search
 			}
 		}
 	};
-	return($recs) unless($@);
+	return $recs unless $@;
 
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
-	return([]);
+	return [];
 }
 
 sub insert
@@ -434,7 +436,7 @@ sub insert
 					'disabled' => $data->{'disabled'}, } );
 		$nuid = defined($_that) ? $_that->id() : 0;
 	};
-	return($nuid) unless($@);
+	return $nuid unless $@;
 
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
@@ -471,7 +473,8 @@ sub update
 
 		$stat = $_tobj->update( $self->{'table'}, $_new1, { 'id' => $cond->{'id'} } );
 	};
-	return($cond->{'id'}) if( $stat && ! $@ );
+
+	return $cond->{'id'} if( $stat && ! $@ );
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
 	return(0);
@@ -493,13 +496,15 @@ sub remove
 
 	return(0) unless( ref($cond) eq q|HASH| );
 	return(0) unless( $self->is_validid($cond->{'id'}) );
+
 	eval {
 		my $_tobj = $self->{'object'};
 		my $_cond = { 'id' => $cond->{'id'} };
 
 		$stat = $_tobj->delete( $self->{'table'}, $_cond );
 	};
-	return($cond->{'id'}) if( $stat && ! $@ );
+
+	return $cond->{'id'} if( $stat && ! $@ );
 	$self->{'error'}->{'string'} = $@;
 	$self->{'error'}->{'count'}++;
 	return(0);

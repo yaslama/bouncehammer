@@ -1,4 +1,4 @@
-# $Id: String.pm,v 1.6 2010/06/19 09:44:15 ak Exp $
+# $Id: String.pm,v 1.7 2010/07/07 11:21:38 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
 
@@ -32,13 +32,13 @@ sub token
 	#		(String) Blank/failed to create token
 	# @See		http://en.wikipedia.org/wiki/ASCII
 	#		http://search.cpan.org/~gaas/Digest-MD5-2.39/MD5.pm
-	my $class = shift() || return q{};
-	my $afrom = shift() || return q{};
-	my $arcpt = shift() || return q{};
+	my $class = shift() || return q();
+	my $afrom = shift() || return q();
+	my $arcpt = shift() || return q();
 
 	# Format: STX(0x02) Sender-Address RS(0x1e) Recipient-Address ETC(0x03)
-	return( Digest::MD5::md5_hex( 
-			sprintf( "\x02%s\x1e%s\x03", lc($afrom), lc($arcpt) ) ));
+	return Digest::MD5::md5_hex( 
+			sprintf( "\x02%s\x1e%s\x03", lc($afrom), lc($arcpt) ) );
 }
 
 sub is_validtoken

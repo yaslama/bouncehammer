@@ -1,4 +1,4 @@
-# $Id: Yahoo.pm,v 1.2 2010/06/10 10:28:46 ak Exp $
+# $Id: Yahoo.pm,v 1.3 2010/07/07 11:21:51 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Bounced::
                                               
@@ -55,7 +55,7 @@ sub is_filtered
 			}
 		}
 	}
-	return($isfi);
+	return $isfi;
 }
 
 sub is_userunknown
@@ -99,7 +99,7 @@ sub is_userunknown
 			$isuu = 1 if( $self->is_permerror() || $stat == Kanadzuchi::RFC1893->internalcode($subj) );
 		}
 	}
-	return($isuu);
+	return $isuu;
 }
 
 sub is_mailboxfull
@@ -136,7 +136,7 @@ sub is_mailboxfull
 			$ismf = 1 if( $stat == Kanadzuchi::RFC1893->internalcode($subj) );
 		}
 	}
-	return($ismf);
+	return $ismf;
 }
 
 1;

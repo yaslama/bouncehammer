@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.20 2010/07/07 05:42:01 ak Exp $
+# $Id: Mbox.pm,v 1.21 2010/07/07 11:21:37 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -52,7 +52,7 @@ __PACKAGE__->mk_accessors(
 #
 sub ENDOF() { qq(\n__THE_END_OF_THE_EMAIL__\n); }
 my $TransferAgents = __PACKAGE__->postulat();
-my $DefaultClasses = [ 'Sendmail', 'Postfix', 'qmail', 'Google' ];
+my $MostFamousMTAs = [ 'Sendmail', 'Postfix', 'qmail', 'Google' ];
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -72,14 +72,14 @@ sub new
 	my $argvs = { @_ };
 
 	DEFAULT_VALUES: {
-		$argvs->{'greed'} = 0 unless($argvs->{'greed'});
+		$argvs->{'greed'} = 0 unless $argvs->{'greed'};
 		$argvs->{'nmails'} = 0;
 		$argvs->{'emails'} = [];
 		$argvs->{'nmesgs'} = 0;
 		$argvs->{'messages'} = [];
 	}
 
-	return( $class->SUPER::new( $argvs ) );
+	return $class->SUPER::new( $argvs );
 }
 
 sub postulat
@@ -175,14 +175,16 @@ sub breakit
 	# @Param <ref>	(Ref->String) Message body
 	# @Return	(String) Message body or empty string
 	my $packagename = shift();
-	my $thismessage = shift() || return(q());
-	my $thebodypart = shift() || return(q());
+	my $thismessage = shift() || return q();
+	my $thebodypart = shift() || return q();
 	my $theheadpart = $thismessage->{'head'};
-	my $contenttype = [ 
-		qr{\Amultipart/(?:report|mixed)},
-		qr{\Amessage/(?:delivery-status|rfc822)},
-		qr{\Atext/rfc822-headers},
-	];
+
+	# For Future Code Refactoring.
+	# my $contenttype = [	
+	#	qr{\Amultipart/(?:report|mixed)},
+	#	qr{\Amessage/(?:delivery-status|rfc822)},
+	#	qr{\Atext/rfc822-headers},
+	# ];
 
 	# Check whether or not the message is a bounce mail.
 	#  _____             _     _____                                _          _ 
@@ -218,7 +220,7 @@ sub breakit
 	my $isirregular = 0;		# (Integer) Is irregular bounce message 
 
 	# qmail and Gmail
-	foreach my $mta ( @$DefaultClasses )
+	foreach my $mta ( @$MostFamousMTAs )
 	{
 		$agentmodule  = q|Kanadzuchi::MTA::|.$mta;
 		$pseudofield .= $agentmodule->reperit( $theheadpart, $thebodypart );
@@ -259,8 +261,8 @@ sub slurpit
 
 	unless( ref($file) eq q|SCALAR| )
 	{
-		return 0 if( $file =~ m{[\n\r]} || $file =~ m{[\x00-\x1f\x7f]} );
-		return 0 if(
+		return(0) if( $file =~ m{[\n\r]} || $file =~ m{[\x00-\x1f\x7f]} );
+		return(0) if(
 			! ( -f $file && -T _ && -s _ ) &&
 			! ( ref($file) eq q|GLOB| && -T $file ) );
 	}
@@ -286,7 +288,7 @@ sub slurpit
 		}
 	};
 
-	return 0 if $@;
+	return(0) if $@;
 	$self->{'nmails'} = scalar( @{$self->{'emails'}} );
 	return $self->{'nmails'};
 }
@@ -305,7 +307,7 @@ sub parseit
 	my $ends = ENDOF;
 	my $seek = 0;
 
-	my $agentclasses = [ map { 'Kanadzuchi::MTA::'.$_ } @$DefaultClasses ];
+	my $agentclasses = [ map { 'Kanadzuchi::MTA::'.$_ } @$MostFamousMTAs ];
 	my $emailheaders = [ 'From', 'To', 'Date', 'Subject', 'Content-Type' ];
 	my $agentheaders = [];
 

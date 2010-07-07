@@ -1,4 +1,4 @@
-# $Id: TestRun.pm,v 1.7 2010/04/09 03:53:36 ak Exp $
+# $Id: TestRun.pm,v 1.8 2010/07/07 11:21:46 ak Exp $
 # -Id: TestRun.pm,v 1.4 2009/09/01 23:19:46 ak Exp -
 # -Id: TestRun.pm,v 1.2 2009/08/27 05:09:32 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -20,25 +20,27 @@ use Kanadzuchi;
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-our $Configuration = {
-	'system'	=> 'BounceHammer',
-	'version'	=> $Kanadzuchi::VERSION,
-	'file'		=> {
-		'maxsize' => 0,
-		'templog' => { 'prefix' => 'hammer', 'suffix' => 'tmp' },
-		'storage' => { 'prefix' => 'hammer', 'suffix' => 'log' },
-	},
-	'directory'	=> {
-		'conf'	=> '/tmp',
-		'pid'	=> '/tmp',
-		'log'	=> '/tmp',
-		'tmp'	=> '/tmp/',
-		'cache'	=> '/tmp',
-		'spool'	=> '/tmp',
-		'incoming' => '/tmp',
-	},
-	'environment'	=> { 'timeout' => 60, },
-};
+sub configuration {
+	return {
+		'system'	=> 'BounceHammer',
+		'version'	=> $Kanadzuchi::VERSION,
+		'file'		=> {
+			'maxsize' => 0,
+			'templog' => { 'prefix' => 'hammer', 'suffix' => 'tmp' },
+			'storage' => { 'prefix' => 'hammer', 'suffix' => 'log' },
+		},
+		'directory'	=> {
+			'conf'	=> '/tmp',
+			'pid'	=> '/tmp',
+			'log'	=> '/tmp',
+			'tmp'	=> '/tmp/',
+			'cache'	=> '/tmp',
+			'spool'	=> '/tmp',
+			'incoming' => '/tmp',
+		},
+		'environment'	=> { 'timeout' => 60, },
+	};
+}
 
 1;
 __END__

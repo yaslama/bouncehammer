@@ -1,4 +1,4 @@
-# $Id: Archive.pm,v 1.6 2010/06/10 10:28:35 ak Exp $
+# $Id: Archive.pm,v 1.7 2010/07/07 11:21:37 ak Exp $
 # -Id: Compress.pm,v 1.1 2009/08/29 08:04:54 ak Exp -
 # -Id: Compress.pm,v 1.2 2009/05/29 08:22:21 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -121,7 +121,7 @@ sub new
 	$argvs->{'cleanup'} = $argvs->{'cleanup'} ? 1 : 0;
 	$argvs->{'level'} ||= 6;
 
-	return( $class->SUPER::new($argvs) );
+	return $class->SUPER::new($argvs);
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -146,7 +146,7 @@ sub is_available
 	$path .= '.pm';
 
 	eval { require $path; };
-	return(1) unless( $@ );
+	return(1) unless $@;
 	return(0);
 }
 

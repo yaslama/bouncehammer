@@ -1,4 +1,4 @@
-# $Id: Parser.pm,v 1.4 2010/06/11 00:05:59 ak Exp $
+# $Id: Parser.pm,v 1.5 2010/07/07 11:21:48 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::MIME::
                                             
@@ -38,7 +38,7 @@ sub new
 	# @Return	(Kanadzuchi::MIME::Parser) Ojbect
 	my $class = shift();
 	my $argvs = { 'data' => {} };
-	return( $class->SUPER::new($argvs));
+	return $class->SUPER::new($argvs);
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -56,11 +56,11 @@ sub parseit
 	# @Param <ref>	(Ref->Scalar|String) Email header text
 	# @Return	(Kanadzuchi::MIME::Parser) This object
 	my $self = shift();
-	my $text = shift() || return($self);
+	my $text = shift() || return $self;
 	my $data = ref($text) eq q|SCALAR| ? $$text : $text;
 
-	return($self) unless( defined $data );
-	return($self) if( ref($data) || ! length($data) );
+	return $self unless( defined $data );
+	return $self if( ref($data) || ! length($data) );
 	$self->flush();
 
 	foreach my $thisline ( split( qq{\n}, $data ) )
@@ -74,11 +74,12 @@ sub parseit
 			$headdata =~ s{\s+\z}{};
 			next() unless( $headdata );
 
-			$self->{'data'}->{$headname} = [] unless( ref($self->{'data'}->{$headname}) eq q|ARRAY| );
+			$self->{'data'}->{$headname} = [] 
+				unless( ref($self->{'data'}->{$headname}) eq q|ARRAY| );
 			push( @{ $self->{'data'}->{ $headname } }, $headdata );
 		}
 	}
-	return($self);
+	return $self;
 }
 
 sub flush
@@ -92,7 +93,7 @@ sub flush
 	# @Return	(Integer) The number of entries
 	my $self = shift();
 	$self->{'data'} = {};
-	return($self);
+	return $self;
 }
 
 sub count
@@ -105,7 +106,7 @@ sub count
 	# @Param	<None>
 	# @Return	(Integer) The number of headers
 	my $self = shift();
-	return( keys %{ $self->{'data'} } );
+	return keys %{ $self->{'data'} };
 }
 
 sub getit
@@ -118,15 +119,15 @@ sub getit
 	# @Param <tab>	(String) Header name
 	# @Return	(Array|String) Value
 	my $self = shift();
-	my $head = shift() || return(undef());
+	my $head = shift() || return undef();
 	my $data = undef();
 
-	return(q{}) unless( ref($self->{'data'}->{$head}) eq q|ARRAY| );
-	return(q{}) unless( scalar @{ $self->{'data'}->{$head} } );
+	return q() unless( ref($self->{'data'}->{$head}) eq q|ARRAY| );
+	return q() unless( scalar @{ $self->{'data'}->{$head} } );
 	$data = $self->{'data'}->{$head};
 
-	return(@$data) if( wantarray() );
-	return($data->[0]);
+	return @$data if( wantarray() );
+	return $data->[0];
 }
 
 1;

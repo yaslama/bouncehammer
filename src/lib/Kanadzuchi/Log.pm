@@ -1,4 +1,4 @@
-# $Id: Log.pm,v 1.18 2010/06/21 05:01:40 ak Exp $
+# $Id: Log.pm,v 1.19 2010/07/07 11:21:37 ak Exp $
 # -Id: Log.pm,v 1.2 2009/10/06 06:21:47 ak Exp -
 # -Id: Log.pm,v 1.11 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -82,10 +82,10 @@ sub new
 	my $argvs = { @_ };
 
 	DEFAULT_VALUES: {
-		$argvs->{'format'} = q(yaml) unless( $argvs->{'format'} );
+		$argvs->{'format'} = 'yaml' unless( $argvs->{'format'} );
 		$argvs->{'comment'} = q() unless( $argvs->{'comment'} );
 	}
-	return( $class->SUPER::new( $argvs ) );
+	return $class->SUPER::new( $argvs );
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -111,11 +111,11 @@ sub logger
 	if( $reqv == 1 )
 	{
 		$data = $self->dumper();
-		return($data);
+		return $data;
 	}
 	else
 	{
-		return( $self->dumper() );
+		return $self->dumper();
 	}
 }
 
@@ -234,7 +234,7 @@ sub dumper
 	if( $reqv == 1 )
 	{
 		# Return as a scalar(dumped data)
-		return($data);
+		return $data;
 	}
 	else
 	{

@@ -1,4 +1,4 @@
-# $Id: Bzip2.pm,v 1.2 2010/02/21 20:24:40 ak Exp $
+# $Id: Bzip2.pm,v 1.3 2010/07/07 11:21:40 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Archive::
                                     
@@ -48,13 +48,13 @@ sub compress
 		$self->{'output'}->remove() if( $self->{'override'} && -e $self->{'output'} );
 		$bzip = IO::Compress::Bzip2->new( $self->{'output'}->stringify(), 'Append' => 0, );
 	};
-	return(0) if( $@ );
+	return(0) if $@;
 
 	$bzip->binmode();
 	$bzip->print( Perl6::Slurp::slurp( $self->{'input'}->stringify() ) );
 	$bzip->close();
 	$self->{'input'}->remove() if( $self->{'cleanup'} );
-	return( $self->{'output'}->stat->size() );
+	return $self->{'output'}->stat->size();
 }
 
 1;

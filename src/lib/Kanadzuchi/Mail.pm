@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.28 2010/06/25 19:23:38 ak Exp $
+# $Id: Mail.pm,v 1.29 2010/07/07 11:21:37 ak Exp $
 # -Id: Message.pm,v 1.1 2009/08/29 07:32:59 ak Exp -
 # -Id: BounceMessage.pm,v 1.13 2009/08/21 02:43:14 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -168,12 +168,12 @@ sub new
 		my $dpart = $argvs->{'destination'};
 		my $klass = $class.q|::Generic|;	# Default Class = K::M::B::Generic
 		my $group = 'pc';			# Default Group = PC
-		my $provi = 'various';			# Default Provider = Various
+		my $prvdr = 'various';			# Default Provider = Various
 
 		if( Kanadzuchi::RFC2606->is_reserved($dpart) )
 		{
 			$group = 'reserved';
-			$provi = Kanadzuchi::RFC2606->is_rfc2606($dpart) ? 'rfc2606' : 'reserved';
+			$prvdr = Kanadzuchi::RFC2606->is_rfc2606($dpart) ? 'rfc2606' : 'reserved';
 		}
 		else
 		{
@@ -182,7 +182,7 @@ sub new
 				# Domain information exists in the cache.
 				$klass = $DomainCache->{$dpart}->{'class'};
 				$group = $DomainCache->{$dpart}->{'group'};
-				$provi = $DomainCache->{$dpart}->{'provider'};
+				$prvdr = $DomainCache->{$dpart}->{'provider'};
 			}
 			else
 			{
@@ -194,7 +194,7 @@ sub new
 					{
 						$klass = $dinfo->{'class'};
 						$group = $dinfo->{'group'};
-						$provi = $dinfo->{'provider'};
+						$prvdr = $dinfo->{'provider'};
 						last();
 					}
 				}
@@ -202,13 +202,13 @@ sub new
 				# Set cache
 				$DomainCache->{$dpart}->{'class'} ||= $klass;
 				$DomainCache->{$dpart}->{'group'} ||= $group;
-				$DomainCache->{$dpart}->{'provider'} ||= $provi;
+				$DomainCache->{$dpart}->{'provider'} ||= $prvdr;
 			}
 		}
 
 		$class = $klass;
 		$argvs->{'hostgroup'} = $group;
-		$argvs->{'provider'} = $provi;
+		$argvs->{'provider'} = $prvdr;
 	}
 
 	PARSE_DESCRIPTION: {
@@ -278,11 +278,11 @@ sub new
 	SET_DEFAULT_VALUES: {
 
 		$argvs->{'frequency'} = 1 unless( $argvs->{'frequency'} );
-		$argvs->{'timezoneoffset'} = q(+0000) unless( $argvs->{'timezoneoffset'} );
+		$argvs->{'timezoneoffset'} = '+0000' unless( $argvs->{'timezoneoffset'} );
 		$argvs->{'diagnosticcode'} = q() unless( defined($argvs->{'diagnosticcode'}) );
 		$argvs->{'deliverystatus'} = 0 unless( defined($argvs->{'deliverystatus'}) );
 	}
-	return( $class->SUPER::new($argvs));
+	return $class->SUPER::new($argvs);
 }
 
 sub id2gname
@@ -296,15 +296,12 @@ sub id2gname
 	# @Return	(String|Ref->Array) Host group name(s)
 	#		(Empty) Does not exist
 	my $class = shift();
-	my $theid = shift() || return q{};
+	my $theid = shift() || return q();
 
 	return [ keys(%$HostGroups) ] if( $theid eq '@' );
-	return q{} unless( $theid );
-	return q{} unless( $theid =~ m{\A\d+\z} );
-	return( 
-		[grep { $HostGroups->{$_} == $theid } keys(%$HostGroups)]->[0]
-		|| q{} 
-	);
+	return q() unless( $theid );
+	return q() unless( $theid =~ m{\A\d+\z} );
+	return [grep { $HostGroups->{$_} == $theid } keys(%$HostGroups)]->[0] || q();
 }
 
 sub id2rname
@@ -318,15 +315,12 @@ sub id2rname
 	# @Return	(String|Ref->Array) The reason(s)
 	#		(Empty) Does not exist
 	my $class = shift();
-	my $theid = shift() || return q{};
+	my $theid = shift() || return q();
 
 	return [ keys(%$ReasonWhy) ] if( $theid eq '@' );
-	return q{} unless( $theid );
-	return q{} unless( $theid =~ m{\A\d+\z} );
-	return( 
-		[grep { $ReasonWhy->{$_} == $theid } keys(%$ReasonWhy)]->[0]
-		|| q{} 
-	);
+	return q() unless( $theid );
+	return q() unless( $theid =~ m{\A\d+\z} );
+	return [grep { $ReasonWhy->{$_} == $theid } keys(%$ReasonWhy)]->[0] || q(); 
 }
 
 sub gname2id
@@ -343,7 +337,7 @@ sub gname2id
 	my $gname = shift() || return(0);
 	return [ values(%$HostGroups) ] if( $gname eq '@' );
 	return(0) unless( $gname );
-	return( $HostGroups->{$gname} || 0 );
+	return $HostGroups->{$gname} || 0;
 }
 
 sub rname2id
@@ -360,7 +354,7 @@ sub rname2id
 	my $rname = shift() || return(0);
 	return [ values(%$ReasonWhy) ] if( $rname eq '@' );
 	return(0) unless( $rname );
-	return( $ReasonWhy->{$rname} || 0 );
+	return $ReasonWhy->{$rname} || 0;
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -391,7 +385,7 @@ sub damn
 	$damn->{'deliverystatus'} = $self->{'description'}->{'deliverystatus'};
 	$damn->{'timezoneoffset'} = Kanadzuchi::Time->second2tz($self->{'description'}->{'timezoneoffset'});
 
-	return($damn);
+	return $damn;
 }
 
 1;

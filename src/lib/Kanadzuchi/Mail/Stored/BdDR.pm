@@ -1,4 +1,4 @@
-# $Id: BdDR.pm,v 1.6 2010/06/21 09:53:52 ak Exp $
+# $Id: BdDR.pm,v 1.7 2010/07/07 11:21:53 ak Exp $
 # -Id: RDB.pm,v 1.10 2010/03/26 07:21:27 ak Exp -
 # -Id: Stored.pm,v 1.5 2009/12/31 16:30:13 ak Exp -
 # -Id: Stored.pm,v 1.1 2009/08/29 07:33:13 ak Exp -
@@ -42,7 +42,7 @@ sub searchandnew
 	# @Param <obj>	(Kanadzuchi::BdDR::Page) Pagination object
 	# @Return	(Kanadzuchi::Iterator) K::Mail::Stored::BdDR(s)
 	my $class = shift();
-	my $txdbh = shift() || return( Kanadzuchi::Iterator->new([]) );
+	my $txdbh = shift() || return Kanadzuchi::Iterator->new([]);
 	my $wcond = shift() || {};
 	my $pagin = shift() || Kanadzuchi::BdDR::Page->new();
 	my $sdata = [];
@@ -50,7 +50,7 @@ sub searchandnew
 	my $xrecs = $txtab->search( $wcond, $pagin );
 
 	map { push( @$sdata, __PACKAGE__->new(%$_) ) } @$xrecs;
-	return( Kanadzuchi::Iterator->new($sdata) );
+	return Kanadzuchi::Iterator->new($sdata);
 }
 
 sub remove

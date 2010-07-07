@@ -1,4 +1,4 @@
-# $Id: Page.pm,v 1.4 2010/06/10 10:28:39 ak Exp $
+# $Id: Page.pm,v 1.5 2010/07/07 11:21:42 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::BdDR::
 
@@ -56,7 +56,7 @@ sub new
 		$argvs->{'lastpagenumber'} = 0    unless(defined($argvs->{'lastpagenumber'}));
 		$argvs->{'offsetposition'} = 0    unless(defined($argvs->{'offsetposition'}));
 	}
-	return($class->SUPER::new($argvs));
+	return $class->SUPER::new($argvs);
 }
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -76,10 +76,10 @@ sub set
 	my $self = shift();
 	my $recs = shift() || 0;
 
-	return($self) if( $recs !~ m{\A\d+\z} || $recs < 1 );
+	return $self if( $recs !~ m{\A\d+\z} || $recs < 1 );
 	$self->{'numofrecordsin'} = $recs;
 	$self->{'lastpagenumber'} = int POSIX::ceil( $recs / $self->{'resultsperpage'} );
-	return($self);
+	return $self;
 }
 
 sub reset
@@ -101,7 +101,7 @@ sub reset
 	$self->{'lastpagenumber'} = 0;
 	$self->{'offsetposition'} = 0;
 
-	return($self);
+	return $self;
 }
 
 sub count
@@ -113,7 +113,7 @@ sub count
 	# @Description	Return the number of entries
 	# @Param	<None>
 	# @Return	(Integer) The number of entries
-	return(shift->{'numofrecordsin'});
+	return shift->{'numofrecordsin'};
 }
 
 sub skip
@@ -129,13 +129,13 @@ sub skip
 	my $page = shift() || $self->{'currentpagenum'};
 	my $ppos = $page;
 
-	return($self) unless( $page =~ m{\A\d+\z} );
+	return $self unless( $page =~ m{\A\d+\z} );
 
 	$ppos = $page < 0 ? 1 : $page > $self->{'lastpagenumber'} ? $self->{'lastpagenumber'} : $page;
 	$self->{'offsetposition'} = ( $ppos - 1 ) * $self->{'resultsperpage'};
 	$self->{'currentpagenum'} = $ppos;
 
-	return($self);
+	return $self;
 }
 
 sub hasnext
@@ -169,13 +169,13 @@ sub next
 	{
 		$self->{'offsetposition'} = $curr * $self->{'resultsperpage'};
 		$self->{'currentpagenum'} = $next;
-		return($self);
+		return $self;
 	}
 	else
 	{
 		$self->{'offsetposition'} = ( $curr - 1 ) * $self->{'resultsperpage'};
 		$self->{'currentpagenum'} = $self->{'lastpagenumber'};
-		return(undef);
+		return undef;
 	}
 }
 
@@ -196,13 +196,13 @@ sub prev
 	{
 		$self->{'currentpagenum'} = $prev;
 		$self->{'offsetposition'} = ( $prev - 1 ) * $self->{'resultsperpage'};
-		return($self);
+		return $self;
 	}
 	else
 	{
 		$self->{'offsetposition'} = 0;
 		$self->{'currentpagenum'} = 1;
-		return(undef);
+		return undef;
 	}
 }
 
@@ -221,7 +221,7 @@ sub to_hashref
 	$page->{'limit'} = $self->{'resultsperpage'} if( $self->{'resultsperpage'} );
 	$page->{'offset'} = $self->{'offsetposition'} if( $self->{'offsetposition'} );
 	$page->{'order_by'} = { $self->{'colnameorderby'} => $self->{'descendorderby'} ? 'DESC' : q() };
-	return($page);
+	return $page;
 }
 
 sub to_sql
@@ -245,7 +245,7 @@ sub to_sql
 
 	push( @$sqls, q(LIMIT ).$self->{'resultsperpage'} ) if( $self->{'resultsperpage'} );
 	push( @$sqls, q(OFFSET ).$self->{'offsetposition'} ) if( $self->{'offsetposition'} );
-	return( join( q{ }, @$sqls ) );
+	return join( q{ }, @$sqls );
 }
 
 1;
