@@ -1,4 +1,4 @@
-# $Id: 015_metadata.t,v 1.6 2010/04/14 00:44:55 ak Exp $
+# $Id: 015_metadata.t,v 1.7 2010/07/07 09:05:00 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Metadata;
-use Test::More ( tests => 170 );
+use Test::More ( tests => 178 );
 use JSON::Syck;
 use Path::Class::File;
 
@@ -102,7 +102,14 @@ TO_OBJECT: {
 			my $argv = defined($v) ? sprintf("%#x",ord($v)) : 'undef()';
 			$object = $T->class->to_object($v);
 			is( ref $object, q|ARRAY|, '->to_object('.$argv.')' );
-			is( $#{$object}, -1, q{Empty Array} );
+			is( scalar @$object, 0, q{Empty Array} );
+		}
+
+		foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+		{
+			$object = $T->class->to_object($n);
+			is( ref $object, q|ARRAY|, '->to_object('.$n.')' );
+			is( scalar @$object, 0, q{Empty Array} );
 		}
 	}
 }

@@ -1,4 +1,4 @@
-# $Id: 115_bddr-bouncelogs-masters.t,v 1.6 2010/07/02 10:36:37 ak Exp $
+# $Id: 115_bddr-bouncelogs-masters.t,v 1.7 2010/07/07 09:05:00 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 2741 );
+use Test::More ( tests => 2861 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -33,7 +33,7 @@ my $Page = undef();
 #
 
 SKIP: {
-	my $howmanyskips = 2741;
+	my $howmanyskips = 2861;
 	eval { require DBI; }; skip( 'Because no DBI for testing', $howmanyskips ) if( $@ );
 	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $howmanyskips ) if( $@ );
 
@@ -135,6 +135,11 @@ SKIP: {
 							my $argv = defined($e) ? sprintf("%#x", ord($e)) : 'undef()';
 							is( $object->getidbyname($e), 0, 'Due to invalid name: '.$argv.', getidbyname() failed' );
 						}
+
+						foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+						{
+							is( $object->getidbyname($n), 0, 'Due to invalid name: '.$n.', getidbyname() failed' );
+						}
 					}
 				}
 
@@ -152,6 +157,12 @@ SKIP: {
 							my $argv = defined($e) ? sprintf("%#x", ord($e)) : 'undef()';
 							is( $object->getnamebyid($e), q(),
 								'Due to invalid ID: '.$argv.', getnamebyid() failed' );
+						}
+
+						foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+						{
+							is( $object->getnamebyid($n), q(),
+								'Due to invalid ID: '.$n.', getnamebyid() failed' );
 						}
 					}
 				}
@@ -178,6 +189,12 @@ SKIP: {
 							my $argv = defined($e) ? sprintf("%#x", ord($e)) : 'undef()';
 							$entity = $object->getentbyid($e);
 							is( exists($entity->{'name'}), q(), 'Due to invalid ID: '.$argv.', getentbyid() returns empty hash reference' );
+						}
+
+						foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+						{
+							$entity = $object->getentbyid($n);
+							is( exists($entity->{'name'}), q(), 'Due to invalid ID: '.$n.', getentbyid() returns empty hash reference' );
 						}
 					}
 				}
@@ -278,6 +295,11 @@ SKIP: {
 						is( $object->update($e), 0, '->update() failed for invalid ID '.$argv );
 					}
 
+					foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+					{
+						is( $object->update($n), 0, '->update() failed for invalid ID '.$n );
+					}
+
 					is( $object->update(), 0, q{Due to no db object, ->update() returns 0: failed} );
 				}
 
@@ -293,6 +315,11 @@ SKIP: {
 					{
 						my $argv = defined($e) ? sprintf("%#x", ord($e)) : 'undef()';
 						is( $object->remove($e), 0, '->remove() failed for invalid ID '.$argv );
+					}
+
+					foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+					{
+						is( $object->remove($n), 0, '->remove() failed for invalid ID '.$n );
 					}
 
 					is( $object->remove(), 0, q{Due to no db object, ->remove() returns 0: failed} );

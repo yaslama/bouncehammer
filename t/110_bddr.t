@@ -1,4 +1,4 @@
-# $Id: 110_bddr.t,v 1.2 2010/06/08 00:59:45 ak Exp $
+# $Id: 110_bddr.t,v 1.3 2010/07/07 09:05:00 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,7 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::BdDR;
 use JSON::Syck;
-use Test::More ( tests => 161 );
+use Test::More ( tests => 169 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -83,7 +83,7 @@ METHODS: {
 	}
 
 	FAIL: {
-		foreach my $e ( @{$Kanadzuchi::Test::ExceptionalValues} )
+		foreach my $e ( @{$Kanadzuchi::Test::ExceptionalValues}, @{$Kanadzuchi::Test::NegativeValues} )
 		{
 			my $argv = defined($e) ? sprintf("%#x", ord($e)) : 'undef()';
 			my $dbio = Kanadzuchi::BdDR->new->setup($e);

@@ -1,4 +1,4 @@
-# $Id: 021_iterator.t,v 1.2 2010/06/03 06:54:33 ak Exp $
+# $Id: 021_iterator.t,v 1.3 2010/07/07 09:05:00 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -94,15 +94,15 @@ METHODS: {
 		FALSE: foreach my $f ( @{$Kanadzuchi::Test::FalseValues}, @{$Kanadzuchi::Test::ZeroValues} )
 		{
 			push( @$objs, $f );
-			#my $argv = defined($f) ? sprintf("%#x",ord($f)) : 'undef()';
-			#is( $object->is_logfile( $f ), 0, q{->is_logfile(}.$argv.q{)} );
 		}
 
+		NEGATIVE: foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+		{
+			push( @$objs, $n );
+		}
 		CONTORL: foreach my $c ( @{$Kanadzuchi::Test::EscapeCharacters}, @{$Kanadzuchi::Test::ControlCharacters} )
 		{
 			push( @$objs, $c );
-			#my $argv = defined($c) ? sprintf("%#x",ord($c)) : 'undef()';
-			#is( $object->is_logfile( $c ), 0, '->is_logfile('.$argv.')' );
 		}
 
 

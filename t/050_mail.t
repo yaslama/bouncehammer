@@ -1,4 +1,4 @@
-# $Id: 050_mail.t,v 1.10 2010/05/19 18:25:14 ak Exp $
+# $Id: 050_mail.t,v 1.11 2010/07/07 09:05:00 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Kanadzuchi::Test;
 use Kanadzuchi::Test::Mail;
 use Kanadzuchi::Mail;
 use Kanadzuchi::String;
-use Test::More ( tests => 727 );
+use Test::More ( tests => 743 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -134,6 +134,11 @@ CLASS_METHODS: {
 			my $argv = defined($z) ? sprintf("%#x",ord($z)) : 'undef()';
 			is( $T->class->id2gname($z), q(), $T->class.'->id2gname('.$argv.')' );
 		}
+
+		NEGATIVE_VALUES: foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+		{
+			is( $T->class->id2gname($n), q(), $T->class.'->id2gname('.$n.')' );
+		}
 	}
 
 	HOSTGROUPNAME_TO_ID: {
@@ -146,6 +151,11 @@ CLASS_METHODS: {
 		{
 			my $argv = defined($z) ? sprintf("%#x", ord($z)) : 'undef()';
 			is( $T->class->gname2id($z), 0, $T->class.'->gname2id('.$argv.')' );
+		}
+
+		NEGATIVE_VALUES: foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+		{
+			is( $T->class->gname2id($n), 0, $T->class.'->gname2id('.$n.')' );
 		}
 	}
 
@@ -161,6 +171,11 @@ CLASS_METHODS: {
 			my $argv = defined($z) ? sprintf("%#x", ord($z)) : 'undef()';
 			is( $T->class->id2rname($z), q(), $T->class.'->id2rname('.$argv.')' );
 		}
+
+		NEGATIVE_VALUES: foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+		{
+			is( $T->class->id2rname($n), q(), $T->class.'->id2rname('.$n.')' );
+		}
 	}
 
 	REASON_TO_ID: {
@@ -172,6 +187,11 @@ CLASS_METHODS: {
 		{
 			my $argv = defined($z) ? sprintf("%#x", ord($z)) : 'undef()';
 			is( $T->class->rname2id($z), 0, $T->class.'->rname2id('.$argv.')' );
+		}
+
+		NEGATIVE_VALUES: foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+		{
+			is( $T->class->rname2id($n), 0, $T->class.'->rname2id('.$n.')' );
 		}
 	}
 }

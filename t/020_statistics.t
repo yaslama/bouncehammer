@@ -1,4 +1,4 @@
-# $Id: 020_statistics.t,v 1.4 2010/07/07 01:04:35 ak Exp $
+# $Id: 020_statistics.t,v 1.5 2010/07/07 09:05:00 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,7 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Statistics;
 use List::Util;
-use Test::More ( tests => 151 );
+use Test::More ( tests => 177 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -51,6 +51,7 @@ PREPROCESS: {
 METHODS: {
 	my $object = $T->instance();
 	my $classx = $T->class();
+	my $rrname = q();
 
 	IS_NUMBER: {
 		ok( $classx->is_number(1) );
@@ -99,139 +100,193 @@ METHODS: {
 
 		NORMAL_SAMPLES: {
 			# Normal
-			$object->label( 'Normal test' );
-			$object->sample( $RecurrenceRelations->{'Normal'} );
+			$rrname = 'Normal',
+			$object->label( $rrname );
+			$object->sample( $RecurrenceRelations->{$rrname} );
 
-			is( $object->label(), 'Normal test', $classx.q{->label(Normal test)} );
-			is( $object->size(), 10, $classx.q{->size(Normal)} );
-			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{'Normal'}}), q{->sum(Normal test)} );
-			is( $object->range(), 9, $classx.q{->range(Normal)} );
-			is( $object->mean(), 4.5, $classx.q{->mean(Normal)} );
-			is( $object->median(), 4.5, $classx.q{->median(Normal)} );
-			is( $object->quartile(1), 2.25, $classx.q{->quartile(1,Normal)} );
-			is( $object->quartile(3), 6.75, $classx.q{->quartile(3,Normal)} );
-			is( $object->max(), 9, $classx.q{->max(Normal)} );
-			is( $object->min(), 0, $classx.q{->min(Normal)} );
-			is( $object->stddev(), 3.028, $classx.q{->stddev(Normal)} );
-			is( $object->variance(), 9.167, $classx.q{->variance(Normal) Unbiased} );
+			is( $object->label(), $rrname, $classx.q{->label = }.$rrname );
+			is( $object->size(), 10, $classx.q{->size = }.$rrname );
+			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{$rrname}}), q{->sum = }.$rrname );
+			is( $object->range(), 9, $classx.q{->range = }.$rrname );
+			is( $object->mean(), 4.5, $classx.q{->mean = }.$rrname );
+			is( $object->median(), 4.5, $classx.q{->median = }.$rrname );
+			is( $object->quartile(1), 2.25, $classx.q{->quartile(1) = }.$rrname );
+			is( $object->quartile(3), 6.75, $classx.q{->quartile(3) = }.$rrname );
+			is( $object->max(), 9, $classx.q{->max = }.$rrname );
+			is( $object->min(), 0, $classx.q{->min = }.$rrname );
+			is( $object->stddev(), 3.028, $classx.q{->stddev() = }.$rrname );
+			is( $object->variance(), 9.167, $classx.q{->variance() Unbiased = }.$rrname );
 
 			$object->unbiased(0);
-			is( $object->variance(), 8.25, $classx.q{->variance(Normal) Sample} );
+			is( $object->variance(), 8.25, $classx.q{->variance() Baiased = }.$rrname );
 			$object->unbiased(1);
 		}
 
 		DESCEND_SAMPLES: {
 			# Descend
-			$object->label( 'Descending' );
-			$object->sample( $RecurrenceRelations->{'Descend'} );
+			$rrname = 'Descend';
+			$object->label( $rrname );
+			$object->sample( $RecurrenceRelations->{$rrname} );
 
-			is( $object->label(), 'Descending', $classx.q{->label(Descending)} );
-			is( $object->size(), 10, $classx.q{->size(Descend)} );
-			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{'Descend'}}), q{->sum(Decend)} );
-			is( $object->range(), 9, $classx.q{->range(Descend)} );
-			is( $object->mean(), 4.5, $classx.q{->mean(Descend)} );
-			is( $object->median(), 4.5, $classx.q{->median(Descend)} );
-			is( $object->quartile(1), 2.25, $classx.q{->quartile(1,Descend)} );
-			is( $object->quartile(3), 6.75, $classx.q{->quartile(3,Descend)} );
-			is( $object->max(), 9, $classx.q{->max(Descend)} );
-			is( $object->min(), 0, $classx.q{->min(Descend)} );
-			is( $object->stddev(), 3.028, $classx.q{->stddev(Descend)} );
-			is( $object->variance(), 9.167, $classx.q{->variance(Descend) Unbiased} );
+			is( $object->label(), $rrname, $classx.q{->label = }.$rrname );
+			is( $object->size(), 10, $classx.q{->size = }.$rrname );
+			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{$rrname}}), q{->sum = }.$rrname );
+			is( $object->range(), 9, $classx.q{->range = }.$rrname );
+			is( $object->mean(), 4.5, $classx.q{->mean = }.$rrname );
+			is( $object->median(), 4.5, $classx.q{->median() = }.$rrname );
+			is( $object->quartile(1), 2.25, $classx.q{->quartile(1) = }.$rrname );
+			is( $object->quartile(3), 6.75, $classx.q{->quartile(3) = }.$rrname );
+			is( $object->max(), 9, $classx.q{->max() = }.$rrname );
+			is( $object->min(), 0, $classx.q{->min() = }.$rrname );
+			is( $object->stddev(), 3.028, $classx.q{->stddev() = }.$rrname );
+			is( $object->variance(), 9.167, $classx.q{->variance() Unbiased = }.$rrname );
 
 			$object->unbiased(0);
-			is( $object->variance(), 8.25, $classx.q{->variance(Descend) Sample} );
+			is( $object->variance(), 8.25, $classx.q{->variance() Baiased = }.$rrname );
 			$object->unbiased(1);
 		}
 
 		CUBE_SAMPLES: {
 			# Cube
-			$object->label('Cube');
-			$object->sample( $RecurrenceRelations->{'Cube'} );
+			$rrname = 'Cube';
+			$object->label($rrname);
+			$object->sample( $RecurrenceRelations->{$rrname} );
 
-			is( $object->label(), 'Cube', $classx.q{->label(Cube)} );
-			is( $object->size(), 12, $classx.q{->size(Cube)} );
-			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{'Cube'}}), q{->sum(Cube)} );
-			is( $object->range(), 1727, $classx.q{->range(Cube)} );
-			is( $object->mean(), 507, $classx.q{->mean(Cube)} );
-			is( $object->median(), 279.5, $classx.q{->median(Cube)} );
-			is( $object->quartile(1), 54.75, $classx.q{->quartile(1,Cube)} );
-			is( $object->quartile(3), 796.75, $classx.q{->quartile(3,Cube)} );
-			is( $object->max(), 1728, $classx.q{->max(Cube)} );
-			is( $object->min(), 1, $classx.q{->min(Cube)} );
-			is( $object->stddev(), 576.144, $classx.q{->stddev(Cube)} );
-			is( $object->variance(), 331942, $classx.q{->variance(Cube) Unbiased} );
+			is( $object->label(), $rrname, $classx.q{->label() = }.$rrname );
+			is( $object->size(), 12, $classx.q{->size() = }.$rrname );
+			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{$rrname}}), q{->sum() = }.$rrname );
+			is( $object->range(), 1727, $classx.q{->range() = }.$rrname );
+			is( $object->mean(), 507, $classx.q{->mean() = }.$rrname );
+			is( $object->median(), 279.5, $classx.q{->median() = }.$rrname );
+			is( $object->quartile(1), 54.75, $classx.q{->quartile(1) = }.$rrname );
+			is( $object->quartile(3), 796.75, $classx.q{->quartile(3) = }.$rrname );
+			is( $object->max(), 1728, $classx.q{->max() = }.$rrname );
+			is( $object->min(), 1, $classx.q{->min() = }.$rrname );
+			is( $object->stddev(), 576.144, $classx.q{->stddev() = }.$rrname );
+			is( $object->variance(), 331942, $classx.q{->variance() Unbiased = }.$rrname );
 
 			$object->unbiased(0);
-			is( $object->variance(), 304280.167, $classx.q{->variance(Cube) Sample} );
+			is( $object->variance(), 304280.167, $classx.q{->variance() Biased = }.$rrname );
 			$object->unbiased(1);
 		}
 
 		FIBONACCI_SAMPLES: {
 			# Fibonacci
-			$object->label('Fibonacci');
-			$object->sample( $RecurrenceRelations->{'Fibonacci'} );
+			$rrname = 'Fibonacci';
+			$object->label($rrname);
+			$object->sample( $RecurrenceRelations->{$rrname} );
 
-			is( $object->label(), 'Fibonacci', $classx.q{->label(Fibonacci)} );
-			is( $object->size(), 17, $classx.q{->size(Fibonacci)} );
-			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{'Fibonacci'}}), q{->sum(Fibonacci)} );
-			is( $object->range(), 987, $classx.q{->range(Fibonacci)} );
-			is( $object->mean(), 151.941, $classx.q{->mean(Fibonacci)} );
-			is( $object->median(), 21, $classx.q{->median(Fibonacci)} );
-			is( $object->quartile(1), 3, $classx.q{->quartile(1,Fibonacci)} );
-			is( $object->quartile(3), 144, $classx.q{->quartile(3,Fibobacci)} );
-			is( $object->max(), 987, $classx.q{->max(Fibonacci)} );
-			is( $object->min(), 0, $classx.q{->min(Fibonacci)} );
-			is( $object->stddev(), 272.004, $classx.q{->stddev(Fibonacci)} );
-			is( $object->variance(), 73985.934, $classx.q{->variance(Fibonacci) Unbiased} );
+			is( $object->label(), $rrname, $classx.q{->label() = }.$rrname );
+			is( $object->size(), 17, $classx.q{->size() = }.$rrname );
+			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{$rrname}}), q{->sum() = }.$rrname );
+			is( $object->range(), 987, $classx.q{->range() = }.$rrname );
+			is( $object->mean(), 151.941, $classx.q{->mean() = }.$rrname );
+			is( $object->median(), 21, $classx.q{->median() = }.$rrname );
+			is( $object->quartile(1), 3, $classx.q{->quartile(1) = }.$rrname );
+			is( $object->quartile(3), 144, $classx.q{->quartile(3) = }.$rrname );
+			is( $object->max(), 987, $classx.q{->max() = }.$rrname );
+			is( $object->min(), 0, $classx.q{->min() = }.$rrname );
+			is( $object->stddev(), 272.004, $classx.q{->stddev() = }.$rrname );
+			is( $object->variance(), 73985.934, $classx.q{->variance() Unbiased = }.$rrname );
 
 			$object->unbiased(0);
-			is( $object->variance(), 69633.82, $classx.q{->variance(Fibonacci) Sample} );
+			is( $object->variance(), 69633.82, $classx.q{->variance() Baiased = }.$rrname );
 			$object->unbiased(1);
 		}
 
 		FRIEDMAN_SAMPLES: {
 			# Friedman
-			$object->label( 'Friedman' );
-			$object->sample( $RecurrenceRelations->{'Friedman'} );
+			$rrname = 'Friedman';
+			$object->label( $rrname );
+			$object->sample( $RecurrenceRelations->{$rrname} );
 
-			is( $object->label(), 'Friedman', $classx.q{->label(Friedman)} );
-			is( $object->size(), 16, $classx.q{->size(Friedman)} );
-			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{'Friedman'}}), q{->sum(Freidman)} );
-			is( $object->range(), 999, $classx.q{->range(Friedman)} );
-			is( $object->mean(), 380.938, $classx.q{->mean(Friedman)} );
-			is( $object->median(), 252.5, $classx.q{->median(Friedman)} );
-			is( $object->quartile(1), 126.75, $classx.q{->quartile(1,Friedman)} );
-			is( $object->quartile(3), 640.75, $classx.q{->quartile(3,Friedman)} );
-			is( $object->max(), 1024, $classx.q{->max(Friedman)} );
-			is( $object->min(), 25, $classx.q{->min(Friedman)} );
-			is( $object->stddev(), 331.445, $classx.q{->stddev(Friedman)} );
-			is( $object->variance(), 109855.663, $classx.q{->variance(Friedman) Unbiased} );
+			is( $object->label(), $rrname, $classx.q{->label() = }.$rrname );
+			is( $object->size(), 16, $classx.q{->size() = }.$rrname );
+			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{$rrname}}), q{->sum() = }.$rrname );
+			is( $object->range(), 999, $classx.q{->range() = }.$rrname );
+			is( $object->mean(), 380.938, $classx.q{->mean() = }.$rrname );
+			is( $object->median(), 252.5, $classx.q{->median() = }.$rrname );
+			is( $object->quartile(1), 126.75, $classx.q{->quartile(1) = }.$rrname );
+			is( $object->quartile(3), 640.75, $classx.q{->quartile(3) = }.$rrname );
+			is( $object->max(), 1024, $classx.q{->max() = }.$rrname );
+			is( $object->min(), 25, $classx.q{->min() = }.$rrname );
+			is( $object->stddev(), 331.445, $classx.q{->stddev() = }.$rrname );
+			is( $object->variance(), 109855.663, $classx.q{->variance() Unbiased = }.$rrname );
 
 			$object->unbiased(0);
-			is( $object->variance(), 102989.684, $classx.q{->variance(Friedman) Sample} );
+			is( $object->variance(), 102989.684, $classx.q{->variance() Baiased = }.$rrname );
 			$object->unbiased(1);
 		}
 
 		SOPHIE_GERMAIN_SAMPLES: {
 			# SophieGermain
-			$object->label( 'SophieGermain' );
-			$object->sample( $RecurrenceRelations->{'SophieGermain'} );
+			$rrname = 'SophieGermain';
+			$object->label( $rrname );
+			$object->sample( $RecurrenceRelations->{$rrname} );
 
-			is( $object->label(), 'SophieGermain', $classx.q{->label(SophieGermain)} );
-			is( $object->size(), 15, $classx.q{->size(SophieGermain)} );
-			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{'SophieGermain'}}), q{->sum(SophieGermain)} );
-			is( $object->range(), 189, $classx.q{->range(SophieGermain)} );
-			is( $object->mean(), 75.067, $classx.q{->mean(SophieGermain)} );
-			is( $object->median(), 53, $classx.q{->median(SophieGermain)} );
-			is( $object->quartile(1), 17, $classx.q{->quartile(1,SophieGermain)} );
-			is( $object->quartile(3), 122, $classx.q{->quartile(3,SophieGermain)} );
-			is( $object->max(), 191, $classx.q{->max(SophieGermain)} );
-			is( $object->min(), 2, $classx.q{->min(SophieGermain)} );
-			is( $object->stddev(), 67.973, $classx.q{->stddev(SophieGermain)} );
-			is( $object->variance(), 4620.352, $classx.q{->variance(SophieGermain) Unbiased} );
+			is( $object->label(), $rrname, $classx.q{->label() = }.$rrname );
+			is( $object->size(), 15, $classx.q{->size() = }.$rrname );
+			is( $object->sum(), List::Util::sum(@{$RecurrenceRelations->{$rrname}}), q{->sum() = }.$rrname );
+			is( $object->range(), 189, $classx.q{->range() = }.$rrname );
+			is( $object->mean(), 75.067, $classx.q{->mean() = }.$rrname );
+			is( $object->median(), 53, $classx.q{->median() = }.$rrname );
+			is( $object->quartile(1), 17, $classx.q{->quartile(1) = }.$rrname );
+			is( $object->quartile(3), 122, $classx.q{->quartile(3) = }.$rrname );
+			is( $object->max(), 191, $classx.q{->max() = }.$rrname );
+			is( $object->min(), 2, $classx.q{->min() = }.$rrname );
+			is( $object->stddev(), 67.973, $classx.q{->stddev() = }.$rrname );
+			is( $object->variance(), 4620.352, $classx.q{->variance() Unbiased = }.$rrname );
 
 			$object->unbiased(0);
-			is( $object->variance(), 4312.329, $classx.q{->variance(SophieGermain) Sample} );
+			is( $object->variance(), 4312.329, $classx.q{->variance() Baiased = }.$rrname );
+			$object->unbiased(1);
+		}
+
+		ZERO_SAMPLES: {
+			# 0
+			$rrname = 'Zero';
+			$object->label( $rrname );
+			$object->sample( [0, +0, -0, 00_0, 00, 0<<0, 0<<1, 0>>0, 0>>1, 0%1] );
+
+			is( $object->label(), $rrname, $classx.q{->label() = }.$rrname );
+			is( $object->size(), 10, $classx.q{->size() = }.$rrname );
+			is( $object->sum(), 0, q{->sum() = }.$rrname );
+			is( $object->range(), 0, $classx.q{->range() = }.$rrname );
+			is( $object->mean(), 0, $classx.q{->mean() = }.$rrname );
+			is( $object->median(), 0, $classx.q{->median() = }.$rrname );
+			is( $object->quartile(1), 0, $classx.q{->quartile(1) = }.$rrname );
+			is( $object->quartile(3), 0, $classx.q{->quartile(3) = }.$rrname );
+			is( $object->max(), 0, $classx.q{->max() = }.$rrname );
+			is( $object->min(), 0, $classx.q{->min() = }.$rrname );
+			is( $object->stddev(), 0, $classx.q{->stddev() = }.$rrname );
+			is( $object->variance(), 0, $classx.q{->variance() Unbiased = }.$rrname );
+
+			$object->unbiased(0);
+			is( $object->variance(), 0, $classx.q{->variance() Baiased = }.$rrname );
+			$object->unbiased(1);
+		}
+
+		NEGATIVE_SAMPLES: {
+			# -1
+			$rrname = 'Negative';
+			$object->label( $rrname );
+			$object->sample( [ -0, -1, -2, -3, -1e0, -1e1, -1e2 ] );
+
+			is( $object->label(), $rrname, $classx.q{->label() = }.$rrname );
+			is( $object->size(), 7, $classx.q{->size() = }.$rrname );
+			is( $object->sum(), -116.999, q{->sum() = }.$rrname );
+			is( $object->range(), 100, $classx.q{->range() = }.$rrname );
+			is( $object->mean(), -16.713, $classx.q{->mean() = }.$rrname );
+			is( $object->median(), -2, $classx.q{->median() = }.$rrname );
+			is( $object->quartile(1), -6.5, $classx.q{->quartile(1) = }.$rrname );
+			is( $object->quartile(3), -1, $classx.q{->quartile(3) = }.$rrname );
+			is( $object->max(), 0, $classx.q{->max() = }.$rrname );
+			is( $object->min(), -100, $classx.q{->min() = }.$rrname );
+			is( $object->stddev(), 36.877, $classx.q{->stddev() = }.$rrname );
+			is( $object->variance(), 1359.905, $classx.q{->variance() Unbiased = }.$rrname );
+
+			$object->unbiased(0);
+			is( $object->variance(), 1165.633, $classx.q{->variance() Baiased = }.$rrname );
 			$object->unbiased(1);
 		}
 
@@ -241,51 +296,51 @@ METHODS: {
 				# Error Case: Empty
 				$object->sample([]);
 
-				is( $object->size(), 0, $classx.q{->size(Empty)} );
-				is( $object->sum(), q(), $classx.q{->sum(Empty)} );
-				is( $object->range(), q(), $classx.q{->range(Empty)} );
-				is( $object->mean(), q(), $classx.q{->mean(Empty)} );
-				is( $object->median(), q(), $classx.q{->median(Empty)} );
-				is( $object->quartile(1), q(), $classx.q{->quartile(1,Empty)} );
-				is( $object->quartile(3), q(), $classx.q{->quartile(3,Empty)} );
-				is( $object->max(), q(), $classx.q{->max(Empty)} );
-				is( $object->min(), q(), $classx.q{->min(Empty)} );
-				is( $object->stddev(), q(), $classx.q{->stddev(Empty)} );
-				is( $object->variance(), q(), $classx.q{->variance(Empty)} );
+				is( $object->size(), 0, $classx.q{->size()} );
+				is( $object->sum(), q(NA), $classx.q{->sum()} );
+				is( $object->range(), q(NA), $classx.q{->range()} );
+				is( $object->mean(), q(NA), $classx.q{->mean()} );
+				is( $object->median(), q(NA), $classx.q{->median()} );
+				is( $object->quartile(1), q(NA), $classx.q{->quartile(1)} );
+				is( $object->quartile(3), q(NA), $classx.q{->quartile(3)} );
+				is( $object->max(), q(NA), $classx.q{->max()} );
+				is( $object->min(), q(NA), $classx.q{->min()} );
+				is( $object->stddev(), q(NA), $classx.q{->stddev()} );
+				is( $object->variance(), q(NA), $classx.q{->variance()} );
 			}
 
 			NULL: {
 				# Error Case: Null
 				$object->sample(q{});
 
-				is( $object->size(), -1, $classx.q{->size(Null)} );
-				is( $object->sum(), q(), $classx.q{->sum(Null)} );
-				is( $object->range(), q(), $classx.q{->range(Null)} );
-				is( $object->mean(), q(), $classx.q{->mean(Null)} );
-				is( $object->median(), q(), $classx.q{->median(Null)} );
-				is( $object->quartile(1), q(), $classx.q{->quartile(1,Null)} );
-				is( $object->quartile(3), q(), $classx.q{->quartile(3,Null)} );
-				is( $object->max(), q(), $classx.q{->max(Null)} );
-				is( $object->min(), q(), $classx.q{->min(Null)} );
-				is( $object->stddev(), q(), $classx.q{->stddev(Null)} );
-				is( $object->variance(), q(), $classx.q{->variance(Null)} );
+				is( $object->size(), -1, $classx.q{->size()} );
+				is( $object->sum(), q(NA), $classx.q{->sum()} );
+				is( $object->range(), q(NA), $classx.q{->range()} );
+				is( $object->mean(), q(NA), $classx.q{->mean()} );
+				is( $object->median(), q(NA), $classx.q{->median()} );
+				is( $object->quartile(1), q(NA), $classx.q{->quartile(1)} );
+				is( $object->quartile(3), q(NA), $classx.q{->quartile(3)} );
+				is( $object->max(), q(NA), $classx.q{->max()} );
+				is( $object->min(), q(NA), $classx.q{->min()} );
+				is( $object->stddev(), q(NA), $classx.q{->stddev()} );
+				is( $object->variance(), q(NA), $classx.q{->variance()} );
 			}
 
 			UNDEF: {
 				# Error Case: undef
 				$object->sample(undef());
 
-				is( $object->size(), -1, $classx.q{->size(undef())} );
-				is( $object->sum(), q(), $classx.q{->sum(undef())} );
-				is( $object->range(), q(), $classx.q{->range(undef())} );
-				is( $object->mean(), q(), $classx.q{->mean(undef())} );
-				is( $object->median(), q(), $classx.q{->median(undef())} );
-				is( $object->quartile(1), q(), $classx.q{->quartile(1,undef())} );
-				is( $object->quartile(3), q(), $classx.q{->quartile(3,undef())} );
-				is( $object->max(), q(), $classx.q{->max(undef())} );
-				is( $object->min(), q(), $classx.q{->min(undef())} );
-				is( $object->stddev(), q(), $classx.q{->stddev(undef())} );
-				is( $object->variance(), q(), $classx.q{->variance(undef())} );
+				is( $object->size(), -1, $classx.q{->size()} );
+				is( $object->sum(), q(NA), $classx.q{->sum()} );
+				is( $object->range(), q(NA), $classx.q{->range()} );
+				is( $object->mean(), q(NA), $classx.q{->mean()} );
+				is( $object->median(), q(NA), $classx.q{->median()} );
+				is( $object->quartile(1), q(NA), $classx.q{->quartile(1)} );
+				is( $object->quartile(3), q(NA), $classx.q{->quartile(3)} );
+				is( $object->max(), q(NA), $classx.q{->max()} );
+				is( $object->min(), q(NA), $classx.q{->min()} );
+				is( $object->stddev(), q(NA), $classx.q{->stddev()} );
+				is( $object->variance(), q(NA), $classx.q{->variance()} );
 			}
 		}
 	}

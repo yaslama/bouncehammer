@@ -1,4 +1,4 @@
-# $Id: 041_mbox.t,v 1.4 2010/07/01 13:04:25 ak Exp $
+# $Id: 041_mbox.t,v 1.5 2010/07/07 09:05:00 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Kanadzuchi::Test;
 use Kanadzuchi::Mbox;
 use Time::Piece;
 use File::Copy;
-use Test::More ( tests => 1788 );
+use Test::More ( tests => 1848 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -143,7 +143,7 @@ PARSE_NON_MAILBOX_TEXT: foreach my $x ( @{$NonEmailFiles->{'text'}} )
 }
 
 PARSE_NON_MAILBOX_BINARY: foreach my $y ( @{$NonEmailFiles->{'binary'}}, 
-	[], {}, @{$Kanadzuchi::Test::ExceptionalValues} ){
+	[], {}, @{$Kanadzuchi::Test::ExceptionalValues}, @{$Kanadzuchi::Test::NegativeValues} ){
 
 	next() unless(defined($y));
 	my $object = new Kanadzuchi::Mbox( 'file' => $y );

@@ -1,4 +1,4 @@
-# $Id: 080_config-testrun.t,v 1.2 2009/12/17 20:45:05 ak Exp $
+# $Id: 080_config-testrun.t,v 1.3 2010/07/07 11:21:57 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -21,7 +21,7 @@ my $T = new Kanadzuchi::Test(
 	'methods' => [],
 	'instance' => undef(),
 );
-my $C = $Kanadzuchi::Config::TestRun::Configuration;
+my $C = Kanadzuchi::Config::TestRun->configuration();
 
 
 #  ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ 

@@ -1,4 +1,4 @@
-# $Id: 011_rfc2822.t,v 1.3 2010/02/17 16:07:58 ak Exp $
+# $Id: 011_rfc2822.t,v 1.4 2010/07/07 09:05:00 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::RFC2822;
-use Test::More ( tests => 225 );
+use Test::More ( tests => 237 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -92,6 +92,13 @@ CLASS_METHODS: {
 			is( $class->is_emailaddress($e) ,0, '->is_emailaddress('.$argv.')' );
 			is( $class->is_mailerdaemon($e) ,0, '->is_mailerdaemon('.$argv.')' );
 			is( $class->is_domainpart($e) ,0, '->is_domainpart('.$argv.')' );
+		}
+
+		foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+		{
+			is( $class->is_emailaddress($n) ,0, '->is_emailaddress('.$n.')' );
+			is( $class->is_mailerdaemon($n) ,0, '->is_mailerdaemon('.$n.')' );
+			is( $class->is_domainpart($n) ,1, '->is_domainpart('.$n.')' );
 		}
 	}
 }

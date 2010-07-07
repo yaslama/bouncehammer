@@ -1,4 +1,4 @@
-# $Id: 012_time.t,v 1.2 2009/12/17 20:45:04 ak Exp $
+# $Id: 012_time.t,v 1.3 2010/07/07 09:05:00 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Time;
-use Test::More ( tests => 183 );
+use Test::More ( tests => 191 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -83,6 +83,12 @@ METHODS: {
 			my $argv = defined($z) ? sprintf("%#x",ord($z)) : 'undef()';
 			is( $class->to_second($z), 0, '->to_second() The value: '.$argv );
 			is( $class->tz2second($z), undef(), '->tz2second() The value: '.$argv );
+		}
+
+		foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+		{
+			is( $class->to_second($n), 0, '->to_second() The value: '.$n );
+			is( $class->tz2second($n), undef(), '->tz2second() The value: '.$n );
 		}
 	}
 

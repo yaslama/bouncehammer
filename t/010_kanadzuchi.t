@@ -1,4 +1,4 @@
-# $Id: 010_kanadzuchi.t,v 1.5 2010/07/02 10:37:26 ak Exp $
+# $Id: 010_kanadzuchi.t,v 1.6 2010/07/07 09:04:59 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Kanadzuchi::Test;
 use Kanadzuchi;
 use File::Basename qw(basename);
 use Path::Class::File;
-use Test::More ( tests => 117 );
+use Test::More ( tests => 121 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -99,6 +99,12 @@ METHODS: {
 		{
 			my $argv = defined($f) ? sprintf("%#x",ord($f)) : 'undef()';
 			is( $object->is_logfile( $f ), 0, q{->is_logfile(}.$argv.q{)} );
+		}
+
+		NEGATIVE: foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+		{
+			my $argv = defined($n) ? sprintf("%#x",ord($n)) : 'undef()';
+			is( $object->is_logfile( $n ), 0, q{->is_logfile(}.$argv.q{)} );
 		}
 
 		CONTORL: foreach my $c ( @{$Kanadzuchi::Test::EscapeCharacters}, @{$Kanadzuchi::Test::ControlCharacters} )

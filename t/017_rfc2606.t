@@ -1,4 +1,4 @@
-# $Id: 017_rfc2606.t,v 1.2 2010/06/03 06:54:33 ak Exp $
+# $Id: 017_rfc2606.t,v 1.3 2010/07/07 09:05:00 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::RFC2606;
-use Test::More ( tests => 132 );
+use Test::More ( tests => 136 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -73,6 +73,11 @@ CLASS_METHODS: {
 		{
 			my $argv = defined($f) ? sprintf("%#x",ord($f)) : 'undef()';
 			is( $class->is_rfc2606($f), 0, q{->is_rfc2606(}.$argv.q{)} );
+		}
+
+		NEGATIVE: foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+		{
+			is( $class->is_rfc2606($n), 0, q{->is_rfc2606(}.$n.q{)} );
 		}
 
 		CONTORL: foreach my $c ( @{$Kanadzuchi::Test::EscapeCharacters}, @{$Kanadzuchi::Test::ControlCharacters} )

@@ -1,4 +1,4 @@
-# $Id: 054_mail-why.t,v 1.5 2010/07/04 23:47:24 ak Exp $
+# $Id: 054_mail-why.t,v 1.6 2010/07/07 09:05:00 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 521 );
+use Test::More ( tests => 549 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -94,7 +94,7 @@ CLASS_METHODS: foreach my $c ( keys(%$Classes) )
 
 	is( $Classes->{$c}->habettextu($OtherString), 0, 'No Match String by '.$c.q{->habettextu()} );
 
-	ZERO: foreach my $z ( @{$Kanadzuchi::Test::ExceptionalValues} )
+	ZERO: foreach my $z ( @{$Kanadzuchi::Test::ExceptionalValues}, @{$Kanadzuchi::Test::NegativeValues} )
 	{
 		my $argv = defined($z) ? sprintf("%#x", ord($z)) : 'undef()';
 		is( $Classes->{$c}->habettextu($z), 0,
