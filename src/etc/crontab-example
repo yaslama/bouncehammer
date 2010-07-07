@@ -1,23 +1,30 @@
-# $Id: crontab-example,v 1.3 2010/03/19 08:05:34 ak Exp $
+# $Id: crontab-example,v 1.4 2010/07/07 01:08:18 ak Exp $
 # A part of /etc/crontab for example
 #
+# BounceHammer
+BHROOT="__KANADZUCHIROOT__"
 PARSER="__KANADZUCHIBIN__/mailboxparser"
 LOGGER="__KANADZUCHIBIN__/logger"
 DBCTRL="__KANADZUCHIBIN__/databasectl"
-TBCTRL="__KANADZUCHIBIN__/tablectl"
+DUMPER="__KANADZUCHIBIN__/datadumper"
 
 # Parse mailbox every hour
-00	*	*	*	*	root	$PARSER --log /path/to/mailbox --remove
+00  *  *  *  *	root	$PARSER --log --truncate /path/to/mailbox
 
-# Parse Maildir every hour
-01	*	*	*	*	root	$PARSER --log /home/who/Maildir/cur
+# Copy emails in Maildir and parse every hour
+00  *  *  *  *  root	find /home/who/Maildir/cur -type f -cmin -60 -exec cp {} $BHROOT/var/mail \;
+05  *  *  *  *  root	$PARSER --log --remove $BHROOT/var/mail
 
 # Concatenate logfiles
-10	*	*	*	*	root	$LOGGER -c --remove
+10  *  *  *  *  root	$LOGGER -c --remove
 
 # Update stored log file of today
-50	*	*	*	*	root	$DBCTRL --update --today
+40  *  *  *  *  root	$DBCTRL --update --today
 
 # Update stored log file of yesterday
-00	01	*	*	*	root	$DBCTRL --update --yesterday
+00 01  *  *  *  root	$DBCTRL --update --yesterday
+
+# Dump
+55  *  *  *  *  root	$DUMPER --howrecent 1d > $BHROOT/var/mail/bouncemail-1d.yaml
+00 02  *  *  *  root	$DUMPER --howrecent 1w > $BHROOT/var/mail/bouncemail-1w.yaml
 
