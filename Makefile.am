@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.45 2010/07/04 23:49:34 ak Exp $
+# $Id: Makefile.am,v 1.46 2010/07/07 01:12:46 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -53,7 +53,7 @@ reverse-patch:
 	fi
 
 sublocalstatedir:
-	mkdir -pm 0755 @localstatedir@/{cache,db,incoming,log,run,spool,tmp}
+	mkdir -pm 0755 @localstatedir@/{cache,db,incoming,log,mail,run,spool,tmp}
 	$(CHMOD) g+w  @localstatedir@/db
 	$(CHMOD) 1777 @localstatedir@/{cache,incoming,run,spool,tmp}
 
