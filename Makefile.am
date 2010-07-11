@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.46 2010/07/07 01:12:46 ak Exp $
+# $Id: Makefile.am,v 1.47 2010/07/11 10:05:58 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -36,7 +36,7 @@ check-implement:
 	@test -x $(PERL) && test -f $(CMD_IMPLEM) && $(PERL) $(CMD_IMPLEM) tb
 
 test:
-	@mkdir -p ./.test && test -w ./.test && $(PROVE) -w
+	@mkdir -p ./.test && test -w ./.test && $(PROVE)
 
 apply-patch:
 	if [ "$(PI_IMPLEMENT_TB)" = "NO" ]; then \

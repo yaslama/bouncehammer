@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.29 2010/07/07 11:21:37 ak Exp $
+# $Id: Mail.pm,v 1.30 2010/07/11 10:06:09 ak Exp $
 # -Id: Message.pm,v 1.1 2009/08/29 07:32:59 ak Exp -
 # -Id: BounceMessage.pm,v 1.13 2009/08/21 02:43:14 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -30,7 +30,6 @@ use Kanadzuchi::Mail::Group::Neighbor;
 use Kanadzuchi::Mail::Group::WebMail;
 use Kanadzuchi::Mail::Bounced::Generic;
 use Time::Piece;
-use JSON::Syck;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||A |||c |||c |||e |||s |||s |||o |||r |||s ||
