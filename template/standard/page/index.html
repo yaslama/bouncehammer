@@ -9,7 +9,7 @@
 [% INCLUDE "dtd-xhtml.html" %]
 <head>
 	[% INCLUDE "meta-http-equiv.html" %]
-	<title>[% systemname %]</title>
+	<title>[% systemname %]/[% head.dashboard %]</title>
 	[% prototype.define_javascript_functions %]
 	<script type = 'text/javascript'>
 		[% INCLUDE bouncehammer.js %]
@@ -17,14 +17,14 @@
 	<style type = 'text/css'>
 	<!--
 	[% INCLUDE bouncehammer.css %]
+	[% INCLUDE dashboard.css %]
 	[% INCLUDE search.css %]
-	[% INCLUDE record.css %]
 	-->
 	</style>
 </head>
 <body>
 	<div id = 'ThePage'>
-		<h1>[% head1title %]</h1>
+		<h1>[% head1title %]/[% head.dashboard %]</h1>
 		<div id = 'North-Ward'>
 			[% INCLUDE "div-menubar.html" %]
 		</div>
@@ -32,15 +32,75 @@
 			[% INCLUDE "div-index.html" %]
 		</div>
 		<div id = 'East-Ward'>
-			[% INCLUDE "help-recipient.html" %]
+			[% INCLUDE "help-addresser.html" %]
 			[% INCLUDE "help-senderdomain.html" %]
 			[% INCLUDE "help-destination-domain.html" %]
-			[% INCLUDE "help-messagetoken.html" %]
-			[% INCLUDE "help-bounced-at.html" %]
-			[% INCLUDE "help-download-file.html" %]
+			<hr class = 'flatline' />
+			[% INCLUDE "help-recipient.html" %]
 		</div>
 
 		<div id = 'Central-Ward'>
+			<h2 style = 'color: #383c3c;'>[% datestring %]</h2>
+			<hr class = 'flatline' />
+			<h2>[% head.datasummary %]</h2>
+			<div class = 'shortsummary'>
+				[%- SET titlename = {
+					'addresser'	=> 'Addressers',
+					'senderdomain'	=> 'Sender Domains',
+					'destination'	=> 'Destinations',
+				} -%]
+				[%- SET recordsizeof = {
+					'addresser'	=> 'addressers',
+					'senderdomain'	=> 'senderdomains',
+					'destination'	=> 'destinations',
+				} -%]
+				<table>
+					<tbody>
+						<tr class = 'numeral'>
+							<td style = 'width: 192px;'>
+								<div class = 'tablename'>BounceLogs</div>
+								<div class = 'recordsize'>[% shortsummary.bouncelogs %]</div>
+								<div class = 'unit'>[% word.unitofrecs %]</div>
+							</td>
+
+							[%- FOREACH MT IN [ 'addresser', 'senderdomain', 'destination' ] -%]
+							<td title = '[% term.${MT} %]'>
+								<div class = 'tablename'>[% titlename.${MT} %]</div>
+								<div class = 'recordsize'>[% shortsummary.${recordsizeof.${MT}} %]</div>
+								<div class = 'unit'>[% word.unitofrecs %]</div>
+							</td>
+							[%- END -%]
+						</tr>
+
+						<tr class = 'options'>
+							<td>
+								<span class = 'flatbutton'>
+									&nbsp;
+									<a href = '[% scriptname %]/summary/'> [% word.detail %] </a>
+									&nbsp;
+								</span>
+							</td>
+							[%- FOREACH MT IN [ 'addresser', 'senderdomain', 'destination' ] -%]
+							<td>
+								<span class = 'flatbutton'>
+									&nbsp;
+									<a href = '[% scriptname %]/tables/[% MT _ "s" %]/list'> [% word.edit %] </a>
+									&nbsp;
+								</span>
+								<span class = 'flatbutton'>
+									&nbsp;
+									<a href = '[% scriptname %]/aggregate/[% MT %]'> [% word.aggregation %] </a>
+									&nbsp;
+								</span>
+							</td>
+							[%- END -%]
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<hr class = 'flatline' />
+
+			<h2>[% head.search %]</h2>
 			[% INCLUDE "form-search-by-recipient.html" %]
 		</div>
 		<div id = 'South-Ward'>

@@ -1,0 +1,86 @@
+/* $Id: dashboard.css,v 1.1 2010/07/11 06:48:32 ak Exp $ */
+/* Copyright 2010 Cubicroot Co. Ltd. */
+/* Short summary classes */
+div.shortsummary {
+	margin: 6px 1px 16px 4px;
+	padding: 0px;
+	border-width: 0px;
+	border-color: #c1e4e9; /* Shiraai */
+	border-style: solid;
+	background-color: #fffffc; /* Gofun-iro */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+
+div.shortsummary table {
+	margin: 8px -8px 4px -8px;
+	padding: 0;
+	border-collapse: separate;
+	border-spacing: 8px 4px;
+}
+
+div.shortsummary tr.numeral {
+}
+
+div.shortsummary tr.numeral td {
+	width: 128px;
+	padding: 0;
+	border-width: 1px;
+	/* border-color: #507ea4; /* Usuhanada */
+	border-color: #9ea1a3; /* Suzu-iro */
+	border-style: solid;
+	background-color: #fffffc; /* Gofun-iro */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+
+div.shortsummary tr.options td {
+	padding: 4px 0;
+	text-align: justify;
+}
+
+div.tablename {
+	padding: 2px;
+	font-size: 12px;
+	text-align: center;
+	font-weight: bold;
+	background-color: transparent;
+	background-image:
+		-moz-linear-gradient( 
+			top, 
+			rgba(254, 254, 254, 0.1), 
+			rgba(248, 248, 248, 0.3) 10%, 
+			rgba(236, 236, 236, 0.7)
+		);
+	background-image:
+		-webkit-gradient(
+			linear, left top, left bottom,
+			color-stop( 0, rgba(254, 254, 254, 0.1)),
+			color-stop( 50%, rgba(248, 248, 248, 0.3)),
+			color-stop( 90%, rgba(236, 236, 236, 0.7))
+		);
+}
+
+div.recordsize {
+	padding: 2px;
+	font-size: 40px;
+	font-weight: bold;
+	font-family: 'Gill Sans Lite', 'Century Gothic', Verdana, 'Trebuchet MS';
+	color: #727171; /* Nibi-iro */
+	text-align: center;
+	/* text-shadow: 1px 1px 1px #0f2350; */
+	border-width: 1px 0 0 0;
+	border-color: #9ea1a3; /* Suzu-iro */
+	/* border-color: #507ea4; /* Usuhanada */
+	border-style: solid;
+}
+
+div.unit {
+	padding: 2px;
+	font-size: 10px;
+	text-align: right;
+}
+
+

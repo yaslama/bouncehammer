@@ -1,4 +1,4 @@
-/* $Id: profile.css,v 1.5 2010/06/23 07:36:21 ak Exp $ */
+/* $Id: profile.css,v 1.6 2010/07/11 06:48:32 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Profile classes */
 div.profile {
@@ -8,7 +8,7 @@ div.profile {
 	border-width: 1px;
 	border-color: #c1e4e9; /* Shiraai */
 	border-style: solid;
-	background-color: #ebf6f7; /* Aijiro */
+	background-color: #fffffc; /* Gofun-iro */
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;

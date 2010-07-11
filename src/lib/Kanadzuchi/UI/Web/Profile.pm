@@ -1,4 +1,4 @@
-# $Id: Profile.pm,v 1.10 2010/06/28 13:18:31 ak Exp $
+# $Id: Profile.pm,v 1.11 2010/07/11 06:48:03 ak Exp $
 # -Id: Profile.pm,v 1.2 2009/08/31 06:58:25 ak Exp -
 # -Id: Profile.pm,v 1.3 2009/08/17 06:54:30 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -20,13 +20,13 @@ use warnings;
 # ||__|||__|||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub profile_ontheweb
+sub systemprofile
 {
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	# |p|r|o|f|i|l|e|_|o|n|t|h|e|w|e|b|
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+-+-+-+-+-+-+
+	# |s|y|s|t|e|m|p|r|o|f|i|l|e|
+	# +-+-+-+-+-+-+-+-+-+-+-+-+-+
 	#
-	# @Description	Draw profile in HTML
+	# @Description	System profile page
 	my $self = shift();
 	my $file = 'profile.html';
 	my $time = q();

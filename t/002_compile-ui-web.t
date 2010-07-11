@@ -9,6 +9,7 @@ my $Modules = [
 	q(Kanadzuchi::UI::Web::Delete),
 	q(Kanadzuchi::UI::Web::Dispatch),
 	q(Kanadzuchi::UI::Web::Index),
+	q(Kanadzuchi::UI::Web::ListOf),
 	q(Kanadzuchi::UI::Web::MasterTables),
 	q(Kanadzuchi::UI::Web::Profile),
 	q(Kanadzuchi::UI::Web::Search),

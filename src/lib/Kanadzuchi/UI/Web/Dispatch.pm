@@ -1,4 +1,4 @@
-# $Id: Dispatch.pm,v 1.8 2010/07/07 01:05:24 ak Exp $
+# $Id: Dispatch.pm,v 1.9 2010/07/11 06:48:03 ak Exp $
 # -Id: Index.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Index.pm,v 1.3 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -24,9 +24,8 @@ use warnings;
 my $Settings = {
 	'coreconfig'	=> '__KANADZUCHIETC__/bouncehammer.cf',
 	'webconfig'	=> '__KANADZUCHIETC__/webui.cf',
-	'neighborconfig'=> '__KANADZUCHIETC__/neighbor-domains',
 	'neighbors'	=> '__KANADZUCHIETC__/neighbor-domains',
-	'hostgroups'	=> '__KANADZUCHIETC__/avaiable-countries',
+	'countries'	=> '__KANADZUCHIETC__/available-countries',
 	'template'	=> '__KANADZUCHIDATA__/template',
 };
 
@@ -35,44 +34,51 @@ my $Settings = {
 # ||__|||__|||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 #
+my $WebUIDashboard = { 'app' => 'Web::Index', 'rm' => 'Index' };
+my $WebUISearching = { 'app' => 'Web::Search', 'rm' => 'Search' };
+my $WebUITableCtrl = { 'app' => 'Web::MasterTables', 'rm' => 'TableControl' };
+my $WebUITableList = { 'app' => 'Web::MasterTables', 'rm' => 'TableList' };
 my $DispatchTables = [
-	'index'		=> { 'app' => 'Web::Index',	'rm' => 'Index' },
-	'token'		=> { 'app' => 'Web::Token',	'rm' => 'Token' },
-	'test'		=> { 'app' => 'Web::Test',	'rm' => 'Test' },
-	'test/parse'	=> { 'app' => 'Web::Test',	'rm' => 'Parse' },
-	'profile'	=> { 'app' => 'Web::Profile',	'rm' => 'Profile' },
-	'summary'	=> { 'app' => 'Web::Summary',	'rm' => 'Summary' },
-	'update/:pi_id'	=> { 'app' => 'Web::Update',	'rm' => 'Update' },
-	'delete/:pi_id'	=> { 'app' => 'Web::Delete',	'rm' => 'Delete' },
-	'config/:pi_cf' => { 'app' => 'Web::Config',	'rm' => 'Config' },
-
-	'search/recipient/:pi_recipient?/:pi_orderby?/:pi_page?/:pi_rpp?' => { 
-						'app' => 'Web::Search', 
-						'rm'  => 'Search' },
-	'search/condition/:pi_condition?/:pi_orderby?/:pi_page?/:pi_rpp?' => {
-						'app' => 'Web::Search',
-						'rm'  => 'Search' },
-	'download/:pi_format?/:pi_condition?/:pi_orderby?' => {
-						'app' => 'Web::Search',
-						'rm'  => 'Search' },
-	'tables/:pi_tablename/sort/:pi_orderby/:pi_page?/:pi_rpp?' => {
-				'app' => 'Web::MasterTables',
-				'rm'  => 'TableList' },
-	'tables/:pi_tablename/list/:pi_page?/:pi_rpp?' => {
-				'app' => 'Web::MasterTables',
-				'rm'  => 'TableList' },
-	'tables/:pi_tablename/create' => {
-				'app' => 'Web::MasterTables',
-				'rm'  => 'TableControl' },
-	'tables/:pi_tablename/update' => { 
-				'app' => 'Web::MasterTables',
-				'rm'  => 'TableControl' },
-	'tables/:pi_tablename/delete' => { 
-				'app' => 'Web::MasterTables',
-				'rm'  => 'TableControl' },
 	'aggregate/:pi_tablename' => {
-				'app' => 'Web::Aggregate',
-				'rm'  => 'Aggregate' },
+			'app' => 'Web::Aggregate',
+			'rm'  => 'Aggregate' },
+	'dashboard' => $WebUIDashboard,
+	'delete/:pi_id'	=> { 
+			'app' => 'Web::Delete',
+			'rm' => 'Delete' },
+	'download/:pi_format?/:pi_condition?/:pi_orderby?' => $WebUISearching,
+	'index' => $WebUIDashboard,
+	'listof/:pi_list' => {
+		'app' => 'Web::ListOf',
+		'rm' => 'ListOf' },
+	'profile' => { 
+		'app' => 'Web::Profile',
+		'rm' => 'Profile' },
+	'search' => { 
+		'app' => 'Web::Search',
+		'rm' => 'StartSearch' },
+	'search/recipient/:pi_recipient?/:pi_orderby?/:pi_page?/:pi_rpp?' => $WebUISearching,
+	'search/condition/:pi_condition?/:pi_orderby?/:pi_page?/:pi_rpp?' => $WebUISearching,
+	'summary' => {
+		'app' => 'Web::Summary',
+		'rm' => 'Summary' },
+	'tables/:pi_tablename/sort/:pi_orderby/:pi_page?/:pi_rpp?' => $WebUITableList,
+	'tables/:pi_tablename/list/:pi_page?/:pi_rpp?' => $WebUITableList,
+	'tables/:pi_tablename/create' => $WebUITableCtrl,
+	'tables/:pi_tablename/update' => $WebUITableCtrl,
+	'tables/:pi_tablename/delete' => $WebUITableCtrl,
+	'test' => {
+		'app' => 'Web::Test',
+		'rm' => 'Test' },
+	'test/parse' => { 
+		'app' => 'Web::Test',
+		'rm' => 'Parse' },
+	'token' => {
+		'app' => 'Web::Token',
+		'rm' => 'Token' },
+	'update/:pi_id' => {
+		'app' => 'Web::Update',
+		'rm' => 'Update' },
 ];
 
 my $DispatchArgsToNew = {
@@ -81,6 +87,8 @@ my $DispatchArgsToNew = {
 		'cf' => $Settings->{'coreconfig'},
 		'wf' => $Settings->{'webconfig'},
 		'tf' => $Settings->{'template'},
+		'nd' => $Settings->{'neighbors'},
+		'cc' => $Settings->{'countries'},
 	},
 };
 

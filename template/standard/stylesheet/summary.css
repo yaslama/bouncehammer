@@ -1,10 +1,10 @@
-/* $Id: summary.css,v 1.7 2010/07/07 01:03:06 ak Exp $ */
+/* $Id: summary.css,v 1.8 2010/07/11 06:48:32 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Summary classes */
 div.summary {
 	/* Based on 'result' class */
 	margin: 6px 1px 12px 18px;
-	padding: 4px;
+	padding: 2px;
 	border-width: 1px;
 	border-color: #c1e4e9; /* Shiraai */
 	border-style: solid;
@@ -22,37 +22,86 @@ div.summary table {
 	border-spacing: 2px 4px;
 }
 
-div.summary td.key { /* LHS */
-	width: 128px;
-	padding: 2px 4px;
+div.recordsize {
+	width: 220px;
+	padding: 2px 1px 0 1px;
+	font-size: 44px;
 	font-weight: bold;
-	border-width: 0 0 1px 0;
-	border-color: #dcdddd; /* Shironezu */
-	border-style: dotted;
-	vertical-align: middle;
+	font-family: 'Gill Sans Lite', 'Century Gothic', Verdana, 'Trebuchet MS';
+	color: #595857; /* Sumi */
+	text-align: right;
+	vertical-align: bottom;
 }
 
-div.summary td.value {
-	padding: 2px 0 2px 4px;
+div.fraction {
+	margin: 0;
+	padding: 2px 0;
+	font-size: 30px;
+	font-weight: bold;
+	font-family: 'Gill Sans Lite', 'Century Gothic', Verdana, 'Trebuchet MS';
+	color: #727171; /* Nibi-iro */
+	vertical-align: bottom;
+}
+
+div.limitsize {
+	width: 96px;
+	padding: 8px auto 2px 0;
+	font-size: 18px;
+	font-weight: bold;
+	font-family: 'Gill Sans Lite', 'Century Gothic', Verdana, 'Trebuchet MS';
+	color: #727171; /* Nibi-iro */
+	text-align: left;
+	vertical-align: bottom;
+}
+
+div.summary td.label {
+	width: 128px;
+	padding: auto 8px auto auto;
 	border-width: 0 0 1px 0;
+	border-style: solid;
 	border-color: #dcdddd; /* Shironezu */
-	border-style: dotted;
+	text-align: left;
+	font-weight: bold;
+	font-size: 11px;
+}
+
+td.label:before { content: "* "; }
+td.label:after { content: ":"; }
+
+div.summary td.value {
+	width: 72px;
+	border-width: 0 0 1px 0;
+	border-style: solid;
+	border-color: #dcdddd; /* Shironezu */
+	text-align: right;
 }
 
 div.graph {
-	width: 368px;
+	width: 560px;
+	height: 8px;
 	border-width: 1px;
 	border-style: solid;
-	border-color: #2ca9e1; /* Ama-iro */
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 	-opera-border-radius: 6px;
 }
 
 div.graph div.used {
-	background: #2ca9e1; /* Ama-iro */
+	height: 8px;
 	-webkit-border-radius: 2px 0 0 2px;
 	-moz-border-radius: 2px 0 0 2px;
 	-opera-border-radius: 2px 0 0 2px;
 }
+
+div.barempty { border-color: #2ca9e1; /* Ama-iro */ }
+div.fillempty { background: #2ca9e1; /* Ama-iro */ }
+
+div.barnorm { border-color: #b8d200; /* Kimidori */ }
+div.fillnorm { background: #b8d200; /* Kimidori */ }
+
+div.barwarn { border-color: #f8b500; /* Yamabuki-iro */ }
+div.fillwarn { background: #f8b500; /* Yamabuki-iro */ }
+
+div.barfull { border-color: #e2041b; /* Shoujouhi */ }
+div.fillfull { background: #e2041b; /* Shoujouhi */ }
 

@@ -1,4 +1,4 @@
-# $Id: neighbor-domains-example,v 1.6 2010/06/10 09:18:22 ak Exp $
+# $Id: neighbor-domains-example,v 1.7 2010/07/11 06:49:34 ak Exp $
 #  neighbor-domains:
 #    Kanadzuchi::Mail::Group::Neighbor reads this file(YAML). If you use 
 #    this file, it should be saved as 'neighbor-domains'.
@@ -7,7 +7,11 @@
 #  provider-name: [ 'domain1', 'domain2', ... ]
 #
 # EXAMPLE:
-#    snakeoil: [ 'snake.example.jp', 'hebi.example.jp', 'nyoro.example.jp' ]
-#    oursites: [ 'snakeoil-online.example.com', 'snakeoil-sales.example.com' ]
+snakeoil: [ 'snakeoil-example.com', 'snakeoil-example.net' ]
+oursites: 
+  - 'snake.example.jp'
+  - 'hebi.example.jp'
+  - 'nyoro.example.jp'
+  - 'daija.example.jp'
 
 ...

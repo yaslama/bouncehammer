@@ -1,0 +1,80 @@
+[%- PROCESS "heads.tt" -%]
+[%- PROCESS "words.tt" -%]
+[%- PROCESS "terms.tt" -%]
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% systemname %]/[% head.listof %]/[% listfile %]</title>
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+		[% INCLUDE bouncehammer.css %]
+		[% INCLUDE profile.css %]
+	-->
+	</style>
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% head1title %]/[% head.listof %]/[% listfile %]</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[% INCLUDE "div-index.html" %]
+		</div>
+		<div id = 'East-Ward'>
+			[% INCLUDE "help-neighbor-domains.html" %]
+		</div>
+
+		<div id = 'Central-Ward'>
+			[%- IF issample == 1 -%][%- SET fileclass = 'errortext' -%][%- ELSE -%][%- SET fileclass = 'x' -%][%- END -%]
+			<h2>[% listfile %]</h2>
+			<div class = 'profile'>
+				<table>
+					<tbody>
+						<tr>
+							<td class = 'key'>
+								[% word.file %]
+								[%- IF issample == 1 -%](Example)[%- END -%]
+							</td>
+							<td class = 'value'><span class = '[% fileclass %]'>[% listpath %]</span></td>
+						</tr>
+						<tr>
+							<td class = 'key'>[% word.format %]</td>
+							<td class = 'value'>YAML</td>
+						</tr>
+						<tr>
+							<td class = 'key'>[% term.updated %]</td>
+							<td class = 'value'>[% listtime %]</td>
+						</tr>
+						<tr>
+							<td class = 'key'>[% head.definedproviders %]</td>
+							<td class = 'value'>[%- FOREACH PN IN listdata -%][%- PN.key -%] &nbsp; [%- END -%]</td>
+						</tr>
+
+					</tbody>
+				</table>
+			</div>
+
+			[%- FOREACH PN IN listdata -%]
+			<h2>* [% PN.key %]</h2>
+			<div class = 'profile'>
+				<ul>
+					[%- FOREACH DN IN PN.value -%]
+					<li>[% DN %]</li>
+					[%- END -%]
+				</ul>
+			</div>
+			[% END %]
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+
+	</div>
+</body>
+</html>
+

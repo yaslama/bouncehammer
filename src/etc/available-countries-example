@@ -1,4 +1,4 @@
-# $Id: available-countries-example,v 1.2 2010/07/05 03:11:29 ak Exp $
+# $Id: available-countries-example,v 1.3 2010/07/11 06:49:34 ak Exp $
 # available-countries:
 #   If you use this file, it should be saved as 'available-countries',
 #   Run /bin/cp ./available-countries-example ./available-countries 
@@ -26,116 +26,115 @@
 #
 # Host groups which are used in Australia
 #   webmail: Many domains of FastMail.FM
-au:
-  webmail: 1
+"au":
+  "webmail": 1
 
 # Host groups which are used in Brasil
 #   webmail: BOL
-br:
-  webmail: 1
+"br":
+  "webmail": 1
 
 # Host groups which are used in Canada
 #   webmail: Hushmail
-ca:
-  webmail: 1
+"ca":
+  "webmail": 1
 
 # Host groups which are used in China
 #   webmail: netease
-cn:
-  webmail: 1
+"cn":
+  "webmail": 1
 
 # Host groups which are used in Czech Republic/Czechia
 #   webmail: Seznam
-cz:
-  webmail: 1
+"cz":
+  "webmail": 1
 
 # Host groups which are used in Bundesrepublik Deutschland
 #   webmail: GMX
-de:
-  webmail: 1
+"de":
+  "webmail": 1
 
 # Host groups which are used in Egypt, The Middle East region.
 #   webmail: Many domains of Gawab
-eg:
-  webmail: 1
+"eg":
+  "webmail": 1
 
 # Host groups which are used in India
 #   webmail: ibibo
-in:
-  webmail: 1
+"in":
+  "webmail": 1
 
 # Host groups which are used in Israel
 #   webmail: Walla!
-il:
-  webmail: 1
+"il":
+  "webmail": 1
 
 # Host groups which are used in Iran
 #   webmail: iran.ir
-ir:
-  webmail: 1
+"ir":
+  "webmail": 1
 
 # Host groups which are used in Japan
 #   cellphone: NTT DoCoMo, au by KDDI, SoftBank Mobile.
 #   smartphone:iPhone, EMOBILE, WILLCOM, and such.
 #   webmail: auone.jp, dwmail.jp, goo.jp, livedoor.jp, and such.
 #   agents: [ 'mta1', 'mta2',... ]
-jp:
-  cellphone: 1
-  smartphone: 1
-  webmail: 1
-  agents: [ 'aubykddi' ]
+"jp":
+  "cellphone": 1
+  "smartphone": 1
+  "webmail": 1
+  "agents": [ "aubykddi" ]
 
 # Host groups which are used in South Korea
 #   webmail: Daum(Hanmail), Empas
-kr:
-  webmail: 1
+"kr":
+  "webmail": 1
 
 # Host groups which are used in Republic of Latvia
 #   webmail: inbokss(inbox.lv)
-lv:
-  webmail: 1
-
+"lv":
+  "webmail": 1
 
 # Host groups which are used in Norway
 #   webmail: runbox.com
-no:
-  webmail: 1
+"no":
+  "webmail": 1
 
 # Host groups which are used in New Zealand
 #   webmail: coolkiwi.com
-nz:
-  webmail: 1
-
-# Host groups which are used in Singapore
-#   webmail: inSing.com
-sg:
-  webmail: 1
+"nz":
+  "webmail": 1
 
 # Host groups which are used in Russia
 #   webmail: mail.ru, yandex, qip
-ru:
-  webmail: 1
+"ru":
+  "webmail": 1
+
+# Host groups which are used in Singapore
+#   webmail: inSing.com
+"sg":
+  "webmail": 1
 
 # Host groups which are used in Republic Of China, Taiwan
 #   webmail: Far Eastone(seednet)
-tw:
-  webmail: 1
+"tw":
+  "webmail": 1
 
 # Host groups which are used in United Kingdom
 #   smartphone: O2 Telefonica's domain
 #   webmail: gmx, postmaster, yipple
-uk:
-  smartphone: 1
-  webmail: 1
+"uk":
+  "smartphone": 1
+  "webmail": 1
 
 # Host groups which are used in United States of America
 #   webmail: Many domains of mail.com, pobox and such.
-us:
-  webmail: 1
+"us":
+  "webmail": 1
 
 # Host groups which are used in South Africa/Zuid-Afrika
 #   webmail: webmail.co.za:South Africa's free email service
-za:
-  webmail: 1
+"za":
+  "webmail": 1
 
 ...

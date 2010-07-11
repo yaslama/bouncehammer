@@ -1,4 +1,4 @@
-# $Id: MasterTables.pm,v 1.17 2010/07/07 01:05:25 ak Exp $
+# $Id: MasterTables.pm,v 1.18 2010/07/11 06:48:03 ak Exp $
 # -Id: MasterTables.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: MasterTables.pm,v 1.7 2009/08/15 15:06:56 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -29,11 +29,11 @@ use Kanadzuchi::BdDR::BounceLogs::Masters;
 # ||__|||__|||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub tablelist_ontheweb
+sub tablelist
 {
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	# |t|a|b|l|e|l|i|s|t|_|o|n|t|h|e|w|e|b|
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+-+-+
+	# |t|a|b|l|e|l|i|s|t|
+	# +-+-+-+-+-+-+-+-+-+
 	#
 	# @Description	Get list of the table
 	# @Param	<None>
@@ -74,11 +74,11 @@ sub tablelist_ontheweb
 	return $self->tt_process($templatef);
 }
 
-sub tablectl_ontheweb
+sub tablecontrol
 {
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	# |t|a|b|l|e|c|t|l|_|o|n|t|h|e|w|e|b|
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+-+-+-+-+-+
+	# |t|a|b|l|e|c|o|n|t|r|o|l|
+	# +-+-+-+-+-+-+-+-+-+-+-+-+
 	#
 	# @Description	Update, Delete, Create record in the table
 	# @Param	<None>

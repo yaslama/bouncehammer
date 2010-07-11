@@ -1,4 +1,4 @@
-# $Id: 160_ui-web.t,v 1.6 2010/06/22 07:17:16 ak Exp $
+# $Id: 160_ui-web.t,v 1.7 2010/07/11 06:48:47 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 16 );
+use Test::More ( tests => 22 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -19,35 +19,44 @@ my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::UI::Web|,
 	'methods' => [ 'cgiapp_init', 'setup', 'cgiapp_prerun', 'cgiapp_postrun', 'teardown',
 			'tt_pre_process', 'tt_post_process', 'loadconfig', 'cryptcbc',
-			'encryptit','decryptit','exception' ],
+			'encryptit', 'decryptit', 'exception' ],
 	'instance' => undef(),
 );
 
 my $W = {
+	'Aggregate' => new Kanadzuchi::Test(
+			'class' => $T->class().q|::Aggregate|,
+			'methods' => [ @{$T->methods()}, 'aggregation' ], ),
+	'Delete' => new Kanadzuchi::Test(
+			'class' => $T->class().q|::Delete|,
+			'methods' => [ @{$T->methods()}, 'deletetherecord' ], ),
 	'Index' => new Kanadzuchi::Test(
 			'class' => $T->class().q|::Index|,
-			'methods' => [ @{$T->methods()}, 'index_ontheweb' ], ),
-	'Search' => new Kanadzuchi::Test(
-			'class' => $T->class().q|::Search|,
-			'methods' => [ @{$T->methods()}, 'search_ontheweb' ], ),
-	'Update' => new Kanadzuchi::Test(
-			'class' => $T->class().q|::Update|,
-			'methods' => [ @{$T->methods()}, 'update_ontheweb' ], ),
-	'Token' => new Kanadzuchi::Test(
-			'class' => $T->class().q|::Token|,
-			'methods' => [ @{$T->methods()}, 'token_ontheweb' ], ),
+			'methods' => [ @{$T->methods()}, 'putindexpage' ], ),
+	'ListOf' => new Kanadzuchi::Test(
+			'class' => $T->class().q|::ListOf|,
+			'methods' => [ @{$T->methods()}, 'listofcontents' ], ),
 	'MasterTables' => new Kanadzuchi::Test(
 			'class' => $T->class().q|::MasterTables|,
-			'methods' => [ @{$T->methods()}, 'tablelist_ontheweb', 'tablectl_ontheweb' ], ),
-	'Test' => new Kanadzuchi::Test(
-			'class' => $T->class().q|::Test|,
-			'methods' => [ @{$T->methods()}, 'test_ontheweb', 'parse_ontheweb' ], ),
+			'methods' => [ @{$T->methods()}, 'tablelist', 'tablecontrol' ], ),
 	'Profile' => new Kanadzuchi::Test(
 			'class' => $T->class().q|::Profile|,
-			'methods' => [ @{$T->methods()}, 'profile_ontheweb' ], ),
+			'methods' => [ @{$T->methods()}, 'systemprofile' ], ),
+	'Search' => new Kanadzuchi::Test(
+			'class' => $T->class().q|::Search|,
+			'methods' => [ @{$T->methods()}, 'onlinesearch', 'putsearchform' ], ),
 	'Summary' => new Kanadzuchi::Test(
 			'class' => $T->class().q|::Summary|,
-			'methods' => [ @{$T->methods()}, 'summary_ontheweb' ], ),
+			'methods' => [ @{$T->methods()}, 'datasummary' ], ),
+	'Token' => new Kanadzuchi::Test(
+			'class' => $T->class().q|::Token|,
+			'methods' => [ @{$T->methods()}, 'maketoken' ], ),
+	'Test' => new Kanadzuchi::Test(
+			'class' => $T->class().q|::Test|,
+			'methods' => [ @{$T->methods()}, 'puttestform', 'onlineparser' ], ),
+	'Update' => new Kanadzuchi::Test(
+			'class' => $T->class().q|::Update|,
+			'methods' => [ @{$T->methods()}, 'updatetherecord' ], ),
 };
 
 $ENV = {

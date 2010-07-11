@@ -1,4 +1,4 @@
-# $Id: Delete.pm,v 1.3 2010/06/28 13:18:31 ak Exp $
+# $Id: Delete.pm,v 1.4 2010/07/11 06:48:03 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::Web::
                                        
@@ -28,10 +28,10 @@ use Time::Piece;
 # ||__|||__|||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub delete_ontheweb
+sub deletetherecord
 {
 	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	# |d|e|l|e|t|e|_|o|n|t|h|e|w|e|b|
+	# |d|e|l|e|t|e|t|h|e|r|e|c|o|r|d|
 	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 	#
 	# @Description	Execute DELETE(Ajax)

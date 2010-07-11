@@ -1,0 +1,56 @@
+[%- PROCESS "heads.tt" -%]
+[%- PROCESS "words.tt" -%]
+[%- PROCESS "terms.tt" -%]
+[%- PROCESS "hostgroup.tt" -%]
+[%- PROCESS "reason.tt" -%]
+[%- PROCESS "error.tt" -%]
+[%- PROCESS "desc.tt" -%]
+[%- PROCESS "time.tt" -%]
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% systemname %]/[% head.search %]</title>
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+	[% INCLUDE bouncehammer.css %]
+	[% INCLUDE search.css %]
+	[% INCLUDE reason.css %]
+	-->
+	</style>
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% head1title %]/[% head.search %]</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[% INCLUDE "div-index.html" %]
+		</div>
+		<div id = 'East-Ward'>
+			[% INCLUDE "help-download-file.html" %]
+			[% INCLUDE "help-record-id.html" %]
+			[% INCLUDE "help-senderdomain.html" %]
+			[% INCLUDE "help-recipient.html" %]
+			[% INCLUDE "help-frequency.html" %]
+			[% INCLUDE "help-diagnostic-code.html" %]
+			[% INCLUDE "help-messagetoken.html" %]
+			[% INCLUDE "help-bounced-at.html" %]
+			[% INCLUDE "help-updated-at.html" %]
+			[% INCLUDE "help-to-update-the-record.html" %]
+		</div>
+
+		<div id = 'Central-Ward'>
+			[% INCLUDE "form-search-by-recipient.html" %]
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+	</div>
+</body>
+</html>
+

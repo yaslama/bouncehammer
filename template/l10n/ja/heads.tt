@@ -1,10 +1,13 @@
-[%# $Id: heads.tt,v 1.2 2010/07/07 01:02:59 ak Exp $ -%]
+[%# $Id: heads.tt,v 1.3 2010/07/11 06:48:25 ak Exp $ -%]
 [%# Headlines in Japanese -%]
 [%- SET head = { 
 		'aggregatedby'	=> '項目別データ集約',
+		'dashboard'	=> 'ダッシュボード',
 		'datasummary'	=> '登録済みデータの概要',
+		'definedproviders' => '定義済みプロバイダ名',
 		'descriptivestat' => '基本統計量',
-		'mastertable'	=> 'マスターテーブル',
+		'listof'	=> '設定内容一覧',
+		'mastertable'	=> 'マスターテーブル編集',
 		'messagetoken'	=> 'トークン生成',
 		'parsingtest'	=> 'メール解析テスト',
 		'recorddetails'	=> '記録の詳細',

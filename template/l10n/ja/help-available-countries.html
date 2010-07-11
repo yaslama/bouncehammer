@@ -1,0 +1,50 @@
+<h6>available-countries</h6>
+<p class = "description">
+	Kanadzuchi::Mail::Group は解析結果の宛先分類(Host Group)と宛先
+	所属(小分類/Provider)を正しく分類するために etc/available-countries
+	ファイルをYAMLファイルとして読み込みます。
+</p>
+<p class = "description">
+	もしもこのファイルが存在しない場合は、
+	Kanadzuchi::Mail::Group は Kanadzuchi/Mail/Group/XX ディレクトリ以下
+	にある全てのモジュールを読み込みます。
+</p>
+
+<h6>使用方法</h6>
+<p class = "description">
+	<span class = 'errortext'>
+	このファイルを使用するには、次のコマンドを実行して
+	available-countries という名前で保存し、コマンドライン
+	から編集してください。
+	<em>/bin/cp ./available-countries-example ./available-countries </em>
+	</span>
+</p>
+
+<h6>設定値</h6>
+<div class = "description">
+<dl>
+	<dt><span class = 'available'>[% word.use %]</span></dt>
+	<dd>
+	Kanadzuchi/Mail/Group ディレクトリ内の XX/YY.pm モジュールを
+	読み込み、宛先分類(Host Group)と宛先所属(Provider)を正しく
+	分類します。
+	</dd>
+
+	<dt><span class = 'errortext'>[% word.disuse %]</span></dt>
+	<dd>
+	宛先分類モジュールを読み込みません。解析結果の宛先分類(Host Group)は
+	&quot;PC&quot;に、宛先所属(Provider)は&quot;various&quot;に分類されます。
+	</dd>
+<dl>
+</div>
+<h6>MTA</h6>
+<p class = 'description'>
+	定義されている名前のMTA用モジュール: Kanadzuch/MTA/XX/ZZ.pm
+	のみ読み込みます。
+</p>
+
+<p class = "description">
+	<em>XX = ccTLD</em><br />
+	<em>YY = 宛先分類: WebMail, Smartphone, &amp; Cellphone.</em><br />
+	<em>ZZ = MTAの名前</em>
+</p>

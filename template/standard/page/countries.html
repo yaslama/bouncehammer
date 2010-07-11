@@ -1,0 +1,189 @@
+[%- PROCESS "heads.tt" -%]
+[%- PROCESS "words.tt" -%]
+[%- PROCESS "terms.tt" -%]
+[%- PROCESS "hostgroup.tt" -%]
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% systemname %]/[% head.listof %]/[% listfile %]</title>
+	[% prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+		[% INCLUDE bouncehammer.css %]
+		[% INCLUDE profile.css %]
+		[% INCLUDE country.css %]
+		[% INCLUDE nationalflag.css %]
+	-->
+	</style>
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% head1title %]/[% head.listof %]/[% listfile %]</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[% INCLUDE "div-index.html" %]
+		</div>
+		<div id = 'East-Ward'>
+			[% INCLUDE "help-available-countries.html" %]
+		</div>
+
+		<div id = 'Central-Ward'>
+			[%- IF issample == 1 -%][%- SET fileclass = 'errortext' -%][%- ELSE -%][%- SET fileclass = 'x' -%][%- END -%]
+			<h2>[% listfile %]</h2>
+			<div class = 'profile'>
+				<table>
+					<tbody>
+						<tr>
+							<td class = 'key'>
+								[% word.file %]
+								[%- IF issample == 1 -%](Example)[%- END -%]
+							</td>
+							<td class = 'value'><span class = '[% fileclass %]'>[% listpath %]</span></td>
+						</tr>
+						<tr>
+							<td class = 'key'>[% word.format %]</td>
+							<td class = 'value'>YAML</td>
+						</tr>
+						<tr>
+							<td class = 'key'>[% term.updated %]</td>
+							<td class = 'value'>[% listtime %]</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<h2>Available Countries[% IF issample == 1 %]([% word.default %])[% END %]</h2>
+			<div class = 'contents'>
+				<table>
+					<thead>
+						<tr>
+							<th class = 'group' colspan = '2'>[% word.country %]</th>
+							<th class = 'group' colspan = '3'>[% term.hostgroup %]</th>
+							<th></th>
+						</tr>
+						<tr class = 'head'>
+							<th>ccTLD</th>
+							<th>[% word.countryname %]</th>
+							<th>[% hostgroup.webmail %]</th>
+							<th>[% hostgroup.smartphone %]</th>
+							<th>[% hostgroup.cellphone %]</th>
+							<th>MTA</th>
+						</tr>
+					</thead>
+					<tbody>
+					[%- FOREACH CC IN listdata -%]
+					<tr>
+						<td class = 'cctld'>
+							<a href = 'javascript:void(0);' onClick = "toggleIt('[% CC.key %]-providers');">
+								<span class = '[% CC.key %]'> [% CC.value.code %]</span></a>
+						</td>
+						<td class = 'cname'>[% CC.value.name %]</td>
+						<td class = 'bool'>
+							[%- IF CC.value.webmail > 0 -%]
+								<span class = 'available' title = '[% CC.value.class.webmail %]'>
+								[%- word.use -%]</span>
+							[%- ELSIF CC.value.webmail == 0 -%]
+								<span class = 'errortext'>[%- word.disuse -%]</span>
+							[%- ELSE -%]
+								<span class = 'voidtext'>NA</span>
+							[%- END -%]
+						</td>
+						<td class = 'bool'>
+							[%- IF CC.value.smartphone > 0 -%]
+								<span class = 'available' title = '[% CC.value.class.smartphone %]'>
+								[%- word.use -%]</span>
+							[%- ELSIF CC.value.smartphone == 0 -%]
+								<span class = 'errortext'>[%- word.disuse -%]</span>
+							[%- ELSE -%]
+								<span class = 'voidtext'>NA</span>
+							[%- END -%]
+						</td>
+						<td class = 'bool'>
+							[%- IF CC.value.cellphone > 0 -%]
+								<span class = 'available' title = '[% CC.value.class.cellphone %]'>
+								[%- word.use -%]</span>
+							[%- ELSIF CC.value.cellphone == 0 -%]
+								<span class = 'errortext'>[%- word.disuse -%]</span>
+							[%- ELSE -%]
+								<span class = 'voidtext'>NA</span>
+							[%- END -%]
+						</td>
+						<td class = 'bool'>
+							[%- IF CC.value.agents == "" -%]
+								<span class = 'voidtext'>NA</span>
+							[%- ELSE -%]
+								<span class = 'available'>[% word.use %]</span>
+							[%- END -%]
+						</td>
+					</tr>
+
+					<tr id = '[% CC.key %]-providers' style = 'display: none;' class = 'provider'>
+						<td class = 'cctld'> &nbsp; </td>
+						<td class = 'cname'> &nbsp; </td>
+						<td class = 'list'>
+							[%- IF CC.value.webmail != "" -%]
+								<dl><dt>[% hostgroup.webmail %]</dt>
+								<dd><ul>
+								[%- FOREACH PN IN CC.value.provider.webmail -%]
+									<li>[%- PN.key -%]</li> 
+								[%- END -%]
+							[%- ELSE -%]
+								&nbsp;
+							</ul></dd></dl>
+							[%- END -%]
+						</td>
+						<td class = 'list'>
+							[%- IF CC.value.smartphone != "" -%]
+								<dl><dt>[% hostgroup.smartphone %]</dt>
+								<dd><ul>
+								[%- FOREACH PN IN CC.value.provider.smartphone -%]
+									<li>[%- PN.key -%]</li> 
+								[%- END -%]
+								</ul></dd></dl>
+							[%- ELSE -%]
+								&nbsp;
+							[%- END -%]
+						</td>
+						<td class = 'list'>
+							[%- IF CC.value.cellphone != "" -%]
+								<dl><dt>[% hostgroup.cellphone %]</dt>
+								<dd><ul>
+								[%- FOREACH PN IN CC.value.provider.cellphone -%]
+									<li>[%- PN.key -%]</li> 
+								[%- END -%]
+								</ul></dd></dl>
+							[%- ELSE -%]
+								&nbsp;
+							[%- END -%]
+						</td>
+						<td class = 'list'>
+							[%- IF CC.value.agents != "" -%]
+								<dl><dt title = 'Kanadzuchi::MTA::[% CC.value.code %]::*'>MTA</dt>
+								<dd><ul>
+								[%- FOREACH MTA IN CC.value.agents -%]
+									<li>[% MTA %]</li>
+								[%- END -%]
+								</ul></dd></dl>
+							[%- ELSE -%]
+								&nbsp;
+							[%- END -%]
+						</td>
+					</tr>
+					[% END %]
+				</tbody>
+				</table>
+			</div>
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+
+	</div>
+</body>
+</html>
+

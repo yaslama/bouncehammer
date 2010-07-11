@@ -1,4 +1,4 @@
-# $Id: Aggregate.pm,v 1.1 2010/07/07 01:04:03 ak Exp $
+# $Id: Aggregate.pm,v 1.2 2010/07/11 06:48:03 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::Web::
    ##                                              ##          
@@ -26,11 +26,11 @@ use Kanadzuchi::BdDR::BounceLogs::Masters;
 # ||__|||__|||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub aggregate_ontheweb
+sub aggregation
 {
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	# |a|g|g|r|e|g|a|t|e|_|o|n|t|h|e|w|e|b|
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+-+-+-+-+
+	# |a|g|g|r|e|g|a|t|i|o|n|
+	# +-+-+-+-+-+-+-+-+-+-+-+
 	#
 	# @Description	Aggregation
 	my $self = shift();

@@ -1,0 +1,114 @@
+/* $Id: country.css,v 1.1 2010/07/11 06:48:32 ak Exp $ */
+/* Copyright 2010 Cubicroot Co. Ltd. */
+/* List of contents classes */
+div.contents {
+	/* Based on 'result' class */
+	margin: 6px 1px 12px 18px;
+	padding: 2px;
+	border-width: 1px;
+	border-color: #c1e4e9; /* Shiraai */
+	border-style: solid;
+	background-color: #fffffc; /* Gofun-iro */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+
+div.contents table {
+	width: 98%;
+	margin: 8px 2px 4px 2px;
+	font-size: 11px;
+	border-collapse: separate;
+	border-spacing: 2px 6px;
+}
+
+tr.head th {
+	border-width: 0 0 2px 0;
+	border-color: #c1e4e9; /* Shiraai */
+	border-style: solid;
+	padding: 2px 4px;
+	vertical-align: middle;
+}
+
+th.group {
+	color: #fffffc; /* Gofun-iro */
+	background-color: #89c3eb; /* Wasurenagusa-iro */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+
+td {
+	border-width: 0 0 1px 0;
+	border-color: #c1e4e9; /* Shiraai */
+	border-style: solid;
+	padding: 2px 4px;
+	vertical-align: middle;
+}
+
+td.cctld {
+	width: 52px;
+	font-size: 12px;
+	font-weight: bold;
+	text-align: left;
+	margin: 0;
+	padding: 0 0 0 2px;
+}
+
+td.cname {
+	width: 108px;
+	margin: 0;
+	padding: 0 0 0 2px;
+	text-align: left;
+}
+
+td.bool {
+	width: 88px;
+	text-align: center;
+	font-weight: bold;
+}
+
+td.list {
+	padding: 0;
+	margin: 0;
+	text-align: left;
+	font-weight: bold;
+}
+
+tr.provider td {
+	vertical-align: top;
+	margin: 0;
+	padding: 0;
+}
+
+td dl, td ul {
+	margin: 0 0 8px 4px;
+	padding: 0;
+}
+
+td dl dt {
+	color: #fffffc; /* Gofun-iro */
+	background-color: #89c3eb; /* Wasurenagusa-iro */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+	margin: 0 0 2px 0;
+	padding: 1px 0;
+	text-align: center;
+	font-weight: bold;
+}
+
+td dl dd {
+	margin: 0;
+	padding: 0;
+}
+
+td ul li {
+	margin: 0 0 0 2px;
+	padding: 0;
+	list-style-position: inside;
+	list-style-type: disc;
+	font-size: 10px;
+	color: #595857;	/* Sumi */
+}
+

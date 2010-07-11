@@ -1,4 +1,4 @@
-# $Id: Update.pm,v 1.13 2010/06/28 13:18:31 ak Exp $
+# $Id: Update.pm,v 1.14 2010/07/11 06:48:03 ak Exp $
 # -Id: Update.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Update.pm,v 1.6 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -31,13 +31,13 @@ use Time::Piece;
 # ||__|||__|||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub update_ontheweb
+sub updatetherecord
 {
 	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	# |u|p|d|a|t|e|_|o|n|t|h|e|w|e|b|
+	# |u|p|d|a|t|e|t|h|e|r|e|c|o|r|d|
 	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 	#
-	# @Description	Execute update(Ajax)
+	# @Description	Update the record on the DB.BounceLogs
 	# @Param	<None>
 	# @Return
 	my $self = shift();

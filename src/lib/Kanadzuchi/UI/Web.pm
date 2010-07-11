@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.19 2010/07/07 01:03:54 ak Exp $
+# $Id: Web.pm,v 1.20 2010/07/11 06:47:58 ak Exp $
 # -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
 # -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -61,7 +61,7 @@ sub cgiapp_init
 
 	# Load config file,
 	$self->loadconfig() if( -r $sysconfig && -T _ && -r $webconfig && -T _ );
-	$self->{'language'} = lc $self->{'webconfig'}->{'language'};
+	$self->{'language'} = lc $self->{'webconfig'}->{'language'} || 'en';
 	$self->{'datetime'} = bless( localtime(), 'Time::Piece' );
 	$self->{'database'} = undef();
 
@@ -102,7 +102,6 @@ sub cgiapp_init
 			$templates.'/'.$ttbasedir.'/'.$__subdir );
 	}
 	$self->tt_config( 'TEMPLATE_OPTIONS' => { 'INCLUDE_PATH' => $ttinclude } );
-
 }
 
 sub setup
@@ -116,18 +115,20 @@ sub setup
 	$self->error_mode('exception');
 	$self->mode_param('x');
 	$self->run_modes( 
-		'Aggregate'	=> 'aggregate_ontheweb',
-		'Delete'	=> 'delete_ontheweb',
-		'Index'		=> 'index_ontheweb',
-		'Parse'		=> 'parse_ontheweb',
-		'Profile'	=> 'profile_ontheweb',
-		'Search'	=> 'search_ontheweb',
-		'Summary'	=> 'summary_ontheweb',
-		'TableControl'	=> 'tablectl_ontheweb',
-		'TableList'	=> 'tablelist_ontheweb',
-		'Test'		=> 'test_ontheweb',
-		'Token'		=> 'token_ontheweb',
-		'Update'	=> 'update_ontheweb',
+		'Aggregate'	=> 'aggregation',
+		'Delete'	=> 'deletetherecord',
+		'Index'		=> 'putindexpage',
+		'ListOf'	=> 'listofcontents',
+		'Parse'		=> 'onlineparser',
+		'Profile'	=> 'systemprofile',
+		'Search'	=> 'onlinesearch',
+		'StartSearch'	=> 'putsearchform',
+		'Summary'	=> 'datasummary',
+		'TableControl'	=> 'tablecontrol',
+		'TableList'	=> 'tablelist',
+		'Test'		=> 'puttestform',
+		'Token'		=> 'maketoken',
+		'Update'	=> 'updatetherecord',
 	);
 }
 
@@ -148,7 +149,7 @@ sub cgiapp_prerun
 	try {
 		$bddr->setup( $conf->{'database'} );
 		Kanadzuchi::Exception::Web->throw( 
-			'-text' => q{Failed to connect DB} ) unless $bddr->connect();
+			'-text' => 'Failed to connect DB' ) unless $bddr->connect();
 		$self->{'database'} = $bddr;
 	}
 	catch Kanadzuchi::Exception::Web with {
@@ -225,7 +226,6 @@ sub loadconfig
 	# @Description	Load BounceHammer config file
 	# @Param	None
 	my $self = shift();
-
 	my $sysconfig = shift @{ Kanadzuchi::Metadata->to_object($self->param('cf')) };
 	$self->{'sysconfig'} = $sysconfig if( ref($sysconfig) eq q|HASH| );
 
@@ -323,7 +323,7 @@ sub exception
 	my $self = shift();
 	my $text = shift();
 	my $file = 'exception.html';
-	my $mode = $self->get_current_runmode();
+	my $mode = $self->get_current_runmode() || q();
 
 	if( $mode =~ m{\A(?:Update|Delete|TableControl|Parse|Token)\z} )
 	{

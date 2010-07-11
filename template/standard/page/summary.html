@@ -32,61 +32,93 @@
 		</div>
 
 		<div id = 'Central-Ward'>
-
-			<h2>[% tablesumm.bouncelogs.screenname %] [% word.table %]
+			[%- SET unitsize = 560 -%]
+			<h2>[% tablesumm.bouncelogs.screenname %]
 				[%- IF tableconf.bouncelogs.readonly > 0 -%]([%- word.readonly %])[%- END -%]</h2>
 			<div class = 'summary'>
 				<table>
 					<tbody>
 						<tr>
-							<td class = 'key'>[% word.upperlimit %]</td>
-							<td class = 'value'>
-								[% IF tableconf.bouncelogs.maxrecords == 0 %]
-									[% word.unlimited %]
-								[% ELSE %]
-									[% tableconf.bouncelogs.maxrecords.chunk(-3).join(',') %] [% word.unitofrecs %]
-								[% END %]
-							</td>
-							<td class = 'extra'></td>
-						</tr>
-
-						<tr>
-							<td class = 'key'>[% word.used %]</td>
-							<td class = 'value'>
-								[% tablesumm.bouncelogs.totalentries.chunk(-3).join(',') %]
-								[% word.unitofrecs %]
-							</td>
-							<td class = 'extra'></td>
-						</tr>
-
-						<tr>
-							<td class = 'key'>[% word.available %]</td>
-							<td class = 'value'>
-								[% IF tableconf.bouncelogs.maxrecords == 0 %]
-									[% word.unlimited %]
-								[% ELSE %]
-									[% SET available = tableconf.bouncelogs.maxrecords - tablesumm.bouncelogs.totalentries %]
-									[% available.chunk(-3).join(',') %] [% word.unitofrecs %]
-								[% END %]
-							</td>
-							<td class = 'extra'></td>
-						</tr>
-
-						<tr>
-							<td class = 'key'>[% word.capacity %]</td>
-							<td class = 'value'>
-								[% SET capacitywidth = tablesumm.bouncelogs.capacity * 368 %]
-								<div class = 'graph'>
-									<div class = 'used' style = 'width: [% capacitywidth %]px;'>&nbsp;
-									</div>
+							<td class = 'label'>[% word.used %]</td>
+							<td class = 'value'>[% tablesumm.bouncelogs.totalentries.chunk(-3).join(',') %]</td>
+							<td rowspan = '5'>
+								<div class = 'recordsize'>
+									[%- tablesumm.bouncelogs.totalentries.chunk(-3).join(',') -%]
 								</div>
 							</td>
-							<td class = 'extra'>
-								[% IF tableconf.bouncelogs.maxrecords == 0 %]
-									[% word.unlimited %]
-								[% ELSE %]
-									[% tablesumm.bouncelogs.capacity * 100 %] %
-								[% END %]
+							<td rowspan = '2'>&nbsp;</td>
+							<td rowspan = '3'>&nbsp;</td>
+						</tr>
+
+						<tr>
+							<td class = 'label'>[% word.upperlimit %]</td>
+							<td class = 'value'>
+								[%- IF tableconf.bouncelogs.maxrecords == 0 -%]
+									[%- word.unlimited -%]
+								[%- ELSE -%]
+									[%- tableconf.bouncelogs.maxrecords.chunk(-3).join(',') -%]
+								[%- END -%]
+							</td>
+						</tr>
+
+						<tr>
+							<td class = 'label'>[% word.available %]</td>
+							<td class = 'value'>
+								[%- IF tableconf.bouncelogs.maxrecords == 0 -%]
+									[%- word.unlimited -%]
+								[%- ELSE -%]
+									[%- SET available = tableconf.bouncelogs.maxrecords - tablesumm.bouncelogs.totalentries -%]
+									[%- available.chunk(-3).join(',') -%]
+								[%- END -%]
+							</td>
+							<td rowspan = '3'><div class = 'fraction'>/</div></td>
+						</tr>
+
+						<tr>
+							<td class = 'label'>[% word.capacity %]</td>
+							<td class = 'value'>
+								[%- IF tableconf.bouncelogs.maxrecords == 0 -%]
+								[%- ELSE -%]
+								<strong>[%- tablesumm.bouncelogs.capacity * 100 -%] %</strong>
+								[%- END -%]
+							</td>
+							<td rowspan = '2'>
+								<div class = 'limitsize'>
+									[%- IF tableconf.bouncelogs.maxrecords == 0 -%]
+										[%- word.unlimited -%]
+									[%- ELSE -%]
+										[%- tableconf.bouncelogs.maxrecords.chunk(-3).join(',') -%]
+									[%- END -%]
+								</div>
+							</td>
+						</tr>
+						<tr><td colspan = '2'>&nbsp;</td></tr>
+						<tr>
+							<td colspan = '5'>
+								[%- IF tablesumm.bouncelogs.capacity > 1 -%]
+									[%- SET thecapacity = 1 -%]
+								[%- ELSIF tablesumm.bouncelogs.capacity < 0 -%]
+									[%- SET thecapacity = 0 -%]
+								[%- ELSE -%]
+									[%- SET thecapacity = tablesumm.bouncelogs.capacity -%]
+								[%- END -%]
+								[%- SET capacitywidth = thecapacity * unitsize -%]
+								[%- IF thecapacity > 0.9 -%]
+									[%- SET barclass = 'barfull' -%]
+									[%- SET fillclass = 'fillfull' -%]
+								[%- ELSIF thecapacity > 0.7 -%]
+									[%- SET barclass = 'barwarn' -%]
+									[%- SET fillclass = 'fillwarn' -%]
+								[%- ELSIF thecapacity > 0.1 -%]
+									[%- SET barclass = 'barnorm' -%]
+									[%- SET fillclass = 'fillnorm ' -%]
+								[%- ELSE -%]
+									[%- SET barclass = 'barempty ' -%]
+									[%- SET fillclass = 'fillempty ' -%]
+								[%- END -%]
+								<div class = 'graph [% barclass %]'>
+									<div class = 'used [% fillclass %]' style = 'width: [% capacitywidth %]px;'>&nbsp;</div>
+								</div>
 							</td>
 						</tr>
 					</tbody>
@@ -95,62 +127,96 @@
 
 			[%- FOREACH T IN [ 'addresser', 'senderdomain','destination' ] -%]
 				[%- SET M = T _ 's' -%]
-				<h2>[% term.$T %] [% word.table %]/[% tablesumm.${M}.screenname %]
+				<hr class = 'flatline' />
+				<h2>[% term.$T %]/[% tablesumm.${M}.screenname %]
 					[%- IF tableconf.${M}.readonly > 0 -%]([% word.readonly %])[%- END -%]</h2>
 				<div class = 'summary'>
 					<table>
 						<tbody>
-							<tr>
-								<td class = 'key'>[% word.upperlimit %]</td>
-								<td class = 'value'>
-									[% IF tableconf.${M}.maxrecords == 0 %]
-										[% word.unlimited %]
-									[% ELSE %]
-										[% tableconf.${M}.maxrecords.chunk(-3).join(',') %] [% word.unitofrecs %]
-									[% END %]
-								</td>
-								<td class = 'extra'></td>
-							</tr>
+						<tr>
+							<td class = 'label'>[% word.used %]</td>
+							<td class = 'value'>[% tablesumm.${M}.totalentries.chunk(-3).join(',') %]</td>
+							<td rowspan = '5'>
+								<div class = 'recordsize'>
+									[%- tablesumm.${M}.totalentries.chunk(-3).join(',') -%]
+								</div>
+							</td>
+							<td rowspan = '2'>&nbsp;</td>
+							<td rowspan = '3'>&nbsp;</td>
+						</tr>
 
-							<tr>
-								<td class = 'key'>[% word.used %]</td>
-								<td class = 'value'>
-									[% tablesumm.${M}.totalentries.chunk(-3).join(',') %]
-									[% word.unitofrecs %]
-								</td>
-								<td class = 'extra'></td>
-							</tr>
+						<tr>
+							<td class = 'label'>[% word.upperlimit %]</td>
+							<td class = 'value'>
+								[%- IF tableconf.${M}.maxrecords == 0 -%]
+									[% word.unlimited %]
+								[%- ELSE -%]
+									[%- tableconf.${M}.maxrecords.chunk(-3).join(',') -%]
+								[%- END -%]
+							</td>
+						</tr>
 
-							<tr>
-								<td class = 'key'>[% word.available %]</td>
-								<td class = 'value'>
-									[% IF tableconf.${M}.maxrecords == 0 %]
-										[% word.unlimited %]
-									[% ELSE %]
-										[% SET available = tableconf.${M}.maxrecords - tablesumm.${M}.totalentries %]
-										[% available.chunk(-3).join(',') %] [% word.unitofrecs %]
-									[% END %]
-								</td>
-								<td class = 'extra'></td>
-							</tr>
+						<tr>
+							<td class = 'label'>[% word.available %]</td>
+							<td class = 'value'>
+								[%- IF tableconf.${M}.maxrecords == 0 -%]
+									[%- word.unlimited -%]
+								[%- ELSE -%]
+									[%- SET available = tableconf.${M}.maxrecords - tablesumm.${M}.totalentries -%]
+									[%- available.chunk(-3).join(',') -%]
+								[%- END -%]
+							</td>
+							<td rowspan = '3'><div class = 'fraction'>/</div></td>
+						</tr>
 
-							<tr>
-								<td class = 'key'>[% word.capacity %]</td>
-								<td class = 'value'>
-									[% SET capacitywidth = tablesumm.${M}.capacity * 320 %]
-									<div class = 'graph'>
-										<div class = 'used' style = 'width: [% capacitywidth %]px;'>&nbsp;
-										</div>
-									</div>
-								</td>
-								<td class = 'extra'>
-									[% IF tableconf.${M}.maxrecords == 0 %]
-										[% word.unlimited %]
-									[% ELSE %]
-										[% tablesumm.${M}.capacity * 100 %] %
-									[% END %]
-								</td>
-							</tr>
+						<tr>
+							<td class = 'label'>[% word.capacity %]</td>
+							<td class = 'value'>
+								[%- IF tableconf.${M}.maxrecords == 0 -%]
+								[%- ELSE -%]
+									<strong>[%- tablesumm.${M}.capacity * 100 -%] %</strong>
+								[%- END -%]
+							</td>
+							<td rowspan = '2'>
+								<div class = 'limitsize'>
+									[%- IF tableconf.${M}.maxrecords == 0 -%]
+										[%- word.unlimited -%]
+									[%- ELSE -%]
+										[%- tableconf.${M}.maxrecords.chunk(-3).join(',') -%]
+									[%- END -%]
+								</div>
+							</td>
+						</tr>
+						<tr><td colspan = '2'>&nbsp;</td></tr>
+						<tr>
+							<td colspan = '5'>
+								[%- IF tablesumm.${M}.capacity > 1 -%]
+									[%- SET thecapacity = 1 -%]
+								[%- ELSIF tablesumm.${M}.capacity < 0 -%]
+									[%- SET thecapacity = 0 -%]
+								[%- ELSE -%]
+									[%- SET thecapacity = tablesumm.${M}.capacity -%]
+								[%- END -%]
+								[%- SET capacitywidth = thecapacity * unitsize -%]
+								[%- IF thecapacity > 0.9 -%]
+									[%- SET barclass = 'barfull' -%]
+									[%- SET fillclass = 'fillfull' -%]
+								[%- ELSIF thecapacity > 0.7 -%]
+									[%- SET barclass = 'barwarn' -%]
+									[%- SET fillclass = 'fillwarn' -%]
+								[%- ELSIF thecapacity > 0.1 -%]
+									[%- SET barclass = 'barnorm' -%]
+									[%- SET fillclass = 'fillnorm ' -%]
+								[%- ELSE -%]
+									[%- SET barclass = 'barempty ' -%]
+									[%- SET fillclass = 'fillempty ' -%]
+								[%- END -%]
+								<div class = 'graph [% barclass %]'>
+									<div class = 'used [% fillclass %]' style = 'width: [% capacitywidth %]px;'>&nbsp;</div>
+								</div>
+							</td>
+						</tr>
+
 						</tbody>
 					</table>
 				</div>

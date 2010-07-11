@@ -1,4 +1,4 @@
-# $Id: 000_compile-core.t,v 1.42 2010/07/04 23:47:13 ak Exp $
+# $Id: 000_compile-core.t,v 1.43 2010/07/11 06:48:47 ak Exp $
 use strict;
 use warnings;
 use lib qw(./t/lib ./dist/lib ./src/lib);
@@ -16,6 +16,7 @@ my $Modules = [ qw{
 	Kanadzuchi::BdDR::BounceLogs::Masters
 	Kanadzuchi::Config::TestRun
 	Kanadzuchi::Exceptions
+	Kanadzuchi::ISO3166
 	Kanadzuchi::Iterator
 	Kanadzuchi::Log
 	Kanadzuchi::Mail

@@ -1,4 +1,4 @@
-# $Id: Summary.pm,v 1.13 2010/07/07 01:05:25 ak Exp $
+# $Id: Summary.pm,v 1.14 2010/07/11 06:48:03 ak Exp $
 # -Id: Summary.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Summary.pm,v 1.1 2009/08/18 02:37:53 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -29,13 +29,13 @@ use Kanadzuchi::BdDR::BounceLogs::Masters;
 # ||__|||__|||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub summary_ontheweb
+sub datasummary
 {
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	# |s|u|m|m|a|r|y|_|o|n|t|h|e|w|e|b|
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+-+-+-+-+
+	# |d|a|t|a|s|u|m|m|a|r|y|
+	# +-+-+-+-+-+-+-+-+-+-+-+
 	#
-	# @Description	Draw summary in HTML
+	# @Description	Data summary page
 	my $self = shift();
 	my $file = 'summary.html';
 	my $bddr = $self->{'database'};

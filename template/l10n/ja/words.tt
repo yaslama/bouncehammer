@@ -1,7 +1,8 @@
-[%# $Id: words.tt,v 1.2 2010/07/07 01:02:59 ak Exp $ -%]
+[%# $Id: words.tt,v 1.3 2010/07/11 06:48:25 ak Exp $ -%]
 [%# Words in Japanese -%]
 [%- SET word = { 
 		'about'		=> '約',
+		'aggregation'	=> 'データ集約',
 		'available'	=> '利用可能',
 		'bounce'	=> 'バウンス',
 		'browser'	=> 'ブラウザ',
@@ -12,6 +13,8 @@
 		'condition'	=> '条件',
 		'config'	=> '設定',
 		'configfile'	=> '設定ファイル',
+		'country'	=> '国',
+		'countryname'	=> '国名',
 		'create'	=> '作成',
 		'creating'	=> '作成中...',
 		'data'		=> 'データ',
@@ -27,8 +30,10 @@
 		'description'	=> '説明',
 		'detail'	=> '詳細',
 		'diagnosticcode'=> 'エラー内容抜粋',
+		'disuse'	=> '不使用',
 		'domainname'	=> 'ドメイン名',
 		'download'	=> 'ダウンロード',
+		'edit'		=> '編集',
 		'email'		=> 'メール',
 		'encrypt'	=> '暗号化',
 		'engine'	=> 'エンジン',

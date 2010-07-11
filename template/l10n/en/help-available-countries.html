@@ -1,0 +1,52 @@
+<h6>available-countries</h6>
+<p class = "description">
+	Kanadzuchi::Mail::Group reads etc/available-countries as YAML for 
+	getting the parsed results which the host group &amp; the provider
+	are correctly classified.
+</p>
+<p class = "description">
+	If the file does not exist, 
+	Kanadzuchi::Mail::Group load  all of modules in the directory 
+	Kanadzuchi/Mail/Group/XX
+</p>
+
+<h6>To use</h6>
+<p class = "description">
+	<span class = 'errortext'>
+	If you use the file, it should be saved as 'available-countries',
+	Run /bin/cp ./available-countries-example ./available-countries,
+	And Edit the file at the command line.
+	</span>
+</p>
+
+<h6>Value</h6>
+<div class = "description">
+<dl>
+	<dt><span class = 'available'>[% word.use %]</span></dt>
+	<dd>
+	Load XX/YY.pm module in the directory Kanadzuchi/Mail/Group.
+	Then it correctly classify host group &amp; provider.
+	</dd>
+
+	<dt><span class = 'errortext'>[% word.disuse %]</span></dt>
+	<dd>
+	Do not load the host group(by area) library, Then Host Group is
+	&quot;PC&quot;, Provider is &quot;various&quot; in parsed results.
+	</dd>
+<dl>
+</div>
+<p class = "description">
+	<em>XX = ccTLD</em><br />
+	<em>YY = Host Group: WebMail, Smartphone, &amp; Cellphone.</em>
+</p>
+
+<h6>MTA</h6>
+<p class = 'description'>
+	Load only the module of its name in Kanadzuch/MTA/XX/ZZ.pm
+</p>
+
+<p class = "description">
+	<em>XX = ccTLD</em><br />
+	<em>YY = Host Group: WebMail, Smartphone, &amp; Cellphone.</em><br />
+	<em>ZZ = MTA Name</em>
+</p>

@@ -1,4 +1,4 @@
-# $Id: Test.pm,v 1.21 2010/06/28 13:18:31 ak Exp $
+# $Id: Test.pm,v 1.22 2010/07/11 06:48:03 ak Exp $
 # -Id: Test.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Test.pm,v 1.10 2009/08/17 12:39:31 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -29,13 +29,13 @@ use Time::Piece;
 # ||__|||__|||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub test_ontheweb
+sub puttestform
 {
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+
-	# |t|e|s|t|_|o|n|t|h|e|w|e|b|
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+-+-+-+-+
+	# |p|u|t|t|e|s|t|p|a|g|e|
+	# +-+-+-+-+-+-+-+-+-+-+-+
 	#
-	# @Description	Draw test(parse) form in HTML
+	# @Description	Test pagsing page
 	# @Param	<None>
 	# @Return
 	my $self = shift();
@@ -45,13 +45,13 @@ sub test_ontheweb
 	return $self->tt_process($file);
 }
 
-sub parse_ontheweb
+sub onlineparser
 {
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	# |p|a|r|s|e|_|o|n|t|h|e|w|e|b|
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	# +-+-+-+-+-+-+-+-+-+-+-+-+
+	# |o|n|l|i|n|e|p|a|r|s|e|r|
+	# +-+-+-+-+-+-+-+-+-+-+-+-+
 	#
-	# @Description	Execute test parse on the web.
+	# @Description	Execute test parsing on the web.
 	# @Param	<None>
 	# @Return
 	my $self = shift();
