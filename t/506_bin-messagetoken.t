@@ -1,4 +1,4 @@
-# $Id: 506_bin-messagetoken.t,v 1.3 2010/07/02 09:00:28 ak Exp $
+# $Id: 506_bin-messagetoken.t,v 1.4 2010/07/11 09:20:39 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -16,7 +16,6 @@ SKIP: {
 
 	require Kanadzuchi::Test::CLI;
 	require Kanadzuchi;
-	require JSON::Syck;
 	require File::Copy;
 
 	#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 

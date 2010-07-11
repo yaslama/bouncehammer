@@ -1,4 +1,4 @@
-# $Id: 061_mail-stored-yaml.t,v 1.9 2010/07/02 09:00:28 ak Exp $
+# $Id: 061_mail-stored-yaml.t,v 1.10 2010/07/11 09:20:38 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,6 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Test::Mail;
 use Kanadzuchi::Mail::Stored::YAML;
-use JSON::Syck;
 use Test::More ( tests => 1430 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 

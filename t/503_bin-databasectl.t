@@ -1,4 +1,4 @@
-# $Id: 503_bin-databasectl.t,v 1.11 2010/07/02 00:06:49 ak Exp $
+# $Id: 503_bin-databasectl.t,v 1.12 2010/07/11 09:20:39 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -25,7 +25,6 @@ SKIP: {
 	require Kanadzuchi::BdDR::Page;
 	require Kanadzuchi::BdDR::BounceLogs;
 	require Kanadzuchi::BdDR::BounceLogs::Masters;
-	require JSON::Syck;
 	require File::Copy;
 
 	#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 

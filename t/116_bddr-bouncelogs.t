@@ -1,4 +1,4 @@
-# $Id: 116_bddr-bouncelogs.t,v 1.7 2010/07/02 09:00:28 ak Exp $
+# $Id: 116_bddr-bouncelogs.t,v 1.8 2010/07/11 09:20:38 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -38,7 +38,6 @@ SKIP: {
 	require Kanadzuchi::BdDR::BounceLogs;
 	require Kanadzuchi::BdDR::BounceLogs::Masters;
 	require Kanadzuchi::Metadata;
-	require JSON::Syck;
 	require Time::Piece;
 
 	my $Btable = undef();

@@ -1,4 +1,4 @@
-# $Id: 015_metadata.t,v 1.7 2010/07/07 09:05:00 ak Exp $
+# $Id: 015_metadata.t,v 1.8 2010/07/11 09:20:38 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,6 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Metadata;
 use Test::More ( tests => 178 );
-use JSON::Syck;
 use Path::Class::File;
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
@@ -25,12 +24,6 @@ my $T = new Kanadzuchi::Test(
 	'methods' => [ 'to_string','to_object', 'mergesort' ],
 	'instance' => undef(), );
 my $F = new Path::Class::File($T->tempdir->stringify().q{/sample-json-datum.tmp});
-
-$JSON::Syck::ImplicitTyping  = 1;
-$JSON::Syck::Headless        = 1;
-$JSON::Syck::ImplicitUnicode = 0;
-$JSON::Syck::SingleQuote     = 0;
-$JSON::Syck::SortKeys        = 1;
 
 #  ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ 
 # ||T |||e |||s |||t |||       |||c |||o |||d |||e |||s ||

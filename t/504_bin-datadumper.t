@@ -1,4 +1,4 @@
-# $Id: 504_bin-datadumper.t,v 1.17 2010/07/02 09:00:28 ak Exp $
+# $Id: 504_bin-datadumper.t,v 1.18 2010/07/11 09:20:39 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -26,7 +26,6 @@ SKIP: {
 	require Kanadzuchi::BdDR::BounceLogs;
 	require Kanadzuchi::BdDR::BounceLogs::Masters;
 	require Kanadzuchi::Mail::Stored::YAML;
-	require JSON::Syck;
 
 	#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 	# ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||

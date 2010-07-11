@@ -1,4 +1,4 @@
-# $Id: 115_bddr-bouncelogs-masters.t,v 1.7 2010/07/07 09:05:00 ak Exp $
+# $Id: 115_bddr-bouncelogs-masters.t,v 1.8 2010/07/11 09:20:38 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -75,7 +75,6 @@ SKIP: {
 		require Kanadzuchi;
 		require Kanadzuchi::RFC2822;
 		require Kanadzuchi::Time;
-		require JSON::Syck;
 
 		my $tabset = {
 			'Addressers' => { 'column' => 'email', 'has' => 'sender01@example.jp', 'new' => 'vicepresident@example.gov' },

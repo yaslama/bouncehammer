@@ -1,4 +1,4 @@
-# $Id: Group.pm,v 1.27 2010/07/01 13:18:09 ak Exp $
+# $Id: Group.pm,v 1.28 2010/07/11 09:20:28 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::
                                      
@@ -12,6 +12,7 @@
 package Kanadzuchi::Mail::Group;
 use strict;
 use warnings;
+use JSON::Syck;
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -39,13 +40,6 @@ sub postulat
 	#       * 1 = Load 'Kanadzuchi::Mail::Group::<CCTLD or ISO3166>::<HOSTGROUP>',
 	#             Then it correctly classify host group and provider.
 	my $class = shift();
-
-	require JSON::Syck;
-	$JSON::Syck::ImplicitTyping  = 1;
-	$JSON::Syck::Headless        = 1;
-	$JSON::Syck::ImplicitUnicode = 0;
-	$JSON::Syck::SingleQuote     = 0;
-	$JSON::Syck::SortKeys        = 0;
 
 	# Experimental implementation for the future.
 	my $iso3166list = [ qw(AU BR CA CN CZ DE EG IN IL IR JP KR LV NO NZ RU SG TW UK US ZA) ];

@@ -1,4 +1,4 @@
-# $Id: 151_ui-cli.t,v 1.6 2010/07/07 09:05:00 ak Exp $
+# $Id: 151_ui-cli.t,v 1.7 2010/07/11 09:20:38 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,6 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::UI::CLI;
 use Path::Class::File;
-use JSON::Syck;
 use File::Basename qw(basename);
 use Test::More ( tests => 736 );
 

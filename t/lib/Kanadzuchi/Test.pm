@@ -1,4 +1,4 @@
-# $Id: Test.pm,v 1.5 2010/07/07 09:05:07 ak Exp $
+# $Id: Test.pm,v 1.6 2010/07/11 09:20:41 ak Exp $
 # Kanadzuchi::
                                
  ######                  ##    
@@ -20,6 +20,7 @@ use strict;
 use warnings;
 use base 'Class::Accessor::Fast::XS';
 use Path::Class;
+use JSON::Syck;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||A |||c |||c |||e |||s |||s |||o |||r |||s ||

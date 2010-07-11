@@ -1,4 +1,4 @@
-# $Id: ListOf.pm,v 1.1 2010/07/11 06:48:03 ak Exp $
+# $Id: ListOf.pm,v 1.2 2010/07/11 09:20:36 ak Exp $
 # -Id: Summary.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Summary.pm,v 1.1 2009/08/18 02:37:53 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -22,6 +22,7 @@ use warnings;
 use base 'Kanadzuchi::UI::Web';
 use Path::Class::File;
 use Time::Piece;
+use JSON::Syck;
 use Kanadzuchi::Metadata;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -61,13 +62,6 @@ sub listofcontents
 		my $iso3166c = Kanadzuchi::ISO3166->assignedcode();
 		map { $listdata->{$_}->{'name'} = $iso3166c->{$_}->{'shortname'} } keys %$listdata;
 		map { $listdata->{$_}->{'code'} = uc $_ } keys %$listdata;
-
-		require JSON::Syck;
-		$JSON::Syck::ImplicitTyping  = 1;
-		$JSON::Syck::Headless        = 1;
-		$JSON::Syck::ImplicitUnicode = 0;
-		$JSON::Syck::SingleQuote     = 0;
-		$JSON::Syck::SortKeys        = 0;
 
 		foreach my $code ( keys %$listdata )
 		{

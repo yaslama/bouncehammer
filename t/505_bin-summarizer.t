@@ -1,4 +1,4 @@
-# $Id: 505_bin-summarizer.t,v 1.15 2010/07/02 09:00:28 ak Exp $
+# $Id: 505_bin-summarizer.t,v 1.16 2010/07/11 09:20:39 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -25,7 +25,6 @@ SKIP: {
 	require Kanadzuchi::BdDR::BounceLogs;
 	require Kanadzuchi::BdDR::BounceLogs::Masters;
 	require Kanadzuchi::Mail::Stored::YAML;
-	require JSON::Syck;
 	require File::Copy;
 
 	#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 

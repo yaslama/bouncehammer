@@ -1,4 +1,4 @@
-# $Id: 500_bin-mailboxparser.t,v 1.22 2010/06/22 07:17:16 ak Exp $
+# $Id: 500_bin-mailboxparser.t,v 1.23 2010/07/11 09:20:39 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -16,7 +16,6 @@ SKIP: {
 
 	require Kanadzuchi::Test::CLI;
 	require Kanadzuchi;
-	require JSON::Syck;
 	require File::Basename;
 
 	#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 

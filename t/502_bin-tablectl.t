@@ -1,4 +1,4 @@
-# $Id: 502_bin-tablectl.t,v 1.15 2010/07/02 00:06:49 ak Exp $
+# $Id: 502_bin-tablectl.t,v 1.16 2010/07/11 09:20:39 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -25,7 +25,6 @@ SKIP: {
 	require Kanadzuchi::BdDR;
 	require Kanadzuchi::BdDR::Page;
 	require Kanadzuchi::BdDR::BounceLogs::Masters;
-	require JSON::Syck;
 	require File::Copy;
 
 	#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
