@@ -1,4 +1,4 @@
-# $Id: 160_ui-web.t,v 1.7 2010/07/11 06:48:47 ak Exp $
+# $Id: 160_ui-web.t,v 1.8 2010/07/12 08:08:43 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 22 );
+use Test::More ( tests => 24 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -24,6 +24,9 @@ my $T = new Kanadzuchi::Test(
 );
 
 my $W = {
+	'About' => new Kanadzuchi::Test(
+			'class' => $T->class().q|::About|,
+			'methods' => [ @{$T->methods()}, 'about' ], ),
 	'Aggregate' => new Kanadzuchi::Test(
 			'class' => $T->class().q|::Aggregate|,
 			'methods' => [ @{$T->methods()}, 'aggregation' ], ),

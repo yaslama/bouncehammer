@@ -1,4 +1,4 @@
-/* $Id: profile.css,v 1.6 2010/07/11 06:48:32 ak Exp $ */
+/* $Id: profile.css,v 1.7 2010/07/12 08:08:38 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Profile classes */
 div.profile {
@@ -23,7 +23,7 @@ div.profile table {
 }
 
 div.profile td.key { /* LHS */
-	width: 169px;
+	width: 128px;
 	padding: 2px 4px;
 	border-width: 0 0 1px 0;
 	border-color: #dcdddd; /* Shironezu */
@@ -38,5 +38,21 @@ div.profile td.value {
 	border-color: #dcdddd; /* Shironezu */
 	border-style: dotted;
 	vertical-align: middle;
+	color: #455765; /* Tetsuonando */
 }
 
+td ul {
+	padding: 2px;
+}
+
+td ul li {
+	margin: 0 0 0 2px;
+	padding: 0;
+	list-style-position: inside;
+	list-style-type: disc;
+	color: #595857;	/* Sumi */
+}
+
+span.largestring {
+	font-size: 14px;
+}

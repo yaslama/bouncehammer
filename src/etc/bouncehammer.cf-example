@@ -1,5 +1,5 @@
 # bouncehammer.cf
-# $Id: bouncehammer.cf-example,v 1.10 2010/04/09 03:52:16 ak Exp $
+# $Id: bouncehammer.cf-example,v 1.11 2010/07/12 08:07:19 ak Exp $
 # This config file is YAML format. bin/* scripts read this file by
 # using (YAML|JSON)::Syck/ Perl module.
 #  ______   ______ _____ _____ __  __ 
@@ -20,15 +20,15 @@ version: '2.0.0'
 # |_|   |___|_____|_____|
 # 
 file:
-  # MaxSize: <n> Bytes, 0 is unlimit.
+  # MaxSize: <n> Bytes, 0 is unlimit.(bin/mailboxparser)
   maxsize: 134217728
 
-  # Temporary log file
+  # Temporary log file.(bin/mailboxparser)
   templog:
     prefix: 'hammer'
     suffix: 'tmp'
 
-  # Stored log files
+  # Stored log file.(bin/logger)
   storage:
     prefix: 'hammer'
     suffix: 'log'
@@ -43,8 +43,8 @@ directory:
   conf: '__KANADZUCHIETC__'
   pid: '__KANADZUCHIVAR__/pid'
 
-  # Log storage, -o(--output) option of bin/mailboxparser command over-
-  # rides this value.
+  # Log storage, -o(--output) option of bin/mailboxparser command
+  # overrides this value.
   log: '__KANADZUCHIVAR__/log'
 
   # Working directory of commandline tools in bin/ directory.
@@ -52,7 +52,7 @@ directory:
   cache: '__KANADZUCHIVAR__/cache'
   spool: '__KANADZUCHIVAR__/spool'
 
-  # Upload directory used by mailboxparser -d option
+  # Upload directory(NOT IMPLEMENTED)
   incoming: '__KANADZUCHIVAR__/incoming'
 
 #  _   _ _____ _______        _____  ____  _  __

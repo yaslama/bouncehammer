@@ -1,4 +1,4 @@
-[%# $Id: words.tt,v 1.3 2010/07/11 06:48:23 ak Exp $ -%]
+[%# $Id: words.tt,v 1.4 2010/07/12 08:08:26 ak Exp $ -%]
 [%# Words in English -%]
 [%- SET word = { 
 		'about'		=> 'About',
@@ -13,6 +13,7 @@
 		'condition'	=> 'Condition',
 		'config'	=> 'Config',
 		'configfile'	=> 'Configuration File',
+		'contact'	=> 'Contact',
 		'country'	=> 'Country',
 		'countryname'	=> 'Country Name',
 		'create'	=> 'Create',
@@ -29,6 +30,7 @@
 		'descending'	=> 'Descending',
 		'description'	=> 'Description',
 		'detail'	=> 'Details',
+		'developer'	=> 'Developer',
 		'diagnosticcode'=> 'Diagnostic Code',
 		'disuse'	=> 'Disuse',
 		'domainname'	=> 'Domain Name',
@@ -50,6 +52,7 @@
 		'id'		=> 'ID',
 		'insertintodb'	=> 'Insert Into DB',
 		'language'	=> 'Language',
+		'license'	=> 'License',
 		'loadaverage'	=> 'Load Average',
 		'mailbox'	=> 'Mailbox',
 		'make'		=> 'Make',
@@ -111,6 +114,7 @@
 		'use'		=> 'Use',
 		'used'		=> 'Used',
 		'version'	=> 'Version',
+		'website'	=> 'Web Site',
 		'why'		=> 'Reason',
 	}
 -%]

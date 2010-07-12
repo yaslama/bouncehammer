@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.20 2010/07/11 06:47:58 ak Exp $
+# $Id: Web.pm,v 1.21 2010/07/12 08:08:15 ak Exp $
 # -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
 # -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -115,6 +115,7 @@ sub setup
 	$self->error_mode('exception');
 	$self->mode_param('x');
 	$self->run_modes( 
+		'About'		=> 'about',
 		'Aggregate'	=> 'aggregation',
 		'Delete'	=> 'deletetherecord',
 		'Index'		=> 'putindexpage',

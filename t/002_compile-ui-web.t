@@ -5,6 +5,7 @@ use Test::More;
 
 my $Modules = [
 	q(Kanadzuchi::UI::Web),
+	q(Kanadzuchi::UI::Web::About),
 	q(Kanadzuchi::UI::Web::Aggregate),
 	q(Kanadzuchi::UI::Web::Delete),
 	q(Kanadzuchi::UI::Web::Dispatch),

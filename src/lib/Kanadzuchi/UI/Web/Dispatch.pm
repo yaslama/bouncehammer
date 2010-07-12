@@ -1,4 +1,4 @@
-# $Id: Dispatch.pm,v 1.9 2010/07/11 06:48:03 ak Exp $
+# $Id: Dispatch.pm,v 1.10 2010/07/12 08:08:18 ak Exp $
 # -Id: Index.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Index.pm,v 1.3 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -39,6 +39,9 @@ my $WebUISearching = { 'app' => 'Web::Search', 'rm' => 'Search' };
 my $WebUITableCtrl = { 'app' => 'Web::MasterTables', 'rm' => 'TableControl' };
 my $WebUITableList = { 'app' => 'Web::MasterTables', 'rm' => 'TableList' };
 my $DispatchTables = [
+	'about' => {
+		'app' => 'Web::About',
+		'rm' => 'About' },
 	'aggregate/:pi_tablename' => {
 			'app' => 'Web::Aggregate',
 			'rm'  => 'Aggregate' },

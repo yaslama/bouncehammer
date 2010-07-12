@@ -1,4 +1,4 @@
-# $Id: 035_mta-jp-aubykddi.t,v 1.1 2010/07/07 05:43:54 ak Exp $
+# $Id: 035_mta-jp-aubykddi.t,v 1.2 2010/07/12 08:08:43 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -55,7 +55,7 @@ REPERIT: {
 	$mesgbodypart .= $_ while( <DATA> );
 	$pseudoheader = $Test->class->reperit( $Head, \$mesgbodypart );
 	ok( $pseudoheader );
-	
+
 	foreach my $el ( split("\n", $pseudoheader) )
 	{
 		next() if( $el =~ m{\A\z} );

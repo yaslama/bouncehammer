@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.14 2010/07/11 06:49:44 ak Exp $
+# $Id: Makefile.am,v 1.15 2010/07/12 08:07:43 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi,
 # is processed by automake to create Makefile.in.

@@ -1,4 +1,4 @@
-[%# $Id: words.tt,v 1.3 2010/07/11 06:48:25 ak Exp $ -%]
+[%# $Id: words.tt,v 1.4 2010/07/12 08:08:28 ak Exp $ -%]
 [%# Words in Japanese -%]
 [%- SET word = { 
 		'about'		=> '約',
@@ -13,6 +13,7 @@
 		'condition'	=> '条件',
 		'config'	=> '設定',
 		'configfile'	=> '設定ファイル',
+		'contact'	=> 'お問い合わせ',
 		'country'	=> '国',
 		'countryname'	=> '国名',
 		'create'	=> '作成',
@@ -29,6 +30,7 @@
 		'descending'	=> '降順',
 		'description'	=> '説明',
 		'detail'	=> '詳細',
+		'developer'	=> '開発元',
 		'diagnosticcode'=> 'エラー内容抜粋',
 		'disuse'	=> '不使用',
 		'domainname'	=> 'ドメイン名',
@@ -50,6 +52,7 @@
 		'id'		=> 'ID',
 		'insertintodb'	=> 'DBに登録',
 		'language'	=> '言語',
+		'license'	=> 'ライセンス',
 		'loadaverage'	=> '負荷',
 		'mailbox'	=> 'メールボックス',
 		'make'		=> '生成',
@@ -111,6 +114,7 @@
 		'use'		=> '使用',
 		'used'		=> '使用中',
 		'version'	=> 'バージョン',
+		'website'	=> 'Webサイト',
 		'why'		=> '理由',
 	}
 -%]

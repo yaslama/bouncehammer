@@ -1,4 +1,4 @@
-# $Id: aubyKDDI.pm,v 1.3 2010/07/07 05:42:04 ak Exp $
+# $Id: aubyKDDI.pm,v 1.4 2010/07/12 08:07:55 ak Exp $
 # -Id: aubyKDDI.pm,v 1.1 2009/08/29 08:50:38 ak Exp -
 # -Id: aubyKDDI.pm,v 1.1 2009/07/31 09:04:51 ak Exp -
 # Kanadzuchi::MTA::JP::
@@ -81,7 +81,7 @@ sub reperit
 			grep { $_ =~ m{\Afrom[ ]\w+[.]auone-net[.]jp[ ]} } @{ $mhead->{'received'} } );
 	return q() unless( $isau1 );
 
-	if( $mhead->{'x-spasign'} eq 'NG' )
+	if( defined $mhead->{'x-spasign'} && $mhead->{'x-spasign'} eq 'NG' )
 	{
 		# Content-Type: text/plain; ..., X-SPASIGN: NG (spamghetti, au by KDDI)
 		# Filtered recipient returns message that include 'X-SPASIGN' header

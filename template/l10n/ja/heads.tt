@@ -1,6 +1,7 @@
-[%# $Id: heads.tt,v 1.3 2010/07/11 06:48:25 ak Exp $ -%]
+[%# $Id: heads.tt,v 1.4 2010/07/12 08:08:28 ak Exp $ -%]
 [%# Headlines in Japanese -%]
 [%- SET head = { 
+		'aboutus'	=> 'BounceHammerについて',
 		'aggregatedby'	=> '項目別データ集約',
 		'dashboard'	=> 'ダッシュボード',
 		'datasummary'	=> '登録済みデータの概要',
@@ -11,6 +12,7 @@
 		'messagetoken'	=> 'トークン生成',
 		'parsingtest'	=> 'メール解析テスト',
 		'recorddetails'	=> '記録の詳細',
+		'reportbugs'	=> 'バグレポート送信先',
 		'search'	=> '検索',
 		'searchresults'	=> '検索結果',
 		'serverprof'	=> 'サーバ情報',

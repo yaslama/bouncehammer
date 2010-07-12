@@ -1,7 +1,8 @@
-[%# $Id: terms.tt,v 1.2 2010/07/07 01:02:59 ak Exp $ -%]
+[%# $Id: terms.tt,v 1.3 2010/07/12 08:08:28 ak Exp $ -%]
 [%# Terms in English -%]
 [%- SET term = { 
 		'bouncelogs'	=> 'BounceLogs',
+		'cubicroot'	=> '株式会社キュービックルート',
 		'mastertable'	=> 'マスターテーブル',
 		'addresser'	=> '発信者アドレス',
 		'recipient'	=> '受信者アドレス',
