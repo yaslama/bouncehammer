@@ -1,9 +1,9 @@
 #__PERLEXECUTABLE__
-# $Id: api.PL,v 1.5 2010/03/26 07:17:51 ak Exp $
+# $Id: api.PL,v 1.6 2010/07/12 15:22:09 ak Exp $
 # -Id: api.PL,v 1.5 2010/02/21 20:11:18 ak Exp -
 # -Id: api.cgi,v 1.3 2009/10/06 00:36:28 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
-package Kanadzuchi::API::CGI;
+package Kanadzuchi::API::HTTP::CGI;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
@@ -13,10 +13,10 @@ package Kanadzuchi::API::CGI;
 use lib '__KANADZUCHIROOT__/lib';
 use strict;
 use warnings;
-use Kanadzuchi::API::Dispatch;
+use Kanadzuchi::API::HTTP::Dispatch;
 
-my $SystemArgs = Kanadzuchi::API::Dispatch->dispatch_args();
-my $UseMyConfs = 0;	# 1=Use $MySettings, 0=Don't use it
+my $SystemArgs = Kanadzuchi::API::HTTP::Dispatch->dispatch_args();
+my $UseMyConfs = 0;	# 1 = Use $MySettings, 0 = Don't use it
 my $MySettings = {
 	'PARAMS' => {
 		'cf' => '/path/to/my/custom/bouncehammer.cf',
@@ -32,11 +32,12 @@ foreach my $x ( 'cf', 'wf' )
 	$UseMyConfs = 0 unless( -r $MySettings->{'PARAMS'}->{$x} && -s _ );
 }
 
-Kanadzuchi::API::Dispatch->dispatch(
+Kanadzuchi::API::HTTP::Dispatch->dispatch(
 	'prefix' => $SystemArgs->{'prefix'},
 	'default' => $SystemArgs->{'default'},
 	'table' => $SystemArgs->{'table'},
 	'args_to_new' => $UseMyConfs ? $MySettings : $SystemArgs->{'args_to_new'},
 );
 
+1;
 __END__

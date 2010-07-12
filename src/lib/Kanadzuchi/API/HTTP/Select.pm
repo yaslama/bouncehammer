@@ -1,4 +1,4 @@
-# $Id: Select.pm,v 1.1 2010/07/12 14:23:12 ak Exp $
+# $Id: Select.pm,v 1.2 2010/07/12 15:22:13 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::HTTP::
                                          
@@ -47,7 +47,7 @@ sub selectbytoken
 
 	$iterat = Kanadzuchi::Mail::Stored::BdDR->searchandnew(
 			$self->{'database'}->handle(), $wherec, $pagina );
-	return q{} unless( $iterat->count() );
+	return q() unless( $iterat->count() );
 
 	# Create serialized data for the format JSON
 	$zcilog = Kanadzuchi::Log->new();

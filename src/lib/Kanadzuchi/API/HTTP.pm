@@ -1,4 +1,4 @@
-# $Id: HTTP.pm,v 1.15 2010/07/12 14:23:10 ak Exp $
+# $Id: HTTP.pm,v 1.16 2010/07/12 15:22:12 ak Exp $
 # -Id: HTTP.pm,v 1.3 2009/10/06 00:36:49 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::
@@ -59,6 +59,7 @@ sub setup
 	$self->run_modes( 
 		'Empty' => 'empty',
 		'Select' => 'selectbytoken',
+		'Search' => 'search',
 	);
 }
 
@@ -78,7 +79,8 @@ sub cgiapp_prerun
 	# Set values to Kanadzuchi::BdDR object, Create data source name
 	try {
 		$bddr->setup( $conf->{'database'} );
-		Kanadzuchi::Exception::API->throw( '-text' => 'Failed to connect DB' ) unless($bddr->connect());
+		Kanadzuchi::Exception::API->throw( 
+			'-text' => 'Failed to connect DB' ) unless($bddr->connect());
 		$self->{'database'} = $bddr;
 	}
 	catch Kanadzuchi::Exception::API with {

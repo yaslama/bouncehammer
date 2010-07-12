@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: bouncehammer.PL,v 1.4 2010/03/26 07:17:51 ak Exp $
+# $Id: bouncehammer.PL,v 1.5 2010/07/12 15:22:09 ak Exp $
 # -Id: bouncehammer.PL,v 1.5 2010/02/21 20:11:18 ak Exp -
 # -Id: bouncehammer.cgi,v 1.2 2009/10/05 08:56:49 ak Exp -
 # -Id: bouncehammer.PL,v 1.1 2009/08/27 05:10:08 ak Exp -
@@ -35,4 +35,5 @@ Kanadzuchi::UI::Web::Dispatch->dispatch(
 	'args_to_new' => $UseMyConfs ? $MySettings : $SystemArgs->{'args_to_new'},
 );
 
+1;
 __END__
