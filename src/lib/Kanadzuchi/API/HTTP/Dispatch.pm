@@ -1,4 +1,4 @@
-# $Id: Dispatch.pm,v 1.1 2010/07/12 14:23:11 ak Exp $
+# $Id: Dispatch.pm,v 1.2 2010/07/12 17:55:00 ak Exp $
 # -Id: Index.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Index.pm,v 1.3 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -32,11 +32,16 @@ my $Settings = {
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 #
 my $DispatchTables = [
-	'empty'		=> { 'app' => 'API::HTTP', 'rm' => 'Empty' },
-	'query/:token?' => { 'app' => 'API::HTTP::Select', 'rm' => 'Select' },
-	'select/:token?' => { 'app' => 'API::HTTP::Select', 'rm' => 'Select' },
-	'search/recipient/:pi_recipient' => {
-		'app' => 'API::HTTP::Search', 'rm' => 'Search' },
+	'empty' => { 'app' => 'API::HTTP', 'rm' => 'Empty' },
+	'query/:pi_identifier?' => {	# Backward compatible, use 'select'
+		'app' => 'API::HTTP::Select',
+		'rm' => 'Select' },
+	'select/:pi_identifier?' => {
+		'app' => 'API::HTTP::Select',
+		'rm' => 'Select' },
+	'search/:pi_column/:pi_string' => {
+		'app' => 'API::HTTP::Search',
+		'rm' => 'Search' },
 ];
 
 my $DispatchArgsToNew = {

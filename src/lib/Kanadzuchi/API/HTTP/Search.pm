@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.1 2010/07/12 14:23:11 ak Exp $
+# $Id: Search.pm,v 1.2 2010/07/12 17:55:00 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::HTTP::
                                            
@@ -41,19 +41,36 @@ sub search
 	my $self = shift();
 	my $bddr = $self->{'database'};
 
+	my $validcols = [];	# (Ref->Array) Valid column names
 	my $wherecond = {};	# (Ref->Hash) WHERE Condition for sending query
 	my $dbrecords = 0;	# (Integer) The number of records in the db
 	my $paginated = new Kanadzuchi::BdDR::Page();
 	my $bouncelog = new Kanadzuchi::BdDR::BounceLogs::Table('handle' => $bddr->handle());
-	my $recipient = $self->param('pi_recipient') || q();
+
+	my $thecolumn = $self->param('pi_column') || q();
+	my $thestring = $self->param('pi_string') || q();
+
 	my $recordsin = 0;		# (Integer) The number of records in the DB
 	my $serializd = q();		# (String) Serialized/json
 	my $cgiqueryp = $self->query();
 
-	return q() unless( $ENV{'PATH_INFO'} =~ m{/recipient/} );
-	return q() unless( $recipient );
+	# Build column names
+	push @$validcols, @{ $bouncelog->fields->{'join'} };
+	push @$validcols, qw(recipient hostgroup reason token id);
 
-	$wherecond->{'recipient'} = Kanadzuchi::RFC2822->cleanup( lc $recipient );
+	# Experimental implementation except the column 'recipient'
+	return unless grep { lc $thecolumn eq $_ } @$validcols;
+	return q() unless( $thestring );
+
+	if( $thecolumn eq 'recipient' || $thecolumn eq 'addresser' )
+	{
+		$wherecond->{$thecolumn} = Kanadzuchi::RFC2822->cleanup( lc $thestring );
+	}
+	else
+	{
+		$wherecond->{$thecolumn} = lc $thestring;
+	}
+
 	$recordsin = $bouncelog->count( $wherecond, $paginated );
 
 	return q() unless( $recordsin );

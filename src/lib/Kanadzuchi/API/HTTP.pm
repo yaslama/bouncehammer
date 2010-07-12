@@ -1,4 +1,4 @@
-# $Id: HTTP.pm,v 1.16 2010/07/12 15:22:12 ak Exp $
+# $Id: HTTP.pm,v 1.17 2010/07/12 17:54:58 ak Exp $
 # -Id: HTTP.pm,v 1.3 2009/10/06 00:36:49 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::
@@ -58,7 +58,7 @@ sub setup
 	$self->mode_param('x');
 	$self->run_modes( 
 		'Empty' => 'empty',
-		'Select' => 'selectbytoken',
+		'Select' => 'select',
 		'Search' => 'search',
 	);
 }

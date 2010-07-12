@@ -1,4 +1,4 @@
-# $Id: 181_api-http.t,v 1.6 2010/07/12 14:23:58 ak Exp $
+# $Id: 181_api-http.t,v 1.7 2010/07/12 17:54:56 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -47,7 +47,7 @@ SKIP: {
 	require Kanadzuchi::API::HTTP::Search;
 	PREPROCESS: {
 		can_ok( 'Kanadzuchi::API::HTTP::Select', @{$T->methods()} );
-		can_ok( 'Kanadzuchi::API::HTTP::Select', 'selectbytoken' );
+		can_ok( 'Kanadzuchi::API::HTTP::Select', 'select' );
 
 		can_ok( 'Kanadzuchi::API::HTTP::Search', @{$T->methods()} );
 		can_ok( 'Kanadzuchi::API::HTTP::Search', 'search' );
