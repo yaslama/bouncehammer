@@ -1,4 +1,4 @@
-# $Id: HTTP.pm,v 1.14 2010/06/25 19:35:30 ak Exp $
+# $Id: HTTP.pm,v 1.15 2010/07/12 14:23:10 ak Exp $
 # -Id: HTTP.pm,v 1.3 2009/10/06 00:36:49 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::
@@ -57,8 +57,8 @@ sub setup
 	$self->error_mode('exception');
 	$self->mode_param('x');
 	$self->run_modes( 
-		'Empty' => 'api_empty',
-		'Select' => 'api_select',
+		'Empty' => 'empty',
+		'Select' => 'selectbytoken',
 	);
 }
 
@@ -78,7 +78,7 @@ sub cgiapp_prerun
 	# Set values to Kanadzuchi::BdDR object, Create data source name
 	try {
 		$bddr->setup( $conf->{'database'} );
-		Kanadzuchi::Exception::API->throw( '-text' => q{Failed to connect DB} ) unless($bddr->connect());
+		Kanadzuchi::Exception::API->throw( '-text' => 'Failed to connect DB' ) unless($bddr->connect());
 		$self->{'database'} = $bddr;
 	}
 	catch Kanadzuchi::Exception::API with {
@@ -135,51 +135,16 @@ sub loadconfig
 	$self->{'webconfig'} = $yaml if( ref($yaml) eq q|HASH| );
 }
 
-sub api_empty
+sub empty
 {
-	# +-+-+-+-+-+-+-+-+-+
-	# |a|p|i|_|e|m|p|t|y|
-	# +-+-+-+-+-+-+-+-+-+
+	# +-+-+-+-+-+
+	# |e|m|p|t|y|
+	# +-+-+-+-+-+
 	#
 	# @Description	Return empty page
 	# @Param	None
 	my $self = shift();
 	return();
-}
-
-sub api_select
-{
-	# +-+-+-+-+-+-+-+-+-+-+
-	# |a|p|i|_|s|e|l|e|c|t|
-	# +-+-+-+-+-+-+-+-+-+-+
-	#
-	# @Description	Send message token and return serialized result.
-	# @Param	None
-	my $self = shift();
-	return() unless( length($self->param('token')) );
-
-	require Kanadzuchi::Mail::Stored::BdDR;
-	require Kanadzuchi::BdDR::Page;
-	require Kanadzuchi::Log;
-
-	my $iterat = undef();
-	my $zcilog = undef();
-	my $string = q();
-	my $wherec = { 'token' => lc($self->param('token')) };
-	my $pagina = Kanadzuchi::BdDR::Page->new( 'resultsperpage' => 1 );
-
-	$iterat = Kanadzuchi::Mail::Stored::BdDR->searchandnew(
-			$self->{'database'}->handle(), $wherec, $pagina );
-	return(q{}) unless( $iterat->count() );
-
-	# Create serialized data for the format JSON
-	$zcilog = Kanadzuchi::Log->new();
-	$zcilog->count( $iterat->count() );
-	$zcilog->format( 'json' );
-	$zcilog->entities( $iterat->all() );
-	$string = $zcilog->dumper() || q();
-
-	return($string);
 }
 
 sub exception

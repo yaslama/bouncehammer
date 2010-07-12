@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.47 2010/07/11 10:05:58 ak Exp $
+# $Id: Makefile.am,v 1.48 2010/07/12 14:23:56 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -82,6 +82,7 @@ uninstall-old-files:
 	rm -f @prefix@/share/template/standard/stylesheet/pager.css
 
 	@echo "Uninstall files which are renamed at ver 2.4.0"
+	rm -f @prefix@/lib/Kanadzuchi/API/Dispatch.pm
 	rm -f @prefix@/lib/Kanadzuchi/Mail/Bounced/NTTDoCoMo.pm
 	rm -f @prefix@/lib/Kanadzuchi/Mail/Bounced/aubyKDDI.pm
 	rm -f @prefix@/lib/Kanadzuchi/Mail/Bounced/SoftBank.pm

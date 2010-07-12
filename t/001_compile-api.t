@@ -6,7 +6,9 @@ use Test::More;
 my $Modules = [
 	q(Kanadzuchi::API),
 	q(Kanadzuchi::API::HTTP),
-	q(Kanadzuchi::API::Dispatch),
+	q(Kanadzuchi::API::HTTP::Dispatch),
+	q(Kanadzuchi::API::HTTP::Search),
+	q(Kanadzuchi::API::HTTP::Select),
 ];
 
 plan( tests => scalar @$Modules );
