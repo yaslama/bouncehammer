@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.2 2010/02/21 23:19:28 ak Exp $
+$Id: INSTALL,v 1.3 2010/07/13 16:44:09 ak Exp $
 -------------------------------------------------------------------------------
   To install this system; BounceHammer, cd to the directory that contains this
   file and type the following commands:
@@ -7,3 +7,127 @@ $Id: INSTALL,v 1.2 2010/02/21 23:19:28 ak Exp $
    # make
    # make test
    # make install
+
+-------------------------------------------------------------------------------
+ 1. Check required perl modules, Use Modules.PL script at the top directory
+
+   # perl ./Modules.PL check
+   *[ NG ] Class::Accessor::Fast::XS
+    [ OK ] File::Spec VERSION = 3.12
+   *[ NG ] Term::ProgressBar
+   *[ NG ] Time::Piece
+   ...
+   *[ NG ] is missing module, [ OK ] is installed module.
+
+-------------------------------------------------------------------------------
+ 2. Install all of the missing perl modules
+
+   If 'Time::Piece' module does not exist, Install the module by executing the
+   following command.
+
+   # cpan Time::Piece
+    or
+   # perl -MCPAN -e 'install Time::Piece'
+   ...
+
+   Then, Check again.
+   # perl ./Modules.PL check
+
+-------------------------------------------------------------------------------
+ 3. Build: configure and make
+
+   * Available configure options
+     --prefix <dir>		Install directory, Default is /usr/local/bouncehammer
+     --with-perl <path>		Path to perl interpreter, If you have multiple perl.
+     --disable-webui=<yes|no>	Disable WebUI, Default is no.
+
+  e.g.)
+   # ./configure --prefix=/opt/local/bouncehammer --with-perl=/usr/local/bin/perl
+   # make && make test && make install
+   ...
+ 
+-------------------------------------------------------------------------------
+ 4. Setting up database
+   e.g.)
+     - Database name = bouncehammer
+     - Database hostname = 127.0.0.1
+     - Database username = bouncehammer
+     - Database password = 794-uguisu-heiankyo
+
+   * MySQL
+     # /usr/local/bin/mysql
+     Welcome to the MySQL monitor. Commands end with ; or \g.
+     Your MySQL connection id is 1537
+     Server version: 5.1.44 Source distribution
+     ...
+ 
+     mysql> CREATE DATABASE bouncehammer;
+     mysql> GRANT ALL PRIVILEGES ON bouncehammer.* TO bouncehammer@127.0.0.1 IDENTIFIED BY '794-uguisu-heiankyo';
+     mysql> FLUSH PRIVILEGES;
+
+   * PostgreSQL
+     % su - postgres
+     $ cd /usr/local/pgsql
+     $ ./bin/createuser bouncehammer ⏎
+     Shall the new role be a superuser? (y/n) n
+     Shall the new role be allowed to create databases? (y/n) y
+     Shall the new role be allowed to create more new roles? (y/n) y
+
+     $ ./bin/createdb -Obouncehammer bouncehammer
+     $ ./bin/psql
+     psql (8.4.4)
+     Type "help" for help.
+
+     postgres=# ALTER USER bouncehammer password '794-uguisu-heiankyo';
+     ALTER ROLE
+
+   * SQLite
+     # touch /opt/local/bouncehammer/var/db/bouncehammer.db
+
+-------------------------------------------------------------------------------
+ 5. Setting up tables of the database
+
+   # cd /opt/local/bouncehammer/share/script
+
+   * MySQL
+     # cat ./MySQL.sql | /usr/local/mysql/bin/mysql -ubouncehammer -Dbouncehammer -h127.0.0.1 -p
+     Enter password: 794-uguisu-heiankyo
+
+     # cat ./mastertable-* | /usr/local/mysql/bin/mysql -ubouncehammer -Dbouncehammer -h127.0.0.1 -p
+     Enter password: 794-uguisu-heiankyo
+
+   * PostgreSQL
+     # cat ./PostgreSQL.sql | /usr/local/pgsq/bin/psql -Ubouncehammer -dbouncehammer
+     # cat ./mastertable-* | /usr/local/pgsq/bin/psql -Ubouncehammer -dbouncehammer
+
+   * SQLite
+     # cat ./SQLite.sql | sqlite3 /opt/local/bouncehammer/var/db/bouncehammer
+     # cat ./mastertable-* | sqlite3 /opt/local/bouncehammer/var/db/bouncehammer
+
+-------------------------------------------------------------------------------
+ 6. Configuration files
+
+   # cd /opt/local/bouncehammer/etc
+   # cp ./bouncehammer.cf-example ./bouncehammer.cf
+   # cp ./webui.cf-example ./webui.cf
+   And edit database sction at bouncehammer.cf
+   
+   The following files are optional.
+   # cp ./neighbor-domains-example ./neighbor-domains
+   # cp ./available-countries-example ./available-countries
+
+-------------------------------------------------------------------------------
+ 7. Copy CGI script file to the document root
+
+   # cd /opt/local/bouncehammer/share/script
+   # cp ./bouncehammer.cgi /path/to/docroot-of-webui/
+   # chmod a+x /path/to/docroot-of-webui/bouncehammer.cgi
+
+   # cp ./api.cgi /path/to/docroot-of-httpapi/
+   # chmod a+x /path/to/docroot-of-httpapi/api.cgi
+
+
+
+
+
+
