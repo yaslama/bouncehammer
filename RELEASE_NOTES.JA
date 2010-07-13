@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES.JA (utf-8/LF)
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES.JA,v 1.43 2010/06/10 09:41:15 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.45 2010/07/13 16:47:00 ak Exp $
 -----------------------------------------------------------------------
  オープンソースのバウンスメール解析システム``BounceHammer''のリリース
  ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
@@ -11,7 +11,82 @@
 -----------------------------------------------------------------------
 
 -----------------------------------------------------------------------
-2.3.4/2.0.0	2010/xx/yy
+2.4.0/2.0.0	2010/07/14
+
+  新機能:
+    * 新しいコマンドラインツール  bin/summarizer:  ログファイルやデータ
+      ベースの記録を集約して表示します。
+    * bin/databasectlコマンドの新しいオプション:  --disable,  --remove,
+      --token, --id
+    * bin/mailboxparserとbin/datadumperが-FcオプションでCSV出力に対応。
+    * WebUI(管理画面)から記録の削除ができるようになりました。
+    * WebUI(管理画面)で集約済みデータの閲覧ができるようになりました。
+    * API(HTTP)で宛先メールアドレスで検索できるようになりました。
+    * WebMailに分類する機能を強化: 750以上のメール用ドメイン、 40以上の
+      プロバイダ(宛先所属・小分類)、20以上の国に対応。
+
+  細かな改善点:
+    * Google Mail(Gmail) と Postfix経由で戻ってきたバウンスメールの解析
+      精度が向上しました。
+    * 過去のバージョンで削除されたファイルを インストールディレクトリか
+      ら撤去するためのmakeターゲット "uninstall-old-files"を追加。
+    * 2つの圧縮用モジュール: IO::Compress::ZipとIO::Compress::Bzip2は、
+      インストール時の必須モジュールではなくなりました。
+    * WebUI(管理画面)のテンプレートとCSSの細かな改善。
+
+  修正されたバグ:
+    * bin/mailboxparserがファイル名にスペースを含むファイルを解析できな
+      い問題を修正しました。
+    * bin/mailboxparserに-vオプションをつけて起動してバウンスメールでは
+      ないメールを解析した場合、プログレスバーが完了しない問題を修正。
+    * WebUI(管理画面)/検索にてページ分割が正しく動作しない問題を修正。
+    * bin/tablectl で出力形式をアスキーテーブルにした場合、内容が正しく
+      表示されない問題を修正しました。
+    * 64ビットOSでmake testが失敗する問題を修正しました。
+    * bin/databasectlの-y(--yesterday)と-b(--bofore) オプションが正しく
+      動作していない問題を修正しました。
+
+  新しいファイル:
+    * UPGRADE
+    * etc/available-countries
+    * lib/Kanadzuchi/API/HTTP/Search.pm
+    * lib/Kanadzuchi/API/HTTP/Select.pm
+    * lib/Kanadzuchi/ISO3166.pm
+    * lib/Kanadzuchi/Mail/Group/??/WebMail.pm
+    * lib/Kanadzuchi/Mail/Group/UK/Smartphone.pm
+    * lib/Kanadzuchi/MTA.pm
+    * lib/Kanadzuchi/MTA/Google.pm
+    * lib/Kanadzuchi/MTA/Postfix.pm
+    * lib/Kanadzuchi/MTA/qmail.pm
+    * lib/Kanadzuchi/MTA/Sendmail.pm
+    * lib/Kanadzuchi/MTA/JP/aubyKDDI.pm
+    * lib/Kanadzuchi/Statistics/Stored.pm
+    * lib/Kanadzuchi/Statistics/Stored/BdDR.pm
+    * lib/Kanadzuchi/Statistics/Stored/YAML.pm
+    * lib/Kanadzuchi/UI/Web/About.pm
+    * lib/Kanadzuchi/UI/Web/Aggregate.pm
+    * lib/Kanadzuchi/UI/Web/ListOf.pm
+    * share/sql/mastertable-many-providers.sql
+    * share/template/l10n/en/*.{tt,html}
+    * share/template/l10n/ja/*.{tt,html}
+    * share/template/standard/page/about.html
+    * share/template/standard/page/aggregate.html
+    * share/template/standard/page/countries.html
+    * share/template/standard/page/neighbors.html
+    * share/template/stylesheet/aggregate.css
+    * share/template/stylesheet/country.css
+    * share/template/stylesheet/nationalflag.css
+    * t/019_iso3166.t
+    * t/023_statistics-stored.t
+    * t/024_statistics-stored-bddr.t
+    * t/025_statistics-stored-yaml.t
+    * t/505_bin-summarizer.t
+
+  削除されたファイル:
+    * lib/Kanadzuchi/Mbox/*.pm
+    * share/template/standard/element/*.{en,ja}.html
+    * share/template/standard/help/*.html
+    * share/template/standard/page/*.{en,ja}.html
 
 
 -----------------------------------------------------------------------

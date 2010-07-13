@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.66 2010/07/07 06:16:11 ak Exp $
+ $Id: RELEASE_NOTES,v 1.68 2010/07/13 16:47:00 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -14,7 +14,7 @@
 -----------------------------------------------------------------------
 
 -----------------------------------------------------------------------
-2.4.0/2.0.0	2010/07/0x
+2.4.0/2.0.0	2010/07/14
 
   New functionality:
     * New command line tool bin/summarizer: it aggregate records in log
@@ -25,6 +25,7 @@
       -Fc print data as a CSV format.
     * Now support removing a record on the WebUI.
     * Now support showing aggregated data on the WebUI.
+    * Now support searching by recipient address on the API/HTTP.
     * Enhance the classification of WebMail: support 750+ mail domains,
       40+ providers, and 20+ countries.
 
@@ -51,7 +52,11 @@
       of bin/databasectl does not work.
 
   New files:
+    * UPGRADE
     * etc/available-countries
+    * lib/Kanadzuchi/API/HTTP/Search.pm
+    * lib/Kanadzuchi/API/HTTP/Select.pm
+    * lib/Kanadzuchi/ISO3166.pm
     * lib/Kanadzuchi/Mail/Group/??/WebMail.pm
     * lib/Kanadzuchi/Mail/Group/UK/Smartphone.pm
     * lib/Kanadzuchi/MTA.pm
@@ -63,12 +68,20 @@
     * lib/Kanadzuchi/Statistics/Stored.pm
     * lib/Kanadzuchi/Statistics/Stored/BdDR.pm
     * lib/Kanadzuchi/Statistics/Stored/YAML.pm
+    * lib/Kanadzuchi/UI/Web/About.pm
     * lib/Kanadzuchi/UI/Web/Aggregate.pm
+    * lib/Kanadzuchi/UI/Web/ListOf.pm
     * share/sql/mastertable-many-providers.sql
     * share/template/l10n/en/*.{tt,html}
     * share/template/l10n/ja/*.{tt,html}
-    * share/template/standard/aggregate.html
+    * share/template/standard/page/about.html
+    * share/template/standard/page/aggregate.html
+    * share/template/standard/page/countries.html
+    * share/template/standard/page/neighbors.html
     * share/template/stylesheet/aggregate.css
+    * share/template/stylesheet/country.css
+    * share/template/stylesheet/nationalflag.css
+    * t/019_iso3166.t
     * t/023_statistics-stored.t
     * t/024_statistics-stored-bddr.t
     * t/025_statistics-stored-yaml.t
@@ -79,6 +92,7 @@
     * share/template/standard/element/*.{en,ja}.html
     * share/template/standard/help/*.html
     * share/template/standard/page/*.{en,ja}.html
+
 
 -----------------------------------------------------------------------
 2.3.3/2.0.0	2010/06/09
