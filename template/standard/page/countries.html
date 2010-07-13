@@ -84,31 +84,43 @@
 						</td>
 						<td class = 'cname'>[% CC.value.name %]</td>
 						<td class = 'bool'>
-							[%- IF CC.value.webmail > 0 -%]
-								<span class = 'available' title = '[% CC.value.class.webmail %]'>
-								[%- word.use -%]</span>
-							[%- ELSIF CC.value.webmail == 0 -%]
-								<span class = 'errortext'>[%- word.disuse -%]</span>
+							[%- IF CC.value.webmail != "" -%]
+								[%- IF CC.value.webmail > 0 -%]
+									<span class = 'available' title = '[% CC.value.class.webmail %]'>
+									[%- word.use -%]</span>
+								[%- ELSIF CC.value.webmail == 0 -%]
+									<span class = 'errortext'>[%- word.disuse -%]</span>
+								[%- ELSE -%]
+									<span class = 'voidtext'>NA</span>
+								[%- END -%]
 							[%- ELSE -%]
 								<span class = 'voidtext'>NA</span>
 							[%- END -%]
 						</td>
 						<td class = 'bool'>
-							[%- IF CC.value.smartphone > 0 -%]
-								<span class = 'available' title = '[% CC.value.class.smartphone %]'>
-								[%- word.use -%]</span>
-							[%- ELSIF CC.value.smartphone == 0 -%]
-								<span class = 'errortext'>[%- word.disuse -%]</span>
+							[%- IF CC.value.smartphone != "" -%]
+								[%- IF CC.value.smartphone > 0 -%]
+									<span class = 'available' title = '[% CC.value.class.smartphone %]'>
+									[%- word.use -%]</span>
+								[%- ELSIF CC.value.smartphone == 0 -%]
+									<span class = 'errortext'>[%- word.disuse -%]</span>
+								[%- ELSE -%]
+									<span class = 'voidtext'>NA</span>
+								[%- END -%]
 							[%- ELSE -%]
 								<span class = 'voidtext'>NA</span>
 							[%- END -%]
 						</td>
 						<td class = 'bool'>
-							[%- IF CC.value.cellphone > 0 -%]
-								<span class = 'available' title = '[% CC.value.class.cellphone %]'>
-								[%- word.use -%]</span>
-							[%- ELSIF CC.value.cellphone == 0 -%]
-								<span class = 'errortext'>[%- word.disuse -%]</span>
+							[%- IF CC.value.cellphone != "" -%]
+								[%- IF CC.value.cellphone > 0 -%]
+									<span class = 'available' title = '[% CC.value.class.cellphone %]'>
+									[%- word.use -%]</span>
+								[%- ELSIF CC.value.cellphone == 0 -%]
+									<span class = 'errortext'>[%- word.disuse -%]</span>
+								[%- ELSE -%]
+									<span class = 'voidtext'>NA</span>
+								[%- END -%]
 							[%- ELSE -%]
 								<span class = 'voidtext'>NA</span>
 							[%- END -%]
