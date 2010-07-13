@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: summarizer.PL,v 1.7 2010/07/07 01:08:00 ak Exp $
+# $Id: summarizer.PL,v 1.8 2010/07/13 07:00:14 ak Exp $
 # -Id: summarizer.PL,v 1.13 2010/02/22 05:09:01 ak Exp -
 # -Id: summarizer.PL,v 1.2 2009/10/06 09:10:32 ak Exp -
 # -Id: summarizer.PL,v 1.3 2009/08/27 05:09:59 ak Exp -
@@ -488,7 +488,7 @@ sub help
 	printf( STDERR " * AGGREGATION OPTION\n" );
 	printf( STDERR "    -A, --aggregate-all : Aggregate by all of the following columns <c>.\n");
 	printf( STDERR "    -a, --aggregate <c> : Aggregate by the following column <c>: \n");
-	printf( STDERR "                          s = [s]enderdomain, d = [d]estinations\n");
+	printf( STDERR "                          a = [a]ddresser, s = [s]enderdomain, d = [d]estinations\n");
 	printf( STDERR "                          h = [h]ostgroup, p = [p]rovider, r,w = [r]easons([w]hy)\n");
 	printf( STDERR "    -s, --summary       : Display descriptive statistics\n");
 	printf( STDERR "\n" );
