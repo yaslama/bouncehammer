@@ -1,4 +1,4 @@
-# $Id: 020_statistics.t,v 1.5 2010/07/07 09:05:00 ak Exp $
+# $Id: 020_statistics.t,v 1.6 2010/07/15 00:33:26 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -22,7 +22,7 @@ my $T = new Kanadzuchi::Test(
 	'methods' => [
 		'new', 'is_number', 'round', 'size', 'sum',
 		'mean', 'variance', 'stddev', 'max', 'var',
-		'min', 'quartile', 'median', 'range', ],
+		'min', 'quartile', 'median', 'range', 'sd' ],
 	'instance' => new Kanadzuchi::Statistics(), );
 
 my $RecurrenceRelations = {

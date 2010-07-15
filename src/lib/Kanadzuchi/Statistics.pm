@@ -1,4 +1,4 @@
-# $Id: Statistics.pm,v 1.9 2010/07/07 09:06:18 ak Exp $
+# $Id: Statistics.pm,v 1.10 2010/07/15 00:33:13 ak Exp $
 # -Id: Statistics.pm,v 1.1 2009/08/29 09:00:23 ak Exp -
 # -Id: Statistics.pm,v 1.1 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -168,12 +168,17 @@ sub variance
 	my $smpl = shift() || $self->{'sample'};
 	my $mean = 0;
 	my $diff = [];
+	my $size = 0;
 
 	my $rounding = $self->{'rounding'};
 	my $variance = 0;
 
 	return NA() unless( ref($smpl) eq q|ARRAY| );
 	return NA() if( $self->size( $smpl ) < 1 );
+
+	$size = $self->size($smpl) - $self->{'unbiased'} || $self->size($smpl);
+	return NA() if( $size < 0 );
+	return 0 if( $size == 1 );
 
 	$self->{'rounding'} = 0;
 	$mean = $self->mean($smpl);
@@ -182,11 +187,12 @@ sub variance
 	return NA() unless( __PACKAGE__->is_number( $mean ) );
 
 	$diff = [ map { ( $_ - $mean ) ** 2 } @$smpl ];
-	$variance = List::Util::sum(@$diff) / ( $self->size($smpl) - $self->{'unbiased'} );
+	$variance = List::Util::sum(@$diff) / $size;
 
 	return $self->round($variance);
 }
 
+*sd = *stddev;
 sub stddev
 {
 	# +-+-+-+-+-+-+
