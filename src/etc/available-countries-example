@@ -1,4 +1,4 @@
-# $Id: available-countries-example,v 1.3 2010/07/11 06:49:34 ak Exp $
+# $Id: available-countries-example,v 1.4 2010/07/15 00:32:51 ak Exp $
 # available-countries:
 #   If you use this file, it should be saved as 'available-countries',
 #   Run /bin/cp ./available-countries-example ./available-countries 
@@ -83,7 +83,7 @@
   "cellphone": 1
   "smartphone": 1
   "webmail": 1
-  "agents": [ "aubykddi" ]
+  "agents": [ "aubyKDDI" ]
 
 # Host groups which are used in South Korea
 #   webmail: Daum(Hanmail), Empas
