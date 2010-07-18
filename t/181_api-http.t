@@ -1,4 +1,4 @@
-# $Id: 181_api-http.t,v 1.7 2010/07/12 17:54:56 ak Exp $
+# $Id: 181_api-http.t,v 1.8 2010/07/18 02:04:33 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -15,6 +15,7 @@ use Test::More ( tests => 5 );
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
+my $S = 5;	# How many skips
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::API::HTTP|,
 	'methods' => [ 'cgiapp_init', 'setup', 'cgiapp_prerun', 'cgiapp_postrun',
@@ -36,7 +37,7 @@ SKIP: {
 		require CGI::Application::Plugin::HTMLPrototype;
 	};
 
-	skip( 'CGI::Application::* is not installed', 1 ) if( $@ );
+	skip( 'CGI::Application::* is not installed', $S ) if( $@ );
 
 	require Kanadzuchi::API::HTTP;
 	PREPROCESS: {

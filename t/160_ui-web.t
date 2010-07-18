@@ -1,4 +1,4 @@
-# $Id: 160_ui-web.t,v 1.8 2010/07/12 08:08:43 ak Exp $
+# $Id: 160_ui-web.t,v 1.9 2010/07/18 02:04:33 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -15,6 +15,7 @@ use Test::More ( tests => 24 );
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
+my $S = 24;	# How many skips
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::UI::Web|,
 	'methods' => [ 'cgiapp_init', 'setup', 'cgiapp_prerun', 'cgiapp_postrun', 'teardown',
@@ -105,7 +106,7 @@ SKIP: {
 		require CGI::Application::Plugin::HTMLPrototype;
 	};
 
-	skip( 'CGI::Application::* is not installed', 16 ) if( $@ );
+	skip( 'CGI::Application::* is not installed', $S ) if( $@ );
 
 	require Kanadzuchi::UI::Web;
 
