@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.22 2010/07/11 09:20:21 ak Exp $
+# $Id: Mbox.pm,v 1.24 2010/07/23 06:49:07 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -278,7 +278,7 @@ sub slurpit
 		if( scalar @{ $self->{'emails'} } )
 		{
 			$self->{'emails'}->[0] =~ s{\AFrom (.+)\z}{$1}s;
-			$self->{'emails'}->[ $#{$self->{'emails'}} ] .= ENDOF;
+			$self->{'emails'}->[-1] .= ENDOF;
 		}
 	};
 
@@ -420,10 +420,12 @@ sub parseit
 		$_mesg->{'body'} =~ s{^[Ee]rrors-[Tt]o:[ ]*(.+)([;].+)?$}{<<<<: Errors-To: $1}m;
 		$_mesg->{'body'} =~ s{^[Ff]inal-[Rr]ecipient:[ ]*[Rr][Ff][Cc]822;[ ]*(.+)$}{<<<<: Final-Recipient: $1}m;
 		$_mesg->{'body'} =~ s{^[Ff]rom:[ ]*(.+)$}{<<<<: From: $1}gm;
+		$_mesg->{'body'} =~ s{^[Ff]orward-[Pp]ath:[ ]*(.+)$}{<<<<: Forward-Path: $1}gm;
 		$_mesg->{'body'} =~ s{^[Ll]ast-[Aa]ttempt-[Dd]ate:[ ]*(.+)$}{<<<<: Last-Attempt-Date: $1}m;
 		$_mesg->{'body'} =~ s{^[Oo]riginal-[Rr]ecipient:[ ]*[Rr][Ff][Cc]822;[ ]*(.+)$}{<<<<: Original-Recipient: $1}m;
 		$_mesg->{'body'} =~ s{^[Rr]eply-[Tt]o:[ ]*(.+)$}{<<<<: Reply-To: $1}m;
 		$_mesg->{'body'} =~ s{^[Rr]eturn-[Pp]ath:[ ]*(.+)$}{<<<<: Return-Path: $1}m;
+		$_mesg->{'body'} =~ s{^[Rr]everse-[Pp]ath:[ ]*(.+)$}{<<<<: Reverse-Path: $1}gm;
 		$_mesg->{'body'} =~ s{^[Ss]tatus:[ ]*(\d[.]\d[.]\d).*$}{<<<<: Status: $1}m;
 		$_mesg->{'body'} =~ s{^[Tt]o:[ ]*(.+)$}{<<<<: To: $1}m;
 		$_mesg->{'body'} =~ s{^[Xx]-[Aa]ctual-[Rr]ecipient:[ ]*[Rf][Ff][Cc]822;[ ]*(.+)$}{<<<<: X-Actual-Recipient: $1}m;

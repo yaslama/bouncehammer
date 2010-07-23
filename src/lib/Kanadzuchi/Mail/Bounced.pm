@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.24 2010/07/07 11:21:50 ak Exp $
+# $Id: Bounced.pm,v 1.25 2010/07/23 06:49:10 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -96,7 +96,8 @@ sub eatit
 						$mimeparser->getit('Original-Recipient') );
 			@$tempemails = grep( m{[@]}, 
 					$mimeparser->getit('To'),
-					$mimeparser->getit('Delivered-To') ) unless( @$tempemails );
+					$mimeparser->getit('Delivered-To'),
+					$mimeparser->getit('Forward-Path') ) unless( @$tempemails );
 
 			if( $mailx->greed() && ! @$tempemails )
 			{
@@ -148,6 +149,7 @@ sub eatit
 				# There is neither From: nor Reply-To: header.
 				@$tempemails = grep( m{[@]}, 
 							$mimeparser->getit('Errors-To'),
+							$mimeparser->getit('Reverse-Path'),
 							$mimeparser->getit('X-Postfix-Sender'),
 							$mimeparser->getit('Envelope-From'),
 							$mimeparser->getit('X-Envelope-From') );
