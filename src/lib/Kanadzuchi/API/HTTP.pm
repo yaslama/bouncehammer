@@ -1,4 +1,4 @@
-# $Id: HTTP.pm,v 1.17 2010/07/12 17:54:58 ak Exp $
+# $Id: HTTP.pm,v 1.18 2010/07/23 06:48:29 ak Exp $
 # -Id: HTTP.pm,v 1.3 2009/10/06 00:36:49 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::
@@ -79,8 +79,16 @@ sub cgiapp_prerun
 	# Set values to Kanadzuchi::BdDR object, Create data source name
 	try {
 		$bddr->setup( $conf->{'database'} );
-		Kanadzuchi::Exception::API->throw( 
-			'-text' => 'Failed to connect DB' ) unless($bddr->connect());
+		unless( $bddr->connect() )
+		{
+			my $errormsg .= 'Failed to connect DB'."\n";
+			my $boundary = '-' x 64;
+			$errormsg .= $boundary;
+			$errormsg .= "\n ".$bddr->error->{'string'};
+			$errormsg .= $boundary;
+			$errormsg .= "\n";
+			Kanadzuchi::Exception::API->throw( '-text' => $errormsg );
+		}
 		$self->{'database'} = $bddr;
 	}
 	catch Kanadzuchi::Exception::API with {

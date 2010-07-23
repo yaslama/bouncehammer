@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: tablectl.PL,v 1.13 2010/06/25 19:34:06 ak Exp $
+# $Id: tablectl.PL,v 1.14 2010/07/23 06:47:34 ak Exp $
 # -Id: tablectl.PL,v 1.12 2010/02/21 20:09:01 ak Exp -
 # -Id: tablectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: tablectl.PL,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -109,7 +109,16 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		Kanadzuchi::Exception::Command->throw( '-text' => 'No table name' ) unless( $Alias );
 
 		$Rdb->setup( $Zci->config->{'database'} );
-		Kanadzuchi::Exception::Database->throw( '-text' => 'Failed to connect DB' ) unless $Rdb->connect();
+		unless( $Rdb->connect() )
+		{
+			my $errormsg .= 'Failed to connect DB'."\n";
+			my $boundary = '-' x 64;
+			$errormsg .= $boundary;
+			$errormsg .= "\n ".$Rdb->error->{'string'};
+			$errormsg .= $boundary;
+			$errormsg .= "\n";
+			Kanadzuchi::Exception::Database->throw( '-text' => $errormsg );
+		}
 		$Cmd->d(2,"Connecting to the database\n") if(defined $Rdb->handle());
 
 		# Create master table object(Tab)

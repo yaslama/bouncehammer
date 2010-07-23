@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: summarizer.PL,v 1.8 2010/07/13 07:00:14 ak Exp $
+# $Id: summarizer.PL,v 1.9 2010/07/23 06:47:34 ak Exp $
 # -Id: summarizer.PL,v 1.13 2010/02/22 05:09:01 ak Exp -
 # -Id: summarizer.PL,v 1.2 2009/10/06 09:10:32 ak Exp -
 # -Id: summarizer.PL,v 1.3 2009/08/27 05:09:59 ak Exp -
@@ -117,7 +117,16 @@ if( $Cmd->operation & $Cmd->option->{'aggregate'} )
 		# Set values to Kanadzuchi::BdDR object, Create data source name
 		try {
 			$Rdb->setup( $Zci->config->{'database'} );
-			Kanadzuchi::Exception::Database->throw( '-text' => 'Failed to connect DB' ) unless $Rdb->connect();
+			unless( $Rdb->connect() )
+			{
+				my $errormsg .= 'Failed to connect DB'."\n";
+				my $boundary = '-' x 64;
+				$errormsg .= $boundary;
+				$errormsg .= "\n ".$Rdb->error->{'string'};
+				$errormsg .= $boundary;
+				$errormsg .= "\n";
+				Kanadzuchi::Exception::Database->throw( '-text' => $errormsg );
+			}
 			$Cmd->d(2,"Connecting to the database\n") if( defined $Rdb->handle() );
 
 			( $Rdb->hostname() && $Rdb->port() )

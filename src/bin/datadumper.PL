@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.17 2010/07/04 23:47:56 ak Exp $
+# $Id: datadumper.PL,v 1.18 2010/07/23 06:47:34 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -132,7 +132,16 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 	# Set values to Kanadzuchi::BdDR object, Create data source name
 	try {
 		$Rdb->setup( $Zci->config->{'database'} );
-		Kanadzuchi::Exception::Database->throw( '-text' => 'Failed to connect DB' ) unless $Rdb->connect();
+		unless( $Rdb->connect() )
+		{
+			my $errormsg .= 'Failed to connect DB'."\n";
+			my $boundary = '-' x 64;
+			$errormsg .= $boundary;
+			$errormsg .= "\n ".$Rdb->error->{'string'};
+			$errormsg .= $boundary;
+			$errormsg .= "\n";
+			Kanadzuchi::Exception::Database->throw( '-text' => $errormsg );
+		}
 		$Cmd->d(2,"Connecting to the database\n") if( defined $Rdb->handle() );
 
 		# Create master table objects
