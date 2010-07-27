@@ -1,4 +1,4 @@
-# $Id: BounceLogs.pm,v 1.11 2010/07/07 11:21:42 ak Exp $
+# $Id: BounceLogs.pm,v 1.12 2010/07/26 08:11:43 ak Exp $
 # -Id: BounceLogs.pm,v 1.9 2010/03/04 08:33:28 ak Exp -
 # -Id: BounceLogs.pm,v 1.1 2009/08/29 08:58:48 ak Exp -
 # -Id: BounceLogs.pm,v 1.6 2009/08/27 05:09:55 ak Exp -
@@ -340,7 +340,7 @@ sub groupby
 		{
 			my $_mtab = new Kanadzuchi::BdDR::BounceLogs::Masters::Table(
 						'alias' => $name.'s', 'handle' => $self->{'handle'} );
-			my $_ropt = {   'group' => { 'column' => $name },
+			my $_ropt = {   'group' => { 'column' => $_mtab->table().'.'.$_mtab->field() },
 					'select' => [ 
 						'COUNT(token) AS x', 
 						'SUM(frequency) AS y', 
