@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.15 2010/07/12 08:07:43 ak Exp $
+# $Id: Makefile.am,v 1.17 2010/08/29 20:23:41 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi,
 # is processed by automake to create Makefile.in.
@@ -13,7 +13,7 @@ instdir = @libdir@/Kanadzuchi
 pkgdatadir = @libdir@/Kanadzuchi
 pkgdata_DATA = API.pm Address.pm Archive.pm Exceptions.pm Log.pm Mail.pm \
 	Metadata.pm BdDR.pm RFC1893.pm RFC2606.pm RFC2822.pm ISO3166.pm \
-	Statistics.pm String.pm Time.pm UI.pm Iterator.pm MTA.pm
+	Statistics.pm String.pm Time.pm UI.pm Iterator.pm MTA.pm Crypt.pm
 
 all-am: distlib
 	test -d $(distdir) || mkdir -p $(distdir)
