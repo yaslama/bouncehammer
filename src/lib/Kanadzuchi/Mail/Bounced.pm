@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.25 2010/07/23 06:49:10 ak Exp $
+# $Id: Bounced.pm,v 1.26 2010/08/16 12:03:35 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
