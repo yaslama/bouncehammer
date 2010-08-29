@@ -1,8 +1,8 @@
 [%- PROCESS "error.tt" -%]
-[%- IF addresser AND recipient -%]
+[%- IF pv_addresser AND pv_recipient -%]
 	<div class = 'messagetoken'>
-		<div class = 'pair'>[% addresser %]:[% recipient %]</div>
-		<div class = 'token'>[% token %]</div>
+		<div class = 'pair'>[% pv_addresser %]:[% pv_recipient %]</div>
+		<div class = 'token'>[% pv_token %]</div>
 	</div>
 [%- ELSE -%]
 	[%- INCLUDE "div-error.html" -%]

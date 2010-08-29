@@ -5,8 +5,8 @@
 [% INCLUDE "dtd-xhtml.html" %]
 <head>
 	[% INCLUDE "meta-http-equiv.html" %]
-	<title>[% systemname %]/[% head.listof %]/[% listfile %]</title>
-	[% prototype.define_javascript_functions %]
+	<title>[% pv_systemname %]/[% tt_head.listof %]/[% pv_listfile %]</title>
+	[% pv_prototype.define_javascript_functions %]
 	<script type = 'text/javascript'>
 		[% INCLUDE bouncehammer.js %]
 	</script>
@@ -21,7 +21,7 @@
 </head>
 <body>
 	<div id = 'ThePage'>
-		<h1>[% head1title %]/[% head.listof %]/[% listfile %]</h1>
+		<h1>[% pv_head1title %]/[% tt_head.listof %]/[% pv_listfile %]</h1>
 		<div id = 'North-Ward'>
 			[% INCLUDE "div-menubar.html" %]
 		</div>
@@ -29,54 +29,61 @@
 			[% INCLUDE "div-index.html" %]
 		</div>
 		<div id = 'East-Ward'>
+			[%- SET tt_menu.listof.countries = 'currentpage' -%]
 			[% INCLUDE "help-available-countries.html" %]
 		</div>
 
 		<div id = 'Central-Ward'>
-			[%- IF issample == 1 -%][%- SET fileclass = 'errortext' -%][%- ELSE -%][%- SET fileclass = 'x' -%][%- END -%]
-			<h2>[% listfile %]</h2>
+			[%- IF pv_issample == 1 -%]
+				[%- SET tt_fileclass = 'errortext' -%]
+			[%- ELSE -%]
+				[%- SET tt_fileclass = 'x' -%]
+			[%- END -%]
+			<h2>[% pv_listfile %]</h2>
 			<div class = 'profile'>
 				<table>
 					<tbody>
 						<tr>
 							<td class = 'key'>
-								[% word.file %]
-								[%- IF issample == 1 -%](Example)[%- END -%]
+								[% tt_word.file %]
+								[%- IF pv_issample == 1 -%](Example)[%- END -%]
 							</td>
-							<td class = 'value'><span class = '[% fileclass %]'>[% listpath %]</span></td>
+							<td class = 'value'>
+								<span class = '[% tt_fileclass %]'>[% pv_listpath %]</span>
+							</td>
 						</tr>
 						<tr>
-							<td class = 'key'>[% word.format %]</td>
+							<td class = 'key'>[% tt_word.format %]</td>
 							<td class = 'value'>YAML</td>
 						</tr>
 						<tr>
-							<td class = 'key'>[% term.updated %]</td>
-							<td class = 'value'>[% listtime %]</td>
+							<td class = 'key'>[% tt_term.updated %]</td>
+							<td class = 'value'>[% pv_listtime %]</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 
-			<h2>Available Countries[% IF issample == 1 %]([% word.default %])[% END %]</h2>
+			<h2>Available Countries[% IF pv_issample == 1 %]([% tt_word.default %])[% END %]</h2>
 			<div class = 'contents'>
 				<table>
 					<thead>
 						<tr>
-							<th class = 'group' colspan = '2'>[% word.country %]</th>
-							<th class = 'group' colspan = '3'>[% term.hostgroup %]</th>
+							<th class = 'group' colspan = '2'>[% tt_word.country %]</th>
+							<th class = 'group' colspan = '3'>[% tt_term.hostgroup %]</th>
 							<th></th>
 						</tr>
 						<tr class = 'head'>
 							<th>ccTLD</th>
-							<th>[% word.countryname %]</th>
-							<th>[% hostgroup.webmail %]</th>
-							<th>[% hostgroup.smartphone %]</th>
-							<th>[% hostgroup.cellphone %]</th>
+							<th>[% tt_word.countryname %]</th>
+							<th>[% tt_hostgroup.webmail %]</th>
+							<th>[% tt_hostgroup.smartphone %]</th>
+							<th>[% tt_hostgroup.cellphone %]</th>
 							<th>MTA</th>
 						</tr>
 					</thead>
 					<tbody>
-					[%- FOREACH CC IN listdata -%]
+					[%- FOREACH CC IN pv_listdata -%]
 					<tr>
 						<td class = 'cctld'>
 							<a href = 'javascript:void(0);' onClick = "toggleIt('[% CC.key %]-providers');">
@@ -87,9 +94,9 @@
 							[%- IF CC.value.webmail != "" -%]
 								[%- IF CC.value.webmail > 0 -%]
 									<span class = 'available' title = '[% CC.value.class.webmail %]'>
-									[%- word.use -%]</span>
+									[%- tt_word.use -%]</span>
 								[%- ELSIF CC.value.webmail == 0 -%]
-									<span class = 'errortext'>[%- word.disuse -%]</span>
+									<span class = 'errortext'>[%- tt_word.disuse -%]</span>
 								[%- ELSE -%]
 									<span class = 'voidtext'>NA</span>
 								[%- END -%]
@@ -101,9 +108,9 @@
 							[%- IF CC.value.smartphone != "" -%]
 								[%- IF CC.value.smartphone > 0 -%]
 									<span class = 'available' title = '[% CC.value.class.smartphone %]'>
-									[%- word.use -%]</span>
+									[%- tt_word.use -%]</span>
 								[%- ELSIF CC.value.smartphone == 0 -%]
-									<span class = 'errortext'>[%- word.disuse -%]</span>
+									<span class = 'errortext'>[%- tt_word.disuse -%]</span>
 								[%- ELSE -%]
 									<span class = 'voidtext'>NA</span>
 								[%- END -%]
@@ -115,9 +122,9 @@
 							[%- IF CC.value.cellphone != "" -%]
 								[%- IF CC.value.cellphone > 0 -%]
 									<span class = 'available' title = '[% CC.value.class.cellphone %]'>
-									[%- word.use -%]</span>
+									[%- tt_word.use -%]</span>
 								[%- ELSIF CC.value.cellphone == 0 -%]
-									<span class = 'errortext'>[%- word.disuse -%]</span>
+									<span class = 'errortext'>[%- tt_word.disuse -%]</span>
 								[%- ELSE -%]
 									<span class = 'voidtext'>NA</span>
 								[%- END -%]
@@ -129,7 +136,7 @@
 							[%- IF CC.value.agents == "" -%]
 								<span class = 'voidtext'>NA</span>
 							[%- ELSE -%]
-								<span class = 'available'>[% word.use %]</span>
+								<span class = 'available'>[% tt_word.use %]</span>
 							[%- END -%]
 						</td>
 					</tr>
@@ -139,7 +146,7 @@
 						<td class = 'cname'> &nbsp; </td>
 						<td class = 'list'>
 							[%- IF CC.value.webmail != "" -%]
-								<dl><dt>[% hostgroup.webmail %]</dt>
+								<dl><dt>[% tt_hostgroup.webmail %]</dt>
 								<dd><ul>
 								[%- FOREACH PN IN CC.value.provider.webmail -%]
 									<li>[%- PN.key -%]</li> 
@@ -151,7 +158,7 @@
 						</td>
 						<td class = 'list'>
 							[%- IF CC.value.smartphone != "" -%]
-								<dl><dt>[% hostgroup.smartphone %]</dt>
+								<dl><dt>[% tt_hostgroup.smartphone %]</dt>
 								<dd><ul>
 								[%- FOREACH PN IN CC.value.provider.smartphone -%]
 									<li>[%- PN.key -%]</li> 
@@ -163,7 +170,7 @@
 						</td>
 						<td class = 'list'>
 							[%- IF CC.value.cellphone != "" -%]
-								<dl><dt>[% hostgroup.cellphone %]</dt>
+								<dl><dt>[% tt_hostgroup.cellphone %]</dt>
 								<dd><ul>
 								[%- FOREACH PN IN CC.value.provider.cellphone -%]
 									<li>[%- PN.key -%]</li> 

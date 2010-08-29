@@ -1,4 +1,4 @@
-# $Id: Aggregate.pm,v 1.2 2010/07/11 06:48:03 ak Exp $
+# $Id: Aggregate.pm,v 1.3 2010/08/28 17:22:09 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::Web::
    ##                                              ##          
@@ -77,9 +77,9 @@ sub aggregation
 	}
 
 	$self->tt_params(
-		'columnname' => $columnname,
-		'aggregated' => $aggregated,
-		'summarized' => $summarized,
+		'pv_columnname' => $columnname,
+		'pv_aggregated' => $aggregated,
+		'pv_summarized' => $summarized,
 	);
 	return $self->tt_process($file);
 }

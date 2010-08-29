@@ -4,8 +4,8 @@
 [% INCLUDE "dtd-xhtml.html" %]
 <head>
 	[% INCLUDE "meta-http-equiv.html" %]
-	<title>[% systemname %]/[% head.systemprof %]</title>
-	[% prototype.define_javascript_functions %]
+	<title>[% pv_systemname %]/[% tt_head.systemprof %]</title>
+	[% pv_prototype.define_javascript_functions %]
 	<script type = 'text/javascript'>
 		[% INCLUDE bouncehammer.js %]
 	</script>
@@ -18,87 +18,95 @@
 </head>
 <body>
 	<div id = 'ThePage'>
-		<h1>[% head1title %]/[% head.systemprof %]</h1>
+		<h1>[% pv_head1title %]/[% head.systemprof %]</h1>
 		<div id = 'North-Ward'>
 			[% INCLUDE "div-menubar.html" %]
 		</div>
 		<div id = 'West-Ward'>
+			[%- SET tt_menu.profile = 'currentpage' -%]
 			[% INCLUDE "div-index.html" %]
 		</div>
 		<div id = 'East-Ward'> </div>
 
 		<div id = 'Central-Ward'>
 
-			<h2>[% head.systemprof %]</h2>
+			<h2>[% tt_head.systemprof %]</h2>
 			<div class = 'profile'>
 				<table>
 					<tbody>
 						<tr>
-							<td class = 'key'>[% word.systemname %]/[% word.version %]</td>
-							<td class = 'value'><span class = 'largestring'>
-									<strong>[% systemname %] [% sysversion %]</strong></span></td>
-						</tr>
-
-						<tr>
-							<td class = 'key'>[% word.configfile %]</td>
-							<td class = 'value'>[% sysconfpath %] (ver. [% sysconfig.version %])<br />[% webconfpath %]</td>
-						</tr>
-
-						<tr>
-							<td class = 'key'>[% word.dbserver %]</td>
+							<td class = 'key'>[% tt_word.systemname %]/[% tt_word.version %]</td>
 							<td class = 'value'>
-								[% sysconfig.database.dbname %]
-								([% sysconfig.database.dbtype %])
+								<span class = 'largestring'>
+									<strong>[% pv_systemname %] [% pv_sysversion %]</strong>
+								</span>
 							</td>
 						</tr>
 
-						[%- IF sysconfig.database.dbtype != 'SQLite' -%]
+						<tr>
+							<td class = 'key'>[% tt_word.configfile %]</td>
+							<td class = 'value'>
+								[% pv_sysconfpath %] (ver. [% pv_sysconfig.version %])<br />[% pv_webconfpath %]
+							</td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>[% tt_word.dbserver %]</td>
+							<td class = 'value'>
+								[% pv_sysconfig.database.dbname %]
+								([% pv_sysconfig.database.dbtype %])
+							</td>
+						</tr>
+
+						[%- IF pv_sysconfig.database.dbtype != 'SQLite' -%]
 							<tr>
-								<td class = 'key'>[% word.dbhost %]</td>
-								<td class = 'value'>[% sysconfig.database.hostname %]:[% sysconfig.database.port %]</td>
+								<td class = 'key'>[% tt_word.dbhost %]</td>
+								<td class = 'value'>
+									[% pv_sysconfig.database.hostname %]:[% pv_sysconfig.database.port %]
+								</td>
 							</tr>
 						[%- END -%]
 						<tr>
-							<td class = 'key'>[% word.compress %] [% word.format %]([% word.download %])</td>
-							<td class = 'value'>[% webconfig.archive.compress.type %]</td>
+							<td class = 'key'>[% tt_word.compress %] [% tt_word.format %]([% tt_word.download %])</td>
+							<td class = 'value'>[% pv_webconfig.archive.compress.type %]</td>
 						</tr>
 
 						<tr>
-							<td class = 'key'>[% word.encrypt %](URL)</td>
-							<td class = 'value'>[% webconfig.security.crypt.cipher %]</td>
+							<td class = 'key'>[% tt_word.encrypt %](URL)</td>
+							<td class = 'value'>[% pv_webconfig.security.crypt.cipher %]</td>
 						</tr>
 
 						<tr>
-							<td class = 'key'>[% word.language %]/[% word.default %]</td>
+							<td class = 'key'>[% tt_word.language %]/[% tt_word.default %]</td>
 							<td class = 'value'>
-								<strong style = 'font-size:13px;'>[% mylanguage %]</strong>/[% webconfig.language %]
+								<strong style = 'font-size:13px;'>[% pv_mylanguage %]</strong>/[% pv_webconfig.language %]
 							</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 
-			<h2>[% head.serverprof %]</h2>
+			<h2>[% tt_head.serverprof %]</h2>
 			<div class = 'profile'>
 				<table>
 					<tbody>
 						<tr>
-							<td class = 'key'>[% word.hostname %]:[% word.port %] [% word.number %]</td>
-							<td class = 'value'>[% serverhost %]</td>
+							<td class = 'key'>[% tt_word.hostname %]:[% tt_word.port %] [% tt_word.number %]</td>
+							<td class = 'value'>[% pv_serverhost %]</td>
 						</tr>
 						<tr>
-							<td class = 'key'>[% word.software %]</td>
-							<td class = 'value'>[% serversoftware %]</td>
-						</tr>
-
-						<tr>
-							<td class = 'key'>[% word.script %] [% word.engine %]</td>
-							<td class = 'value'>[% scriptengine %]</td>
+							<td class = 'key'>[% tt_word.software %]</td>
+							<td class = 'value'>[% pv_serversoftware %]</td>
 						</tr>
 
 						<tr>
-							<td class = 'key'>[% word.uptime %]/[% word.loadaverage %]</td>
-							<td class = 'value'>[% sysuptime %]</td>
+							<td class = 'key'>[% tt_word.script %] [% tt_word.engine %]</td>
+							<td class = 'value'>[% pv_scriptengine %]</td>
+						</tr>
+
+						<tr>
+							<td class = 'key'>[% tt_word.uptime %]/[% tt_word.loadaverage %]</td>
+							<td class = 'value'>[% pv_sysuptime %]</td>
 						</tr>
 					</tbody>
 				</table>

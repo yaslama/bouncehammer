@@ -1,6 +1,6 @@
-[%# $Id: reason.tt,v 1.1 2010/06/28 13:15:40 ak Exp $ -%]
+[%# $Id: reason.tt,v 1.2 2010/08/28 17:19:11 ak Exp $ -%]
 [%# Reason names definiations in English -%]
-[%- SET reason = { 
+[%- SET tt_reason = { 
 		'_'		=> '- Select Reason -',
 		'undefined'	=> 'Undefined',
 		'userunknown'	=> 'User Unknown',

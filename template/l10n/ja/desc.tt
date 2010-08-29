@@ -1,6 +1,6 @@
-[%# $Id: desc.tt,v 1.1 2010/06/28 13:15:42 ak Exp $ -%]
+[%# $Id: desc.tt,v 1.2 2010/08/28 17:19:14 ak Exp $ -%]
 [%# Short descriptions in English -%]
-[%- SET desc = { 
+[%- SET tt_desc = { 
 		'searchbyemail'		=> '宛先のメールアドレスで検索',
 		'norecordinthedb'	=> '該当する記録がありません',
 		'emptyaddress'		=> '空の値で検索すると全ての記録が表示されます',

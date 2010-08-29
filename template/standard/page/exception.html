@@ -5,8 +5,8 @@
 [% INCLUDE "dtd-xhtml.html" %]
 <head>
 	[% INCLUDE "meta-http-equiv.html" %]
-	<title>[% systemname %]/[% error.exception %]</title>
-	[% prototype.define_javascript_functions %]
+	<title>[% pv_systemname %]/[% tt_error.exception %]</title>
+	[% pv_prototype.define_javascript_functions %]
 	<script type = 'text/javascript'>
 		[% INCLUDE bouncehammer.js %]
 	</script>
@@ -18,7 +18,7 @@
 </head>
 <body>
 	<div id = 'ThePage'>
-		<h1>[% head1title %]/[%- error.exception -%]</h1>
+		<h1>[% pv_head1title %]/[%- tt_error.exception -%]</h1>
 		<div id = 'North-Ward'>
 			[% INCLUDE "div-menubar.html" %]
 		</div>
@@ -28,9 +28,9 @@
 		<div id = 'East-Ward'> </div>
 
 		<div id = 'Central-Ward'>
-			<h2 class = 'excephead'>[%- error.exception -%]</h2>
+			<h2 class = 'excephead'>[%- tt_error.exception -%]</h2>
 			<div class = 'result'>
-				<div class = 'exception'><p>[%- exception -%]</p></div>
+				<div class = 'exception'><p>[%- pv_exception -%]</p></div>
 			</div>
 		</div>
 		<div id = 'South-Ward'>

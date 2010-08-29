@@ -4,8 +4,8 @@
 [% INCLUDE "dtd-xhtml.html" %]
 <head>
 	[% INCLUDE "meta-http-equiv.html" %]
-	<title>[% systemname %]/[% head.aboutus %]</title>
-	[% prototype.define_javascript_functions %]
+	<title>[% pv_systemname %]/[% tt_head.aboutus %]</title>
+	[% pv_prototype.define_javascript_functions %]
 	<script type = 'text/javascript'>
 		[% INCLUDE bouncehammer.js %]
 	</script>
@@ -18,57 +18,60 @@
 </head>
 <body>
 	<div id = 'ThePage'>
-		<h1>[% head1title %]/[% head.aboutus %]</h1>
+		<h1>[% pv_head1title %]/[% tt_head.aboutus %]</h1>
 		<div id = 'North-Ward'>
 			[% INCLUDE "div-menubar.html" %]
 		</div>
 		<div id = 'West-Ward'>
+			[%- SET tt_menu.about = 'currentpage' -%]
 			[% INCLUDE "div-index.html" %]
 		</div>
 		<div id = 'East-Ward'> </div>
 
 		<div id = 'Central-Ward'>
 
-			<h2>[% head.aboutus %]</h2>
+			<h2>[% tt_head.aboutus %]</h2>
 			<div class = 'profile'>
 				<table>
 					<tbody>
 						<tr>
-							<td class = 'key'>[% word.developer %]</td>
+							<td class = 'key'>[% tt_word.developer %]</td>
 							<td class = 'value'>
 								<a href = 'http://cubicroot.jp/' target = 'new'>
-									<span class = 'largestring'>[% term.cubicroot %]</span></a> (Kyoto, Japan)
+									<span class = 'largestring'>[% tt_term.cubicroot %]</span></a> (Kyoto, Japan)
 							</td>
 						</tr>
 
 						<tr>
-							<td class = 'key'>[% word.website %]</td>
+							<td class = 'key'>[% tt_word.website %]</td>
 							<td class = 'value'>
 								<a href = 'http://bouncehammer.jp/' target = 'new'>
 									<span class = 'largestring'>http://bouncehammer.jp/</span></a> (Japanese)</td>
 						</tr>
 
 						<tr>
-							<td class = 'key'>[% head.reportbugs %]</td>
+							<td class = 'key'>[% tt_head.reportbugs %]</td>
 							<td class = 'value'><a href = 'mailto:bugs@bouncehammer.jp'>
 									<span class = 'largestring'>bugs@bouncehammer.jp</span></a></td>
 						</tr>
 
 						<tr>
-							<td class = 'key'>[% word.contact %]</td>
+							<td class = 'key'>[% tt_word.contact %]</td>
 							<td class = 'value'>
 								<ul>
-									<li><a href = 'http://cubicroot.jp/contact/' target = 'new'>http://cubicroot.jp/contact/</a></li>
+									<li><a href = 'http://cubicroot.jp/contact/'
+										target = 'new'>http://cubicroot.jp/contact/</a></li>
 									<li><a href = 'mailto:info@bouncehammer.jp'>info@bouncehammer.jp</a></li>
 								</ul>
 							</td>
 						</tr>
 
 						<tr>
-							<td class = 'key'>[% word.license %]</td>
+							<td class = 'key'>[% tt_word.license %]</td>
 							<td class = 'value'>
 								<ul>
-									<li><a href = 'http://dev.perl.org/licenses/' target = 'new'>Perl Licensing</a></li>
+									<li><a href = 'http://dev.perl.org/licenses/' 
+										target = 'new'>Perl Licensing</a></li>
 									<li><a href = 'http://www.gnu.org/licenses/old-licenses/gpl-2.0.html' target = 'new'>GNU
 										General Public License, version 2</a></li>
 									<li><a href = 'http://dev.perl.org/licenses/artistic.html' target = 'new'>The

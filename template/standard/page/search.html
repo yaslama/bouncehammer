@@ -9,8 +9,8 @@
 [% INCLUDE "dtd-xhtml.html" %]
 <head>
 	[% INCLUDE "meta-http-equiv.html" %]
-	<title>[% systemname %]/[% head.searchresults %]</title>
-	[% prototype.define_javascript_functions %]
+	<title>[% pv_systemname %]/[% tt_head.searchresults %]</title>
+	[% pv_prototype.define_javascript_functions %]
 	<script type = 'text/javascript'>
 		[% INCLUDE bouncehammer.js %]
 	</script>
@@ -26,11 +26,12 @@
 </head>
 <body>
 	<div id = 'ThePage'>
-		<h1>[% head1title %]/[% head.searchresults %]</h1>
+		<h1>[% pv_head1title %]/[% tt_head.searchresults %]</h1>
 		<div id = 'North-Ward'>
 			[% INCLUDE "div-menubar.html" %]
 		</div>
 		<div id = 'West-Ward'>
+			[%- SET tt_menu.search = 'currentpage' -%]
 			[% INCLUDE "div-index.html" %]
 		</div>
 		<div id = 'East-Ward'>
@@ -48,23 +49,23 @@
 
 		<div id = 'Central-Ward'>
 			[% INCLUDE "form-search-by-recipient.html" %]
-			<h2>[%- word.searchresults -%]
-				<span style = 'font-size:11px;'>([%- word.sort -%]:
-					[%- IF pagination.colnameorderby == 'id' -%]
-						[%- word.id -%]
-					[%- ELSIF pagination.colnameorderby == 'recipient' -%]
-						[%- term.recipient -%]
-					[%- ELSIF pagination.colnameorderby == 'senderdomain' -%]
-						[%- term.senderdomain -%]
-					[%- ELSIF pagination.colnameorderby == 'destination' -%]
-						[%- term.destination -%]
-					[%- ELSIF pagination.colnameorderby == 'bounced' -%]
-						[%- term.bouncedat -%]
-					[%- ELSIF pagination.colnameorderby == 'frequency' -%]
-						[%- term.frequency -%]
+			<h2>[%- tt_word.searchresults -%]
+				<span style = 'font-size:11px;'>([%- tt_word.sort -%]:
+					[%- IF pv_pagination.colnameorderby == 'id' -%]
+						[%- tt_word.id -%]
+					[%- ELSIF pv_pagination.colnameorderby == 'recipient' -%]
+						[%- tt_term.recipient -%]
+					[%- ELSIF pv_pagination.colnameorderby == 'senderdomain' -%]
+						[%- tt_term.senderdomain -%]
+					[%- ELSIF pv_pagination.colnameorderby == 'destination' -%]
+						[%- tt_term.destination -%]
+					[%- ELSIF pv_pagination.colnameorderby == 'bounced' -%]
+						[%- tt_term.bouncedat -%]
+					[%- ELSIF pv_pagination.colnameorderby == 'frequency' -%]
+						[%- tt_term.frequency -%]
 					[%- END -%]
-					[%- IF pagination.descendorderby == 1 -%]
-						/[%- word.descending -%]
+					[%- IF pv_pagination.descendorderby == 1 -%]
+						/[%- tt_word.descending -%]
 					[%- END -%] )
 				</span>
 			</h2>
@@ -74,7 +75,7 @@
 			<div class = 'result'>
 				[% INCLUDE "div-result.html" %]
 			</div>
-			[%- IF pagination.resultsperpage > 4 AND pagination.count > 4 AND hascondition > 0 -%]
+			[%- IF pv_pagination.resultsperpage > 4 AND pv_pagination.count > 4 AND pv_hascondition > 0 -%]
 				<div class = 'pagination'>
 					[% INCLUDE "div-pagination.html" %]
 				</div>

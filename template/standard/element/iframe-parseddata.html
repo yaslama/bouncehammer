@@ -4,17 +4,19 @@
 [%- PROCESS "reason.tt" -%]
 [%- PROCESS "desc.tt" -%]
 [%- PROCESS "error.tt" -%]
-[%- SET IFRAMEHEIGHT = 169 -%]
-[%- IF parsedmessages -%]
-	[%- SET IFRAMEHEIGHT = ( IFRAMEHEIGHT + ( parsedmessages + 600 ) ) %]
+[%- SET tt_iframeheight = 169 -%]
+[%- IF pv_parsedmessages -%]
+	[%- SET tt_iframeheight = ( tt_iframeheight + ( pv_parsedmessages + 600 ) ) %]
 [%- END -%]
-[% IF onlineparse == 1 %]
+[% IF pv_onlineparse == 1 %]
 <body style = 'margin: 0; padding: 0; width: 585px; text-align: left;' 
-	onLoad = "parent.document.getElementById('parseddata').style.height = '[% IFRAMEHEIGHT %]';
-			parent.document.getElementById('doparse').value = '[% word.parse %]';"
-	onAbort = "parent.document.getElementById('doparse').disabled = false;">
+	onLoad = "
+		parent.document.getElementById('jx_parseddata').style.height = '[% tt_iframeheight %]';
+		parent.document.getElementById('jx_doparse').value = '[% tt_word.parse %]';"
+	onAbort = "
+		parent.document.getElementById('jx_doparse').disabled = false;">
 	
-	[% prototype.define_javascript_functions %]
+	[% pv_prototype.define_javascript_functions %]
 	<script type = 'text/javascript'>
 		[% INCLUDE bouncehammer.js %]
 	</script>
@@ -28,58 +30,58 @@
 	-->
 	</style>
 
-	<h2>[% word.parseddata %]</h2>
+	<h2>[% tt_word.parseddata %]</h2>
 	<div class = 'result' style = 'margin: 0 0 0 2px; padding: 0;'>
 		<div class = 'upload-summary'>
 			<table>
 				<tbody>
 					<tr>
-						<td class = 'key'>[% word.datasource %]</td>
-						<td class = 'value'>[% parsedfilename %] </td>
+						<td class = 'key'>[% tt_word.datasource %]</td>
+						<td class = 'value'>[% pv_parsedfilename %] </td>
 						<td class = 'extra'> </td>
 					</tr>
 
 					<tr>
-						<td class = 'key'>[% word.datasize %]</td>
+						<td class = 'key'>[% tt_word.datasize %]</td>
 						<td class = 'value'>
-							[% IF parseerror == "toobig" %]
-								<span class = 'errortext'>[% error.exceedslimit %]</span>
-							[% ELSIF parseerror == "nottext" %]
-								? [% word.bytes %]
+							[% IF pv_parseerror == "toobig" %]
+								<span class = 'errortext'>[% tt_error.exceedslimit %]</span>
+							[% ELSIF pv_parseerror == "nottext" %]
+								? [% tt_word.bytes %]
 							[% ELSE %]
-								[% word.about %] [% parsedfilesize %] [% word.bytes %]
+								[% tt_word.about %] [% pv_parsedfilesize %] [% tt_word.bytes %]
 							[% END %]
 						</td>
 						<td class = 'extra'> </td>
 					</tr>
 
 					<tr>
-						<td class = 'key'>[% word.message %]</td>
-						<td class = 'value'>[% parsedmessages %] [% word.unitofrecs %]</td>
+						<td class = 'key'>[% tt_word.message %]</td>
+						<td class = 'value'>[% pv_parsedmessages %] [% tt_word.unitofrecs %]</td>
 						<td class = 'extra'> </td>
 					</tr>
 
-					[% IF onlineupdate == 1 AND parseerror == '' %]
+					[% IF pv_onlineupdate == 1 AND pv_parseerror == '' %]
 						<tr>
-							<td class = 'key'>[% word.registered %]</td>
-							<td class = 'value'>[% updateresult.insert %] [% word.unitofrecs %]</td>
+							<td class = 'key'>[% tt_word.registered %]</td>
+							<td class = 'value'>[% pv_updateresult.insert %] [% tt_word.unitofrecs %]</td>
 							<td class = 'extra'></td>
 						</tr>
 
 						<tr>
-							<td class = 'key'>[% word.updated %]</td>
-							<td class = 'value'>[% updateresult.update %] [% word.unitofrecs %]</td>
+							<td class = 'key'>[% tt_word.updated %]</td>
+							<td class = 'value'>[% pv_updateresult.update %] [% tt_word.unitofrecs %]</td>
 							<td class = 'extra'></td>
 						</tr>
 
 						<tr>
-							<td class = 'key'>[% word.skipped %]</td>
+							<td class = 'key'>[% tt_word.skipped %]</td>
 							<td class = 'value'>
-								[% error.nosenderdomain %]: [% updateresult.nofrom %],
-								[% error.toooldorsame %]: [% updateresult.tooold %],
-								[% error.iswhitelisted %]: [% updateresult.whited %],
-								[% error.exceedslimit %]: [% updateresult.exceed %]
-								[% error.failed %]: [% updateresult.failed %]
+								[% tt_error.nosenderdomain %]: [% pv_updateresult.nofrom %],
+								[% tt_error.toooldorsame %]: [% pv_updateresult.tooold %],
+								[% tt_error.iswhitelisted %]: [% pv_updateresult.whited %],
+								[% tt_error.exceedslimit %]: [% pv_updateresult.exceed %]
+								[% tt_error.failed %]: [% pv_updateresult.failed %]
 							</td>
 							<td class = 'extra'></td>
 						</tr>
@@ -88,22 +90,22 @@
 			</table>
 		</div>
 
-		[%- IF parsedmessages -%]
-			[% IF outputformat == "html" %]
+		[%- IF pv_parsedmessages -%]
+			[% IF pv_outputformat == "html" %]
 				[% INCLUDE "div-result.html" %]
 			[% ELSE %]
-				<textarea name = 'serialized' id = 'serialized' class = 'serialized'
-					rows = '22' cols = '87' readonly = 'readonly'>[% parseddatatext %]</textarea>
+				<textarea name = 'fe_serialized' id = 'jx_serialized' class = 'serialized'
+					rows = '22' cols = '87' readonly = 'readonly'>[% pv_parseddatatext %]</textarea>
 			[% END %]
 		[%- ELSE -%]
-			<h2 class = 'errorhead'>[%- error.error -%]</h2>
+			<h2 class = 'errorhead'>[%- tt_error.error -%]</h2>
 			<div class = 'errormessage'>
-			[%- IF parseerror == "toobig" -%]
-				[% error.filesizetoobig %]
-			[%- ELSIF parseerror == "nottext" %]
-				[% error.isnotemail %]
+			[%- IF pv_parseerror == "toobig" -%]
+				[% tt_error.filesizetoobig %]
+			[%- ELSIF pv_parseerror == "nottext" %]
+				[% tt_error.isnotemail %]
 			[%- ELSE -%]
-				[% error.nobouncemessage %]
+				[% tt_error.nobouncemessage %]
 			[%- END -%]
 			</div>
 		[%- END -%]

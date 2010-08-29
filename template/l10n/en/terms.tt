@@ -1,20 +1,20 @@
-[%# $Id: terms.tt,v 1.3 2010/07/12 08:08:26 ak Exp $ -%]
+[%# $Id: terms.tt,v 1.4 2010/08/28 17:19:11 ak Exp $ -%]
 [%# Terms in English -%]
-[%- SET term = { 
+[%- SET tt_term = { 
+		'addresser'	=> 'Sender Address',
+		'bounced'	=> 'Bounced at',
 		'bouncelogs'	=> 'BounceLogs',
 		'cubicroot'	=> 'Cubicroot Co. Ltd.',
-		'mastertable'	=> 'MasterTable',
-		'addresser'	=> 'Sender Address',
-		'recipient'	=> 'Recipient Address',
-		'senderdomain'	=> 'Sender Domain',
 		'destination'	=> 'Destination Domain',
-		'hostgroup'	=> 'Host Group',
-		'provider'	=> 'Provider',
-		'reason'	=> 'Reason',
 		'freq'		=> 'Freq.',
 		'frequency'	=> 'Frequency',
+		'hostgroup'	=> 'Host Group',
+		'mastertable'	=> 'MasterTable',
+		'provider'	=> 'Provider',
+		'recipient'	=> 'Recipient Address',
+		'reason'	=> 'Reason',
+		'senderdomain'	=> 'Sender Domain',
 		'token'		=> 'Message Token',
-		'bounced'	=> 'Bounced at',
 		'updated'	=> 'Updated at',
 	}
 -%]

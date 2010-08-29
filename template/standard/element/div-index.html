@@ -1,47 +1,68 @@
 <ul class = 'index'>
-	<li class = 'item'><a href = '[% scriptname %]/index'>[% head.dashboard %]</a></li>
-	<li class = 'item'><a href = '[% scriptname %]/search'>[% head.search %]</a></li>
-	<li class = 'item'><a href = '[% scriptname %]/test'>[% head.parsingtest %]</a></li>
-	<li class = 'item'><a href = '[% scriptname %]/token'>[% head.messagetoken %]</a></li>
+	<li class = 'item [% tt_menu.index %]'>
+		<a href = '[% pv_scriptname %]/index'>[% tt_head.dashboard %]</a></li>
+	<li class = 'item [% tt_menu.search %]'>
+		<a href = '[% pv_scriptname %]/search'>[% tt_head.search %]</a></li>
+	<li class = 'item [% tt_menu.parse %]'>
+		<a href = '[% pv_scriptname %]/test'>[% tt_head.parsingtest %]</a></li>
+	<li class = 'item [% tt_menu.token %]'>
+		<a href = '[% pv_scriptname %]/token'>[% tt_head.messagetoken %]</a></li>
 
 	<hr class = 'flatline' />
 	<li class = 'itemgroup'>
-		<a href = '#' onClick = "toggleIt('index-of-mastertable');">[% head.mastertable %]</a>
+		<a href = '#' onClick = "toggleIt('jx_index-of-mastertable');">[% tt_head.mastertable %]</a>
 	</li>
-	<div id = 'index-of-mastertable'>
-		<li class = 'subitem'> <a href = '[% scriptname %]/tables/addressers/list'>[% term.addresser %]</a></li>
-		<li class = 'subitem'> <a href = '[% scriptname %]/tables/senderdomains/list'>[% term.senderdomain %]</a></li>
-		<li class = 'subitem'> <a href = '[% scriptname %]/tables/destinations/list'>[% term.destination %]</a></li>
-		<li class = 'subitem'> <a href = '[% scriptname %]/tables/reasons/list'>[% term.reason %]</a></li>
-		<li class = 'subitem'> <a href = '[% scriptname %]/tables/hostgroups/list'>[% term.hostgroup %]</a></li>
-		<li class = 'subitem'> <a href = '[% scriptname %]/tables/providers/list'>[% term.provider %]</a></li>
+	<div id = 'jx_index-of-mastertable'>
+		<li class = 'subitem [% tt_menu.tables.addressers %]'>
+			<a href = '[% pv_scriptname %]/tables/addressers/list'>[% tt_term.addresser %]</a></li>
+		<li class = 'subitem [% tt_menu.tables.senderdomains %]'>
+			<a href = '[% pv_scriptname %]/tables/senderdomains/list'>[% tt_term.senderdomain %]</a></li>
+		<li class = 'subitem [% tt_menu.tables.destinations %]'>
+			<a href = '[% pv_scriptname %]/tables/destinations/list'>[% tt_term.destination %]</a></li>
+		<li class = 'subitem [% tt_menu.tables.reasons %]'>
+			<a href = '[% pv_scriptname %]/tables/reasons/list'>[% tt_term.reason %]</a></li>
+		<li class = 'subitem [% tt_menu.tables.hostgroups %]'>
+			<a href = '[% pv_scriptname %]/tables/hostgroups/list'>[% tt_term.hostgroup %]</a></li>
+		<li class = 'subitem [% tt_menu.tables.providers %]'>
+			<a href = '[% pv_scriptname %]/tables/providers/list'>[% tt_term.provider %]</a></li>
 	</div>
 
 	<hr class = 'flatline' />
-	<li class = 'item'><a href = '[% scriptname %]/summary'>[% head.datasummary %]</a></li>
+	<li class = 'item [% tt_menu.summary %]'>
+		<a href = '[% pv_scriptname %]/summary'>[% tt_head.datasummary %]</a></li>
 	<li class = 'itemgroup'>
-		<a href = '#' onClick = "toggleIt('index-of-aggregation');">[% head.aggregatedby %]</a>
+		<a href = '#' onClick = "toggleIt('jx_index-of-aggregation');">[% tt_head.aggregatedby %]</a>
 	</li>
 
-	<div id = 'index-of-aggregation'>
-		<li class = 'subitem'> <a href = '[% scriptname %]/aggregate/addresser'>[% term.addresser %]</a></li>
-		<li class = 'subitem'> <a href = '[% scriptname %]/aggregate/senderdomain'>[% term.senderdomain %]</a></li>
-		<li class = 'subitem'> <a href = '[% scriptname %]/aggregate/destination'>[% term.destination %]</a></li>
-		<li class = 'subitem'> <a href = '[% scriptname %]/aggregate/reason'>[% term.reason %]</a></li>
-		<li class = 'subitem'> <a href = '[% scriptname %]/aggregate/hostgroup'>[% term.hostgroup %]</a></li>
-		<li class = 'subitem'> <a href = '[% scriptname %]/aggregate/provider'>[% term.provider %]</a></li>
+	<div id = 'jx_index-of-aggregation'>
+		<li class = 'subitem [% tt_menu.aggregate.addresser %]'>
+			<a href = '[% pv_scriptname %]/aggregate/addresser'>[% tt_term.addresser %]</a></li>
+		<li class = 'subitem [% tt_menu.aggregate.senderdomain %]'>
+			<a href = '[% pv_scriptname %]/aggregate/senderdomain'>[% tt_term.senderdomain %]</a></li>
+		<li class = 'subitem [% tt_menu.aggregate.destination %]'>
+			<a href = '[% pv_scriptname %]/aggregate/destination'>[% tt_term.destination %]</a></li>
+		<li class = 'subitem [% tt_menu.aggregate.reason %]'>
+			<a href = '[% pv_scriptname %]/aggregate/reason'>[% tt_term.reason %]</a></li>
+		<li class = 'subitem [% tt_menu.aggregate.hostgroup %]'>
+			<a href = '[% pv_scriptname %]/aggregate/hostgroup'>[% tt_term.hostgroup %]</a></li>
+		<li class = 'subitem [% tt_menu.aggregate.provider %]'>
+			<a href = '[% pv_scriptname %]/aggregate/provider'>[% tt_term.provider %]</a></li>
 	</div>
+	<li class = 'item [% tt_menu.dailyupdates %]'>
+		<a href = '[% pv_scriptname %]/dailyupdates'>[% tt_head.dailyupdates %]</a></li>
 
 	<hr class = 'flatline' />
 	<li class = 'itemgroup'>
-		<a href = '#' onClick = "toggleIt('index-of-list-of-contents');">[% head.listof %]</a>
+		<a href = '#' onClick = "toggleIt('jx_index-of-list-of-contents');">[% tt_head.listof %]</a>
 	</li>
 
-	<div id = 'index-of-list-of-contents'>
-		<li class = 'subitem'> <a href = '[% scriptname %]/listof/neighbors'>neighbor-domains</a></li>
-		<li class = 'subitem'> <a href = '[% scriptname %]/listof/countries'>available-countries</a></li>
+	<div id = 'jx_index-of-list-of-contents'>
+		<li class = 'subitem [% tt_menu.listof.neighbors %]'>
+			<a href = '[% pv_scriptname %]/listof/neighbors'>neighbor-domains</a></li>
+		<li class = 'subitem [% tt_menu.listof.countries %]'>
+			<a href = '[% pv_scriptname %]/listof/countries'>available-countries</a></li>
 	</div>
 	<hr class = 'flatline' />
-	<li class = 'item'><a href = '[% scriptname %]/profile'>[% head.systemprof %]</a></li>
-	<li class = 'item'><a href = '[% scriptname %]/about'>[% head.aboutus %]</a></li>
+	<li class = 'item [% tt_menu.profile %]'><a href = '[% pv_scriptname %]/profile'>[% tt_head.systemprof %]</a></li>
+	<li class = 'item [% tt_menu.about %]'><a href = '[% pv_scriptname %]/about'>[% tt_head.aboutus %]</a></li>
 </ul>

@@ -1,34 +1,35 @@
 <span class = 'flatbutton caution longflatbutton'>
-	<a href = "javascript:void(0);" onClick = 'delete_a_record.style.display = "block";'>[% desc.deletetherecord %]</a>
+	<a href = "javascript:void(0);"
+		onClick = 'jx_delete_the_record.style.display = "block";'>[% tt_desc.deletetherecord %]</a>
 </span>
-<div id = 'delete_a_record' style = 'display: none;'>
-	<form action = "[% scriptname %]/tables/[% tablename %]/delete" method = 'POST'>
-			[%- prototype.form_remote_tag( {
-					url => "${scriptname}/tables/${tablename}/delete",
-					update => "mtr-${R.id}",
-					before => "disableIt('do_update_${R.id}');",
+<div id = 'jx_delete_the_record' style = 'display: none;'>
+	<form action = "[% pv_scriptname %]/tables/[% pv_tablename %]/delete" method = 'POST'>
+			[%- pv_prototype.form_remote_tag( {
+					url => "${pv_scriptname}/tables/${pv_tablename}/delete",
+					update => "jx_mtr-${R.id}",
+					before => "disableIt('jx_do_update_${R.id}');",
 				});
 			-%]
 		<fieldset>
-		<legend>[% desc.deletetherecord %]([% titlename %])</legend>
-		<input type = 'checkbox' name = 'do_delete' />&nbsp;&larr; [% desc.checktodelete %]: &nbsp; 
+		<legend>[% tt_desc.deletetherecord %]([% pv_titlename %])</legend>
+		<input type = 'checkbox' name = 'fe_do_delete' />&nbsp;&larr; [% tt_desc.checktodelete %]: &nbsp; 
 
-		<select name = 'record_will_be_delete'>
-			<option value = '0'>- [% desc.selectonetodelete %] - </option>
-			[%- FOREACH D IN tablecontents -%]
+		<select name = 'fe_record_will_be_delete'>
+			<option value = '0'>- [% tt_desc.selectonetodelete %] - </option>
+			[%- FOREACH D IN pv_tablecontents -%]
 				<option value = '[% D.id %]'>[% D.name %]</option>
 			[%- END -%]
 		</select>
 		&nbsp;
-		<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
-		<input type = 'hidden' name = 'action' value = 'delete' />
-		<input type = 'hidden' name = 'colnameorderby' value = '[% pagination.colnameorderby %]' />
-		<input type = 'hidden' name = 'currentpagenum' value = '[% pagination.currentpagenum %]' />
-		<input type = 'hidden' name = 'resultsperpage' value = '[% pagination.resultsperpage %]' />
-		<input type = 'submit' value = '[% word.delete %]' class = 'flatbutton caution' />
+		<input type = 'hidden' name = 'fe_language' value = '[% pv_mylanguage %]' />
+		<input type = 'hidden' name = 'fe_action' value = 'delete' />
+		<input type = 'hidden' name = 'fe_colnameorderby' value = '[% pv_pagination.colnameorderby %]' />
+		<input type = 'hidden' name = 'fe_currentpagenum' value = '[% pv_pagination.currentpagenum %]' />
+		<input type = 'hidden' name = 'fe_resultsperpage' value = '[% pv_pagination.resultsperpage %]' />
+		<input type = 'submit' value = '[% tt_word.delete %]' class = 'flatbutton caution' />
 		<br />
 		<span class = 'warnings'>
-			<strong>[% word.headsup %]:</strong> [% desc.integritywarning %]
+			<strong>[% tt_word.headsup %]:</strong> [% tt_desc.integritywarning %]
 		</span>
 		</fieldset>
 	</form>

@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.30 2010/07/11 06:48:03 ak Exp $
+# $Id: Search.pm,v 1.31 2010/08/28 17:22:09 ak Exp $
 # -Id: Search.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Search.pm,v 1.11 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -59,6 +59,7 @@ sub onlinesearch
 	require Kanadzuchi::RFC2822;
 	require Kanadzuchi::Time;
 	require Kanadzuchi::Metadata;
+	require Kanadzuchi::Crypt;
 
 	my $wherecond = {};	# (Ref->Hash) WHERE Condition for sending query
 	my $errorsinq = {};	# (Ref->Hash) Parameter errors in the query
@@ -72,6 +73,10 @@ sub onlinesearch
 	my $bouncelog = new Kanadzuchi::BdDR::BounceLogs::Table('handle' => $bddr->handle());
 	my $cgiqueryp = $self->query();
 	my $readonlyx = $self->{'webconfig'}->{'database'}->{'table'}->{'bouncelogs'}->{'readonly'};
+	my $ocryptcbc = new Kanadzuchi::Crypt(
+				'key' => $self->{'webconfig'}->{'security'}->{'crypt'}->{'key'},
+				'salt' => $self->{'webconfig'}->{'security'}->{'crypt'}->{'salt'},
+				'cipher' => $self->{'webconfig'}->{'security'}->{'crypt'}->{'cipher'} );
 
 	# Do not include a record that is disabled(=1)
 	$wherecond->{'disabled'} = 0;
@@ -95,7 +100,7 @@ sub onlinesearch
 			$encrypted = $self->param('pi_recipient');
 		}
 
-		$decrypted = $self->decryptit($encrypted);
+		$decrypted = $ocryptcbc->decryptit($encrypted);
 		$wherecond = shift @{ Kanadzuchi::Metadata->to_object(\$decrypted) } || { 'disabled' => 0 };
 
 		#   ___  ____  ____  _____ ____    ______   __
@@ -142,31 +147,34 @@ sub onlinesearch
 		my $rfc2822c = q|Kanadzuchi::RFC2822|;	# (String) RFC2822 Class name
 		my $wcparams = {};			# (Ref->Hash) WHERE Condition
 		my $validcnd = 0;			# (Boolean) Validation for WHERE Cond.
+		my $rcptinqp = $cgiqueryp->param('fe_recipient') || q();
 
 		# Make 'wherecond' hash reference
-		if( length($cgiqueryp->param('recipient')) )
+		if( length $rcptinqp )
 		{
 			# Pre-Process Recipient address
-			$wcparams->{'recipient'} =  lc $cgiqueryp->param('recipient');
+			$wcparams->{'recipient'} =  lc $rcptinqp;
 			$wcparams->{'recipient'} =  $rfc2822c->cleanup($wcparams->{'recipient'});
-			$wherecond->{'recipient'} = $wcparams->{'recipient'} if( length($wcparams->{'recipient'}) );
+			$wherecond->{'recipient'} = $wcparams->{'recipient'} if length $wcparams->{'recipient'};
 		}
 
-		foreach my $w ( 'addresser', 'senderdomain', 'destination', 'token', 'provider' )
+		foreach my $s ( 'addresser', 'senderdomain', 'destination', 'token', 'provider' )
 		{
-			next() unless( defined($cgiqueryp->param($w)) );
-			( $wcparams->{$w} = lc($cgiqueryp->param($w)) ) =~ y{;'" }{}d;
-			next() unless( length($wcparams->{$w}) );
+			my $condinqp = $cgiqueryp->param('fe_'.$s) || q();
+			next() unless $condinqp;
+			( $wcparams->{$s} = lc($condinqp) ) =~ y{;'" }{}d;
+			next() unless( length($wcparams->{$s}) );
 
-			$wherecond->{$w} = $wcparams->{$w};
+			$wherecond->{$s} = $wcparams->{$s};
 			$advancedx++;
 		}
 
 		foreach my $w ( 'hostgroup', 'reason' )
 		{
-			if( $cgiqueryp->param($w) ne '_' )
+			my $condinqp = $cgiqueryp->param('fe_'.$w) || q();
+			if( $condinqp ne '_' && $condinqp ne q() )
 			{
-				$wherecond->{$w} = $cgiqueryp->param($w);
+				$wherecond->{$w} = $condinqp;
 				$advancedx++;
 			}
 			else
@@ -176,14 +184,15 @@ sub onlinesearch
 		}
 
 		# How recent the record has been bounced
-		if( $cgiqueryp->param('howrecent') )
+		if( $cgiqueryp->param('fe_howrecent') )
 		{
 			require Kanadzuchi::Time;
-			$wherecond->{'bounced'} = Kanadzuchi::Time->to_second($cgiqueryp->param('howrecent'));
+			$wherecond->{'bounced'} = 
+				Kanadzuchi::Time->to_second($cgiqueryp->param('fe_howrecent'));
 
-			if( $wherecond->{'bounced'} > 0 && $wherecond->{'bounced'} < time() )
+			if( $wherecond->{'bounced'} > 0 && $wherecond->{'bounced'} < time )
 			{
-				$wherecond->{'bounced'} = { '>=' => int( time() - $wherecond->{'bounced'} ) };
+				$wherecond->{'bounced'} = { '>=' => int( time - $wherecond->{'bounced'} ) };
 			}
 			else
 			{
@@ -192,19 +201,19 @@ sub onlinesearch
 		}
 
 		# Pagination, ORDER BY
-		$paginated->resultsperpage( $cgiqueryp->param('resultsperpage') || 10 );
+		$paginated->resultsperpage( $cgiqueryp->param('fe_resultsperpage') || 10 );
 		$paginated->set( $bouncelog->count( $wherecond ) );
-		$paginated->skip( $cgiqueryp->param('thenextpagenum') || 1 );
-		$paginated->colnameorderby( lc($cgiqueryp->param('orderby')) || 'id' );
-		$paginated->descendorderby( $cgiqueryp->param('descend') ? 1 : 0 );
+		$paginated->skip( $cgiqueryp->param('fe_thenextpagenum') || 1 );
+		$paginated->colnameorderby( lc($cgiqueryp->param('fe_orderby')) || 'id' );
+		$paginated->descendorderby( $cgiqueryp->param('fe_descend') ? 1 : 0 );
 
 		# Crypt
 		$decrypted = Kanadzuchi::Metadata->to_string($wherecond);
-		$encrypted = $self->encryptit($decrypted);
+		$encrypted = $ocryptcbc->encryptit($decrypted);
 
 		# Downloading
-		$downloadx = $cgiqueryp->param('enabledownload') ? 1 : 0;
-		$datformat = $cgiqueryp->param('downloadformat') || 'yaml';
+		$downloadx = $cgiqueryp->param('fe_enabledownload') ? 1 : 0;
+		$datformat = $cgiqueryp->param('fe_downloadformat') || 'yaml';
 	}
 
 	if( $downloadx )
@@ -234,7 +243,7 @@ sub onlinesearch
 		#                                      
 		use Kanadzuchi::Archive;
 		my $archivecn = q|Kanadzuchi::Archive::|;
-		my $zipformat = $cgiqueryp->param('compress')
+		my $zipformat = $cgiqueryp->param('fe_compress')
 				|| $webconfig->{'archive'}->{'compress'}->{'type'}
 				|| Kanadzuchi::Archive->ARCHIVEFORMAT();
 
@@ -291,11 +300,11 @@ sub onlinesearch
 					'output' => $cachename,
 					'filename' => $basefname.q{.}.$txtprefix,
 					'override' => 1 );
-		undef($md5digest);
-		undef($cacheddir);
-		undef($inputfile);
-		undef($basefname);
-		undef($cachename);
+		undef $md5digest;
+		undef $cacheddir;
+		undef $inputfile;
+		undef $basefname;
+		undef $cachename;
 
 		CREATE_FILE: {
 			#  ____  _   _ __  __ ____        __  
@@ -336,8 +345,8 @@ sub onlinesearch
 				# Pagination, ORDER BY, Create archive file
 				$paginated->skip(1);
 				$paginated->resultsperpage(1000);
-				$paginated->colnameorderby( lc($cgiqueryp->param('orderby')) || 'id' );
-				$paginated->descendorderby( $cgiqueryp->param('descend') ? 1 : 0 );
+				$paginated->colnameorderby( lc $cgiqueryp->param('fe_orderby') || 'id' );
+				$paginated->descendorderby( $cgiqueryp->param('fe_descend') ? 1 : 0 );
 				$zippedobj->input->touch();
 
 				while(1)
@@ -345,7 +354,7 @@ sub onlinesearch
 					# Send query and receive results
 					$iteratorr = Kanadzuchi::Mail::Stored::BdDR->searchandnew(
 								$bddr->handle(), $wherecond, $paginated );
-					last() unless( $iteratorr->count() );
+					last() unless $iteratorr->count();
 
 					while( my $obj = $iteratorr->next() )
 					{
@@ -359,17 +368,17 @@ sub onlinesearch
 								'format' => $datformat, );
 
 					$kanazcilg->header(0);
-					$kanazcilg->header(1) if( $paginated->currentpagenum == 1 );
+					$kanazcilg->header(1) if $paginated->currentpagenum == 1;
 					$kanazcilg->dumper();
 
-					last() unless($paginated->hasnext());
+					last() unless $paginated->hasnext();
 					$paginated->next();
 
 				}
 
 			} # End of the block(SEARCH_AND_NEW)
 
-			return('No data') unless( $zippedobj->input->stat->size() );
+			return('No data') unless $zippedobj->input->stat->size();
 
 			#   ____ ___  __  __ ____  ____  _____ ____ ____        __  
 			#  / ___/ _ \|  \/  |  _ \|  _ \| ____/ ___/ ___|       \ \ 
@@ -378,8 +387,8 @@ sub onlinesearch
 			#  \____\___/|_|  |_|_|   |_| \_\_____|____/____/       /_/ 
 			#                                                           
 			# Compress, and create archive file
-			my $txtfilename = $zippedobj->output->dir().q{/}.$zippedobj->filename();
-			my $zipfilename = $txtfilename.q{.}.$zippedobj->prefix();
+			my $txtfilename = $zippedobj->output->dir().'/'.$zippedobj->filename();
+			my $zipfilename = $txtfilename.'.'.$zippedobj->prefix();
 
 			File::Copy::copy( $zippedobj->input(), $txtfilename );
 			File::Copy::copy( $zippedobj->output(), $zipfilename );
@@ -408,7 +417,7 @@ sub onlinesearch
 			'-content-disposition' => q(attachment;filename=).$zippedobj->output->basename(),
 			'-content-length' => $zippedobj->output->stat->size(),
 		);
-		return( Perl6::Slurp::slurp( $zippedobj->output->stringify() ) );
+		return Perl6::Slurp::slurp( $zippedobj->output->stringify() );
 	}
 	else
 	{
@@ -426,21 +435,24 @@ sub onlinesearch
 		while( my $o = $iteratorr->next() )
 		{
 			my $damnedobj = $o->damn();
-			$damnedobj->{'updated'}  = $o->updated->ymd().'('.$o->updated->wdayname().') '.$o->updated->hms();
-			$damnedobj->{'bounced'}  = $o->bounced->ymd().'('.$o->bounced->wdayname().') '.$o->bounced->hms();
-			$damnedobj->{'bounced'} .= ' '.$o->timezoneoffset() if( $o->timezoneoffset() );
+			$damnedobj->{'updated'}  =
+				$o->updated->ymd().'('.$o->updated->wdayname().') '.$o->updated->hms();
+			$damnedobj->{'bounced'}  =
+				$o->bounced->ymd().'('.$o->bounced->wdayname().') '.$o->bounced->hms();
+			$damnedobj->{'bounced'} .=
+				' '.$o->timezoneoffset() if( $o->timezoneoffset() );
 			push( @$logrecord, $damnedobj );
 		}
 
 		$self->tt_params( 
-			'bouncemessages' => $logrecord,
-			'contentsname' => 'search',
-			'hascondition' => $advancedx,
-			'searchcondition' => $wherecond,
-			'encryptedforuri' => $encrypted,
-			'isreadonly' => $readonlyx,
-			'pagination' => $paginated,
-			'errorsinq' => $errorsinq );
+			'pv_bouncemessages' => $logrecord,
+			'pv_contentsname' => 'search',
+			'pv_hascondition' => $advancedx,
+			'pv_searchcondition' => $wherecond,
+			'pv_encryptedforuri' => $encrypted,
+			'pv_isreadonly' => $readonlyx,
+			'pv_pagination' => $paginated,
+			'pv_errorsinq' => $errorsinq );
 		return $self->tt_process($tmpl);
 	}
 }

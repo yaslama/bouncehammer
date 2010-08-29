@@ -1,4 +1,4 @@
-# $Id: Test.pm,v 1.22 2010/07/11 06:48:03 ak Exp $
+# $Id: Test.pm,v 1.23 2010/08/28 17:22:09 ak Exp $
 # -Id: Test.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Test.pm,v 1.10 2009/08/17 12:39:31 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -41,7 +41,8 @@ sub puttestform
 	my $self = shift();
 	my $file = 'test.html';
 	$self->tt_params( 
-		'maxsize' => $self->{'webconfig'}->{'upload'}->{'maxsize'} );
+		'pv_maxsize' => $self->{'webconfig'}->{'upload'}->{'maxsize'}
+	);
 	return $self->tt_process($file);
 }
 
@@ -59,9 +60,11 @@ sub onlineparser
 	my $cgiq = $self->query();
 	my $data = [];
 
-	if( defined($cgiq->param('emailfile')) ||
-		( defined($cgiq->param('emailtext')) && length($cgiq->param('emailtext'))) ){
+	my $emailfile = $cgiq->param('fe_emailfile') || q();
+	my $emailtext = $cgiq->param('fe_emailtext') || q();
 
+	if( $emailfile || length $emailtext )
+	{
 		require Kanadzuchi::Mail::Bounced;
 		require Kanadzuchi::Mbox;
 		require Path::Class;
@@ -79,28 +82,28 @@ sub onlineparser
 		my $pseudofrom = q(From MAILER-DAEMON Sun Dec 31 23:59:59 2000).qq(\n);
 		my $fileconfig = $self->{'sysconfig'}->{'file'}->{'templog'};
 		my $maxtxtsize = $self->{'webconfig'}->{'upload'}->{'maxsize'};
-		my $dataformat = $cgiq->param('format') || 'html';
-		my $parseuntil = $cgiq->param('parsenmessages') || 10;
+		my $dataformat = $cgiq->param('fe_format') || 'html';
+		my $parseuntil = $cgiq->param('fe_parsenmessages') || 10;
 
-		my $registerit = ( defined($cgiq->param('register')) && $cgiq->param('register') eq 'on' ? 1 : 0 );
+		my $registerit = ( defined $cgiq->param('fe_register') && $cgiq->param('fe_register') ) eq 'on' ? 1 : 0;
 		my $execstatus = {
 			'update' => 0, 'insert' => 0, 'tooold' => 0, 'exceed' => 0,
 			'failed' => 0, 'nofrom' => 0, 'whited' => 0, };
 
 		my $sourcelist = [];		# (Ref->Array) Data source names
 		my $givenctype = q();		# (String) Content-Type of the email file
-		my $givenemail = $cgiq->param('emailfile') || undef();
-		my $pastedmail = $cgiq->param('emailtext') || q();
+		my $givenemail = $emailfile || undef();
+		my $pastedmail = $emailtext || q();
 
 		# Read email from uploaded file
-		if( ref($givenemail) && -s $givenemail )
+		if( ref $givenemail && -s $givenemail )
 		{
 			READ_EMAIL_FILE: while(1)
 			{
 				push( @$sourcelist, $givenemail );
 				$sizeofmail = -s $givenemail;
 				$givenctype = lc $cgiq->uploadInfo( $givenemail )->{'Content-Type'} || 'text/plain';
-				$errortitle = 'toobig' if( $maxtxtsize > 0 && length($sizeofmail) > $maxtxtsize );
+				$errortitle = 'toobig' if( $maxtxtsize > 0 && length $sizeofmail > $maxtxtsize );
 				$errortitle = 'nottext' if( $givenctype =~ m{\A(audio|application|image|video)/}m );
 				last() if( $errortitle );
 
@@ -124,7 +127,7 @@ sub onlineparser
 		}
 
 		# Read email from pasted text
-		if( length($pastedmail) )
+		if( length $pastedmail )
 		{
 			$sizeofmail += length($pastedmail);
 			$first5byte  = substr( $pastedmail, 0, 5 );
@@ -210,6 +213,7 @@ sub onlineparser
 				require Kanadzuchi::BdDR::BounceLogs;
 				require Kanadzuchi::BdDR::BounceLogs::Masters;
 				require Kanadzuchi::BdDR::Cache;
+				require Kanadzuchi::BdDR::DailyUpdates;
 				require Kanadzuchi::Mail::Stored::YAML;
 				require Kanadzuchi::Mail::Stored::BdDR;
 
@@ -217,20 +221,33 @@ sub onlineparser
 				my $xntableobj = undef();	# (Kanadzuchi::BdDR::BounceLogs::Table) Txn table object
 				my $mastertabs = {};		# (Ref->Hash) Kanadzuchi::BdDR::BounceLogs::Masters::Table objects
 				my $xntabalias = q();		# (String) lower cased txn table alias
+
+				my $dupdataobj = undef();	# (Kanadzuchi::BdDR::DailyUpdates::Data) Daily Updates
+				my $dupdatarec = 0;		# (Integer) The number of data in the t_dailyupdates tables
+				my $theupdated = {};		# (Ref->Hash) Data for Daily Updates
+				my $tobupdated = [];
+
 				my $recinthedb = 0;		# (Integer) The number of records in the db
+				my $okorfailed = q();		# (String) OK or Failed
 				my $bddrobject = $self->{'database'};
 				my $xsoftlimit = $self->{'sysconfig'}->{'database'}->{'table'}->{'bouncelogs'}->{'maxrecords'} || 0;
+				my $yamlkeymap = { 'inserted' => 'insert', 'updated' => 'update', 'failed' => 'failed' };
 
 				$mpiterator->reset();
 				$tablecache = Kanadzuchi::BdDR::Cache->new();
 				$xntableobj = Kanadzuchi::BdDR::BounceLogs::Table->new( 'handle' => $bddrobject->handle() );
 				$mastertabs = Kanadzuchi::BdDR::BounceLogs::Masters::Table->mastertables( $bddrobject->handle() );
+
 				$xntabalias = lc $xntableobj->alias();
 				$recinthedb = $xntableobj->count();
+
+				$dupdataobj = Kanadzuchi::BdDR::DailyUpdates::Data->new( 'handle' => $bddrobject->handle() );
+				$dupdatarec = $dupdataobj->db->count();	# Dummy connection for detecting the table
 
 				DATABASECTL: while( my $o = $mpiterator->next() )
 				{
 					my $thiscached = {};		# (Ref->Hash) Cached data of each table
+					my $thisdateis = q();		# (String) This date: e.g.) 2009-04-29
 					my $thismtoken = q();		# (String) This record's message token
 					my $thismepoch = 0;		# (Integer) Bounced time
 					my $thisstatus = 0;		# (Integer) Returned status value
@@ -239,7 +256,7 @@ sub onlineparser
 					bless( $o, q|Kanadzuchi::Mail::Stored::YAML| );
 
 					# Check limit the number of records
-					if( $xsoftlimit > 0 && ($execstatus->{'insert'} + $recinthedb) >= $xsoftlimit )
+					if( $xsoftlimit > 0 && ( $execstatus->{'insert'} + $recinthedb) >= $xsoftlimit )
 					{
 						# Exceeds limit!
 						$execstatus->{'exceed'}++;
@@ -249,6 +266,7 @@ sub onlineparser
 					# Check cached data
 					$thismtoken = $o->token();
 					$thismepoch = $o->bounced->epoch();
+					$thisdateis = $o->bounced->ymd('-');
 					$thiscached = $tablecache->getit( $xntabalias, $thismtoken );
 
 					if( exists($thiscached->{'bounced'}) )
@@ -258,6 +276,7 @@ sub onlineparser
 						if( $thiscached->{'bounced'} >= $thismepoch )
 						{
 							$execstatus->{'tooold'}++;
+							$theupdated->{$thisdateis}->{'skipped'}++;
 							next();
 						}
 					}
@@ -273,12 +292,14 @@ sub onlineparser
 							{
 								# This record's bounced date is older than the record in the database.
 								$execstatus->{'tooold'}++;
+								$theupdated->{$thisdateis}->{'skipped'}++;
 								next();
 							}
 							elsif( $thiscached->{'reason'} eq 'whitelisted' )
 							{
 								# The whitelisted record is not updated without --force option.
 								$execstatus->{'whited'}++;
+								$theupdated->{$thisdateis}->{'skipped'}++;
 								next();
 							}
 						}
@@ -294,6 +315,7 @@ sub onlineparser
 							{
 								# The senderdomain DOES NOT EXIST in the mastertable
 								$execstatus->{'nofrom'}++;
+								$theupdated->{$thisdateis}->{'skipped'}++;
 								next();
 							}
 						}
@@ -303,16 +325,34 @@ sub onlineparser
 					if( $execinsert )
 					{
 						# INSERT this record INTO the database
-						$thisstatus = $o->insert($xntableobj,$mastertabs,$tablecache);
-						$thisstatus ? $execstatus->{'insert'}++ : $execstatus->{'failed'}++;
+						$thisstatus = $o->insert( $xntableobj, $mastertabs, $tablecache );
+						$okorfailed = ( $thisstatus > 0 ) ? 'inserted' : 'failed';
 					}
 					else
 					{
-						$thisstatus = $o->update($xntableobj,$tablecache);
-						$thisstatus ? $execstatus->{'update'}++ : $execstatus->{'failed'}++;
+						$thisstatus = $o->update( $xntableobj, $tablecache );
+						$okorfailed = ( $thisstatus == 1 ) ? 'updated' : 'failed';
 					}
+					$execstatus->{ $yamlkeymap->{ $okorfailed } }++;
+					$theupdated->{ $thisdateis }->{ $okorfailed }++;
 
 				} # End of while(DATABASECTL)
+
+				if( $dupdataobj->db->{'error'}->{'count'} == 0 )
+				{
+					foreach my $d ( keys %$theupdated )
+					{
+						push( @$tobupdated, { 
+								'thedate' => $d,
+								'inserted' => $theupdated->{$d}->{'inserted'} || 0,
+								'updated' => $theupdated->{$d}->{'updated'} || 0,
+								'skipped' => $theupdated->{$d}->{'skipped'} || 0,
+								'failed' => $theupdated->{$d}->{'failed'} || 0,
+							} );
+					}
+
+					$dupdatarec = $dupdataobj->recordit($tobupdated);
+				}
 
 			} # End of if(REGISTERIT)
 
@@ -321,16 +361,16 @@ sub onlineparser
 		} # End of while(SLURP_AND_EAT)
 
 		$self->tt_params( 
-			'bouncemessages' => $damnedobjs,
-			'parseddatatext' => $serialized,
-			'parsedfilename' => join( ',', @$sourcelist ),
-			'parsedfilesize' => $datasource ? length($datasource) : $sizeofmail,
-			'parsedmessages' => defined($mpiterator) ? $mpiterator->count() : 0,
-			'outputformat' => $dataformat,
-			'onlineparse' => 1,
-			'onlineupdate' => $registerit,
-			'updateresult' => $execstatus,
-			'parseerror' => $errortitle );
+			'pv_bouncemessages' => $damnedobjs,
+			'pv_parseddatatext' => $serialized,
+			'pv_parsedfilename' => join( ',', @$sourcelist ),
+			'pv_parsedfilesize' => $datasource ? length($datasource) : $sizeofmail,
+			'pv_parsedmessages' => defined($mpiterator) ? $mpiterator->count() : 0,
+			'pv_outputformat' => $dataformat,
+			'pv_onlineparse' => 1,
+			'pv_onlineupdate' => $registerit,
+			'pv_updateresult' => $execstatus,
+			'pv_parseerror' => $errortitle );
 		return $self->tt_process($file);
 	}
 }

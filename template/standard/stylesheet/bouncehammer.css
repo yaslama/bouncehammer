@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.19 2010/07/11 06:48:32 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.20 2010/08/28 17:16:40 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -126,12 +126,12 @@ body {
 h1 {
 	margin: 0;
 	padding: 0;
-	color: #0095d9; /* Ao */
-	font-size: 20px;
+	font-size: 24px;
 	font-family: 'Gill Sans Lite', 'Century Gothic', Verdana, 'Trebuchet MS';
 	border-style: solid;
 	border-width: 0 0 2px 0;
-	text-shadow: 0px 1px 0px #eeeeee;
+	color: #38a1db; /* Tsuyukusa-iro */
+	text-shadow: 1px 1px 0px #eeeeee; /* Noshimehana-iro */
 }
 
 h2 {
@@ -139,7 +139,7 @@ h2 {
 	padding: 0 0 0 3px;
 	font-size: 16px;
 	font-family: 'Trebuchet MS', Verdana;
-	color: #1e50a2; /* Ruri-iro */
+	color: #426579; /* Noshimehana-iro */
 }
 
 h3 {}
@@ -184,6 +184,10 @@ fieldset {
 input, select { 
 	font-size: 11px; 
 	outline: none;
+}
+
+select.wide-dropdownlist {
+	width: 192px;
 }
 
 /* Anchor pseudo classes */
@@ -324,6 +328,14 @@ ul.index li.itemgroup:hover {
 	-opera-border-radius: 4px;
 }
 
+ul.index li.currentpage {
+	font-weight: bold;
+	background: #fcc800; /* Himawari-iro */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+
 ul.index li.subitem {
 	width: 122px;
 	margin: 2px 0;
@@ -333,7 +345,7 @@ ul.index li.subitem {
 
 /* Anchor pseudo classes in index class */
 ul.index a:link {
-	color: #595857;	/* Sumi */
+	color: #383c3c;	/* Youkan-iro */
 	text-decoration: none; 
 }
 
@@ -344,7 +356,7 @@ ul.index a:hover, ul.index a:visited:hover {
 }
 
 ul.index a:visited { 
-	color: #595857; /* Sumi */
+	color: #383c3c;	/* Youkan-iro */
 	text-decoration: none; 
 }
 

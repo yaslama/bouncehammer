@@ -1,99 +1,107 @@
-[%- SET currentpagenum = pagination.currentpagenum -%]
-[%- SET resultsperpage = pagination.resultsperpage -%]
-[%- SET lastpagenumber = pagination.lastpagenumber -%]
-[%- SET colnameorderby = pagination.colnameorderby -%]
-[%- SET descendorderby = pagination.descendorderby -%]
-[%- SET pagesintheline = 10 -%]
-[%- SET firstentry = pagination.offsetposition + 1 -%]
-[%- SET lastentry = pagination.currentpagenum * pagination.resultsperpage -%]
+[%- SET tt_currentpagenum = pv_pagination.currentpagenum -%]
+[%- SET tt_resultsperpage = pv_pagination.resultsperpage -%]
+[%- SET tt_lastpagenumber = pv_pagination.lastpagenumber -%]
+[%- SET tt_colnameorderby = pv_pagination.colnameorderby -%]
+[%- SET tt_descendorderby = pv_pagination.descendorderby -%]
+[%- SET tt_pagesintheline = 10 -%]
+[%- SET tt_additionalcond = '' -%]
+[%- SET tt_firstentry = pv_pagination.offsetposition + 1 -%]
+[%- SET tt_lastentry = pv_pagination.currentpagenum * pv_pagination.resultsperpage -%]
 
-[%- IF contentsname == 'search' -%]
-	[%- SET baseuri = "${scriptname}/search/condition/${encryptedforuri}/${colnameorderby},${descendorderby}" -%]
-[%- ELSIF contentsname == 'table' -%]
-	[%- IF sortby == '' -%]
-		[%- SET baseuri = "${scriptname}/tables/${tablename}/list" -%]
+[%- IF pv_contentsname == 'search' -%]
+	[%- SET tt_baseurl = "${pv_scriptname}/search/${tt_colnameorderby},${tt_descendorderby}" -%]
+	[%- SET tt_additionalcond = pv_encryptedforuri -%]
+[%- ELSIF pv_contentsname == 'table' -%]
+	[%- IF pv_sortby == '' -%]
+		[%- SET tt_baseurl = "${pv_scriptname}/tables/${pv_tablename}/list" -%]
 	[%- ELSE -%]
-		[%- SET baseuri = "${scriptname}/tables/${tablename}/sort/${sortby}" -%]
+		[%- SET tt_baseurl = "${pv_scriptname}/tables/${pv_tablename}/sort/${pv_sortby}" -%]
 	[%- END -%]
+[%- ELSIF pv_contentsname == 'dailyupdates' -%]
+	[%- SET tt_baseurl = "${pv_scriptname}/dailyupdates/${pv_totalsby},${tt_descendorderby}" -%]
+	[%- SET tt_additionalcond = pv_uioptions.value -%]
 [%- END -%]
-[%- IF currentpagenum > ( pagesintheline / 2 ) -%]
-	[%- IF ( currentpagenum + ( pagesintheline / 2 ) ) > lastpagenumber -%]
-		[%- SET pp_start = ( lastpagenumber - pagesintheline ) -%]
+[%- IF tt_currentpagenum > ( tt_pagesintheline / 2 ) -%]
+	[%- IF ( tt_currentpagenum + ( tt_pagesintheline / 2 ) ) > tt_lastpagenumber -%]
+		[%- SET tt_pp_start = ( tt_lastpagenumber - tt_pagesintheline ) -%]
 	[%- ELSE -%]
-		[%- SET pp_start = ( currentpagenum - ( pagesintheline / 2 ) ) -%]
+		[%- SET tt_pp_start = ( tt_currentpagenum - ( tt_pagesintheline / 2 ) ) -%]
 	[%- END -%]
-	[%- IF pp_start < 1 -%][%- SET pp_start = 1 -%][%- END -%]
+	[%- IF tt_pp_start < 1 -%][%- SET tt_pp_start = 1 -%][%- END -%]
 
-	[%- IF lastpagenumber > ( pp_start + ( pagesintheline / 2 ) ) -%]
-		[%- SET pp_endby = pp_start + pagesintheline -%]
+	[%- IF tt_lastpagenumber > ( tt_pp_start + ( tt_pagesintheline / 2 ) ) -%]
+		[%- SET tt_pp_endby = tt_pp_start + tt_pagesintheline -%]
 	[%- ELSE -%]
-		[%- SET pp_endby = lastpagenumber -%]
+		[%- SET tt_pp_endby = tt_lastpagenumber -%]
 	[%- END -%]
-	[%- IF pp_endby > lastpagenumber -%][%- SET pp_endby = lastpagenumber -%][%- END -%]
+	[%- IF tt_pp_endby > tt_lastpagenumber -%][%- SET tt_pp_endby = tt_lastpagenumber -%][%- END -%]
 
 [%- ELSE -%]
-	[%- SET pp_start = 1 -%]
-	[%- IF lastpagenumber > pagesintheline -%]
-		[%- SET pp_endby = pagesintheline -%]
+	[%- SET tt_pp_start = 1 -%]
+	[%- IF tt_lastpagenumber > tt_pagesintheline -%]
+		[%- SET tt_pp_endby = tt_pagesintheline -%]
 	[%- ELSE -%]
-		[%- SET pp_endby = lastpagenumber -%]
+		[%- SET tt_pp_endby = tt_lastpagenumber -%]
 	[%- END -%]
 [%- END -%]
-[%- SET availablepages = [ pp_start .. pp_endby ] -%]
+[%- SET tt_availablepages = [ tt_pp_start .. tt_pp_endby ] -%]
 <div class = 'pagesummary'>
-	[%- IF pagination.count > 0 -%]
-		[% word.searchresults %]
-		[%- IF pagination.count > 1 -%]
-			[%- IF pagination.count > lastentry -%]
-				<strong>[% firstentry %] - [% lastentry %]</strong>
+	[%- IF pv_pagination.count > 0 -%]
+		[% tt_word.searchresults %]
+		[%- IF pv_pagination.count > 1 -%]
+			[%- IF pv_pagination.count > tt_lastentry -%]
+				<strong>[% tt_firstentry %] - [% tt_lastentry %]</strong>
 			[%- ELSE -%]
-				<strong>[% firstentry %] - [% pagination.count %]</strong>
+				<strong>[% tt_firstentry %] - [% pv_pagination.count %]</strong>
 			[%- END -%]
-			(<strong>[% pagination.count %]</strong> [% word.unitofrecs %])
+			(<strong>[% pv_pagination.count %]</strong> [% tt_word.unitofrecs %])
 		[%- ELSE -%]
-			<strong>1</strong> [% word.unitofrecs %]
+			<strong>1</strong> [% tt_word.unitofrecs %]
 		[%- END -%]
 	[%- ELSE -%]
-		<strong>[% error.norecordinthedb %]</strong>
+		<strong>[% tt_error.norecordinthedb %]</strong>
 	[%- END -%]
 </div>
 <div class = 'pageindex'>
 	<div class = 'lhs'>
-		[%- IF lastpagenumber > 1 -%]
-			[%- IF currentpagenum > 1 -%]
-				&nbsp;<a href = '[% baseuri %]/[% currentpagenum - 1 %]/[% resultsperpage %]'><strong>[%- word.previous %]</strong></a>&nbsp;
-			[%- END -%]
+	[%- IF tt_lastpagenumber > 1 -%]
+		[%- IF tt_currentpagenum > 1 -%]
+			&nbsp;<a href = '[% tt_baseurl %]/[% tt_currentpagenum - 1 %]/[% tt_resultsperpage %]/[%- tt_additionalcond -%]'>
+			<strong>[%- tt_word.previous %]</strong></a>&nbsp;
 		[%- END -%]
+	[%- END -%]
 	</div>
 	<div class = 'rhs'>
-		[%- IF lastpagenumber > 1 -%]
-			[%- IF currentpagenum < lastpagenumber -%]
-				&nbsp;<a href = '[% baseuri %]/[% currentpagenum + 1 %]/[% resultsperpage %]'><strong>[%- word.next -%]</strong></a>&nbsp;
+		[%- IF tt_lastpagenumber > 1 -%]
+			[%- IF tt_currentpagenum < tt_lastpagenumber -%]
+				&nbsp;<a href = '[% tt_baseurl %]/[% tt_currentpagenum + 1 %]/[% tt_resultsperpage %]/[%- tt_additionalcond -%]'>
+				<strong>[%- tt_word.next -%]</strong></a>&nbsp;
 			[%- END -%]
 		[%- END -%]
 	</div>
 	<div class = 'mid'>
-		[%- IF lastpagenumber > 1 -%]
-			[%- IF currentpagenum > 1 -%]
-				[%- IF currentpagenum > ( ( pagesintheline / 2 ) + 1 ) -%]
-					<a href = '[% baseuri %]/1/[% resultsperpage %]'>1</a>&nbsp;..&nbsp;
+		[%- IF tt_lastpagenumber > 1 -%]
+			[%- IF tt_currentpagenum > 1 -%]
+				[%- IF tt_currentpagenum > ( ( tt_pagesintheline / 2 ) + 1 ) -%]
+					<a href = '[% tt_baseurl %]/1/[% tt_resultsperpage %]/[% tt_additionalcond %]'>1</a>&nbsp;..&nbsp;
 				[%- END -%]
 			[%- END -%]
 
-			[%- FOREACH PP IN availablepages -%]
-				[%- IF PP == pagination.currentpagenum -%]
+			[%- FOREACH PP IN tt_availablepages -%]
+				[%- IF PP == pv_pagination.currentpagenum -%]
 					<span class = 'thispage'>&nbsp;<strong>[% PP %]</strong>&nbsp;</span>&nbsp;
 				[%- ELSE -%]
-					<a href = '[% baseuri %]/[% PP %]/[% resultsperpage %]'>[% PP %]</a>&nbsp;
+					<a href = '[% tt_baseurl %]/[% PP %]/[% tt_resultsperpage %]/[% tt_additionalcond %]'>[%- PP -%]</a>&nbsp;
 				[%- END -%]
 			[%- END -%]
 
-			[%- IF currentpagenum < lastpagenumber -%]
-				[%- IF ( pp_endby + 1 ) < lastpagenumber -%]
-					.. <a href = '[% baseuri %]/[% lastpagenumber %]/[% resultsperpage %]'>[% lastpagenumber %]</a>&nbsp;
+			[%- IF tt_currentpagenum < tt_lastpagenumber -%]
+				[%- IF ( tt_pp_endby + 1 ) < tt_lastpagenumber -%]
+					.. <a href = '[% tt_baseurl %]/[% tt_lastpagenumber %]/[% tt_resultsperpage %]/[%- tt_additionalcond -%]'>
+					[%- tt_lastpagenumber -%]</a>&nbsp;
 				[%- END -%]
 			[%- END -%]
-		[%- ELSIF lastpagenmber == 1 -%]
+		[%- ELSIF tt_lastpagenmber == 1 -%]
 			<span class = 'thispage'>&nbsp;<strong>1</strong>&nbsp;</span>&nbsp;
 		[%- END -%]
 	</div>

@@ -4,8 +4,8 @@
 [% INCLUDE "dtd-xhtml.html" %]
 <head>
 	[% INCLUDE "meta-http-equiv.html" %]
-	<title>[% systemname %]/[% head.listof %]/[% listfile %]</title>
-	[% prototype.define_javascript_functions %]
+	<title>[% pv_systemname %]/[% tt_head.listof %]/[% pv_listfile %]</title>
+	[% pv_prototype.define_javascript_functions %]
 	<script type = 'text/javascript'>
 		[% INCLUDE bouncehammer.js %]
 	</script>
@@ -18,11 +18,12 @@
 </head>
 <body>
 	<div id = 'ThePage'>
-		<h1>[% head1title %]/[% head.listof %]/[% listfile %]</h1>
+		<h1>[% pv_head1title %]/[% tt_head.listof %]/[% pv_listfile %]</h1>
 		<div id = 'North-Ward'>
 			[% INCLUDE "div-menubar.html" %]
 		</div>
 		<div id = 'West-Ward'>
+			[%- SET tt_menu.listof.neighbors = 'currentpage' -%]
 			[% INCLUDE "div-index.html" %]
 		</div>
 		<div id = 'East-Ward'>
@@ -30,41 +31,45 @@
 		</div>
 
 		<div id = 'Central-Ward'>
-			[%- IF issample == 1 -%][%- SET fileclass = 'errortext' -%][%- ELSE -%][%- SET fileclass = 'x' -%][%- END -%]
-			<h2>[% listfile %]</h2>
+			[%- IF pv_issample == 1 -%]
+				[%- SET tt_fileclass = 'errortext' -%]
+			[%- ELSE -%]
+				[%- SET tt_fileclass = 'x' -%]
+			[%- END -%]
+			<h2>[% pv_listfile %]</h2>
 			<div class = 'profile'>
 				<table>
 					<tbody>
 						<tr>
 							<td class = 'key'>
-								[% word.file %]
-								[%- IF issample == 1 -%](Example)[%- END -%]
+								[% tt_word.file %]
+								[%- IF pv_issample == 1 -%](Example)[%- END -%]
 							</td>
-							<td class = 'value'><span class = '[% fileclass %]'>[% listpath %]</span></td>
+							<td class = 'value'><span class = '[% tt_fileclass %]'>[% pv_listpath %]</span></td>
 						</tr>
 						<tr>
-							<td class = 'key'>[% word.format %]</td>
+							<td class = 'key'>[% tt_word.format %]</td>
 							<td class = 'value'>YAML</td>
 						</tr>
 						<tr>
-							<td class = 'key'>[% term.updated %]</td>
-							<td class = 'value'>[% listtime %]</td>
+							<td class = 'key'>[% tt_term.updated %]</td>
+							<td class = 'value'>[% pv_listtime %]</td>
 						</tr>
 						<tr>
-							<td class = 'key'>[% head.definedproviders %]</td>
-							<td class = 'value'>[%- FOREACH PN IN listdata -%][%- PN.key -%] &nbsp; [%- END -%]</td>
+							<td class = 'key'>[% tt_head.definedproviders %]</td>
+							<td class = 'value'>[%- FOREACH PN IN pv_listdata -%][%- PN.key -%] &nbsp; [%- END -%]</td>
 						</tr>
 
 					</tbody>
 				</table>
 			</div>
 
-			[%- FOREACH PN IN listdata -%]
+			[%- FOREACH PN IN pv_listdata -%]
 			<h2>* [% PN.key %]</h2>
 			<div class = 'profile'>
 				<ul>
 					[%- FOREACH DN IN PN.value -%]
-					<li>[% DN %]</li>
+						<li>[% DN %]</li>
 					[%- END -%]
 				</ul>
 			</div>

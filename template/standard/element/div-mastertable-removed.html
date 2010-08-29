@@ -1,4 +1,4 @@
-[% FOREACH RR IN removedrecord %]
+[% FOREACH RR IN pv_removedrecord %]
 <table class = 'stored'>
 	<tbody class = 'mastertable'>
 		<tr class = 'removedrecord'>
@@ -9,7 +9,7 @@
 					value = '[% RR.description %]' readonly = 'readonly' />
 			</td>
 			<td class = 'theMethod'>
-				<input type = 'submit' value = '[% word.removed %]' class = 'flatbutton' disabled />
+				<input type = 'submit' value = '[% tt_word.removed %]' class = 'flatbutton' disabled />
 			</td>
 		</tr>
 	</tbody>

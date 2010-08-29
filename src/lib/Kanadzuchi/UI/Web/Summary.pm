@@ -1,4 +1,4 @@
-# $Id: Summary.pm,v 1.14 2010/07/11 06:48:03 ak Exp $
+# $Id: Summary.pm,v 1.15 2010/08/28 17:22:09 ak Exp $
 # -Id: Summary.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Summary.pm,v 1.1 2009/08/18 02:37:53 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -71,8 +71,8 @@ sub datasummary
 	}
 
 	$self->tt_params(
-		'tableconf' => $tableconf,
-		'tablesumm' => $tablesumm,
+		'pv_tableconf' => $tableconf,
+		'pv_tablesumm' => $tablesumm,
 	);
 	return $self->tt_process($file);
 }

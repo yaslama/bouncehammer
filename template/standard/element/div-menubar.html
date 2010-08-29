@@ -1,54 +1,50 @@
-[%- SET ThisURI = thepageuri -%]
-[%- IF encryptedforuri -%]
-	[%- SET colname = pagination.colnameorderby -%]
-	[%- SET descend = pagination.descendorderby -%]
-	[%- IF pagination.currentpagenum -%]
-		[%- SET page = pagination.currentpagenum -%]
-		[%- SET DownloadLink = "${ThisURI}/download" -%]
-		[%- IF pagination.resultsperpage -%]
-			[%- SET rpp = pagination.resultsperpage -%]
-			[%- SET ThisURI = "${ThisURI}/search/condition/${encryptedforuri}/${colname},${descend}/${page}/${rpp}" -%]
+[%- SET tt_thisurl = pv_thepageuri -%]
+[%- IF pv_encryptedforuri -%]
+	[%- SET tt_colname = pv_pagination.colnameorderby -%]
+	[%- SET tt_descend = pv_pagination.descendorderby -%]
+	[%- IF pv_pagination.currentpagenum -%]
+		[%- SET tt_page = pv_pagination.currentpagenum -%]
+		[%- SET tt_downloadlink = "${tt_thisurl}/download" -%]
+		[%- IF pv_pagination.resultsperpage -%]
+			[%- SET tt_rpp = pv_pagination.resultsperpage -%]
+			[%- SET tt_thisurl = "${tt_thisurl}/search/${tt_colname},${tt_descend}/${tt_page}/${tt_rpp}/${pv_encryptedforuri}" -%]
 		[%- ELSE -%]
-			[%- SET ThisURI = "${ThisURI}/search/condition/${encryptedforuri}/${colname},${descend}/${page}" -%]
+			[%- SET tt_thisurl = "${tt_thisurl}/search/${tt_colname},${tt_descend}/${tt_page}/10/${pv_encryptedforuri}" -%]
 		[%- END -%]
 	[%- ELSE -%]
-		[%- SET ThisURI = "${ThisURI}/search/condition/${encryptedforuri}/${colname},${descend}" -%]
+		[%- SET tt_thisurl = "${tt_thisurl}/search/${tt_colname},${tt_descend}/1/10/${pv_encryptedforuri}" -%]
 	[%- END -%]
 [%- ELSE -%]
-	[%- SET ThisURI = "${ThisURI}${pathinfo}" -%]
+	[%- SET tt_thisurl = "${tt_thisurl}${pv_pathinfo}" -%]
 [%- END -%]
 <div id = 'MenuBar'>
-	[%- IF DownloadLink -%]
-		[%- SET DLLYAML = "${DownloadLink}/yaml/${encryptedforuri}/${colname},${descend}" -%]
-		[%- SET DLLJSON = "${DownloadLink}/json/${encryptedforuri}/${colname},${descend}" -%]
-		[%- SET DLLCSV = "${DownloadLink}/csv/${encryptedforuri}/${colname},${descend}" -%]
-		<select onChange = "window.open(this.options[this.selectedIndex].value)" style = 'font-size:10px;'>
-			<option value = '#' >[%- word.download -%]([%- word.searchresults -%])</option>
-			<option value = '[% DLLYAML %]'>YAML</option>
-			<option value = '[% DLLJSON %]'>JSON</option>
-			<option value = '[% DLLCSV %]'>CSV</option>
-		</select>
-	[%- END -%]
-
-	<form action = '[% ThisURI %]' method = 'POST' id = 'SelectLanguage' style = 'display: inline;'>
+[%- IF tt_downloadlink -%]
+	[%- SET tt_linkforyaml = "${tt_downloadlink}/yaml/${tt_colname},${tt_descend}/${pv_encryptedforuri}" -%]
+	[%- SET tt_linkforjson = "${tt_downloadlink}/json/${tt_colname},${tt_descend}/${pv_encryptedforuri}" -%]
+	[%- SET tt_linkforcsvf = "${tt_downloadlink}/csv/${tt_colname},${tt_descend}/${pv_encryptedforuri}" -%]
+	<select onChange = "window.open( this.options[ this.selectedIndex ].value );"
+		style = 'font-size:10px;'>
+		<option value = '#' >[%- tt_word.download -%]([%- tt_word.searchresults -%])</option>
+		<option value = '[% tt_linkforyaml %]'>YAML</option>
+		<option value = '[% tt_linkforjson %]'>JSON</option>
+		<option value = '[% tt_linkforcsvf %]'>CSV</option>
+	</select>
+[%- END -%]
+	<form action = '[% tt_thisurl %]' method = 'POST' id = 'SelectLanguage' style = 'display: inline;'>
 		[% INCLUDE "select-language.html" %]
 		<span class = 'flatbutton'>
-			&nbsp;
-			<a href = "javascript:void(0);" onClick = "SelectLanguage.submit(); return(false);">[%- word.switchlang -%]</a>
-			&nbsp;
+			<a href = "javascript:void(0);" 
+				onClick = "SelectLanguage.submit(); return(false);">
+				&nbsp; [%- tt_word.switchlang -%]&nbsp; </a>
 		</span>
 	</form>
 
 	<span class = 'flatbutton'>
-		&nbsp;
-		<a href = "javascript:void(0);" onClick = "toggleIt('PageURI');">URL</a>
-		&nbsp;
+		<a href = "javascript:void(0);" onClick = "toggleIt('PageURI');">&nbsp; URL &nbsp;</a>
 	</span>
 	<div id = 'PageURI' style = 'display: none;'>
-		<input type = 'text' id = 'URI' value = '[% ThisURI %]' class = 'flat' 
+		<input type = 'text' id = 'URI' value = '[% tt_thisurl %]' class = 'flat' 
 			readonly = 'readonly' onClick = "this.select();" />
 	</div>
-
-
 </div>
 

@@ -1,30 +1,30 @@
 [%- PROCESS "words.tt" -%]
-<div id = 'create_a_new_record' style = 'display: none;'>
-	[%- prototype.form_remote_tag( {
-			url => "${scriptname}/tables/${tablename}/create",
-			update => "here_is_new_record",
+<div id = 'jx_create_a_new_record' style = 'display: none;'>
+	[%- pv_prototype.form_remote_tag( {
+			url => "${pv_scriptname}/tables/${pv_tablename}/create",
+			update => "jx_here_is_new_record",
 			position => 'Before',
-			before => "disableIt('create_a_new_one');",
-			loaded => "newname.value = ''; newdesc.value = '';",
+			before => "disableIt('jx_create_a_new_one');",
+			loaded => "jx_newname.value = ''; jx_newdesc.value = '';",
 		});
 	-%]
 	<table class = 'stored'>
 		<tbody class = 'mastertable'>
 			<tr>
 				<td class = 'theID'>
-					<strong>[% word.new %]</strong>
-					<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
+					<strong>[% tt_word.new %]</strong>
+					<input type = 'hidden' name = 'fe_language' value = '[% pv_mylanguage %]' />
 				</td>
 				<td class = 'theName'>
-					<input type = 'text' id = 'newname' name = 'newname'
-						class = 'rewritabletext newone' onChange = "enableIt('create_a_new_one');" />
+					<input type = 'text' id = 'jx_newname' name = 'fe_newname'
+						class = 'rewritabletext newone' onChange = "enableIt('jx_create_a_new_one');" />
 				</td>
 				<td class = 'theDescription'>
-					<input type = 'text' id = 'newdesc' name = 'newdesc'
+					<input type = 'text' id = 'jx_newdesc' name = 'fe_newdesc'
 						class = 'rewritabletext newone' />
 				</td>
 				<td class = 'theMethod'>
-					<input type = 'submit' id = 'create_a_new_one' value = '[% word.create %]' 
+					<input type = 'submit' id = 'jx_create_a_new_one' value = '[% tt_word.create %]' 
 						class = 'flatbutton' disabled = 'disabled' />
 				</td>
 			</tr>
@@ -32,8 +32,8 @@
 	</table>
 	</form>
 </div>
-<span class = 'flatbutton longflatbutton'
-	<a href = "javascript:void(0);" onClick = 'create_a_new_record.style.display = "block";'>
-		[%- desc.createanewrecord -%]
+<span class = 'flatbutton longflatbutton'>
+	<a href = "javascript:void(0);" onClick = 'jx_create_a_new_record.style.display = "block";'>
+		[%- tt_desc.createanewrecord -%]
 	</a>
 </span>

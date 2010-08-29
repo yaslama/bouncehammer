@@ -1,6 +1,6 @@
-[%# $Id: error.tt,v 1.2 2010/07/07 01:02:59 ak Exp $ -%]
+[%# $Id: error.tt,v 1.3 2010/08/28 17:19:14 ak Exp $ -%]
 [%# Error Messages in Japanese -%]
-[%- SET error = {
+[%- SET tt_error = {
 		'alreadyexists'		=> '既に同じデータが存在します',
 		'checkboxisoff'		=> 'チェックボックスがOffのままです',
 		'dataformaterror'	=> '不正なデータの形式です',

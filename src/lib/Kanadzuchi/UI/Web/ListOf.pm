@@ -1,4 +1,4 @@
-# $Id: ListOf.pm,v 1.2 2010/07/11 09:20:36 ak Exp $
+# $Id: ListOf.pm,v 1.3 2010/08/28 17:22:09 ak Exp $
 # -Id: Summary.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Summary.pm,v 1.1 2009/08/18 02:37:53 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -79,12 +79,12 @@ sub listofcontents
 	}
 
 	$self->tt_params(
-		'issample' => $issample,
-		'listname' => $listname,
-		'listfile' => $lfobject->basename(),
-		'listpath' => $listpath,
-		'listdata' => $listdata,
-		'listtime' => $listtime->ymd('/').' '.$listtime->hms(':'),
+		'pv_issample' => $issample,
+		'pv_listname' => $listname,
+		'pv_listfile' => $lfobject->basename(),
+		'pv_listpath' => $listpath,
+		'pv_listdata' => $listdata,
+		'pv_listtime' => $listtime->ymd('/').' '.$listtime->hms(':'),
 	);
 
 	return $self->tt_process($listtmpl);

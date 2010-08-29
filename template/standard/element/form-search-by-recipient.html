@@ -1,164 +1,183 @@
-[%- SET showsearchcondition = 'none' -%]
-<div id = 'queryform'>
-	<form action = '[% scriptname %]/search/recipient' method = 'POST'>
+[%- SET tt_showssearchcond = 'none' -%]
+<div id = 'jx_queryform'>
+	<form action = '[% pv_scriptname %]/search/recipient' method = 'POST'>
 	<fieldset>
-		<legend>[%- desc.searchbyemail -%]</legend>
-		<input type = 'text' name = 'recipient' accesskey = '3' style = 'width: 405px;' class = 'wide'
-			placeholder = '[%- term.recipient -%](To)' autosave = '[% systemname %].recipient' results = '16' />
-		<input type = 'submit' value = '[%- word.search -%]' id = 'dosearch' accesskey = '4' class = 'flatbutton' />
-		<input type = 'reset' value = '[%- word.reset -%]' accesskey = '0' class = 'flatbutton' /><br />
-		<span class = 'shortdescription'>[%- desc.emptyaddress -%]</span>
+		<legend>[%- tt_desc.searchbyemail -%]</legend>
+		<input type = 'text' name = 'fe_recipient' accesskey = '3' style = 'width: 405px;' class = 'wide'
+			placeholder = '[%- tt_term.recipient -%](To)' autosave = '[% pv_systemname %].recipient' results = '16' />
+		<input type = 'submit' value = '[%- tt_word.search -%]' id = 'jx_dosearch' accesskey = '4' class = 'flatbutton' />
+		<input type = 'reset' value = '[%- tt_word.reset -%]' accesskey = '0' class = 'flatbutton' /><br />
+		<span class = 'shortdescription'>[%- tt_desc.emptyaddress -%]</span>
 
-		<div style = 'margin: 8px 8px 4px 8px;'>
-			<a href = '#' onClick = "toggleIt('search-condition');" accesskey = '9'>[% word.searchcond %]</a>
+		<div style = 'margin: 6px 0 4px -2px;'>
+			<span class = 'flatbutton'>
+				<a href = '#' onClick = "toggleIt('jx_search-condition');" 
+					accesskey = '9'>&nbsp; [% tt_word.searchcond %] &nbsp; </a>
+			</span>
 		</div>
 
-		<div id = 'search-condition' style = 'display: [% showsearchcondition %];'> 
+		<div id = 'jx_search-condition' style = 'display: [% tt_showssearchcond %];'> 
 			<table>
 			<tbody>
 				<tr>
-					<td class = 'key'>[%- term.addresser -%]</td>
+					<td class = 'key'>[%- tt_term.addresser -%]</td>
 					<td class = 'value'>
-						<input type = 'text' name = 'addresser' style = 'width: 288px;' class = 'wide'
-							placeholder = '[%- term.addresser -%](From)' autosave = '[% systemname %].addresser' 
-							results = '16' onChange = "checksa.innerHTML='&#9745; [%- word.use -%]';"/>
+						<input type = 'text' name = 'fe_addresser' style = 'width: 288px;' class = 'wide'
+							placeholder = '[%- tt_term.addresser -%](From)' 
+							autosave = '[% pv_systemname %].addresser' results = '16'
+							onChange = "jx_checksa.innerHTML='&#9745; [%- tt_word.use -%]';"/>
 					</td>
-					<td class = 'extra' id = 'checksa'></td>
+					<td class = 'extra' id = 'jx_checksa'></td>
 				</tr>
 				<tr>
-					<td class = 'key'>[%- term.senderdomain -%]</td>
+					<td class = 'key'>[%- tt_term.senderdomain -%]</td>
 					<td class = 'value'>
-						<input type = 'text' name = 'senderdomain' style = 'width: 288px;' class = 'wide'
-							placeholder = '[%- term.senderdomain -%](From)' autosave = '[% systemname %].senderdomain' 
-							results = '16' onChange = "checksd.innerHTML='&#9745; [%- word.use -%]';"/>
+						<input type = 'text' name = 'fe_senderdomain' style = 'width: 288px;' class = 'wide'
+							placeholder = '[%- tt_term.senderdomain -%](From)' 
+							autosave = '[% pv_systemname %].senderdomain' results = '16'
+							onChange = "jx_checksd.innerHTML='&#9745; [%- tt_word.use -%]';"/>
 					</td>
-					<td class = 'extra' id = 'checksd'></td>
-				</tr>
-
-				<tr>
-					<td class = 'key'>[%- term.destination -%]</td>
-					<td class = 'value'>
-						<input type = 'text' name = 'destination' style = 'width: 288px;' class = 'wide'
-							placeholder = '[%- term.destination -%](To)' autosave = '[% systemname %].destination' 
-							results = '16' onChange = "checkdd.innerHTML='&#9745; [%- word.use -%]';"/>
-					</td>
-					<td class = 'extra' id = 'checkdd'></td>
+					<td class = 'extra' id = 'jx_checksd'></td>
 				</tr>
 
 				<tr>
-					<td class = 'key'>[%- term.reason -%]</td>
+					<td class = 'key'>[%- tt_term.destination -%]</td>
+					<td class = 'value'>
+						<input type = 'text' name = 'fe_destination' style = 'width: 288px;' class = 'wide'
+							placeholder = '[%- tt_term.destination -%](To)'
+							autosave = '[% pv_systemname %].destination' results = '16' 
+							onChange = "jx_checkdd.innerHTML='&#9745; [%- tt_word.use -%]';"/>
+					</td>
+					<td class = 'extra' id = 'jx_checkdd'></td>
+				</tr>
+
+				<tr>
+					<td class = 'key'>[%- tt_term.reason -%]</td>
 					<td class = 'value'>
 						[% INCLUDE "select-reason.html" %]
 					</td>
-					<td class = 'extra' id = 'checkrw'></td>
+					<td class = 'extra' id = 'jx_checkrw'></td>
 				</tr>
 
 				<tr>
-					<td class = 'key'>[%- term.hostgroup -%]</td>
+					<td class = 'key'>[%- tt_term.hostgroup -%]</td>
 					<td class = 'value'>
 						[%- INCLUDE "select-hostgroup.html" -%]
 					</td>
-					<td class = 'extra' id = 'checkhc'></td>
+					<td class = 'extra' id = 'jx_checkhc'></td>
 				</tr>
 
 				<tr>
-					<td class = 'key'>[%- term.provider -%]</td>
+					<td class = 'key'>[%- tt_term.provider -%]</td>
 					<td class = 'value'>
-						<input type = 'text' name = 'provider' style = 'width: 288px;' class = 'wide'
-							placeholder = '[%- term.provider -%]' autosave = '[% systemname %].provider' 
-							results = '16' onChange = "checkpn.innerHTML='&#9745; [%- word.use -%]';"/>
+						<input type = 'text' name = 'fe_provider' style = 'width: 288px;' class = 'wide'
+							placeholder = '[%- tt_term.provider -%]' 
+							autosave = '[% pv_systemname %].provider' results = '16' 
+							onChange = "jx_checkpn.innerHTML='&#9745; [%- tt_word.use -%]';"/>
 					</td>
-					<td class = 'extra' id = 'checkpn'></td>
+					<td class = 'extra' id = 'jx_checkpn'></td>
 				</tr>
 
 				<tr>
-					<td class = 'key'>[%- term.token -%]</td>
+					<td class = 'key'>[%- tt_term.token -%]</td>
 					<td class = 'value'>
-						<input type = 'text' name = 'token' results = '16' style = 'width: 288px;' class = 'wide'
-							placeholder = '[%- term.token -%](MD5)' autosave = '[% systemname %].token' 
-							onChange = "checkmd.innerHTML = '&#9745; [%- word.use -%]';"/>
+						<input type = 'text' name = 'fe_token' style = 'width: 288px;' class = 'wide'
+							placeholder = '[%- tt_term.token -%](MD5)'
+							autosave = '[% pv_systemname %].token' results = '16'
+							onChange = "jx_checkmd.innerHTML = '&#9745; [%- tt_word.use -%]';"/>
 					</td>
-					<td class = 'extra' id = 'checkmd'></td>
+					<td class = 'extra' id = 'jx_checkmd'></td>
 				</tr>
 
 
 				<tr>
-					<td class = 'key'>[%- term.bounced -%]</td>
+					<td class = 'key'>[%- tt_term.bounced -%]</td>
 					<td class = 'value'>
 						[%- INCLUDE "select-howrecent.html" -%]
 					</td>
-					<td class = 'extra' id = 'checkbd'></td>
+					<td class = 'extra' id = 'jx_checkbd'></td>
 				</tr>
 				
 				<tr>
-					<td class = 'key'>[%- word.sort -%]<br /><br />
-						&nbsp; <input type = 'checkbox' name = 'descend' /> [%- word.descending -%]
+					<td class = 'key'>[%- tt_word.sort -%]<br /><br />
+						&nbsp; <input type = 'checkbox' name = 'fe_descend' /> [%- tt_word.descending -%]
 					</td>
 					<td class = 'value'>
 					<fieldset style = 'border-width: 1px; line-height: 16px;'>
-						<legend>[%- word.column -%]</legend>
-						<span><input type = 'radio' name = 'orderby' value = 'id' checked /> ID</span> &nbsp; 
-						<span><input type = 'radio' name = 'orderby' value = 'addresser' /> [%- term.addresser -%]</span> &nbsp;
-						<span><input type = 'radio' name = 'orderby' value = 'recipient' /> [%- term.recipient -%]</span> &nbsp;
-						<span><input type = 'radio' name = 'orderby' value = 'senderdomain' /> [%- term.senderdomain -%]</span> &nbsp; <br />
-						<span><input type = 'radio' name = 'orderby' value = 'destination' /> [%- term.destination -%]</span> &nbsp; &nbsp;
-						<span><input type = 'radio' name = 'orderby' value = 'hostgroup' /> [%- term.hostgroup -%]</span> &nbsp;
-						<span><input type = 'radio' name = 'orderby' value = 'provider' /> [%- term.provider -%]</span> &nbsp; <br />
-						<span><input type = 'radio' name = 'orderby' value = 'reason' /> [%- term.reason -%]</span> &nbsp;
-						<span><input type = 'radio' name = 'orderby' value = 'bounced' /> [%- term.bounced -%]</span> &nbsp;
-						<span><input type = 'radio' name = 'orderby' value = 'updated' /> [%- term.updated -%]</span> &nbsp;
-						<span><input type = 'radio' name = 'orderby' value = 'frequency' /> [%- term.frequency -%]</span> &nbsp;
+						<legend>[%- tt_word.column -%]</legend>
+						<span><input type = 'radio' name = 'fe_orderby' 
+							value = 'id' checked /> ID</span> &nbsp; 
+						<span><input type = 'radio' name = 'fe_orderby' 
+							value = 'addresser' /> [%- tt_term.addresser -%]</span> &nbsp;
+						<span><input type = 'radio' name = 'fe_orderby' 
+							value = 'recipient' /> [%- tt_term.recipient -%]</span> &nbsp;
+						<span><input type = 'radio' name = 'fe_orderby' 
+							value = 'senderdomain' /> [%- tt_term.senderdomain -%]</span> &nbsp; <br />
+						<span><input type = 'radio' name = 'fe_orderby' 
+							value = 'destination' /> [%- tt_term.destination -%]</span> &nbsp; &nbsp;
+						<span><input type = 'radio' name = 'fe_orderby' 
+							value = 'hostgroup' /> [%- tt_term.hostgroup -%]</span> &nbsp;
+						<span><input type = 'radio' name = 'fe_orderby'
+							value = 'provider' /> [%- tt_term.provider -%]</span> &nbsp; <br />
+						<span><input type = 'radio' name = 'fe_orderby' 
+							value = 'reason' /> [%- tt_term.reason -%]</span> &nbsp;
+						<span><input type = 'radio' name = 'fe_orderby' 
+							value = 'bounced' /> [%- tt_term.bounced -%]</span> &nbsp;
+						<span><input type = 'radio' name = 'fe_orderby' 
+							value = 'updated' /> [%- tt_term.updated -%]</span> &nbsp;
+						<span><input type = 'radio' name = 'fe_orderby' 
+							value = 'frequency' /> [%- tt_term.frequency -%]</span> &nbsp;
 					</fieldset>
 					</td>
-					<td class = 'extra' id = 'checkob'></td>
+					<td class = 'extra' id = 'jx_checkob'></td>
 				</tr>
 
 				<tr>
-					<td class = 'key'>[%- word.results -%]/[%- word.page -%]</td>
+					<td class = 'key'>[%- tt_word.results -%]/[%- tt_word.page -%]</td>
 					<td class = 'value'>
-						<select name = 'resultsperpage' id = 'resultsperpage'>
+						<select name = 'fe_resultsperpage' id = 'jx_resultsperpage'>
 							[%- FOREACH RPP IN [10,25,50,75,100] -%]
 								<option value = '[%- RPP -%]' [%- IF RPP == 10 -%] selected [%- END -%]>
 									[% RPP %]
 								</option>
 							[%- END -%]
 						</select>
-						<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
+						<input type = 'hidden' name = 'fe_language' value = '[% pv_mylanguage %]' />
 					</td>
 					<td class = 'extra'></td>
 				</tr>
 
 				<tr>
 					<td class = 'key'>
-						&nbsp; <input type = 'checkbox' name = 'enabledownload' 
+						&nbsp; <input type = 'checkbox' name = 'fe_enabledownload' 
 							onChange = "
 								if( this.checked == true ){
-									disableIt('resultsperpage');
-									dosearch.value = 'Download';
-									enableIt('yamlff');
-									enableIt('jsonff');
-									enableIt('csvff');
+									disableIt('jx_resultsperpage');
+									jx_dosearch.value = '[% tt_word.download %]';
+									enableIt('jx_yamlff');
+									enableIt('jx_jsonff');
+									enableIt('jx_csvff');
 								}
 								else{
-									enableIt('resultsperpage');
-									dosearch.value = 'Search';
-									disableIt('yamlff');
-									disableIt('jsonff');
-									disableIt('csvff');
-								}"/> [% word.download %]
+									enableIt('jx_resultsperpage');
+									jx_dosearch.value = 'Search';
+									disableIt('jx_yamlff');
+									disableIt('jx_jsonff');
+									disableIt('jx_csvff');
+								}"/> [% tt_word.download %]
 					</td>
 					<td class = 'value'>
-						<fieldset id = 'fileformat' style = 'border-width: 1px;'>
-							<legend>[% word.fileformat %]</legend>
-							<span><input id = 'yamlff' type = 'radio' name = 'downloadformat' value = 'yaml' disabled checked />
-								YAML</span> &nbsp; &nbsp; 
-							<span><input id = 'jsonff' type = 'radio' name = 'downloadformat' value = 'json' disabled />
-								JSON</span> &nbsp; &nbsp; 
-							<span><input id = 'csvff' type = 'radio' name = 'downloadformat' value = 'csv' disabled />
-								CSV</span> &nbsp; &nbsp; 
+						<fieldset id = 'jx_fileformat' style = 'border-width: 1px;'>
+							<legend>[% tt_word.fileformat %]</legend>
+							<span><input id = 'jx_yamlff' type = 'radio' name = 'fe_downloadformat'
+								value = 'yaml' disabled checked /> YAML</span> &nbsp; &nbsp; 
+							<span><input id = 'jx_jsonff' type = 'radio' name = 'fe_downloadformat'
+								value = 'json' disabled /> JSON</span> &nbsp; &nbsp; 
+							<span><input id = 'jx_csvff' type = 'radio' name = 'fe_downloadformat'
+								value = 'csv' disabled /> CSV</span> &nbsp; &nbsp; 
 						</fieldset>
 					</td>
-					<td class = 'extra' id = 'checkff'></td>
+					<td class = 'extra' id = 'jx_checkff'></td>
 				</tr>
 			</tbody>
 			</table>

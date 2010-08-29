@@ -8,8 +8,8 @@
 [% INCLUDE "dtd-xhtml.html" %]
 <head>
 	[% INCLUDE "meta-http-equiv.html" %]
-	<title>[% systemname %]/[% head.parsingtest %]</title>
-	[% prototype.define_javascript_functions %]
+	<title>[% pv_systemname %]/[% tt_head.parsingtest %]</title>
+	[% pv_prototype.define_javascript_functions %]
 	<script type = 'text/javascript'>
 		[% INCLUDE bouncehammer.js %]
 	</script>
@@ -22,11 +22,12 @@
 </head>
 <body>
 	<div id = 'ThePage'>
-		<h1>[% head1title %]/[% head.parsingtest %]</h1>
+		<h1>[% pv_head1title %]/[% tt_head.parsingtest %]</h1>
 		<div id = 'North-Ward'>
 			[% INCLUDE "div-menubar.html" %]
 		</div>
 		<div id = 'West-Ward'>
+			[%- SET tt_menu.parse = 'currentpage' -%]
 			[% INCLUDE "div-index.html" %]
 		</div>
 		<div id = 'East-Ward'>
@@ -44,66 +45,67 @@
 		<div id = 'Central-Ward'>
 
 			<div id = 'ChooseFile'>
-				<form action = '[% scriptname %]/test/parse' method = 'POST' target = 'parseddata' id = 'parseform'
-					enctype = 'multipart/form-data' 
-					onSubmit = " doparse.disabled = true; doparse.value = '[% word.parsing %]';
-					setTimeout( function(){ doparse.disabled = false; }, 8000 );
+				<form action = '[% pv_scriptname %]/test/parse' method = 'POST' 
+					target = 'fe_parseddata' id = 'jx_parseform' enctype = 'multipart/form-data' 
+					onSubmit = " jx_doparse.disabled = true; jx_doparse.value = '[% tt_word.parsing %]';
+					setTimeout( function(){ jx_doparse.disabled = false; }, 8000 );
 					" >
 					<fieldset>
-						<legend>[%- word.parse -%]</legend>
+						<legend>[%- tt_word.parse -%]</legend>
 						<table>
 						<tbody>
 							<tr>
-								<td class = 'key'>[%- word.email -%]([%- word.mailbox -%])</td>
+								<td class = 'key'>[%- tt_word.email -%]([%- tt_word.mailbox -%])</td>
 								<td class = 'value'>
-									<input type = 'file' name = 'emailfile' class = 'emailfile'
-										onChange = "checkef.innerHTML = '&#9745; [% word.use %]';
-										doparse.disabled = false;" />&nbsp; 
-									[%- IF maxsize == 0 -%]
-										<strong> == [% word.unlimited %]</strong>
+									<input type = 'file' name = 'fe_emailfile' class = 'emailfile'
+										onChange = "jx_checkef.innerHTML = '&#9745; [% tt_word.use %]';
+										jx_doparse.disabled = false;" />&nbsp; 
+									[%- IF pv_maxsize == 0 -%]
+										<strong> == [% tt_word.unlimited %]</strong>
 									[%- ELSE -%]
-										<strong> &lt; [% maxsize %] [% word.bytes %]</strong>
+										<strong> &lt; [% pv_maxsize %] [% tt_word.bytes %]</strong>
 									[%- END -%]
 								</td>
-								<td class = 'extra' id = 'checkef'> </td>
+								<td class = 'extra' id = 'jx_checkef'> </td>
 							</tr>
 
 							<tr>
 								<td class = 'key'>
-									<a href = "javascript:void(0);" onClick = "toggleIt('emailtextarea');">
-										[% desc.wholemessagetext %] &gt;&gt;
+									<a href = "javascript:void(0);" onClick = "toggleIt('jx_emailtextarea');">
+										[% tt_desc.wholemessagetext %] &gt;&gt;
 									</a>
 								</td>
 								<td class = 'value' >
 									[% desc.copyandpasteemail %]
 									<span class = 'flatbutton'>
-										<a href = "javascript:void(0);" onClick = "toggleIt('emailtextarea');">
-											[%- word.show -%]
-										</a>
+										<a href = "javascript:void(0);" onClick = "toggleIt('jx_emailtextarea');">
+											&nbsp; [% tt_word.input %] &nbsp; </a>
 									</span><br />
-									<textarea name = 'emailtext' id = 'emailtextarea' onKeyUp = "doparse.disabled = false;"
-										onChange = "checket.innerHTML = '&#9745; [% word.use %]';"
-										class = 'emailtext' style = 'display: none;' rows = '24' cols = '48'></textarea>
+									<textarea name = 'fe_emailtext' id = 'jx_emailtextarea' 
+										onKeyUp = "jx_doparse.disabled = false;"
+										onChange = "jx_checket.innerHTML = '&#9745; [% tt_word.use %]';"
+										class = 'emailtext' style = 'display: none;' 
+										rows = '24' cols = '48'></textarea>
 								</td>
-								<td class = 'extra' id = 'checket'> </td>
+								<td class = 'extra' id = 'jx_checket'> </td>
 							</tr>
 
 							<tr>
-								<td class = 'key'>[% word.outputformat %]</td>
+								<td class = 'key'>[% tt_word.outputformat %]</td>
 								<td class = 'value'>
-									<span><input type = 'radio' name = 'format' value = 'html' checked /> HTML</span> &nbsp; 
-									<span><input type = 'radio' name = 'format' value = 'yaml' /> YAML</span> &nbsp; 
-									<span><input type = 'radio' name = 'format' value = 'json' /> JSON</span> &nbsp; 
-									<span><input type = 'radio' name = 'format' value = 'csv' /> CSV</span> &nbsp; 
+									<span><input type = 'radio' name = 'fe_format' value = 'html' checked /> HTML</span> &nbsp; 
+									<span><input type = 'radio' name = 'fe_format' value = 'yaml' /> YAML</span> &nbsp; 
+									<span><input type = 'radio' name = 'fe_format' value = 'json' /> JSON</span> &nbsp; 
+									<span><input type = 'radio' name = 'fe_format' value = 'csv' /> CSV</span> &nbsp; 
 								</td>
-								<td class = 'extra' id = 'checkof'> </td>
+								<td class = 'extra' id = 'jx_checkof'> </td>
 							</tr>
 
 							<tr>
-								<td class = 'key'>[% word.insertintodb %]</td>
+								<td class = 'key'>[% tt_word.insertintodb %]</td>
 								<td class = 'value'>
-									<input type = 'checkbox' name = 'register' /> [% desc.insertafterparsing %]<br />
-									<span class = 'shortdescription'>[% desc.senderdomainmustexist %]</span>
+									<input type = 'checkbox' name = 'fe_register' /> [% tt_desc.insertafterparsing %]<br />
+									<span class = 'shortdescription'>[% tt_desc.senderdomainmustexist %]</span>
 								</td>
 								<td class = 'extra'></td>
 							</tr>
@@ -111,13 +113,13 @@
 							<tr>
 								<td class = 'key' style = 'margin: 4px 0;'>
 									<br />
-									<input type = 'submit' id = 'doparse' value = '[% word.parse %]' 
+									<input type = 'submit' id = 'jx_doparse' value = '[% tt_word.parse %]' 
 										class = 'flatbutton' disabled />
 								</td>
 								<td class = 'value'></td>
 								<td class = 'extra'>
-									<input type = 'hidden' name = 'parsenmessages' value = '10' />
-									<input type = 'reset' value = '[% word.reset %]' class = 'flatbutton' />
+									<input type = 'hidden' name = 'fe_parsenmessages' value = '10' />
+									<input type = 'reset' value = '[% tt_word.reset %]' class = 'flatbutton' />
 								</td>
 							</tr>
 						</tbody>
@@ -127,7 +129,7 @@
 			</div>
 
 			<div style = 'margin: 12px 0; padding: 0;'>
-				<iframe name = 'parseddata' id = 'parseddata' frameborder = '0' width = '605'
+				<iframe name = 'fe_parseddata' id = 'jx_parseddata' frameborder = '0' width = '605'
 					height = '1' marginheight = '0' marginwidth = '0' ></iframe>
 			</div>
 		</div>

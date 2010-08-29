@@ -7,8 +7,8 @@
 [% INCLUDE "dtd-xhtml.html" %]
 <head>
 	[% INCLUDE "meta-http-equiv.html" %]
-	<title>[% systemname %]/[% head.mastertable %]/[% term.$asacolumn %]</title>
-	[% prototype.define_javascript_functions %]
+	<title>[% pv_systemname %]/[% tt_head.mastertable %]/[% tt_term.$pv_asacolumn %]</title>
+	[% pv_prototype.define_javascript_functions %]
 	<script type = 'text/javascript'>
 		[% INCLUDE bouncehammer.js %]
 	</script>
@@ -23,36 +23,54 @@
 </head>
 <body>
 	<div id = 'ThePage'>
-		<h1>[% head1title %]/[%- head.mastertable -%]/[% term.$asacolumn %]</h1>
+		<h1>[% pv_head1title %]/[%- tt_head.mastertable -%]/[% tt_term.$pv_asacolumn %]</h1>
 		<div id = 'North-Ward'>
 			[% INCLUDE "div-menubar.html" %]
 		</div>
 		<div id = 'West-Ward'>
+			[%- IF pv_tablename == 'addressers' %]
+				[%- SET tt_menu.tables.addressers = 'currentpage' -%]
+			[%- END -%]
+			[%- IF pv_tablename == 'senderdomains' %]
+				[%- SET tt_menu.tables.senderdomains = 'currentpage' -%]
+			[%- END -%]
+			[%- IF pv_tablename == 'destinations' %]
+				[%- SET tt_menu.tables.destinations = 'currentpage' -%]
+			[%- END -%]
+			[%- IF pv_tablename == 'reasons' %]
+				[%- SET tt_menu.tables.reasons = 'currentpage' -%]
+			[%- END -%]
+			[%- IF pv_tablename == 'hostgroups' %]
+				[%- SET tt_menu.tables.hostgroups = 'currentpage' -%]
+			[%- END -%]
+			[%- IF pv_tablename == 'providers' %]
+				[%- SET tt_menu.tables.providers = 'currentpage' -%]
+			[%- END -%]
 			[% INCLUDE "div-index.html" %]
 		</div>
 		<div id = 'East-Ward'>
-			[%- IF tablename == 'addressers' %]
+			[%- IF pv_tablename == 'addressers' %]
 				[% INCLUDE "help-addresser.html" %]
 			[%- END -%]
-			[%- IF tablename == 'senderdomains' %]
+			[%- IF pv_tablename == 'senderdomains' %]
 				[% INCLUDE "help-senderdomain.html" %]
 			[%- END -%]
-			[%- IF tablename == 'destinations' %]
+			[%- IF pv_tablename == 'destinations' %]
 				[% INCLUDE "help-destination-domain.html" %]
 			[%- END -%]
-			[%- IF tablename == 'reasons' %]
+			[%- IF pv_tablename == 'reasons' %]
 				[% INCLUDE "help-reason.html" %]
 			[%- END -%]
-			[%- IF tablename == 'hostgroups' %]
+			[%- IF pv_tablename == 'hostgroups' %]
 				[% INCLUDE "help-hostgroup.html" %]
 			[%- END -%]
-			[%- IF tablename == 'providers' %]
+			[%- IF pv_tablename == 'providers' %]
 				[% INCLUDE "help-provider.html" %]
 			[%- END -%]
 		</div>
 
 		<div id = 'Central-Ward'>
-			<h2>[% term.mastertable %]/[% term.$asacolumn %]([% titlename %])</h2>
+			<h2>[% tt_term.mastertable %]/[% tt_term.$pv_asacolumn %]([% pv_titlename %])</h2>
 			<div class = 'pagination'>
 				[% INCLUDE "div-pagination.html" %]
 			</div>
@@ -60,27 +78,30 @@
 				<table class = 'tableheadings'>
 					<thead class = 'mastertable'><tr>
 						<th class = 'theID'>
-							<form action = '[% "${scriptname}/tables/${tablename}/sort/id" %]' method = 'POST' id = 'sortbyid'>
-								<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
-								<a href = "javascript:void(0);" onClick = "sortbyid.submit(); return(false);"
-									title = '[% word.sort %](ID)'>
-										[%- IF sortby == 'Id' -%]*[%- END -%][% word.id %] &#9652;</a>
+							<form action = '[% "${pv_scriptname}/tables/${pv_tablename}/sort/id" %]'
+								method = 'POST' id = 'jx_sortbyid'>
+								<input type = 'hidden' name = 'fe_language' value = '[% pv_mylanguage %]' />
+								<a href = "javascript:void(0);" onClick = "jx_sortbyid.submit(); return(false);"
+									title = '[% tt_word.sort %](ID)'>
+										[%- IF pv_sortby == 'Id' -%]*[%- END -%][% tt_word.id %] &#9652;</a>
 							</form>
 						</th>
 						<th class = 'theName'>
-							<form action = '[% "${scriptname}/tables/${tablename}/sort/${fieldname}" %]' method = 'POST' id = 'sortbyname'>
-								<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
-								<a href = "javascript:void(0);" onClick = "sortbyname.submit(); return(false);"
-									title = '[% word.sort %]([% fieldname %])'>
-									[%- IF sortby == fieldname -%]*[%- END -%][% word.${fieldname} %] &#9652;</a>
+							<form action = '[% "${pv_scriptname}/tables/${pv_tablename}/sort/${pv_fieldname}" %]' 
+								method = 'POST' id = 'jx_sortbyname'>
+								<input type = 'hidden' name = 'fe_language' value = '[% pv_mylanguage %]' />
+								<a href = "javascript:void(0);" onClick = "jx_sortbyname.submit(); return(false);"
+									title = '[% tt_word.sort %]([% pv_fieldname %])'>
+									[%- IF pv_sortby == pv_fieldname -%]*[%- END -%][% tt_word.${pv_fieldname} %] &#9652;</a>
 							</form>
 						</th>
 						<th class = 'theDescription'>
-							<form action = '[% "${scriptname}/tables/${tablename}/sort/description" %]' method = 'POST' id = 'sortbydesc'>
-								<input type = 'hidden' name = 'language' value = '[% mylanguage %]' />
-								<a href = "javascript:void(0);" onClick = "sortbydesc.submit(); return(false);" 
-									title = '[% word.sort %]([% word.description %])'>
-									[%- IF sortby == 'description' -%]*[%- END -%][% word.description %]&#9652;</a>
+							<form action = '[% "${pv_scriptname}/tables/${pv_tablename}/sort/description" %]' 
+								method = 'POST' id = 'jx_sortbydesc'>
+								<input type = 'hidden' name = 'fe_language' value = '[% pv_mylanguage %]' />
+								<a href = "javascript:void(0);" onClick = "jx_sortbydesc.submit(); return(false);" 
+									title = '[% tt_word.sort %]([% tt_word.description %])'>
+									[%- IF pv_sortby == 'description' -%]*[%- END -%][% tt_word.description %]&#9652;</a>
 							</form>
 						</th>
 						<th class = 'theMethod'>&nbsp; </th>
@@ -88,21 +109,21 @@
 				</table>
 				[% INCLUDE "div-mastertable-contents.html" %]
 
-				<div id = 'here_is_old_record' class = 'mastertable'>
+				<div id = 'jx_here_is_old_record' class = 'mastertable'>
 					[% INCLUDE "div-mastertable-removed.html" %]
 				</div>
 
-				<div id = 'here_is_new_record' class = 'stored'></div>
+				<div id = 'jx_here_is_new_record' class = 'stored'></div>
 
-				[%- IF ( tablename == 'senderdomains' OR tablename == 'destinations' OR tablename == 'addressers' ) 
-					AND isreadonly == 0 -%]
+				[%- IF ( pv_tablename == 'senderdomains' OR pv_tablename == 'destinations' OR pv_tablename == 'addressers' ) 
+					AND pv_isreadonly == 0 -%]
 
 					[% INCLUDE "div-create-a-new-mastertable-record.html" %]
 					[% INCLUDE "div-delete-a-mastertable-record.html" %]
 				[%- END -%]
 				[%- INCLUDE "div-error.html" -%]
 			</div>
-			[%- IF pagination.resultsperpage > 10 AND pagination.count > 10 AND hascondition > 0 -%]
+			[%- IF pv_pagination.resultsperpage > 10 AND pv_pagination.count > 10 AND pv_hascondition > 0 -%]
 				<div class = 'pagination'>
 					[% INCLUDE "div-pagination.html" %]
 				</div>

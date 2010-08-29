@@ -1,20 +1,21 @@
-[%- SET isselected = '' -%]
+[%- SET tt_isselected = '' -%]
 [%- IF B.id -%]
-	<select name = 'reason' id = 'reasons-of-[% B.id %]'
-	[%- IF isreadonly == 0 -%]
-		onChange = "enableIt('do-update-[% B.id %]');">
+	<select name = 'fe_reason' id = 'jx_reasons-of-[% B.id %]' class = 'wide-dropdownlist'
+	[%- IF pv_isreadonly == 0 -%]
+		onChange = "enableIt('jx_do-update-[% B.id %]');">
 	[%- ELSE -%]
 		disabled = 'disabled'>
 	[%- END -%]
 [%- ELSE -%]
-	<select name = 'reason' onChange = "checkrw.innerHTML = '&#9745; [% word.use %]';">
+	<select name = 'fe_reason' class = 'wide-dropdownlist'
+		onChange = "jx_checkrw.innerHTML = '&#9745; [% tt_word.use %]';">
 [%- END -%]
-		[%- FOREACH r IN reason -%]
+		[%- FOREACH r IN tt_reason -%]
 			[%- IF r.key == B.reason -%]
-				[%- SET isselected = 'selected' -%]
+				[%- SET tt_isselected = 'selected' -%]
 			[%- ELSE -%]
-				[%- SET isselected = '' -%]
+				[%- SET tt_isselected = '' -%]
 			[%- END -%]
-			<option value = '[% r.key %]' [%- isselected -%]>[% r.value %]</option>
+			<option value = '[% r.key %]' [%- tt_isselected -%]>[% r.value %]</option>
 		[%- END -%]
 	</select>

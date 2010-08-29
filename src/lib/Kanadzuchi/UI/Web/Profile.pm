@@ -1,4 +1,4 @@
-# $Id: Profile.pm,v 1.11 2010/07/11 06:48:03 ak Exp $
+# $Id: Profile.pm,v 1.12 2010/08/28 17:22:09 ak Exp $
 # -Id: Profile.pm,v 1.2 2009/08/31 06:58:25 ak Exp -
 # -Id: Profile.pm,v 1.3 2009/08/17 06:54:30 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -34,15 +34,15 @@ sub systemprofile
 	eval { $time = qx|uptime|; };
 
 	$self->tt_params(
-		'sysconfig' => $self->{'sysconfig'},
-		'webconfig' => $self->{'webconfig'},
-		'systemname' => $Kanadzuchi::SYSNAME,
-		'sysconfpath' => $self->param('cf'),
-		'webconfpath' => $self->param('wf'),
-		'sysuptime' => $time,
-		'scriptengine' => $ENV{'MOD_PERL'} || 'CGI',
-		'serversoftware' => $ENV{'SERVER_SOFTWARE'} || 'Unknown',
-		'serverhost' => $ENV{'SERVER_NAME'}.':'.$ENV{'SERVER_PORT'},
+		'pv_sysconfig' => $self->{'sysconfig'},
+		'pv_webconfig' => $self->{'webconfig'},
+		'pv_systemname' => $Kanadzuchi::SYSNAME,
+		'pv_sysconfpath' => $self->param('cf'),
+		'pv_webconfpath' => $self->param('wf'),
+		'pv_sysuptime' => $time,
+		'pv_scriptengine' => $ENV{'MOD_PERL'} || 'CGI',
+		'pv_serversoftware' => $ENV{'SERVER_SOFTWARE'} || 'Unknown',
+		'pv_serverhost' => $ENV{'SERVER_NAME'}.':'.$ENV{'SERVER_PORT'},
 	);
 	return $self->tt_process($file);
 }

@@ -1,8 +1,9 @@
-[%# $Id: heads.tt,v 1.4 2010/07/12 08:08:28 ak Exp $ -%]
+[%# $Id: heads.tt,v 1.6 2010/08/28 17:19:14 ak Exp $ -%]
 [%# Headlines in Japanese -%]
-[%- SET head = { 
+[%- SET tt_head = { 
 		'aboutus'	=> 'BounceHammerについて',
 		'aggregatedby'	=> '項目別データ集約',
+		'dailyupdates'	=> '日々の更新記録',
 		'dashboard'	=> 'ダッシュボード',
 		'datasummary'	=> '登録済みデータの概要',
 		'definedproviders' => '定義済みプロバイダ名',

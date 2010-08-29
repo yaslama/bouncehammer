@@ -1,4 +1,4 @@
-# $Id: Delete.pm,v 1.4 2010/07/11 06:48:03 ak Exp $
+# $Id: Delete.pm,v 1.5 2010/08/28 17:22:09 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::Web::
                                        
@@ -42,10 +42,11 @@ sub deletetherecord
 	my $file = 'div-result.html';
 	my $iter = undef();	# (K::Iterator) Iterator object
 	my $cond = {};		# (Ref->Hash) WHERE Condition
+	my $cgiq = $self->query();
 
 	$cond = {
-		'id' => $self->param('pi_id') || $self->query->param('id') || 0,
-		'token' => $self->param('token') || $self->query->param('token') || q(),
+		'id' => $self->param('pi_id') || $cgiq->param('fe_id') || 0,
+		'token' => $self->param('token') || $cgiq->param('fe_token') || q(),
 	};
 
 	return $self->e( 'invalidrecordid','ID: #'.$cond->{'id'} ) unless($cond->{'id'});
@@ -67,7 +68,7 @@ sub deletetherecord
 			$data->{'removed'}  = $this->updated->ymd().'('.$this->updated->wdayname().') '.$this->updated->hms();
 			$data->{'bounced'}  = $this->bounced->ymd().'('.$this->bounced->wdayname().') '.$this->bounced->hms();
 			$data->{'bounced'} .= ' '.$this->timezoneoffset() if( $this->timezoneoffset() );
-			$self->tt_params( 'bouncemessages' => [ $data ], 'isremoved' => 1 );
+			$self->tt_params( 'pv_bouncemessages' => [ $data ], 'pv_isremoved' => 1 );
 			$self->tt_process( $file );
 		}
 		else

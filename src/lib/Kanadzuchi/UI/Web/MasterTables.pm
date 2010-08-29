@@ -1,4 +1,4 @@
-# $Id: MasterTables.pm,v 1.18 2010/07/11 06:48:03 ak Exp $
+# $Id: MasterTables.pm,v 1.19 2010/08/28 17:22:09 ak Exp $
 # -Id: MasterTables.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: MasterTables.pm,v 1.7 2009/08/15 15:06:56 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -46,7 +46,7 @@ sub tablelist
 	my $tableconf = $self->{'webconfig'}->{'database'}->{'table'};
 	my $tablename = lc $self->param('pi_tablename');
 	my $asacolumn = $tablename; $asacolumn =~ s{s\z}{};
-	my $tableisro = $tableconf->{$tablename}->{'readonly'} || 0;
+	my $tableisro = $tableconf->{ $tablename }->{'readonly'} || 0;
 	my $wherecond = {};
 	my $mastertab = new Kanadzuchi::BdDR::BounceLogs::Masters::Table( 
 				'alias' => $tablename, 'handle' => $bddr->handle() );
@@ -61,16 +61,16 @@ sub tablelist
 	map { utf8::encode($_->{'description'}) if( utf8::is_utf8($_->{'description'}) ) } @$list;
 
 	$self->tt_params( 
-		'sortby' => $paginated->colnameorderby(),
-		'titlename' => ucfirst $tablename,
-		'tablename' => $tablename,
-		'asacolumn' => $asacolumn,
-		'fieldname' => $mastertab->field(),
-		'isreadonly' => $tableisro,
-		'pagination' => $paginated,
-		'contentsname' => 'table',
-		'hascondition' => 0,
-		'tablecontents' => $list );
+		'pv_sortby' => $paginated->colnameorderby(),
+		'pv_titlename' => ucfirst $tablename,
+		'pv_tablename' => $tablename,
+		'pv_asacolumn' => $asacolumn,
+		'pv_fieldname' => $mastertab->field(),
+		'pv_isreadonly' => $tableisro,
+		'pv_pagination' => $paginated,
+		'pv_contentsname' => 'table',
+		'pv_hascondition' => 0,
+		'pv_tablecontents' => $list );
 	return $self->tt_process($templatef);
 }
 
@@ -103,7 +103,7 @@ sub tablecontrol
 		my $newmtdata = {};			# (Ref->Hash) New data for mastertable
 		my $wherecond = {};			# (Ref->Hash) WHERE Condition
 		my $currentid = 0;			# (Integer) Current ID of the record
-		my $tabaction = $cgidquery->param('action') || $ENV{'PATH_INFO'};
+		my $tabaction = $cgidquery->param('fe_action') || $ENV{'PATH_INFO'};
 
 		$tabaction =~ s{\A.+/([a-zA-Z]+)\z}{$1};
 
@@ -116,16 +116,17 @@ sub tablecontrol
 			# |___|_| \_|____/|_____|_| \_\|_|   |___|_| \_| |_| \___/ 
 			#                                                          
 			require Kanadzuchi::RFC2822;
-			$newmtdata->{'name'} = lc $cgidquery->param('newname');
-			$newmtdata->{'description'} = $cgidquery->param('newdesc');
+			$newmtdata->{'name'} = lc $cgidquery->param('fe_newname');
+			$newmtdata->{'description'} = $cgidquery->param('fe_newdesc');
 			$newmtdata->{'disabled'} = 0;
 
 			# The table is read only table, Set error template
 			return $self->e( 'readonlytable' ) if( $tableisro );
 
 			# The table is writable
-			if( Kanadzuchi::RFC2822->is_domainpart($newmtdata->{'name'}) && $newmtdata->{'name'} =~ m{[.]} )
-			{
+			if( Kanadzuchi::RFC2822->is_domainpart($newmtdata->{'name'}) 
+				&& $newmtdata->{'name'} =~ m{[.]} ){
+
 				$currentid = $mastertab->getidbyname( $newmtdata->{'name'} );
 				return $self->e( 'alreadyexists', 'name: '.$newmtdata->{'name'} ) if( $currentid );
 
@@ -154,12 +155,12 @@ sub tablecontrol
 			}
 
 			$self->tt_params(
-				'titlename' => ucfirst $tablename,
-				'tablename' => $tablename,
-				'fieldname' => $mastertab->field(),
-				'isreadonly' => $tableisro,
-				'contentsname' => 'table',
-				'tablecontents' => $tabrecord );
+				'pv_titlename' => ucfirst $tablename,
+				'pv_tablename' => $tablename,
+				'pv_fieldname' => $mastertab->field(),
+				'pv_isreadonly' => $tableisro,
+				'pv_contentsname' => 'table',
+				'pv_tablecontents' => $tabrecord );
 		}
 		elsif( $tabaction eq 'update' )
 		{
@@ -170,7 +171,7 @@ sub tablecontrol
 			#  \___/|_|   |____/_/   \_\_| |_____|
 			#                                     
 			# The table is read only table, Set error template
-			$wherecond->{'id'} = $cgidquery->param('id');
+			$wherecond->{'id'} = $cgidquery->param('fe_id');
 			$curmtdata = $mastertab->getentbyid($wherecond->{'id'});
 
 			if( $tableisro )
@@ -188,7 +189,7 @@ sub tablecontrol
 				if( exists($curmtdata->{'id'}) && $curmtdata->{'id'} )
 				{
 					$newmtdata->{'name'} = $curmtdata->{'name'};
-					$newmtdata->{'description'} = $cgidquery->param('desc');
+					$newmtdata->{'description'} = $cgidquery->param('fe_desc');
 					$newmtdata->{'disabled'} = $curmtdata->{'disabled'};
 
 					if( $mastertab->update( $newmtdata, $wherecond ) )
@@ -217,19 +218,19 @@ sub tablecontrol
 					$templatef = $templatee;
 					$tabrecord = [ { 
 						'head' => 'dataformaterror',
-						'id' => $cgidquery->param('id'),
-						'name' => $cgidquery->param('name'),
-						'description' => $cgidquery->param('desc'), } ];
+						'id' => $cgidquery->param('fe_id'),
+						'name' => $cgidquery->param('fe_name'),
+						'description' => $cgidquery->param('fe_desc'), } ];
 				}
 			}
 
 			$self->tt_params(
-				'titlename' => ucfirst $tablename,
-				'tablename' => $tablename,
-				'fieldname' => $mastertab->field(),
-				'isreadonly' => $tableisro,
-				'contentsname' => 'table',
-				'tablecontents' => $tabrecord );
+				'pv_titlename' => ucfirst $tablename,
+				'pv_tablename' => $tablename,
+				'pv_fieldname' => $mastertab->field(),
+				'pv_isreadonly' => $tableisro,
+				'pv_contentsname' => 'table',
+				'pv_tablecontents' => $tabrecord );
 		}
 		elsif( $tabaction eq 'delete' )
 		{
@@ -240,23 +241,23 @@ sub tablecontrol
 			# |____/|_____|_____|_____| |_| |_____| |_|   |_| \_\\___/|_|  |_|
 			#                                                                 
 			require Kanadzuchi::BdDR::Page;
-			my $theidwillberm = $cgidquery->param('record_will_be_delete');
+			my $theidwillberm = $cgidquery->param('fe_record_will_be_delete');
 			my $errormessages = q();
 			my $willberemoved = {};
 			my $removedrecord = [];
 
 			$templatef = 'mastertable.html';
 			$paginated = Kanadzuchi::BdDR::Page->new(
-					'colnameorderby' => $cgidquery->param('colnameorderby') || 'id',
-					'resultsperpage' => $cgidquery->param('resultsperpage') || 10 );
+					'colnameorderby' => $cgidquery->param('fe_colnameorderby') || 'id',
+					'resultsperpage' => $cgidquery->param('fe_resultsperpage') || 10 );
 			$paginated->set( $mastertab->count( $wherecond ) );
-			$paginated->skip( $cgidquery->param('currentpagenum') || 1 );
+			$paginated->skip( $cgidquery->param('fe_currentpagenum') || 1 );
 
 			if( $theidwillberm )
 			{
 				$wherecond->{'id'} = $theidwillberm;
 
-				if( defined($cgidquery->param('do_delete')) )
+				if( defined($cgidquery->param('fe_do_delete')) )
 				{
 					$willberemoved = $mastertab->getentbyid($theidwillberm);
 
@@ -300,30 +301,31 @@ sub tablecontrol
 			} @$tabrecord, @$removedrecord;
 
 			$self->tt_params( 
-				'titlename' => ucfirst $tablename,
-				'tablename' => $tablename,
-				'fieldname' => $mastertab->field(),
-				'isreadonly' => $tableisro,
-				'pagination' => $paginated,
-				'contentsname' => 'table',
-				'hascondition' => 0,
-				'errormessage' => $errormessages,
-				'tablecontents' => $tabrecord,
-				'removedrecord' => $removedrecord );
+				'pv_titlename' => ucfirst $tablename,
+				'pv_tablename' => $tablename,
+				'pv_fieldname' => $mastertab->field(),
+				'pv_isreadonly' => $tableisro,
+				'pv_pagination' => $paginated,
+				'pv_contentsname' => 'table',
+				'pv_hascondition' => 0,
+				'pv_errormessage' => $errormessages,
+				'pv_tablecontents' => $tabrecord,
+				'pv_removedrecord' => $removedrecord );
 		}
 		else
 		{
 			# Unknown or empty action
 			$templatef = $templatee;
 			$self->tt_params(
-				'titlename' => ucfirst $tablename,
-				'tablename' => $tablename,
-				'fieldname' => $mastertab->field(),
-				'isreadonly' => $tableisro,
-				'contentsname' => 'table',
-				'tablecontents' => [ {
+				'pv_titlename' => ucfirst $tablename,
+				'pv_tablename' => $tablename,
+				'pv_fieldname' => $mastertab->field(),
+				'pv_isreadonly' => $tableisro,
+				'pv_contentsname' => 'table',
+				'pv_tablecontents' => [ {
 					'name' => $tablename,
-					'description' => 'Unknown or empty action.', } ],
+					'description' => 'Unknown or empty action.', }
+				],
 			);
 
 		} # End of if($action)
@@ -333,14 +335,15 @@ sub tablecontrol
 		# Invalid table name
 		$templatef = $templatee;
 		$self->tt_params(
-			'titlename' => ucfirst $tablename,
-			'tablename' => $tablename,
-			'fieldname' => 'unknown',
-			'isreadonly' => $tableisro,
-			'contentsname' => 'table',
-			'tablecontents' => [ {
+			'pv_titlename' => ucfirst $tablename,
+			'pv_tablename' => $tablename,
+			'pv_fieldname' => 'unknown',
+			'pv_isreadonly' => $tableisro,
+			'pv_contentsname' => 'table',
+			'pv_tablecontents' => [ {
 				'name' => $tablename,
-				'description' => 'Unknown table name.', } ],
+				'description' => 'Unknown table name.', }
+			],
 		);
 
 	} # End of if($table)

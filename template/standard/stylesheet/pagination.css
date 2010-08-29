@@ -1,4 +1,4 @@
-/* $Id: pagination.css,v 1.5 2010/06/25 19:19:06 ak Exp $ */
+/* $Id: pagination.css,v 1.6 2010/08/28 17:16:40 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Pagination Classes */
 div.pagination {
@@ -9,7 +9,7 @@ div.pageindex {
 	padding: 2px 0;
 	background: #383c3c; /* Youkan-iro */
 	color: #e5e4e6; /* Shiraumenezu */
-	font-size: 11px;
+	font-size: 10px;
 	font-weight: bold;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
@@ -44,8 +44,9 @@ div.pagination .pagesummary {
 
 div.pageindex .lhs {
 	margin: 0;
-	padding: 2px;
-	width: 32px;
+	padding: 2px 0 2px 1px;
+	width: 44px;
+	font-size: 12px;
 	float: left;
 	text-align: left;
 	vertical-align: middle;
@@ -53,8 +54,9 @@ div.pageindex .lhs {
 
 div.pageindex .rhs {
 	margin: 0;
-	padding: 2px;
-	width: 32px;
+	padding: 2px 1px 2px 0;
+	width: 44px;
+	font-size: 12px;
 	float: right;
 	text-align: right;
 	vertical-align: middle;
@@ -91,4 +93,8 @@ div.pageindex .thispage {
 			color-stop( 50%, rgba(248, 248, 248, 1.0)),
 			color-stop( 90%, rgba(240, 240, 240, 1.0))
 		);
+}
+
+div.pageindex a:hover, div.pageindex a:visited:hover {
+	color: #89c3eb; /* Wasurenagusa-iro */
 }

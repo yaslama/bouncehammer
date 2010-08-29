@@ -1,6 +1,6 @@
-[%# $Id: time.tt,v 1.1 2010/06/28 13:15:43 ak Exp $ -%]
+[%# $Id: time.tt,v 1.2 2010/08/28 17:19:14 ak Exp $ -%]
 [%# Times in Japanese -%]
-[%- SET howrecent = { 
+[%- SET tt_howrecent = { 
 		'0'	=> '指定無し',
 		'12h'	=> '12時間以内',
 		'1d'	=> '24時間以内',
@@ -10,5 +10,18 @@
 		'0.5y'	=> '半年以内',
 		'1y'	=> '1年以内',
 		'1o'	=> '4年以内',
+	}
+-%]
+[%- SET tt_unitoftime = { 
+		'd'	=> '日',
+		'w'	=> '週',
+		'm'	=> '月',
+		'y'	=> '年',
+	}
+-%]
+[%- SET tt_datename = { 
+		'latest'	=> '最新',
+		'today'		=> '今日',
+		'yesterday'	=> '昨日',
 	}
 -%]

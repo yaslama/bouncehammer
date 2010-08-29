@@ -1,8 +1,8 @@
-/* $Id: dashboard.css,v 1.1 2010/07/11 06:48:32 ak Exp $ */
+/* $Id: dashboard.css,v 1.2 2010/08/28 17:16:40 ak Exp $ */
 /* Copyright 2010 Cubicroot Co. Ltd. */
 /* Short summary classes */
 div.shortsummary {
-	margin: 6px 1px 16px 4px;
+	margin: 2px 1px 8px 4px;
 	padding: 0px;
 	border-width: 0px;
 	border-color: #c1e4e9; /* Shiraai */
@@ -43,6 +43,7 @@ div.shortsummary tr.options td {
 
 div.tablename {
 	padding: 2px;
+	height: 16px;
 	font-size: 12px;
 	text-align: center;
 	font-weight: bold;
@@ -65,7 +66,8 @@ div.tablename {
 
 div.recordsize {
 	padding: 2px;
-	font-size: 40px;
+	height: 28px;
+	font-size: 24px;
 	font-weight: bold;
 	font-family: 'Gill Sans Lite', 'Century Gothic', Verdana, 'Trebuchet MS';
 	color: #727171; /* Nibi-iro */
@@ -83,4 +85,10 @@ div.unit {
 	text-align: right;
 }
 
+.not-measured { color: #d4dcd6; /* Sobakiri-iro */ }
+.mon, .tue, .wed, .thu, .fri {
+	color: #595857;	/* Sumi */
+}
+.sat { color: #0095d9;	/* Ao */ }
+.sun { color: #e83929;	/* Benihi */ }
 

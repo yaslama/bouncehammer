@@ -1,8 +1,8 @@
 [%- PROCESS "error.tt" -%]
-[%- IF errorhead -%]
-<h3 class = 'errorhead'>[%- error.error -%]</h3>
+[%- IF pv_errorhead -%]
+<h3 class = 'errorhead'>[%- tt_error.error -%]</h3>
 <div class = 'errormessage'>
-	<p>[%- error.${errorhead} -%]</p>
-	<p>[%- errorbody -%]</p>
+	<p>[%- tt_error.${pv_errorhead} -%]</p>
+	<p>[%- pv_errorbody -%]</p>
 </div>
 [%- END -%]

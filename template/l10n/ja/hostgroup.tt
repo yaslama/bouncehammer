@@ -1,6 +1,6 @@
-[%# $Id: hostgroup.tt,v 1.1 2010/06/28 13:15:43 ak Exp $ -%]
+[%# $Id: hostgroup.tt,v 1.2 2010/08/28 17:19:14 ak Exp $ -%]
 [%# Host Group definiations in English -%]
-[%- SET hostgroup = { 
+[%- SET tt_hostgroup = { 
 		'_'		=> '- 宛先分類を選択 -',
 		'undefined'	=> '未定義',
 		'reserved'	=> '予約済み',

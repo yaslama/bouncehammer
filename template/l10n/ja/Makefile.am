@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.5 2010/07/11 06:48:25 ak Exp $
+# $Id: Makefile.am,v 1.6 2010/08/28 17:19:14 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/template/l10n/ja,
 # is processed by automake to create Makefile.in.
@@ -10,6 +10,11 @@ pkgdata_DATA = \
 	heads.tt \
 	help-addresser.html \
 	help-available-countries.html \
+	help-dailyupdates-day.html \
+	help-dailyupdates-week.html \
+	help-dailyupdates-registered.html \
+	help-dailyupdates-skipped.html \
+	help-dailyupdates-modified.html \
 	help-bounced-at.html \
 	help-destination-domain.html \
 	help-diagnostic-code.html \

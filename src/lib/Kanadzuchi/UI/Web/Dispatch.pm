@@ -1,4 +1,4 @@
-# $Id: Dispatch.pm,v 1.10 2010/07/12 08:08:18 ak Exp $
+# $Id: Dispatch.pm,v 1.12 2010/08/28 17:22:09 ak Exp $
 # -Id: Index.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Index.pm,v 1.3 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -41,30 +41,33 @@ my $WebUITableList = { 'app' => 'Web::MasterTables', 'rm' => 'TableList' };
 my $DispatchTables = [
 	'about' => {
 		'app' => 'Web::About',
-		'rm' => 'About' },
+		'rm'  => 'About' },
 	'aggregate/:pi_tablename' => {
-			'app' => 'Web::Aggregate',
-			'rm'  => 'Aggregate' },
+		'app' => 'Web::Aggregate',
+		'rm'  => 'Aggregate' },
+	'dailyupdates/:pi_totalsby?/:pi_page?/:pi_rpp?/:pi_uioption?' => {
+		'app' => 'Web::DailyUpdates',
+		'rm'  => 'DailyUpdates' },
 	'dashboard' => $WebUIDashboard,
 	'delete/:pi_id'	=> { 
-			'app' => 'Web::Delete',
-			'rm' => 'Delete' },
-	'download/:pi_format?/:pi_condition?/:pi_orderby?' => $WebUISearching,
+		'app' => 'Web::Delete',
+		'rm'  => 'Delete' },
+	'download/:pi_format?/:pi_orderby?/:pi_condition?' => $WebUISearching,
 	'index' => $WebUIDashboard,
 	'listof/:pi_list' => {
 		'app' => 'Web::ListOf',
-		'rm' => 'ListOf' },
+		'rm'  => 'ListOf' },
 	'profile' => { 
 		'app' => 'Web::Profile',
-		'rm' => 'Profile' },
+		'rm'  => 'Profile' },
 	'search' => { 
 		'app' => 'Web::Search',
-		'rm' => 'StartSearch' },
+		'rm'  => 'StartSearch' },
+	'search/:pi_orderby?/:pi_page?/:pi_rpp?/:pi_condition?' => $WebUISearching,
 	'search/recipient/:pi_recipient?/:pi_orderby?/:pi_page?/:pi_rpp?' => $WebUISearching,
-	'search/condition/:pi_condition?/:pi_orderby?/:pi_page?/:pi_rpp?' => $WebUISearching,
 	'summary' => {
 		'app' => 'Web::Summary',
-		'rm' => 'Summary' },
+		'rm'  => 'Summary' },
 	'tables/:pi_tablename/sort/:pi_orderby/:pi_page?/:pi_rpp?' => $WebUITableList,
 	'tables/:pi_tablename/list/:pi_page?/:pi_rpp?' => $WebUITableList,
 	'tables/:pi_tablename/create' => $WebUITableCtrl,
@@ -72,16 +75,20 @@ my $DispatchTables = [
 	'tables/:pi_tablename/delete' => $WebUITableCtrl,
 	'test' => {
 		'app' => 'Web::Test',
-		'rm' => 'Test' },
+		'rm'  => 'Test' },
 	'test/parse' => { 
 		'app' => 'Web::Test',
-		'rm' => 'Parse' },
+		'rm'  => 'Parse' },
 	'token' => {
 		'app' => 'Web::Token',
-		'rm' => 'Token' },
+		'rm'  => 'Token' },
 	'update/:pi_id' => {
 		'app' => 'Web::Update',
-		'rm' => 'Update' },
+		'rm'  => 'Update' },
+	# download/:pi_format?/:pi_condition?/... is backward compatible; 2.5.0 or former.
+	'download/:pi_format?/:pi_condition?/:pi_orderby?' => $WebUISearching,
+	# seaarch/condition/... is backward compatible; 2.5.0 or former.
+	'search/condition/:pi_condition?/:pi_orderby?/:pi_page?/:pi_rpp?' => $WebUISearching,
 ];
 
 my $DispatchArgsToNew = {

@@ -1,4 +1,4 @@
-# $Id: Token.pm,v 1.5 2010/07/11 06:48:03 ak Exp $
+# $Id: Token.pm,v 1.6 2010/08/28 17:22:09 ak Exp $
 # -Id: Digest.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Digest.pm,v 1.4 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -38,23 +38,27 @@ sub maketoken
 	# @Return
 	my $self = shift();
 	my $file = 'messagetoken.html';
-	my $q = $self->query();
+	my $cgiq = $self->query();
 
-	if( defined($q->param('makenewtoken')) && $q->param('makenewtoken') == 1 )
+	if( defined $cgiq->param('fe_makenewtoken') && $cgiq->param('fe_makenewtoken') == 1 )
 	{
 		$file = 'div-new-message-token.html';
-		my $_sender = defined($q->param('addresser')) ? lc($q->param('addresser')) : q();
-		my $_recipt = defined($q->param('recipient')) ? lc($q->param('recipient')) : q();
-		my $_string = q();
-		return $self->e('missingargument') unless( $_sender && $_recipt );
+		my $sender = defined $cgiq->param('fe_addresser')
+				? lc $cgiq->param('fe_addresser') 
+				: q();
+		my $recipt = defined $cgiq->param('fe_recipient')
+				? lc $cgiq->param('fe_recipient')
+				: q();
+		my $string = q();
+		return $self->e('missingargument') unless( $sender && $recipt );
 
-		$_string = Kanadzuchi::String->token( $_sender, $_recipt );
-		return $self->e('failedtocreate') unless( $_string );
+		$string = Kanadzuchi::String->token( $sender, $recipt );
+		return $self->e('failedtocreate') unless $string;
 
 		$self->tt_params( 
-			'addresser' => $_sender,
-			'recipient' => $_recipt,
-			'token' => $_string );
+			'pv_addresser' => $sender,
+			'pv_recipient' => $recipt,
+			'pv_token' => $string );
 	}
 
 	return $self->tt_process($file);

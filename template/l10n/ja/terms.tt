@@ -1,20 +1,20 @@
-[%# $Id: terms.tt,v 1.3 2010/07/12 08:08:28 ak Exp $ -%]
+[%# $Id: terms.tt,v 1.4 2010/08/28 17:19:14 ak Exp $ -%]
 [%# Terms in English -%]
-[%- SET term = { 
+[%- SET tt_term = { 
+		'addresser'	=> '発信者アドレス',
+		'bounced'	=> '差戻日時',
 		'bouncelogs'	=> 'BounceLogs',
 		'cubicroot'	=> '株式会社キュービックルート',
-		'mastertable'	=> 'マスターテーブル',
-		'addresser'	=> '発信者アドレス',
-		'recipient'	=> '受信者アドレス',
-		'senderdomain'	=> '発信者ドメイン',
 		'destination'	=> '宛先ドメイン',
-		'hostgroup'	=> '宛先分類',
-		'provider'	=> '宛先所属',
-		'reason'	=> '差戻理由',
 		'freq'		=> '回数',
 		'frequency'	=> '差戻回数',
+		'hostgroup'	=> '宛先分類',
+		'mastertable'	=> 'マスターテーブル',
+		'provider'	=> '宛先所属',
+		'recipient'	=> '受信者アドレス',
+		'reason'	=> '差戻理由',
+		'senderdomain'	=> '発信者ドメイン',
 		'token'		=> 'トークン',
-		'bounced'	=> '差戻日時',
 		'updated'	=> '更新日時',
 	}
 -%]
