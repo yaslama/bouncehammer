@@ -1,4 +1,4 @@
-# $Id: Metadata.pm,v 1.14 2010/07/07 11:21:37 ak Exp $
+# $Id: Metadata.pm,v 1.15 2010/08/28 17:23:53 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                         
@@ -156,41 +156,45 @@ sub mergesort
 	# +-+-+-+-+-+-+-+-+-+
 	#
 	# @Description	Merge sort
-	# @Param	(Ref->Array) Unsorted list
+	# @Param <ref>	(Ref->Array) Unsorted list
+	# @Param <str>	(String) Hash key name
 	# @Return	(Ref->Array) Sorted list
 	my $class = shift();
-	my $array = shift() || return [];
+	my $slist = shift() || return [];
+	my $kname = shift() || return [];
 	my( $lhsln, $rhsln, $wshed );
 	my $lhsar = [];
 	my $rhsar = [];
 
-	return $array if( scalar(@$array) < 2 );
-	$wshed = int( scalar(@$array)/2 );
+	return $slist if( scalar(@$slist) < 2 );
+	$wshed = int( scalar(@$slist) / 2 );
 
-	@$lhsar = map { $array->[$_] } ( 0 .. $wshed - 1 );
-	@$rhsar = map { $array->[$_] } ( $wshed .. scalar(@$array) - 1 );
+	$lhsar = [ map { $slist->[$_] } ( 0 .. $wshed - 1 ) ];
+	$rhsar = [ map { $slist->[$_] } ( $wshed .. scalar(@$slist) - 1 ) ];
 	$lhsln = scalar(@$lhsar);
 	$rhsln = scalar(@$rhsar);
 
-	$lhsar = $class->mergesort($lhsar);
-	$rhsar = $class->mergesort($rhsar);
+	$lhsar = $class->mergesort( $lhsar, $kname );
+	$rhsar = $class->mergesort( $rhsar, $kname );
 
-	my $newar = [];
+	my $dlist = [];
 	my $x = 0;
 	my $y = 0;
 
 	while( $x < $lhsln || $y < $rhsln )
 	{
-		if( $y >= $rhsln || ( $x < $lhsln && $lhsar->[$x]->{'bounced'} < $rhsar->[$y]->{'bounced'} ) )
-		{
-			push( @$newar, $lhsar->[$x++] );
+		if( $y >= $rhsln || 
+			( $x < $lhsln && $lhsar->[$x]->{ $kname } < $rhsar->[$y]->{ $kname } ) ){
+
+			push( @$dlist, $lhsar->[$x++] );
 		}
 		else
 		{
-			push( @$newar, $rhsar->[$y++] );
+			push( @$dlist, $rhsar->[$y++] );
 		}
 	}
-	return $newar;
+
+	return $dlist;
 }
 
 1;
