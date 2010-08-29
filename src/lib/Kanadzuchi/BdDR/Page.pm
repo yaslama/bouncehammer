@@ -1,4 +1,4 @@
-# $Id: Page.pm,v 1.5 2010/07/07 11:21:42 ak Exp $
+# $Id: Page.pm,v 1.6 2010/08/28 17:27:01 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::BdDR::
 
@@ -131,7 +131,11 @@ sub skip
 
 	return $self unless( $page =~ m{\A\d+\z} );
 
-	$ppos = $page < 0 ? 1 : $page > $self->{'lastpagenumber'} ? $self->{'lastpagenumber'} : $page;
+	$ppos = $page < 0 
+			? 1
+			: $page > $self->{'lastpagenumber'}
+				? $self->{'lastpagenumber'}
+				: $page;
 	$self->{'offsetposition'} = ( $ppos - 1 ) * $self->{'resultsperpage'};
 	$self->{'currentpagenum'} = $ppos;
 
