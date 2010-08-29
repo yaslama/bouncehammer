@@ -1,4 +1,4 @@
-# $Id: Time.pm,v 1.6 2010/07/07 11:21:38 ak Exp $
+# $Id: Time.pm,v 1.7 2010/08/16 12:02:22 ak Exp $
 # -Id: Time.pm,v 1.1 2009/08/29 09:13:56 ak Exp -
 # -Id: Time.pm,v 1.5 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -13,6 +13,7 @@
 package Kanadzuchi::Time;
 use strict;
 use warnings;
+use Time::Piece;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||o |||n |||s |||t |||a |||n |||t ||
@@ -219,6 +220,33 @@ sub hourname
 	my $keyis = $fname ? 'Full' : 'Abbr';
 	return @{ $HourName->{$keyis} } if wantarray();
 	return $HourName->{ $keyis };
+}
+
+sub o2d
+{
+	# +-+-+-+
+	# |o|2|d|
+	# +-+-+-+
+	#
+	# @Description	Convert from date offset to date string
+	# @Param <int>	(Integer) Offset
+	# @Param <del>	(Character) Delimiter
+	# @Return	(String) String
+	#
+	my $class = shift();
+	my $dateo = shift() || 0;
+	my $delim = shift();
+	my $timep = new Time::Piece;
+	my $epoch = 0;
+
+	$delim = '-' unless defined $delim;
+	return $timep->ymd($delim) unless( $dateo =~ m{\A[-]?\d+\z} );
+
+	# See http://en.wikipedia.org/wiki/Year_2038_problem
+	$epoch = $timep->epoch() - $dateo * 86400;
+	$epoch = 0 if( $epoch < 0 );
+	$epoch = 2 ** 31 - 1 if( $epoch >= 2 ** 31 );
+	return Time::Piece->new($epoch)->ymd($delim);
 }
 
 1;
