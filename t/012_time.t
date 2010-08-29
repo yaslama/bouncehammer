@@ -1,4 +1,4 @@
-# $Id: 012_time.t,v 1.4 2010/08/16 12:02:31 ak Exp $
+# $Id: 012_time.t,v 1.5 2010/08/29 21:03:42 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,7 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Time;
 use Time::Piece;
-use Test::More ( tests => 209 );
+use Test::More ( tests => 207 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -153,9 +153,6 @@ METHODS: {
 			like( $date, qr{\A\d{4}[-]\d{2}[-]\d{2}\z}, 'offset = '.$o.', date = '.$date );
 			is( $time->epoch, $base->epoch )
 		}
-
-		is( $class->o2d(2**16), '1970-01-01', 'offset = '.2**16 );
-		is( $class->o2d(2**16*-1), '2038-01-19', 'offset = '.2**16*-1 );
 	}
 }
 
