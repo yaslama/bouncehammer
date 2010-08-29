@@ -1,4 +1,4 @@
-# $Id: 024_statistics-stored-bddr.t,v 1.3 2010/07/02 09:00:28 ak Exp $
+# $Id: 024_statistics-stored-bddr.t,v 1.4 2010/08/16 12:06:40 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,7 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Statistics::Stored::BdDR;
 use List::Util;
-use Test::More ( tests => 603 );
+use Test::More ( tests => 1139 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -43,7 +43,7 @@ PREPROCESS: {
 # 5 tests
 
 SKIP: {
-	my $howmanyskips = 598;
+	my $howmanyskips = 1134;
 	eval { require DBI; }; skip( 'Because no DBI for testing', $howmanyskips ) if( $@ );
 	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $howmanyskips ) if( $@ );
 
@@ -111,6 +111,7 @@ SKIP: {
 	AGGREAGATE: {
 		my $Stat = new Kanadzuchi::Statistics::Stored::BdDR( 'handle' => $BdDR->handle() );
 		my $Aggr = [];
+		my $Cond = {};
 
 		isa_ok( $Stat, $T->class() );
 		isa_ok( $Stat->handle(), q|DBI::db| );
@@ -127,6 +128,17 @@ SKIP: {
 				ok( ( $e->{'size'} > -1 ), '->congregat('.$c.')->size = '.$e->{'size'} );
 				ok( ( $e->{'freq'} > -1 ), '->congregat('.$c.')->freq = '.$e->{'freq'} );
 			}
+
+			$Cond = { 'bounced' => [ { '>' => 0 }, { '<' => 2 ** 31 - 1 } ] };
+			$Aggr = $Stat->congregat($c,$Cond);
+			isa_ok( $Aggr, q|ARRAY|, '->congregat '.$c.' + WHERE Cond.' );
+			foreach my $e ( @$Aggr )
+			{
+				like( $e->{'name'}, qr{\A[a-z]}, '+(WHERE Cond.)->congregat('.$c.')->name = '.$e->{'name'} );
+				ok( ( $e->{'size'} > -1 ), '+(WHERE Cond.)->congregat('.$c.')->size = '.$e->{'size'} );
+				ok( ( $e->{'freq'} > -1 ), '+(WHERE Cond.)->congregat('.$c.')->freq = '.$e->{'freq'} );
+			}
+
 		}
 
 		foreach my $c ( @{ $Btab->fields->{'join'} }, 'hostgroup', 'reason' )
@@ -140,6 +152,17 @@ SKIP: {
 				like( $e->{'name'}, qr{\A[a-z]}, '->aggregate('.$c.')->name = '.$e->{'name'} );
 				ok( ( $e->{'size'} > -1 ), '->aggregate('.$c.')->size = '.$e->{'size'} );
 				ok( ( $e->{'freq'} > -1 ), '->aggregate('.$c.')->freq = '.$e->{'freq'} );
+			}
+
+			$Cond = { 'bounced' => [ { '>' => 0 }, { '<' => 2 ** 31 - 1 } ] };
+			$Aggr = $Stat->aggregate($c,$Cond);
+
+			isa_ok( $Aggr, q|ARRAY|, 'aggregate '.$c.' + WHERE Cond.' );
+			foreach my $e ( @$Aggr )
+			{
+				like( $e->{'name'}, qr{\A[a-z]}, '+(WHERE Cond.)->aggregate('.$c.')->name = '.$e->{'name'} );
+				ok( ( $e->{'size'} > -1 ), '+(WHERE Cond.)->aggregate('.$c.')->size = '.$e->{'size'} );
+				ok( ( $e->{'freq'} > -1 ), '+(WHERE COnd.)->aggregate('.$c.')->freq = '.$e->{'freq'} );
 			}
 		}
 
