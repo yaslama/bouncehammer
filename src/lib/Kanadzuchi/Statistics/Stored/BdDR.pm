@@ -1,4 +1,4 @@
-# $Id: BdDR.pm,v 1.1 2010/06/25 19:29:28 ak Exp $
+# $Id: BdDR.pm,v 1.2 2010/08/16 12:05:03 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Statistics::Stored::
                               
@@ -58,14 +58,20 @@ sub congregat
 	#
 	# @Description	Count by each key of the table
 	# @Param <str>	(String) Table name or alias
+	# @Param <ref>	(Ref->Hash) WHERE Condition
 	# @Return	(Ref->Hash)
 	my $self = shift();
 	my $name = shift() || return undef();
+	my $cond = shift() || {};
 	my $bddr = undef();
 
 	return undef() unless( ref($self->{'handle'}) eq q|DBI::db| );
+	return undef() if ref $name;
+	return undef() if( $cond && ref $cond ne q|HASH| );
+
+	$cond = undef() unless keys %$cond;
 	$bddr = Kanadzuchi::BdDR::BounceLogs::Table->new( 'handle' => $self->{'handle'} );
-	return $bddr->groupby( $name );
+	return $bddr->groupby( $name, $cond );
 }
 
 1;

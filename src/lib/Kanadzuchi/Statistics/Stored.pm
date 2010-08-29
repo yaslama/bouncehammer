@@ -1,4 +1,4 @@
-# $Id: Stored.pm,v 1.1 2010/06/25 19:29:27 ak Exp $
+# $Id: Stored.pm,v 1.2 2010/08/16 12:05:12 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Statistics::
                                          
@@ -62,7 +62,11 @@ sub aggregate
 	# @Return	(Ref->Array) Aggregated data
 	my $self = shift();
 	my $name = shift() || return [];
-	my $aggr = $self->congregat( $name );
+	my $cond = shift() || {};
+
+	$cond = undef() if( ref($cond) eq q|HASH| && ! keys %$cond );
+
+	my $aggr = $self->congregat( $name, $cond );
 	my $list = [];
 
 	if( $name eq 'hostgroup' || $name eq 'reason' )
