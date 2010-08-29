@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: make-dummy-data.pl,v 1.2 2010/06/25 19:17:58 ak Exp $
+# $Id: make-dummy-data.pl,v 1.3 2010/08/28 17:28:45 ak Exp $
 use strict;
 use warnings;
 use Digest::MD5;
@@ -43,9 +43,9 @@ my $outputformat = qq|- { "bounced": %d, "addresser": "%s", "recipient": "%s", |
 
 while( $createdcount < $howmanylines )
 {
-	my $bouncedat = Time::Piece->new->epoch() - int(rand(1e7));
+	my $bouncedat = Time::Piece->new->epoch() - int(rand(1e8));
 	my $reasonwhy = $reasons->[ rand(1e2) % scalar(@$reasons) ];
-	my $localpart = substr( Digest::MD5->new->add( rand(10) )->hexdigest(), 1, int(rand(24)) + 12 );
+	my $localpart = substr( Digest::MD5->new->add( rand(10) )->hexdigest(), 1, int(rand(3)) + 1 );
 
 	my $randomindex = rand(1e2) % scalar(@$destinations);
 	my $destination = $destinations->[ $randomindex ]->{'domain'};
