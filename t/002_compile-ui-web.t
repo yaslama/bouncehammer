@@ -7,6 +7,7 @@ my $Modules = [
 	q(Kanadzuchi::UI::Web),
 	q(Kanadzuchi::UI::Web::About),
 	q(Kanadzuchi::UI::Web::Aggregate),
+	q(Kanadzuchi::UI::Web::DailyUpdates),
 	q(Kanadzuchi::UI::Web::Delete),
 	q(Kanadzuchi::UI::Web::Dispatch),
 	q(Kanadzuchi::UI::Web::Index),

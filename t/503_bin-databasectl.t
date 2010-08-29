@@ -1,4 +1,4 @@
-# $Id: 503_bin-databasectl.t,v 1.12 2010/07/11 09:20:39 ak Exp $
+# $Id: 503_bin-databasectl.t,v 1.13 2010/08/16 12:06:26 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,10 +7,10 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 504 );
+use Test::More ( tests => 506 );
 
 SKIP: {
-	my $Skip = 504;	# How many skips
+	my $Skip = 506;	# How many skips
 	eval{ require IPC::Cmd; }; 
 	skip('Because no IPC::Cmd for testing',$Skip) if($@);
 
@@ -112,7 +112,7 @@ SKIP: {
 
 		NON_EXISTENT_LOG_DATE: {
 
-			DATE_OPTIONS: foreach my $d ( '--today', '--yesterday', '--before 2'  )
+			DATE_OPTIONS: foreach my $d ( '--today', '--yesterday', '--before 2', '--date 1994-04-29', '--date 2038-02-01'  )
 			{
 				$command = $Test->perl().$Test->command().$Opts.' --update '.$d;
 				$xresult = [ IPC::Cmd::run( 'command' => $command ) ];

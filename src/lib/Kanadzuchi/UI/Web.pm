@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.22 2010/07/23 06:47:32 ak Exp $
+# $Id: Web.pm,v 1.24 2010/08/28 17:22:04 ak Exp $
 # -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
 # -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -27,7 +27,6 @@ use Kanadzuchi;
 use Kanadzuchi::Metadata;
 use Kanadzuchi::Exceptions;
 use Kanadzuchi::Time;
-use Compress::Zlib;
 use Error ':try';
 use Time::Piece;
 
@@ -70,7 +69,7 @@ sub cgiapp_init
 	{
 		$htsession->param( 
 			'-name' => 'language', 
-			'-value' => $httpquery->param('language') 
+			'-value' => $httpquery->param('fe_language') 
 					|| substr( $httpalang, 0, 2 ) 
 					|| $self->{'language'} 
 					|| 'en'
@@ -78,12 +77,12 @@ sub cgiapp_init
 
 		$htsession->expire( $self->{'webconfig'}->{'session'}->{'expires'} || '+9h' );
 	}
-	elsif( defined $httpquery->param('language') && 
-		$httpquery->param('language') ne $htsession->param('language') ){
+	elsif( defined $httpquery->param('fe_language') && 
+		$httpquery->param('fe_language') ne $htsession->param('language') ){
 
 		$htsession->param( 
 			'-name' => 'language', 
-			'-value' => $httpquery->param('language') );
+			'-value' => $httpquery->param('fe_language') );
 	}
 
 	$self->{'language'} = $htsession->param('language');
@@ -117,6 +116,7 @@ sub setup
 	$self->run_modes( 
 		'About'		=> 'about',
 		'Aggregate'	=> 'aggregation',
+		'DailyUpdates'	=> 'dailyupdates',
 		'Delete'	=> 'deletetherecord',
 		'Index'		=> 'putindexpage',
 		'ListOf'	=> 'listofcontents',
@@ -199,16 +199,16 @@ sub tt_pre_process
 	$majorver =~ s{\A(\d+[.]\d+)[.]\d+}{$1};
 
 	$self->tt_params( 
-		'systemname' => $Kanadzuchi::SYSNAME,
-		'sysversion' => $Kanadzuchi::VERSION,
-		'scriptname' => $htscript,
-		'head1title' => $Kanadzuchi::SYSNAME.'<sup>'.$majorver.'</sup>',
-		'thepageuri' => 'http://'.$httphost.$htscript,
-		'mylanguage' => $self->{'language'},
-		'prototype' => $self->prototype,
-		'pathinfo' => $pathinfo,
-		'thisyear' => $self->{'datetime'}->year(),
-		'tzoffset' => Kanadzuchi::Time->second2tz( $self->{'datetime'}->tzoffset() ),
+		'pv_systemname' => $Kanadzuchi::SYSNAME,
+		'pv_sysversion' => $Kanadzuchi::VERSION,
+		'pv_scriptname' => $htscript,
+		'pv_head1title' => $Kanadzuchi::SYSNAME.'<sup>'.$majorver.'</sup>',
+		'pv_thepageuri' => 'http://'.$httphost.$htscript,
+		'pv_mylanguage' => $self->{'language'},
+		'pv_prototype' => $self->prototype,
+		'pv_pathinfo' => $pathinfo,
+		'pv_thisyear' => $self->{'datetime'}->year(),
+		'pv_tzoffset' => Kanadzuchi::Time->second2tz( $self->{'datetime'}->tzoffset() ),
 	);
 }
 
@@ -242,59 +242,7 @@ sub loadconfig
 	$self->{'webconfig'} = $webconfig if( ref($webconfig) eq q|HASH| );
 }
 
-sub cryptcbc
-{
-	# +-+-+-+-+-+-+-+-+
-	# |c|r|y|p|t|c|b|c|
-	# +-+-+-+-+-+-+-+-+
-	#
-	# @Description	Encrypt/Decrypt text|data
-	# @Param <str>	(String) Plain text|Encrypted data
-	# @Param <flg>	(Character) e = Encrypt, d = Decrypt
-	# @Return	(String) Encrypted hex string
-	#		(String) Decrypted plain text
-	require Crypt::CBC;
-	my $self = shift();
-	my $data = shift() || return q{};
-	my $flag = shift() || return q{};
-	my $conf = $self->{'webconfig'}->{'security'}->{'crypt'};
-	my $cipher = undef();	# Crypt::CBC object
-
-	$cipher = new Crypt::CBC( '-key' => $conf->{'key'}, '-chipher' => $conf->{'chipher'} );
-	$cipher->salt($conf->{'salt'});
-
-	return $cipher->encrypt_hex(Compress::Zlib::compress($data)) if( $flag eq 'e' );
-	return Compress::Zlib::uncompress($cipher->decrypt_hex($data)) if( $flag eq 'd' );
-}
-
-sub encryptit
-{
-	# +-+-+-+-+-+-+-+-+-+
-	# |e|n|c|r|y|p|t|i|t|
-	# +-+-+-+-+-+-+-+-+-+
-	#
-	# @Description	Wrapper method of cryptcbc()
-	# @Param <str>	(String) Plain text
-	# @Return	(String) Encrypted hex string
-	# @See		cryptcbc()
-	my( $self, $data ) = @_;
-	return $self->cryptcbc( $data, 'e' );
-}
-
-sub decryptit
-{
-	# +-+-+-+-+-+-+-+-+-+
-	# |d|e|c|r|y|p|t|i|t|
-	# +-+-+-+-+-+-+-+-+-+
-	#
-	# @Description	Wrapper method of cryptcbc()
-	# @Param <str>	(String) Encrypted text(hex)
-	# @Return	(String) Plain text
-	# @See		cryptcbc()
-	my( $self, $data ) = @_;
-	return $self->cryptcbc( $data, 'd' );
-}
-
+*error = *e;
 sub e
 {
 	# +-+
@@ -311,15 +259,13 @@ sub e
 	my $file = 'div-error.html';
 
 	$self->tt_params( 
-		'errorhead' => $head,
-		'errorbody' => ref($body) eq q|ARRAY| 
+		'pv_errorhead' => $head,
+		'pv_errorbody' => ref($body) eq q|ARRAY| 
 				? join( '<br />', @$body )
 				: $body,
 	);
-
 	return $self->tt_process($file);
 }
-*error = *e;
 
 sub exception
 {
@@ -338,7 +284,7 @@ sub exception
 	{
 		$file = 'div-exception.html' 
 	}
-	$self->tt_params( 'exception' => $text );
+	$self->tt_params( 'pv_exception' => $text );
 	return $self->tt_process($file);
 }
 

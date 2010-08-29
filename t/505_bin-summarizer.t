@@ -1,4 +1,4 @@
-# $Id: 505_bin-summarizer.t,v 1.16 2010/07/11 09:20:39 ak Exp $
+# $Id: 505_bin-summarizer.t,v 1.18 2010/08/28 17:22:45 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,10 +7,10 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 170 );
+use Test::More ( tests => 200 );
 
 SKIP: {
-	my $howmanyskips = 170;
+	my $howmanyskips = 200;
 	eval{ require IPC::Cmd; }; 
 	skip( 'Because no IPC::Cmd for testing', $howmanyskips ) if($@);
 
@@ -24,6 +24,7 @@ SKIP: {
 	require Kanadzuchi::BdDR::Cache;
 	require Kanadzuchi::BdDR::BounceLogs;
 	require Kanadzuchi::BdDR::BounceLogs::Masters;
+	require Kanadzuchi::BdDR::DailyUpdates;
 	require Kanadzuchi::Mail::Stored::YAML;
 	require File::Copy;
 
@@ -37,6 +38,7 @@ SKIP: {
 	my $Btab = undef();
 	my $Mtab = {};
 	my $Cdat = new Kanadzuchi::BdDR::Cache();
+	my $Dobj = undef();
 	my $Test = new Kanadzuchi::Test::CLI(
 			'command' => -x q(./dist/bin/summarizer) ? q(./dist/bin/summarizer) : q(./src/bin/summarizer.PL),
 			'config' => q(./src/etc/prove.cf),
@@ -68,6 +70,55 @@ SKIP: {
 			'name' => 'Aggregate records in the db/descriptive statistics',
 			'option' => $Opts.' -Ds ',
 		},
+		{
+			'name' => 'Aggregate records in the db/--date',
+			'option' => $Opts.' -D --date 2009/07/17',
+		},
+		{
+			'name' => 'Aggregate records in the db/--period',
+			'option' => $Opts.' -D --period 2000/01/01:2009/12/31',
+		},
+	];
+
+	my $Uset = [
+		{
+			'name' => 'Daily Updates in the db',
+			'option' => $Opts.' -U ',
+		},
+		{
+			'name' => 'Daily Updates in the db/descriptive statistics',
+			'option' => $Opts.' -Us ',
+		},
+		{
+			'name' => 'Daily Updates in the db/--date',
+			'option' => $Opts.' -Us --date 1980/07/17',
+		},
+		{
+			'name' => 'Daily Updates in the db/--period',
+			'option' => $Opts.' -Us --period 1975/04/01:1999/12/31',
+		},
+		{
+			'name' => 'Daily Updates in the db/totals by date',
+			'option' => $Opts.' -U --totalsby date',
+		},
+		{
+			'name' => 'Daily Updates in the db/totals by week',
+			'option' => $Opts.' -U --totalsby week',
+		},
+		{
+			'name' => 'Daily Updates in the db/totals by month',
+			'option' => $Opts.' -U --totalsby month',
+		},
+		{
+			'name' => 'Daily Updates in the db/totals by year',
+			'option' => $Opts.' -U --totalsby year',
+		},
+	];
+
+	my $uData = [ 
+		{ 'thedate' => '1970-01-01', 'inserted' => 1, 'updated' => 2, 'skipped' => 3 },
+		{ 'thedate' => '1975-04-09', 'inserted' => 4, 'updated' => 5, 'skipped' => 6 },
+		{ 'thedate' => '1980-07-17', 'inserted' => 7, 'updated' => 8, 'skipped' => 9 },
 	];
 
 	#  ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ 
@@ -75,6 +126,7 @@ SKIP: {
 	# ||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__||
 	# |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 	#
+	File::Copy::copy( $File, $Test->output() ) unless -e $Test->output();
 	CONNECT: {
 		$BdDR = Kanadzuchi::BdDR->new();
 		$BdDR->setup( { 'dbname' => $Test->database(), 'dbtype' => 'SQLite' } );
@@ -93,17 +145,9 @@ SKIP: {
 	TABLEOBJECTS: {
 		$Btab = Kanadzuchi::BdDR::BounceLogs::Table->new('handle'=>$BdDR->handle());
 		$Mtab = Kanadzuchi::BdDR::BounceLogs::Masters::Table->mastertables($BdDR->handle());
+		$Dobj = Kanadzuchi::BdDR::DailyUpdates::Data->new( 'handle' => $BdDR->handle() );
 	}
 	
-	#COPY: {
-	#	$Test->tempdir->mkpath() unless( -e $Test->tempdir->stringify() );
-	#	$Kana->load($Test->config());
-	#	File::Copy::copy( q{../examples/}.File::Basename::basename($Test->output()),
-	#				$Test->tempdir().q{/}.File::Basename::basename($Test->output()) );
-	#	File::Copy::copy( $Test->output(), $Test->output.q{.bak} ) if( -s $Test->output() );
-	#	File::Copy::copy( $Test->output().q{.bak}, $Test->output() ) if( -s $Test->output().q{.bak} );
-	#}
-
 	LOAD_THE_LOG: {
 		$Yaml = JSON::Syck::LoadFile($Test->output());
 
@@ -157,6 +201,8 @@ SKIP: {
 						ok( scalar(@$array), '->search(id) returns '.scalar(@$array) );
 					}
 				}
+
+				$Dobj->recordit($uData);
 			}
 		}
 	}
@@ -209,9 +255,16 @@ SKIP: {
 				}
 			}
 		}
+
+		DAILYUPDATES:  foreach my $_u ( @$Uset )
+		{
+			$command = $Test->perl().$Test->command().$_u->{'option'};
+			$xresult = qx($command);
+			ok( length($xresult), $_u->{'name'}.' length() = '.length($xresult) );
+		}
+
 	}
 
 }
 
 __END__
-
