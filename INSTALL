@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.3 2010/07/13 16:44:09 ak Exp $
+$Id: INSTALL,v 1.4 2010/08/16 11:57:31 ak Exp $
 -------------------------------------------------------------------------------
   To install this system; BounceHammer, cd to the directory that contains this
   file and type the following commands:
@@ -90,18 +90,18 @@ $Id: INSTALL,v 1.3 2010/07/13 16:44:09 ak Exp $
    # cd /opt/local/bouncehammer/share/script
 
    * MySQL
-     # cat ./MySQL.sql | /usr/local/mysql/bin/mysql -ubouncehammer -Dbouncehammer -h127.0.0.1 -p
+     # cat ./MySQL*.sql | /usr/local/mysql/bin/mysql -ubouncehammer -Dbouncehammer -h127.0.0.1 -p
      Enter password: 794-uguisu-heiankyo
 
      # cat ./mastertable-* | /usr/local/mysql/bin/mysql -ubouncehammer -Dbouncehammer -h127.0.0.1 -p
      Enter password: 794-uguisu-heiankyo
 
    * PostgreSQL
-     # cat ./PostgreSQL.sql | /usr/local/pgsq/bin/psql -Ubouncehammer -dbouncehammer
+     # cat ./PostgreSQL*.sql | /usr/local/pgsq/bin/psql -Ubouncehammer -dbouncehammer
      # cat ./mastertable-* | /usr/local/pgsq/bin/psql -Ubouncehammer -dbouncehammer
 
    * SQLite
-     # cat ./SQLite.sql | sqlite3 /opt/local/bouncehammer/var/db/bouncehammer
+     # cat ./SQLite*.sql | sqlite3 /opt/local/bouncehammer/var/db/bouncehammer
      # cat ./mastertable-* | sqlite3 /opt/local/bouncehammer/var/db/bouncehammer
 
 -------------------------------------------------------------------------------
