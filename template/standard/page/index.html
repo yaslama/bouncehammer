@@ -9,8 +9,8 @@
 [% INCLUDE "dtd-xhtml.html" %]
 <head>
 	[% INCLUDE "meta-http-equiv.html" %]
-	<title>[% systemname %]/[% head.dashboard %]</title>
-	[% prototype.define_javascript_functions %]
+	<title>[% pv_systemname %]/[% tt_head.dashboard %]</title>
+	[% pv_prototype.define_javascript_functions %]
 	<script type = 'text/javascript'>
 		[% INCLUDE bouncehammer.js %]
 	</script>
@@ -24,11 +24,12 @@
 </head>
 <body>
 	<div id = 'ThePage'>
-		<h1>[% head1title %]/[% head.dashboard %]</h1>
+		<h1>[% pv_head1title %]/[% tt_head.dashboard %]</h1>
 		<div id = 'North-Ward'>
 			[% INCLUDE "div-menubar.html" %]
 		</div>
 		<div id = 'West-Ward'>
+			[%- SET tt_menu.index = 'currentpage' -%]
 			[% INCLUDE "div-index.html" %]
 		</div>
 		<div id = 'East-Ward'>
@@ -36,20 +37,24 @@
 			[% INCLUDE "help-senderdomain.html" %]
 			[% INCLUDE "help-destination-domain.html" %]
 			<hr class = 'flatline' />
+			[% INCLUDE "help-dailyupdates-day.html" %]
+			[% INCLUDE "help-dailyupdates-registered.html" %]
+			[% INCLUDE "help-dailyupdates-modified.html" %]
+			<hr class = 'flatline' />
 			[% INCLUDE "help-recipient.html" %]
 		</div>
 
 		<div id = 'Central-Ward'>
-			<h2 style = 'color: #383c3c;'>[% datestring %]</h2>
+			<h2 style = 'color: #383c3c;'>[% pv_datestring %]</h2>
 			<hr class = 'flatline' />
-			<h2>[% head.datasummary %]</h2>
+			<h2>[% tt_head.datasummary %]</h2>
 			<div class = 'shortsummary'>
-				[%- SET titlename = {
+				[%- SET tt_titlename = {
 					'addresser'	=> 'Addressers',
 					'senderdomain'	=> 'Sender Domains',
 					'destination'	=> 'Destinations',
 				} -%]
-				[%- SET recordsizeof = {
+				[%- SET tt_recordsizeof = {
 					'addresser'	=> 'addressers',
 					'senderdomain'	=> 'senderdomains',
 					'destination'	=> 'destinations',
@@ -59,15 +64,15 @@
 						<tr class = 'numeral'>
 							<td style = 'width: 192px;'>
 								<div class = 'tablename'>BounceLogs</div>
-								<div class = 'recordsize'>[% shortsummary.bouncelogs %]</div>
-								<div class = 'unit'>[% word.unitofrecs %]</div>
+								<div class = 'recordsize'>[% pv_shortsummary.bouncelogs %]</div>
+								<div class = 'unit'>[% tt_word.unitofrecs %]</div>
 							</td>
 
 							[%- FOREACH MT IN [ 'addresser', 'senderdomain', 'destination' ] -%]
-							<td title = '[% term.${MT} %]'>
-								<div class = 'tablename'>[% titlename.${MT} %]</div>
-								<div class = 'recordsize'>[% shortsummary.${recordsizeof.${MT}} %]</div>
-								<div class = 'unit'>[% word.unitofrecs %]</div>
+							<td title = '[% tt_term.${MT} %]'>
+								<div class = 'tablename'>[% tt_titlename.${MT} %]</div>
+								<div class = 'recordsize'>[% pv_shortsummary.${tt_recordsizeof.${MT}} %]</div>
+								<div class = 'unit'>[% tt_word.unitofrecs %]</div>
 							</td>
 							[%- END -%]
 						</tr>
@@ -75,22 +80,16 @@
 						<tr class = 'options'>
 							<td>
 								<span class = 'flatbutton'>
-									&nbsp;
-									<a href = '[% scriptname %]/summary/'> [% word.detail %] </a>
-									&nbsp;
+									<a href = '[% pv_scriptname %]/summary/'>&nbsp; [% tt_word.detail %] &nbsp; </a>
 								</span>
 							</td>
 							[%- FOREACH MT IN [ 'addresser', 'senderdomain', 'destination' ] -%]
 							<td>
 								<span class = 'flatbutton'>
-									&nbsp;
-									<a href = '[% scriptname %]/tables/[% MT _ "s" %]/list'> [% word.edit %] </a>
-									&nbsp;
+									<a href = '[% pv_scriptname %]/tables/[% MT _ "s" %]/list'>&nbsp; [% tt_word.edit %] &nbsp; </a>
 								</span>
 								<span class = 'flatbutton'>
-									&nbsp;
-									<a href = '[% scriptname %]/aggregate/[% MT %]'> [% word.aggregation %] </a>
-									&nbsp;
+									<a href = '[% pv_scriptname %]/aggregate/[% MT %]'>&nbsp; [% tt_word.aggregation %] &nbsp; </a>
 								</span>
 							</td>
 							[%- END -%]
@@ -99,8 +98,75 @@
 				</table>
 			</div>
 			<hr class = 'flatline' />
+			<h2>[% tt_head.dailyupdates %]</h2>
+			<div class = 'shortsummary'>
+				<table>
+					<tbody>
+						[%- FOREACH X IN pv_dailyupdates -%]
+						<tr class = 'numeral'>
+							<td style = 'width: 192px;'>
+								<div class = 'tablename'>[% tt_datename.${X.name} %]</div>
+								<div class = 'recordsize'>
+									<span class = '[% X.dayofweek %]' title = '[% X.thedate %]'>
+										[% X.datestring %]
+									</span>
+								</div>
+								<div class = 'unit'>
+									[%- IF X.modifieddate == '?' -%] &nbsp; [%- ELSE -%]
+										[%- tt_word.lastmodified -%]&nbsp;[%- X.modifieddate -%]
+										&nbsp;[%- X.modifiedtime -%]
+									[%- END -%]
+								</div>
+							</td>
+							<td>
+								<div class = 'tablename'>[% tt_word.nestimated %]</div>
+								<div class = 'recordsize'>
+									[%- IF X.estimated == -1 -%]
+										<span class = 'not-measured'>?</span>
+									[%- ELSE -%]
+										[% X.estimated %]
+									[%- END -%]
+								</div>
+								<div class = 'unit'>[% tt_word.unitofrecs %]</div>
+							</td>
+							<td>
+								<div class = 'tablename'>[% tt_word.ninserted %]</div>
+								<div class = 'recordsize'>
+									[%- IF X.inserted == -1 -%]
+										<span class = 'not-measured'>?</span>
+									[%- ELSE -%]
+										[% X.inserted %]
+									[%- END -%]
+								</div>
+								<div class = 'unit'>[% tt_word.unitofrecs %]</div>
+							</td>
+							<td>
+								<div class = 'tablename'>[% tt_word.nupdated %]</div>
+								<div class = 'recordsize'>
+									[%- IF X.updated == -1 -%]
+										<span class = 'not-measured'>?</span>
+									[%- ELSE -%]
+										[% X.updated %]
+									[%- END -%]
+								</div>
+								<div class = 'unit'>[% tt_word.unitofrecs %]</div>
+							</td>
+						</tr>
+						[%- END -%]
 
-			<h2>[% head.search %]</h2>
+						<tr class = 'options'>
+							<td>
+								<span class = 'flatbutton'>
+									<a href = '[% pv_scriptname %]/dailyupdates/'>&nbsp; [% tt_word.detail %] &nbsp; </a>
+								</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<hr class = 'flatline' />
+
+			<h2>[% tt_head.search %]</h2>
 			[% INCLUDE "form-search-by-recipient.html" %]
 		</div>
 		<div id = 'South-Ward'>
