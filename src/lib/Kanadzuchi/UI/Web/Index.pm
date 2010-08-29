@@ -1,4 +1,4 @@
-# $Id: Index.pm,v 1.8 2010/08/28 17:22:09 ak Exp $
+# $Id: Index.pm,v 1.9 2010/08/29 22:26:37 ak Exp $
 # -Id: Index.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Index.pm,v 1.3 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -54,50 +54,51 @@ sub putindexpage
 	my $thelatest = [];
 
 	THE_LATEST: {
-		my $d = [ 
+		my $days = [ 
 			{ 'name' => 'today', 'time' => Time::Piece->new() },
 			{ 'name' => 'yesterday', 'time' => Time::Piece->new( time - 86400 ) },
 		];
-		my $p = Kanadzuchi::BdDR::Page->new( 'resultsperpage' => 2 );
-		my $r = {};
-		my $e = 0;
+		my $page = Kanadzuchi::BdDR::Page->new( 'resultsperpage' => 2 );
+		my $recs = {};
+		my $flag = 0;
 
-		foreach my $x ( @$d )
+		foreach my $x ( @$days )
 		{
-			$dailylogs->quaerit( { 'thedate' => $x->{'time'}->ymd('-') }, $p, 'd' );
-			$r = shift @{ $dailylogs->data() }
+			$dailylogs->quaerit( { 'thedate' => $x->{'time'}->ymd('-') }, $page, 'd' );
+			$recs = shift @{ $dailylogs->data() }
 				|| {	'thedate' => $x->{'time'}->ymd, 
 					'estimated' => -1,
 					'inserted' => -1, 
 					'updated' => -1, };
-			$r->{'name'} = $x->{'name'};
-			$r->{'dayofweek'} = lc $x->{'time'}->day();
-			$r->{'datestring'} = $x->{'time'}->mon().'/'.$x->{'time'}->mday();
-			$r->{'modifieddate'} = ref $r->{'modified'} eq q|Time::Piece|
-						? $r->{'modified'}->ymd('/') : '?';
-			$r->{'modifiedtime'} = ref $r->{'modified'} eq q|Time::Piece| 
-						? $r->{'modified'}->hms(':') : '?';
-			push( @$thelatest, $r );
+			$recs->{'name'} = $x->{'name'};
+			$recs->{'dayofweek'} = lc $x->{'time'}->day();
+			$recs->{'datestring'} = $x->{'time'}->mon().'/'.$x->{'time'}->mday();
+			$recs->{'modifieddate'} = ref $recs->{'modified'} eq q|Time::Piece|
+						? $recs->{'modified'}->ymd('/') : '?';
+			$recs->{'modifiedtime'} = ref $recs->{'modified'} eq q|Time::Piece| 
+						? $recs->{'modified'}->hms(':') : '?';
+			push( @$thelatest, $recs );
+			$flag += 1 if( $recs->{'estimated'} > -1 );
 		}
 
-		unless( scalar @{ $dailylogs->data() } )
+		if( $flag == 0 )
 		{
-			$p->resultsperpage(1);
-			$p->descendorderby(1);
-			$dailylogs->quaerit( {}, $p, 'd' );
-			$r = shift @{ $dailylogs->data() };
+			$page->resultsperpage(1);
+			$page->descendorderby(1);
+			$dailylogs->quaerit( {}, $page, 'd' );
+			$recs = shift @{ $dailylogs->data() };
 
-			if( $r->{'thedate'} )
+			if( $recs->{'thedate'} )
 			{
-				my $t = Time::Piece->strptime( $r->{'thedate'}, "%Y-%m-%d");
-				$r->{'name'} = 'latest';
-				$r->{'dayofweek'} = lc $t->day();
-				$r->{'datestring'} = $t->mon().'/'.$t->mday();
-				$r->{'modifieddate'} = ref $r->{'modified'} eq q|Time::Piece|
-							? $r->{'modified'}->ymd('/') : '?';
-				$r->{'modifiedtime'} = ref $r->{'modified'} eq q|Time::Piece|
-							? $r->{'modified'}->hms(':') : '?';
-				push( @$thelatest, $r );
+				my $t = Time::Piece->strptime( $recs->{'thedate'}, "%Y-%m-%d");
+				$recs->{'name'} = 'latest';
+				$recs->{'dayofweek'} = lc $t->day();
+				$recs->{'datestring'} = $t->mon().'/'.$t->mday();
+				$recs->{'modifieddate'} = ref $recs->{'modified'} eq q|Time::Piece|
+							? $recs->{'modified'}->ymd('/') : '?';
+				$recs->{'modifiedtime'} = ref $recs->{'modified'} eq q|Time::Piece|
+							? $recs->{'modified'}->hms(':') : '?';
+				push( @$thelatest, $recs );
 			}
 		}
 	}

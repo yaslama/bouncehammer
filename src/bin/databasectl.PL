@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.21 2010/08/28 17:25:07 ak Exp $
+# $Id: databasectl.PL,v 1.22 2010/08/29 22:26:35 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -414,7 +414,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 						} );
 				}
 
-				$Cmd->d(3,sprintf("Using table = %s\n", $dupdataobj->db->alias()));
+				$Cmd->d(2,sprintf("Using table = %s\n", $dupdataobj->db->alias()));
 				$dupdatarec = $dupdataobj->recordit($tobupdated);
 			}
 		}

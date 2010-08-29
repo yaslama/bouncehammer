@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: tablectl.PL,v 1.14 2010/07/23 06:47:34 ak Exp $
+# $Id: tablectl.PL,v 1.15 2010/08/29 21:24:41 ak Exp $
 # -Id: tablectl.PL,v 1.12 2010/02/21 20:09:01 ak Exp -
 # -Id: tablectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: tablectl.PL,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -501,7 +501,7 @@ sub help
 	# @Param	NONE
 	# @Return	1
 	printf( STDERR "%s/%s %s\n", $Zci->myname(), $Cmd->calledfrom(), $Zci->version() );
-	printf( STDERR "Usage: %s [OPTIONS] -T<x>\n", $Cmd->calledfrom() );
+	printf( STDERR "Usage: %s [OPTIONS] -t<x>\n", $Cmd->calledfrom() );
 	printf( STDERR "\n" );
 	printf( STDERR " * TABLE CONTROL OPTIONS\n" );
 	printf( STDERR "    -t, --table <t>       : Table name, ALWAYS REQUIRED.\n");
