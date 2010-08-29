@@ -1,4 +1,4 @@
-# $Id: 011_rfc2822.t,v 1.4 2010/07/07 09:05:00 ak Exp $
+# $Id: 011_rfc2822.t,v 1.5 2010/08/16 12:03:33 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::RFC2822;
-use Test::More ( tests => 237 );
+use Test::More ( tests => 241 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -85,6 +85,11 @@ CLASS_METHODS: {
 	}
 
 	IRREGULAR_CASES: {
+		foreach my $x ( qw(@example.jp user@) )
+		{
+			is( $class->is_emailaddress($e), 0, '->is_emailaddress('.$x.')' );
+			is( $class->is_mailerdaemon($e), 0, '->is_mailerdaemon('.$x.')' );
+		}
 
 		foreach my $e ( @{$Kanadzuchi::Test::ExceptionalValues} )
 		{
