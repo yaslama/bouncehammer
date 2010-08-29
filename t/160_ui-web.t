@@ -1,4 +1,4 @@
-# $Id: 160_ui-web.t,v 1.9 2010/07/18 02:04:33 ak Exp $
+# $Id: 160_ui-web.t,v 1.10 2010/08/28 17:22:44 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,19 +8,18 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 24 );
+use Test::More ( tests => 26 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-my $S = 24;	# How many skips
+my $S = 26;	# How many skips
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::UI::Web|,
 	'methods' => [ 'cgiapp_init', 'setup', 'cgiapp_prerun', 'cgiapp_postrun', 'teardown',
-			'tt_pre_process', 'tt_post_process', 'loadconfig', 'cryptcbc',
-			'encryptit', 'decryptit', 'exception' ],
+			'tt_pre_process', 'tt_post_process', 'loadconfig', 'exception' ],
 	'instance' => undef(),
 );
 
@@ -31,6 +30,9 @@ my $W = {
 	'Aggregate' => new Kanadzuchi::Test(
 			'class' => $T->class().q|::Aggregate|,
 			'methods' => [ @{$T->methods()}, 'aggregation' ], ),
+	'DailyUpdates' => new Kanadzuchi::Test(
+			'class' => $T->class().q|::DailyUpdates|,
+			'methods' => [ @{$T->methods()}, 'dailyupdates' ], ),
 	'Delete' => new Kanadzuchi::Test(
 			'class' => $T->class().q|::Delete|,
 			'methods' => [ @{$T->methods()}, 'deletetherecord' ], ),
