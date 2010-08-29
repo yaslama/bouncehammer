@@ -1,0 +1,156 @@
+/* $Id: dailyupdates.css,v 1.1 2010/08/28 17:14:02 ak Exp $ */
+/* Copyright 2009,2010 Cubicroot Co. Ltd. */
+/* Daily Updates table classes */
+div.togglebuttonfield {
+	margin: 0px 0px -2px 33px;
+}
+fieldset.graphoption {
+	margin: 2px 12px 2px 24px;
+	padding: 0px 4px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #d4dcd6;	/* Sobakiri-iro */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+
+table.stored {
+	border-collapse: collapse;
+}
+
+table.dailyupdates {
+	margin: 2px 0 8px 2px;
+	border-collapse: collapse;
+	width: 99%;
+}
+
+thead.dailyhead {
+	margin:	0;
+	font-weight: bold;
+	font-size: 11px;
+}
+
+thead.dailyhead tr th {
+	margin: 2px 0 4px 0;
+	padding: 2px 0 8px 2px;
+	border-color: #afafb0; /* Gin-nezu */
+	border-width: 0 0 2px 0;
+	border-style: solid;
+	text-align: center;
+	font-size: 11px;
+	font-weight: bold;
+	vertical-align: middle;
+}
+
+thead.dailyhead tr th a.sort {
+	background: #eaf4fc; /* Geppaku */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+}
+
+thead.dailyhead tr th a:hover,
+thead.dailyhead tr th a:visited:hover {
+	color: #007bbb; /* Kompeki */
+}
+
+tbody.dailydata {
+	font-size: 11px;
+}
+
+tbody.dailydata tr td,
+tbody.dailysummary tr td {
+	margin: 2px 0 4px 0;
+	padding: 2px 0 2px 2px;
+	text-align: left;
+	vertical-align: middle;
+	border-color: #dcdddd; /* Shiro-nezu */
+	border-width: 0 0 1px 0;
+	border-style: solid;
+}
+
+tbody.thelatest tr td {
+	margin: 4px 0 8px 0;
+	padding: 4px 0 4px 2px;
+	text-align: left;
+	vertical-align: middle;
+	border-color: #dcdddd; /* Shiro-nezu */
+	border-width: 1px 0 1px 0;
+	border-style: solid;
+}
+
+td.key { /* LHS */
+	margin: 2px 0;
+	padding: 2px 8px 2px 2px;
+	width: 83px;
+	font-weight: bold;
+	vertical-align: middle;
+	font-size: 11px;
+}
+
+tbody.dailydata .date,
+tbody.dailysummary .date {
+	text-align: left;
+	font-weight: bold;
+}
+
+tbody.dailydata .value,
+tbody.dailysummary .value {
+	width: 83px;
+	padding: 0 2px 0 0;
+	text-align: right;
+}
+
+tbody.thelatest .value {
+	width: 83px;
+	padding: 0 2px 0 0;
+	font-size: 16px;
+	font-weight: bold;
+	text-align: right;
+}
+
+
+tbody.dailydata .modified {
+	text-align: right;
+}
+
+tbody.dailysummary {
+	margin: 8px 0 4px 0;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+tbody.dailysummary tr.firstrow {
+	margin: 4px 0 0 0;
+	border-style: solid;
+	border-width: 2px 0 0 0;
+	border-color: #dcdddd; /* Shiro-nezu */
+}
+
+tbody.dailysummary td.name,
+tbody.dailysummary td.value {
+	text-align: right;
+	padding: 1px 4px 1px 0;
+}
+
+.skippedtext	{ color: #ee7800;	/* Daidai-iro */ }
+.insertedtext	{ color: #007b43;	/* Tokiwa-iro */ }
+.updatedtext	{ color: #19448e;	/* Rurikon */ }
+.failedtext	{ color: #c9171e;	/* Kokihi */ }
+.skippedline	{ border-color: #fcc800;	/* Himawari-iro */ }
+.insertedline	{ border-color: #b8d200;	/* Kimidori */ }
+.updatedline	{ border-color: #5383c3;	/* Usugunjou */ }
+.failedline	{ border-color: #d3381c;	/* Hi-iro */ }
+
+.errorstring {
+	font-weight: bold;
+	color: #e2041b; /* Shoujouhi */
+}
+
+.removedrecord {
+	padding: 0;
+	color: #9ea1a3; /* Suzu-iro */
+}
+
+

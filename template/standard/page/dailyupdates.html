@@ -1,0 +1,318 @@
+[%- PROCESS "heads.tt" -%]
+[%- PROCESS "words.tt" -%]
+[%- PROCESS "terms.tt" -%]
+[%- PROCESS "time.tt" -%]
+[%- PROCESS "desc.tt" -%]
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% pv_systemname %]/[% tt_head.dailyupdates %]</title>
+	[% pv_prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+		[% INCLUDE dailyupdates.js %]
+		[% IF pv_iexplorer == 1 %][% INCLUDE excanvas.js %][% END %]
+
+		var data = new Array();
+		var stat = {
+			max: {	
+				estimated: [%- pv_summary.max.estimated -%],
+				inserted: [%- pv_summary.max.inserted -%],
+				updated: [%- pv_summary.max.updated -%],
+				skipped: [%- pv_summary.max.skipped -%],
+				failed: [%- pv_summary.max.failed -%],
+				executed: [%- pv_summary.max.executed -%]
+			},
+			mean: {	
+				estimated: [%- pv_summary.mean.estimated -%],
+				inserted: [%- pv_summary.mean.inserted -%],
+				updated: [%- pv_summary.mean.updated -%],
+				skipped: [%- pv_summary.mean.skipped -%],
+				failed: [%- pv_summary.mean.failed -%], 
+				executed: [%- pv_summary.mean.executed -%]
+			},
+		};
+		var thisgraphoption = eval( [%- pv_uioptions.serialized -%] );
+
+		[%- FOREACH X IN pv_dailydata -%]
+			data.push( { 
+				xlabel: "[%- IF pv_totalsby == 'd' -%][%- X.thedate -%][%- ELSE -%][%- X.name -%][%- END -%]",
+				machinetime: [%- X.thetime -%],
+				estimated: [%- X.estimated -%],
+				inserted: [%- X.inserted -%],
+				updated: [%- X.updated -%],
+				skipped: [%- X.skipped -%],
+				failed: [%- X.failed -%],
+				executed: [%- X.executed -%]
+			} );
+		[%- END -%]
+	</script>
+	<style type = 'text/css'>
+	<!--
+	[% INCLUDE bouncehammer.css %]
+	[% INCLUDE dailyupdates.css %]
+	[% INCLUDE pagination.css %]
+	[% INCLUDE record.css %]
+	-->
+	</style>
+</head>
+<body onLoad = 'plot(data,stat,thisgraphoption);'>
+	<div id = 'ThePage'>
+		<h1>[% pv_head1title %]/[%- tt_head.dailyupdates -%]</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[%- SET tt_menu.dailyupdates = 'currentpage' -%]
+			[% INCLUDE "div-index.html" %]
+		</div>
+		<div id = 'East-Ward'>
+			[% INCLUDE "help-dailyupdates-day.html" %]
+			[% INCLUDE "help-dailyupdates-week.html" %]
+			[% INCLUDE "help-dailyupdates-registered.html" %]
+			[% INCLUDE "help-dailyupdates-skipped.html" %]
+			[% INCLUDE "help-dailyupdates-modified.html" %]
+		</div>
+
+		<div id = 'Central-Ward'>
+			<h2>[% tt_head.dailyupdates %](bin/databasectl)</h2>
+
+			[%- IF pv_dailydata.size > 0 -%]
+				<canvas id = 'jx_duplot' width = '600' height = '144'></canvas>
+				<form action = '[% "${pv_scriptname}/dailyupdates/" %]' method = 'POST' id = 'jx_switchunit'>
+				<div class = 'togglebuttonfield'>
+					<input type = 'button' class = 'flatbutton'
+						onClick = "toggleIt('jx_graphoption');" value = '[%- tt_word.graph %]' />
+				</div>
+				<fieldset class = 'graphoption' id = 'jx_graphoption' style = 'display: none;'>
+					<input type = 'hidden' name = 'fe_language' value = '[% pv_mylanguage %]' />
+					<input type = 'hidden' name = 'fe_havepostdata' value = '1' />
+					<table>
+					<tbody>
+						<tr>
+							<td class = 'key'>[%- tt_word.graph -%]</td>
+							<td class = 'value'>
+								<select name = 'fe_graph' id = 'jx_graph'>
+									<option value = 'standard'
+										[%- IF pv_uioptions.config.semilog != 1 %] selected [% END %]>
+										[%- tt_word.standard -%]</option>
+									<option value = 'semilog'
+										[%- IF pv_uioptions.config.semilog == 1 %] selected [% END %]>
+										[%- tt_word.semilog -%]</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td class = 'key'>[%- tt_word.measured -%]</td>
+							<td class = 'value'>
+								<input type = 'checkbox' name = 'fe_vestimated' id = 'jx_vestimated'
+									[%- IF pv_uioptions.config.vestimated == 1 %] checked [% END %] />
+									&nbsp;[%- tt_word.nestimated -%] &nbsp;
+								<input type = 'checkbox' name = 'fe_vinserted' id = 'jx_vinserted'
+									[%- IF pv_uioptions.config.vinserted == 1 %] checked [% END %] />
+									&nbsp;[%- tt_word.ninserted -%] &nbsp;
+								<input type = 'checkbox' name = 'fe_vupdated' id = 'jx_vupdated' 
+									[%- IF pv_uioptions.config.vupdated == 1 %] checked [% END %] />
+									&nbsp;[%- tt_word.nupdated -%] &nbsp;
+								<input type = 'checkbox' name = 'fe_vskipped' id = 'jx_vskipped'
+									[%- IF pv_uioptions.config.vskipped == 1 %] checked [% END %] />
+									&nbsp;[%- tt_word.nskipped -%] &nbsp;
+								<input type = 'checkbox' name = 'fe_vfailed' id = 'jx_vfailed' 
+									[%- IF pv_uioptions.config.vfailed == 1 %] checked [% END %] />
+									&nbsp;[%- tt_word.nfailed -%] &nbsp;
+							</td>
+						</tr>
+						<tr>
+							<td class = 'key'>[%- tt_word.mean -%]</td>
+							<td class = 'value'>
+								<input type = 'checkbox' name = 'fe_mestimated' id = 'jx_mestimated'
+									[%- IF pv_uioptions.config.mestimated == 1 %] checked [% END %] />
+									&nbsp;[%- tt_word.nestimated -%] &nbsp;
+								<input type = 'checkbox' name = 'fe_minserted' id = 'jx_minserted'
+									[%- IF pv_uioptions.config.minserted == 1 %] checked [% END %] />
+									&nbsp;[%- tt_word.ninserted -%] &nbsp;
+								<input type = 'checkbox' name = 'fe_mupdated' id = 'jx_mupdated'
+									[%- IF pv_uioptions.config.mupdated == 1 %] checked [% END %] />
+									&nbsp;[%- tt_word.nupdated -%] &nbsp;
+								<input type = 'checkbox' name = 'fe_mskipped' id = 'jx_mskipped'
+									[%- IF pv_uioptions.config.mskipped == 1 %] checked [% END %] />
+									&nbsp;[%- tt_word.nskipped -%] &nbsp;
+								<input type = 'checkbox' name = 'fe_mfailed' id = 'jx_mfailed'
+									[%- IF pv_uioptions.config.mfailed == 1 %] checked [% END %] />
+									&nbsp;[%- tt_word.nfailed -%] &nbsp;
+							</td>
+						</tr>
+						<tr>
+							<td class = 'key'>
+								<input type = 'button' class = 'flatbutton'
+									onClick = "plot( data, stat, { 
+												semilog: jx_graph.value == 'semilog' ? 1 : 0,
+												vestimated: jx_vestimated.checked ? 1 : 0,
+												vinserted: jx_vinserted.checked ? 1 : 0,
+												vupdated: jx_vupdated.checked ? 1 : 0,
+												vskipped: jx_vskipped.checked ? 1 : 0,
+												vfailed: jx_vfailed.checked ? 1 : 0,
+												mestimated: jx_mestimated.checked ? 1 : 0,
+												minserted: jx_minserted.checked ? 1 : 0,
+												mupdated: jx_mupdated.checked ? 1 : 0,
+												mskipped: jx_mskipped.checked ? 1 : 0,
+												mfailed: jx_mfailed.checked ? 1 : 0
+											} );" value = '[%- tt_word.plot -%]' />
+							</td>
+							<td class = 'value'> &nbsp; </td>
+						</tr>
+					</tbody>
+					</table>
+				</fieldset>
+				<fieldset class = 'graphoption'>
+					<table>
+					<tbody>
+						<tr>
+							<td class = 'key'>
+								<input type = 'submit' id = 'jx_switchtheunit'
+									class = 'flatbutton' value = '[% tt_word.reload %]' />
+							</td>
+							<td class = 'value'>
+								[%- tt_word.totalsby -%] &nbsp;
+								<select name = 'fe_totalsby' onChange = 'jx_switchtheunit.value = "[%- tt_word.switchunit -%]";'>
+								<option value = 'd' [% IF pv_totalsby == 'd' %]selected [% END %]>[% tt_unitoftime.d %]</option>
+								<option value = 'w' [% IF pv_totalsby == 'w' %]selected [% END %]>[% tt_unitoftime.w %]</option>
+								<option value = 'm' [% IF pv_totalsby == 'm' %]selected [% END %]>[% tt_unitoftime.m %]</option>
+								<option value = 'y' [% IF pv_totalsby == 'y' %]selected [% END %]>[% tt_unitoftime.y %]</option>
+								</select>
+								&nbsp;
+								<input type = 'checkbox' name = 'fe_descend' 
+									[% IF pv_pagination.descendorderby == 1 %] checked [% END %] />
+									[% tt_word.descending %] &nbsp;
+							</td>
+						</tr>
+					</tbody>
+					</table>
+				</fieldset>
+				</form>
+				<div class = 'pagination'>
+					[% INCLUDE "div-pagination.html" %]
+				</div>
+			[%- END -%]
+			<div class = 'result'>
+				[%- IF pv_dailydata.size > 0 -%]
+					<table class = 'dailyupdates'>
+						<tbody class = 'dailydata thelatest'>
+							[%- FOREACH L IN pv_thelatest %]
+							<tr>
+								<td class = 'date'>
+									[%- tt_datename.${L.name} -%]<br />&nbsp; [%- L.thedate -%]
+								</td>
+								<td class = 'value estimatedtext'
+									title = '[% tt_word.nexecuted %]: [% L.executed %]'>[%- L.estimated -%]</td>
+								<td class = 'value insertedtext insertedline'>[%- L.inserted -%]</td>
+								<td class = 'value updatedtext'>[%- L.updated -%]</td>
+								<td class = 'value skippedtext'>[%- L.skipped -%]</td>
+								<td class = 'value failedtext'>[%- L.failed -%]</td>
+								<td class = 'modified'>[%- L.modifieddate -%]<br />[%- L.modifiedtime %]</td>
+							</tr>
+							[%- END -%]
+						</tbody>
+					</table>
+					<table class = 'dailyupdates'>
+						<thead class = 'dailyhead'><tr>
+							<th class = 'date'>
+								<span class = 'flatbutton'><strong>
+									<a href = 'javascript:void(0)' 
+										onClick = "toggleIt('jx_dailydata');">&nbsp;X&nbsp;</a></strong></span>
+								[%- tt_unitoftime.${pv_totalsby} -%]
+								[%- IF pv_pagination.descendorderby == 0 -%]&darr;[%- ELSE -%]&uarr;[%- END -%]
+							</th>
+							<th class = 'estimatedtext'>[%- tt_word.nestimated -%]</th>
+							<th class = 'insertedtext'>[%- tt_word.ninserted -%]</th>
+							<th class = 'updatedtext'>[%- tt_word.nupdated -%]</th>
+							<th class = 'skippedtext'>[%- tt_word.nskipped -%]</th>
+							<th class = 'failedtext'>[%- tt_word.nfailed -%]</th>
+							<th>[%- tt_word.lastmodified -%]</th>
+						</tr></thead>
+						<tbody class = 'dailydata' id = 'jx_dailydata'>
+							[%- FOREACH E IN pv_dailydata %]
+							<tr>
+								<td class = 'date'>
+									[%- IF pv_totalsby == 'd' -%]
+										[%- E.thedate -%]
+									[%- ELSE -%]
+										[%- E.name -%]
+									[%- END -%]
+								</td>
+								<td class = 'value'
+									title = '[% tt_word.nexecuted %]: [% L.executed %]'>[%- E.estimated -%]</td>
+								<td class = 'value'>[%- E.inserted -%]</td>
+								<td class = 'value'>[%- E.updated -%]</td>
+								<td class = 'value'>[%- E.skipped -%]</td>
+								<td class = 'value'>[%- E.failed -%]</td>
+								<td class = 'modified' title = '[%- E.modifiedtime %]'>[%- E.modifieddate -%]</td>
+							</tr>
+							[%- END -%]
+						</tbody>
+
+						<tbody class = 'dailysummary' id = 'jx_dailysummary'>
+							<tr class = 'firstrow'>
+								<td class = 'name'>[%- tt_word.sum -%]</td>
+								<td class = 'value'>[%- pv_summary.sum.estimated -%]</td>
+								<td class = 'value'>[%- pv_summary.sum.inserted -%]</td>
+								<td class = 'value'>[%- pv_summary.sum.updated -%]</td>
+								<td class = 'value'>[%- pv_summary.sum.skipped -%]</td>
+								<td class = 'value'>[%- pv_summary.sum.failed -%]</td>
+								<td class = 'modified'> </td>
+							</tr>
+							<tr>
+								<td class = 'name'>[%- tt_word.min -%]</td>
+								<td class = 'value'>[%- pv_summary.min.estimated -%]</td>
+								<td class = 'value'>[%- pv_summary.min.inserted -%]</td>
+								<td class = 'value'>[%- pv_summary.min.updated -%]</td>
+								<td class = 'value'>[%- pv_summary.min.skipped -%]</td>
+								<td class = 'value'>[%- pv_summary.min.failed -%]</td>
+								<td class = 'modified'> </td>
+							</tr>
+							<tr>
+								<td class = 'name'>[%- tt_word.mean -%]</td>
+								<td class = 'value'>[%- pv_summary.mean.estimated -%]</td>
+								<td class = 'value'>[%- pv_summary.mean.inserted -%]</td>
+								<td class = 'value'>[%- pv_summary.mean.updated -%]</td>
+								<td class = 'value'>[%- pv_summary.mean.skipped -%]</td>
+								<td class = 'value'>[%- pv_summary.mean.failed -%]</td>
+								<td class = 'modified'> </td>
+							</tr>
+							<tr>
+								<td class = 'name'>[%- tt_word.max -%]</td>
+								<td class = 'value'>[%- pv_summary.max.estimated -%]</td>
+								<td class = 'value'>[%- pv_summary.max.inserted -%]</td>
+								<td class = 'value'>[%- pv_summary.max.updated -%]</td>
+								<td class = 'value'>[%- pv_summary.max.skipped -%]</td>
+								<td class = 'value'>[%- pv_summary.max.failed -%]</td>
+								<td class = 'modified'> </td>
+							</tr>
+							<tr>
+								<td class = 'name'>[%- tt_word.stddev -%]</td>
+								<td class = 'value'>[%- pv_summary.stddev.estimated -%]</td>
+								<td class = 'value'>[%- pv_summary.stddev.inserted -%]</td>
+								<td class = 'value'>[%- pv_summary.stddev.updated -%]</td>
+								<td class = 'value'>[%- pv_summary.stddev.skipped -%]</td>
+								<td class = 'value'>[%- pv_summary.stddev.failed -%]</td>
+								<td class = 'modified'> </td>
+							</tr>
+						</tbody>
+					</table>
+				[%- END -%]
+				[%- INCLUDE "div-error.html" -%]
+			</div>
+			[%- IF pv_dailydata.size > 10 -%]
+				<div class = 'pagination'>
+					[% INCLUDE "div-pagination.html" %]
+				</div>
+			[%- END -%]
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+
+	</div>
+</body>
+</html>
+
