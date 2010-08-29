@@ -1,4 +1,4 @@
-# $Id: BounceLogs.pm,v 1.12 2010/07/26 08:11:43 ak Exp $
+# $Id: BounceLogs.pm,v 1.13 2010/08/16 11:59:15 ak Exp $
 # -Id: BounceLogs.pm,v 1.9 2010/03/04 08:33:28 ak Exp -
 # -Id: BounceLogs.pm,v 1.1 2009/08/29 08:58:48 ak Exp -
 # -Id: BounceLogs.pm,v 1.6 2009/08/27 05:09:55 ak Exp -
@@ -314,9 +314,11 @@ sub groupby
 	#
 	# @Description	Aggregate by specified column
 	# @Param <str>	(String) Column name
+	# @Param <ref>	(Ref->Hash) WHERE Condition
 	# @Return	(Ref->Array) Aggregated data
 	my $self = shift();
 	my $name = shift() || return {};
+	my $cond = shift() || {};
 	my $rset = undef();
 	my $mtab = q();
 	my $data = [];
@@ -329,11 +331,24 @@ sub groupby
 	eval {
 		if( $name eq 'hostgroup' || $name eq 'reason' )
 		{
-			my $_sqlx = 'SELECT '.$name.', ';
-			$_sqlx .= 'COUNT(token) AS x, ';
-			$_sqlx .= 'SUM(frequency) AS y ';
-			$_sqlx .= 'FROM '.$self->{'table'}.' GROUP BY '.$name;
+			my $_sqlx = 'SELECT '.$name.', COUNT(token) AS x, SUM(frequency) AS y FROM '.$self->{'table'};
 
+			if( keys %$cond )
+			{
+				# WHERE ( bounced > ... AND bounced < ... )
+				my @_sqlw = ();
+				while( my $_wcnd = shift @{ $cond->{'bounced'} } )
+				{
+					foreach my $__op ( keys %$_wcnd )
+					{
+						push( @_sqlw, sprintf( "bounced %s %d", $__op, $_wcnd->{$__op} ) );
+					}
+				}
+				$_sqlx .= ' WHERE (';
+				$_sqlx .= join( ' AND ', @_sqlw );
+				$_sqlx .= ' )';
+			}
+			$_sqlx .= ' GROUP BY '.$name;
 			$iterator = $xtobject->search_by_sql( $_sqlx );
 		}
 		else
@@ -353,6 +368,7 @@ sub groupby
 
 			$_rset->add_select( $_mtab->table().'.'.$_mtab->field() => $name );
 			$_rset->add_join( $self->{'table'} => [ $_join ] );
+			map { $_rset->add_where( 'bounced' => $cond->{'bounced'}->[$_] ) } (0,1) if( keys %$cond );
 			$iterator = $_rset->retrieve(); 
 		}
 	};
