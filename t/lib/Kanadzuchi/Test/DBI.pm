@@ -1,4 +1,4 @@
-# $Id: DBI.pm,v 1.1 2010/05/17 00:01:01 ak Exp $
+# $Id: DBI.pm,v 1.2 2010/08/16 12:01:16 ak Exp $
 package Kanadzuchi::Test::DBI;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -17,6 +17,7 @@ sub buildtable
 	my $sqlst = q();
 	my $files = [
 		'./src/sql/SQLite.sql',
+		'./src/sql/SQLite-dailyupdates.sql',
 		'./src/sql/mastertable-hostgroups.sql',
 		'./src/sql/mastertable-providers.sql',
 		'./src/sql/mastertable-reasons.sql',
