@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES.JA (utf-8/LF)
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES.JA,v 1.48 2010/07/27 02:56:20 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.49 2010/08/29 20:13:42 ak Exp $
 -----------------------------------------------------------------------
  オープンソースのバウンスメール解析システム``BounceHammer''のリリース
  ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
@@ -9,6 +9,40 @@
 -----------------------------------------------------------------------
  Copyright (C) 2009,2010 Cubicroot Co. Ltd. ALL RIGHTS RESERVED.
 -----------------------------------------------------------------------
+
+-----------------------------------------------------------------------
+2.5.0/2.0.0	2010/08/30
+
+  新機能
+    * 日々のバウンス記録数の為の新しいテーブル ``t_dailyupdates'' 
+    * bin/summarizerコマンドの新しいオプション: --date(-d), --totalsby,
+      --period(-p), --totalsby, -Fc (CSV format), --dailyupdates(-U).
+    * bin/databasectlコマンドの新しいオプション: --date(-d)
+
+  細かな改善点:
+    * "@"から始まるメールアドレスを含むバウンスメールを解析した場合に、
+      bin/mailboxparser コマンドが"Invalid mailbox list: ..."という警告
+      メッセージを出す問題を修正。(商用Sendmailのメールサンプルをご提供
+      いただいた企業様ありがとうございました)
+
+  修正されたバグ:
+    * DES以外の暗号化方式を指定しても Kanadzuchi::UI::Webによって無視さ
+      れる問題を修正。
+
+  新しいファイル:
+    * lib/Kanadzuchi/Crypt.pm
+    * lib/Kanadzuchi/BdDR/DailyUpdates.pm
+    * lib/Kanadzuchi/UI/Web/DailyUpdates.pm
+    * share/script/MySQL-dailyupdates.sql
+    * share/script/PostgreSQL-dailyupdates.sql
+    * share/script/SQLite-dailyupdates.sql
+    * share/template/l10n/{en,ja}/help-dailyupdates*.tt
+    * share/template/standard/javascript/excanvas.js
+    * share/template/standard/page/dailyupdates.html
+    * share/template/standard/stylesheet/dailyupdates.css
+    * t/070_crypt.t
+    * t/117_bddr-dailyupdates.t
+
 
 -----------------------------------------------------------------------
 2.4.2/2.0.0	2010/07/27

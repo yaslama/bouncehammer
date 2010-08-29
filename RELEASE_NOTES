@@ -1,6 +1,6 @@
 		BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
- $Id: RELEASE_NOTES,v 1.71 2010/07/27 02:56:20 ak Exp $
+ $Id: RELEASE_NOTES,v 1.72 2010/08/29 20:13:42 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -12,6 +12,42 @@
 -----------------------------------------------------------------------
  Copyright (C) 2009,2010 Cubicroot Co. Ltd. ALL RIGHTS RESERVED.
 -----------------------------------------------------------------------
+
+-----------------------------------------------------------------------
+2.5.0/2.0.0	2010/08/30
+
+  New functionality:
+    * New database table ``t_dailyupdates'' for recording the number of
+      email bounces of each day.
+    * New options of bin/summarizer command: --date(-d),  --period(-p),
+      --totalsby, -Fc (CSV format), and --dailyupdates(-U).
+    * New option of bin/databasectl command: --date(-d).
+
+  Assorted improvements and code cleanup:
+    * Fixed an issue that bin/mailboxparser(Kanadzuchi::Address module)
+      displays an warning message: ``Invalid mailbox list: ...'' if the
+      bounced email contains the email address which begins from ``@''.
+      (thanks to the company that provide us with sample emails of com-
+       mercial Sendmail)
+
+  Fixed bugs:
+    * Fixed an issue that encrption method(Kanadzuchi::UI::Web) doesn't
+      work except cipher type is DES.
+
+  New files:
+    * lib/Kanadzuchi/Crypt.pm
+    * lib/Kanadzuchi/BdDR/DailyUpdates.pm
+    * lib/Kanadzuchi/UI/Web/DailyUpdates.pm
+    * share/script/MySQL-dailyupdates.sql
+    * share/script/PostgreSQL-dailyupdates.sql
+    * share/script/SQLite-dailyupdates.sql
+    * share/template/l10n/{en,ja}/help-dailyupdates*.tt
+    * share/template/standard/javascript/excanvas.js
+    * share/template/standard/page/dailyupdates.html
+    * share/template/standard/stylesheet/dailyupdates.css
+    * t/070_crypt.t
+    * t/117_bddr-dailyupdates.t
+
 
 -----------------------------------------------------------------------
 2.4.2/2.0.0	2010/07/27
