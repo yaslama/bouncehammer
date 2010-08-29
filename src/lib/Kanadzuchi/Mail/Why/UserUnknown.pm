@@ -1,4 +1,4 @@
-# $Id: UserUnknown.pm,v 1.8 2010/07/07 01:06:29 ak Exp $
+# $Id: UserUnknown.pm,v 1.9 2010/08/16 12:04:05 ak Exp $
 # -Id: UserUnknown.pm,v 1.1 2009/08/29 07:33:28 ak Exp -
 # -Id: UserUnknown.pm,v 1.2 2009/05/11 08:22:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -33,10 +33,7 @@ sub exemplaria
 		qr{mailbox not present},
 		qr{recipient address rejected: invalid user},
 		qr{recipient address rejected: user .+ does not exist},
-		qr{recipient address rejected: user unknown in relay recipient table},
-		qr{recipient address rejected: user unknown in local recipient table},
-		qr{recipient address rejected: user unknown in virtual mailbox table},
-		qr{recipient address rejected: user unknown in virtual alias table},
+		qr{recipient address rejected: user unknown in[ ].+[ ]table},
 		qr{recipient address rejected: unknown user},
 		qr{recipient is not local},
 		qr{requested action not taken: mailbox unavailable},
