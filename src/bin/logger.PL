@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.16 2010/06/25 19:34:06 ak Exp $
+# $Id: logger.PL,v 1.17 2010/08/28 17:24:21 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -365,7 +365,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 				my $_statregrlog = undef();	# (File::stat) stat() of the regular log
 				my $_theheaddata = {};
 
-				$dataoftheday = Kanadzuchi::Metadata->mergesort($objectbydate->{$_key});
+				$dataoftheday = Kanadzuchi::Metadata->mergesort( $objectbydate->{$_key}, 'bounced' );
 				$_handleoflog = $_eachregrlog->openr() if( -s $_eachregrlog && -r _ );
 
 				# Set the temporary regular log's object and file handle
