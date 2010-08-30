@@ -78,12 +78,16 @@
 			<h2>[% tt_head.dailyupdates %](bin/databasectl)</h2>
 
 			[%- IF pv_dailydata.size > 0 -%]
-				<canvas id = 'jx_duplot' width = '600' height = '144'></canvas>
+				[%- IF pv_iexplorer == 0 -%]
+					<canvas id = 'jx_duplot' width = '600' height = '144'></canvas>
+				[%- END -%]
 				<form action = '[% "${pv_scriptname}/dailyupdates/" %]' method = 'POST' id = 'jx_switchunit'>
+				[%- IF pv_iexplorer == 0 -%]
 				<div class = 'togglebuttonfield'>
 					<input type = 'button' class = 'flatbutton'
 						onClick = "toggleIt('jx_graphoption');" value = '[%- tt_word.graph %]' />
 				</div>
+				[%- END -%]
 				<fieldset class = 'graphoption' id = 'jx_graphoption' style = 'display: none;'>
 					<input type = 'hidden' name = 'fe_language' value = '[% pv_mylanguage %]' />
 					<input type = 'hidden' name = 'fe_havepostdata' value = '1' />
