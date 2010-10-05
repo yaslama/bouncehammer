@@ -1,4 +1,4 @@
-# $Id: 502_bin-tablectl.t,v 1.16 2010/07/11 09:20:39 ak Exp $
+# $Id: 502_bin-tablectl.t,v 1.17 2010/10/05 11:30:57 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,7 +7,7 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 1643 );
+use Test::More ( tests => 1651 );
 
 
 SKIP: {

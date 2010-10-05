@@ -1,4 +1,4 @@
-# $Id: 031_mta-sendmail.t,v 1.1 2010/07/07 04:42:44 ak Exp $
+# $Id: 031_mta-sendmail.t,v 1.2 2010/10/05 11:30:56 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -43,12 +43,12 @@ REPERIT: {
 
 	$mesgbodypart .= $_ while( <DATA> );
 	$pseudoheader = $Test->class->reperit( $Head, \$mesgbodypart );
-	ok( $pseudoheader );
-	
+	ok( $pseudoheader, 'pseudo header length = '.length($pseudoheader) );
+
 	foreach my $el ( split("\n", $pseudoheader) )
 	{
 		next() if( $el =~ m{\A\z} );
-		ok( $el, $el ) if( $el =~ m{X-SMTP-Command: [A-Z]{4}} );
+		ok( $el, $el ) if( $el =~ m{\AX-SMTP-Command: [A-Z]{4}\z} );
 	}
 }
 

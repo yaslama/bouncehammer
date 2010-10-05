@@ -1,4 +1,4 @@
-# $Id: 054_mail-why.t,v 1.6 2010/07/07 09:05:00 ak Exp $
+# $Id: 054_mail-why.t,v 1.7 2010/10/05 11:30:57 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 549 );
+use Test::More ( tests => 852 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -23,16 +23,22 @@ my $Classes = {
         'systemfull'	=> q(Kanadzuchi::Mail::Why::SystemFull),
         'msgtoobig'	=> q(Kanadzuchi::Mail::Why::MesgTooBig),
         'userunknown'	=> q(Kanadzuchi::Mail::Why::UserUnknown),
+        'rejected'	=> q(Kanadzuchi::Mail::Why::Rejected),
+        'systemerror'	=> q(Kanadzuchi::Mail::Why::SystemError),
+        'securityerr'	=> q(Kanadzuchi::Mail::Why::SecurityError),
+        'contenterr'	=> q(Kanadzuchi::Mail::Why::ContentError),
 };
 
 my $Strings = {
-        'filtered'	=> [
-		q(Sorry, Your remotehost looks suspiciously like spammer),
+	'filtered'	=> [
+		q{due to extended inactivity new mail is not currently being accepted for this mailbox},
+		q{this account has been disabled or discontinued},
+	],
+        'contenterr'	=> [
 		q(The message was rejected because it contains prohibited virus or spam content),
 		q(Message filtered. Please see the faqs section on spam),
 		q(Blocked by policy: No spam please),
 		q(Message rejected due to suspected spam content),
-		q(Domain of sender address exampe.int does not exist),
 	],
         'hostunknown'	=> [
 		q(Recipient address rejected: Unknown domain name),
@@ -47,7 +53,21 @@ my $Strings = {
 	],
         'relayingdenied'=> [ 
 		q(Relaying denied),
+	],
+	'securityerr' => [
 		q{553 sorry, that domain isn't in my list of allowed rcpthosts (#5.7.1)},
+	],
+	'systemerror' => [
+		q{Server configuration error},
+		q{Local error in processing},
+		q{mail system configuration error},
+		q{system config error},
+		q{Too many hops},
+	],
+	'rejected' => [
+		q{domain of sender address example.jp does not exist},
+		q(Domain of sender address exampe.int does not exist),
+		q(Sorry, Your remotehost looks suspiciously like spammer),
 	],
         'systemfull'	=> [ q(Requested mail action aborted: exceeded storage allocation) ],
         'mesgtoobig'	=> [
@@ -67,7 +87,6 @@ my $Strings = {
 		q(Sorry, User unknown),
 		q(Sorry, No mailbox here by that name),
 		q(Mailbox not present),
-		q(Requested action not taken: Mailbox unavailable),
 		q(Recipient is not local),
 		q(Unknown address),
 		q(Unknown recipient),
@@ -82,23 +101,23 @@ my $OtherString = 'This string does not match with any patterns';
 # |/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|
 #
 REQUIRE: foreach my $c ( keys(%$Classes) ){ require_ok("$Classes->{$c}"); }
-METHODS: foreach my $c ( keys(%$Classes) ){ can_ok( $Classes->{$c}, 'habettextu' ); }
+METHODS: foreach my $c ( keys(%$Classes) ){ can_ok( $Classes->{$c}, 'textumhabet' ); }
 
 # 3. Call class method
 CLASS_METHODS: foreach my $c ( keys(%$Classes) )
 {
 	MATCH: foreach my $s ( @{$Strings->{$c}} )
 	{
-		ok( $Classes->{$c}->habettextu($s), 'Match String by '.$c.q{->habettextu()} );
+		ok( $Classes->{$c}->textumhabet($s), 'Match String by '.$c.'->textumhabet('.$s.')' );
 	}
 
-	is( $Classes->{$c}->habettextu($OtherString), 0, 'No Match String by '.$c.q{->habettextu()} );
+	is( $Classes->{$c}->textumhabet($OtherString), 0, 'No Match String by '.$c.'->textumhabet('.$OtherString.')' );
 
 	ZERO: foreach my $z ( @{$Kanadzuchi::Test::ExceptionalValues}, @{$Kanadzuchi::Test::NegativeValues} )
 	{
 		my $argv = defined($z) ? sprintf("%#x", ord($z)) : 'undef()';
-		is( $Classes->{$c}->habettextu($z), 0,
-			'No Match String by '.$c.'->habettextu('.$argv.')' );
+		is( $Classes->{$c}->textumhabet($z), 0,
+			'No Match String by '.$c.'->textumhabet('.$argv.')' );
 	}
 }
 

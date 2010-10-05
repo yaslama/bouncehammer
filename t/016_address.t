@@ -1,4 +1,4 @@
-# $Id: 016_address.t,v 1.2 2010/07/02 00:06:48 ak Exp $
+# $Id: 016_address.t,v 1.3 2010/10/05 11:30:56 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Kanadzuchi::Test;
 use Kanadzuchi::Address;
 use Kanadzuchi::RFC2822;
 use Path::Class;
-use Test::More ( tests => 1166 );
+use Test::More ( tests => 1178 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -20,7 +20,7 @@ use Test::More ( tests => 1166 );
 #
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::Address|,
-	'methods' => [ 'new', 'parse' ],
+	'methods' => [ 'new', 'parse', 'canonify' ],
 	'instance' => new Kanadzuchi::Address(
 			'address' => 'user@example.jp' ),
 );
@@ -62,6 +62,16 @@ CLASS_METHODS: {
 		'X-Envelope-To',
 		'Resent-To',
 		'Apparently-To',
+	];
+	my $froms = [
+		q{"hoge" <hoge@example.jp>},
+		q{"=?ISO-2022-JP?B?dummy?=" <fuga@example.jp>},
+		q{"T E S T" <test@exampe.jp>},
+		q{"Nanashi no gombe" <gombe@example.jp>},
+		q{<root@example.jp>},
+		q{User name <user@example.jp>},
+		q{dummy@host <dummy@example.jp>},
+		q{address@example.jp},
 	];
 
 	CONSTRUCTOR: {
@@ -114,6 +124,19 @@ CLASS_METHODS: {
 			isa_ok( $objects, q|ARRAY| );
 			is( scalar(@$objects), 0, q{->parser(}.$argv.q{) = Empty array} );
 		}
+	}
+
+	CANONIFY: {
+		foreach my $e ( @$froms )
+		{
+			my $c = Kanadzuchi::Address->canonify($e);
+			ok( Kanadzuchi::RFC2822->is_emailaddress($c), '->canonify('.$e.') => '.$c );
+		}
+
+		is( Kanadzuchi::Address->canonify(), q(), '->canonify() = Empty' );
+		is( Kanadzuchi::Address->canonify([]), q(), '->canonify([]) = Empty' );
+		is( Kanadzuchi::Address->canonify({}), q(), '->canonify([]) = Empty' );
+		is( Kanadzuchi::Address->canonify(0), 0, '->canonify(0) = 0' );
 	}
 }
 

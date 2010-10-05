@@ -1,4 +1,4 @@
-# $Id: 115_bddr-bouncelogs-masters.t,v 1.8 2010/07/11 09:20:38 ak Exp $
+# $Id: 115_bddr-bouncelogs-masters.t,v 1.9 2010/10/05 11:30:57 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 2861 );
+use Test::More ( tests => 2864 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||

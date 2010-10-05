@@ -1,4 +1,4 @@
-# $Id: 052_mail-bounced.t,v 1.7 2010/07/02 00:06:48 ak Exp $
+# $Id: 052_mail-bounced.t,v 1.8 2010/10/05 11:30:56 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -138,7 +138,7 @@ CALL_PARSER: {
 
 				foreach my $ds ( $_p->deliverystatus, $_p->description->{'deliverystatus'} )
 				{
-					like( $ds, qr{\A\d+\z}, q{->deliverystatus() is valid: }.$ds );
+					like( $ds, qr{\A\d[.]\d[.]\d+\z}, q{->deliverystatus() is valid: }.$ds );
 					ok( $_p->is_permerror(), q{->is_permerror(}.$ds.q{)} ) if( $ds =~ m{\A5} );
 					ok( $_p->is_temperror(), q{->is_temperror(}.$ds.q{)} ) if( $ds =~ m{\A4} );
 				}

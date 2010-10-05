@@ -1,4 +1,4 @@
-# $Id: 110_bddr.t,v 1.4 2010/07/11 09:20:38 ak Exp $
+# $Id: 110_bddr.t,v 1.5 2010/10/05 11:30:57 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::BdDR;
-use Test::More ( tests => 169 );
+use Test::More ( tests => 170 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -38,9 +38,9 @@ METHODS: {
 	my $therdb = q(:memory:);
 	my $datasn = q();
 	my $rdbset = {
-		'PostgreSQL' => { 'driver' => 'Pg', 'port' => 5432, 'short' => 'p', },
-		'MySQL' => { 'driver' => 'mysql', 'port' => 3306, 'short' => 'm', },
-		'SQLite' => { 'driver' => 'SQLite', 'port' => undef(), 'short' => 's', 'dbname' => $therdb },
+		'PostgreSQL' => { 'driver' => 'Pg', 'port' => 5432 },
+		'MySQL' => { 'driver' => 'mysql', 'port' => 3306 },
+		'SQLite' => { 'driver' => 'SQLite', 'port' => undef(), 'dbname' => $therdb },
 	};
 
 	foreach my $d ( keys(%$rdbset) )
@@ -56,12 +56,22 @@ METHODS: {
 		SETUP: {
 			ok( $object->setup( $config->{'database'}, q{->setup()} ) );
 
-			is( $object->hostname(), q(127.0.0.1), q{->hostname() = 127.0.0.1} );
-			is( $object->port(), $rdbset->{$d}->{'port'}, q{->port() = }.$object->port() ) if( defined($object->port) );
+			if( $d eq 'SQLite' )
+			{
+				is( $object->hostname(), q(), q{->hostname() is empty} );
+				is( $object->port(), q(), q{->port() is empty } );
+				is( $object->username(), q(), q{->username() is empty} );
+				is( $object->password(), q(), q{->password() is empty} );
+			}
+			else
+			{
+				is( $object->hostname(), q(127.0.0.1), q{->hostname() = 127.0.0.1} );
+				is( $object->port(), $rdbset->{$d}->{port}, q{->port() = }.$rdbset->{$d}->{port} );
+				is( $object->username(), q(bouncehammer), q{->username() = bouncehammer} );
+				is( $object->password(), q(kanadzuchi), q{->password() = kanadzuchi} );
+			}
 			is( $object->dbtype(), $d, q{->dbtype() = }.$d );
 			is( $object->dbname(), $config->{'database'}->{'dbname'}, q{->dbname() = }.$config->{'database'}->{'dbname'} );
-			is( $object->username(), q(bouncehammer), q{->username() = bouncehammer} );
-			is( $object->password(), q(kanadzuchi), q{->password() = kanadzuchi} );
 			ok( length($object->datasn()), q{->datasn() = }.$object->datasn() );
 		}
 

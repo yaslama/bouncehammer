@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.12 2010/06/21 09:54:17 ak Exp $
+# $Id: Mail.pm,v 1.13 2010/10/05 11:31:14 ak Exp $
 package Kanadzuchi::Test::Mail;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -26,13 +26,13 @@ our $MethodList = {
 		'eatit',
 		'tellmewhy',
 		'is_filtered',
+		'is_rejected',
 		'is_userunknown',
 		'is_hostunknown',
 		'is_mailboxfull',
 		'is_toobigmesg',
 		'is_exceedlimit',
 		'is_norelaying',
-		'is_securityerror',
 		'is_mailererror',
 		'is_onhold',
 		'is_somethingelse',

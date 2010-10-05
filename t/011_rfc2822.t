@@ -1,4 +1,4 @@
-# $Id: 011_rfc2822.t,v 1.5 2010/08/16 12:03:33 ak Exp $
+# $Id: 011_rfc2822.t,v 1.6 2010/10/05 11:30:56 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::RFC2822;
-use Test::More ( tests => 241 );
+use Test::More ( tests => 228 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -20,7 +20,7 @@ my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::RFC2822|,
 	'methods' => [
 		'is_emailaddress', 'is_domainpart', 'expand_subaddress',
-		'is_mailerdaemon', 'is_subaddress', 'cleanup' ],
+		'is_mailerdaemon', 'is_subaddress', ],
 	'instance' => undef(), );
 
 my $e = {
@@ -60,8 +60,6 @@ CLASS_METHODS: {
 
 		my $xa = $class->expand_subaddress($x->{ok});
 		is( $class->expand_subaddress($x->{ok}), $xa, q{Expand sub-address = }.$xa );
-
-		like( $class->cleanup(qq| <$e->{ok}> |), qr($e->{ok}) );
 	}
 
 	INVALID_ADDRESS: {
@@ -72,16 +70,6 @@ CLASS_METHODS: {
 
 		my $xa = $class->expand_subaddress($x->{ng});
 		is( $class->expand_subaddress($x->{ng}), q{}, q{Expand invalid sub-address = } );
-	}
-
-	CLEANUP: {
-		my $a = $e->{'ok'};
-
-		foreach my $m ( $a, ' '.$a, $a.' ', ' '.$a.' ', 'mailto:'.$a, '<'.$a.'>' )
-		{
-			is( $class->cleanup($m), $a, qq{->cleanup($m) == $a} );
-			ok( $class->is_emailaddress( $class->cleanup($m) ), qq{->is_emailaddress($m)} );
-		}
 	}
 
 	IRREGULAR_CASES: {

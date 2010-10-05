@@ -1,4 +1,4 @@
-# $Id: 034_mta-google.t,v 1.1 2010/07/07 04:42:44 ak Exp $
+# $Id: 034_mta-google.t,v 1.2 2010/10/05 11:30:56 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,8 +8,8 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Kanadzuchi::MTA::Google;
-use Test::More ( tests => 11 );
+use Kanadzuchi::MTA::US::Google;
+use Test::More ( tests => 10 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -17,7 +17,7 @@ use Test::More ( tests => 11 );
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
 my $Test = new Kanadzuchi::Test(
-		'class' => q|Kanadzuchi::MTA::Google|,
+		'class' => q|Kanadzuchi::MTA::US::Google|,
 		'methods' => [ 'xsmtpcommand', 'emailheaders', 'reperit' ],
 		'instance' => undef(),
 );
@@ -56,8 +56,7 @@ REPERIT: {
 		ok( $el, $el ) if( $el =~ m{Arrival-Date: } );
 		ok( $el, $el ) if( $el =~ m{Final-Recipient: } );
 		ok( $el, $el ) if( $el =~ m{Status: } );
-		ok( $el, $el ) if( $el =~ m{Diagnostic-Code: } );
-		ok( $el, $el ) if( $el =~ m{From: } );
+		ok( $el, $el ) if( $el =~ m{X-Diagnosis: } );
 		ok( $el, $el ) if( $el =~ m{To: } );
 	}
 }

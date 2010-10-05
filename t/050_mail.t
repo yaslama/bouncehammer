@@ -1,4 +1,4 @@
-# $Id: 050_mail.t,v 1.11 2010/07/07 09:05:00 ak Exp $
+# $Id: 050_mail.t,v 1.12 2010/10/05 11:30:56 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -117,7 +117,7 @@ CLASS_METHODS: {
 				is( $o->reason(), q(), q{->reason() is empty} );
 				is( $o->hostgroup(), q(), q{->hostgroup() is empty} );
 				is( $o->diagnosticcode(), q(), q{->diagnosticcode() is empty} );
-				is( $o->deliverystatus(), 0, q{->deliverystatus() == 0} );
+				is( $o->deliverystatus(), q(), q{->deliverystatus() is empty} );
 			}
 		}
 	}

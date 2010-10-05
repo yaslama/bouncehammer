@@ -1,4 +1,4 @@
-# $Id: 000_compile-core.t,v 1.45 2010/08/28 17:22:44 ak Exp $
+# $Id: 000_compile-core.t,v 1.46 2010/10/05 11:30:56 ak Exp $
 use strict;
 use warnings;
 use lib qw(./t/lib ./dist/lib ./src/lib);
@@ -59,25 +59,32 @@ my $Modules = [ qw{
 	Kanadzuchi::Mail::Stored::BdDR
 	Kanadzuchi::Mail::Stored::YAML
 	Kanadzuchi::Mail::Why
+	Kanadzuchi::Mail::Why::ContentError
 	Kanadzuchi::Mail::Why::ExceedLimit
 	Kanadzuchi::Mail::Why::Filtered
 	Kanadzuchi::Mail::Why::HostUnknown
 	Kanadzuchi::Mail::Why::MailboxFull
+	Kanadzuchi::Mail::Why::Rejected
 	Kanadzuchi::Mail::Why::RelayingDenied
 	Kanadzuchi::Mail::Why::SystemFull
 	Kanadzuchi::Mail::Why::MesgTooBig
 	Kanadzuchi::Mail::Why::UserUnknown
+	Kanadzuchi::Mail::Why::SecurityError
+	Kanadzuchi::Mail::Why::SystemError
 	Kanadzuchi::Mbox
+	Kanadzuchi::MDA
 	Kanadzuchi::MIME::Parser
 	Kanadzuchi::Metadata
 	Kanadzuchi::MTA
-	Kanadzuchi::MTA::Google
+	Kanadzuchi::MTA::Exim
+	Kanadzuchi::MTA::Fallback
 	Kanadzuchi::MTA::Postfix
 	Kanadzuchi::MTA::qmail
 	Kanadzuchi::MTA::Sendmail
 	Kanadzuchi::RFC1893
 	Kanadzuchi::RFC2606
 	Kanadzuchi::RFC2822
+	Kanadzuchi::RFC3463
 	Kanadzuchi::Statistics
 	Kanadzuchi::Statistics::Stored
 	Kanadzuchi::Statistics::Stored::BdDR
@@ -92,6 +99,7 @@ my $Optionals = [ qw{
 	Kanadzuchi::Archive::Bzip2
 	Kanadzuchi::Archive::Zip
 	Kanadzuchi::MTA::JP::aubyKDDI
+	Kanadzuchi::MTA::US::Google
 } ];
 
 plan( tests => scalar @$Modules );
