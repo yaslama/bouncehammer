@@ -1,4 +1,4 @@
-# $Id: available-countries-example,v 1.4 2010/07/15 00:32:51 ak Exp $
+# $Id: available-countries-example,v 1.5 2010/10/05 11:02:16 ak Exp $
 # available-countries:
 #   If you use this file, it should be saved as 'available-countries',
 #   Run /bin/cp ./available-countries-example ./available-countries 
@@ -131,6 +131,7 @@
 #   webmail: Many domains of mail.com, pobox and such.
 "us":
   "webmail": 1
+  "agents": [ "Google" ]
 
 # Host groups which are used in South Africa/Zuid-Afrika
 #   webmail: webmail.co.za:South Africa's free email service
