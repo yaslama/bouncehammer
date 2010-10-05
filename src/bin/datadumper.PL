@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.18 2010/07/23 06:47:34 ak Exp $
+# $Id: datadumper.PL,v 1.20 2010/10/05 10:59:43 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -120,7 +120,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 	require Kanadzuchi::Mail::Stored::BdDR;
 	require Kanadzuchi::Log;
 	require Kanadzuchi::Time;
-	require Kanadzuchi::RFC2822;
+	require Kanadzuchi::Address;
 
 	my $xntableobj = undef();	# (Kanadzuchi::BdDR::BounceLogs::Table) Txn table object
 	my $pagination = undef();	# (Kanadzuchi::BdDR::Page) Pagination object
@@ -149,9 +149,9 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		Kanadzuchi::Exception::Database->throw( 
 			'-text' => 'Failed to create table objects' ) unless $xntableobj;
 
-		( $Rdb->hostname() && $Rdb->port() )
-			? $Cmd->d(2,sprintf("Database host = %s:%d\n", $Rdb->hostname(),$Rdb->port()))
-			: $Cmd->d(2,qq{Database host = Socket\n});
+		( $Rdb->hostname() ne 'localhost' && $Rdb->port() ne q() )
+			? $Cmd->d(2,sprintf("Database host = %s:%s\n", $Rdb->hostname(), $Rdb->port()))
+			: $Rdb->hostname() eq 'localhost' ? $Cmd->d(2,'Database host = Socket'.qq{\n}) : 1;
 
 		$Cmd->d(2,sprintf("Database name = %s(%s)\n", $Rdb->dbname(), $Rdb->dbtype()));
 		$Cmd->d(2,sprintf("Database user = %s\n", $Rdb->username()));
@@ -170,7 +170,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		$whereconds->{$_key} =  lc($WhereCondition->{$_key});
 		$whereconds->{$_key} =~ y{[;=&`'"%*()[]|~$]}{}d;
 		$whereconds->{$_key} =~ s{\A.+[@]}{}g if( $_key eq 'senderdomain' || $_key eq 'destination' );
-		$whereconds->{$_key} =  Kanadzuchi::RFC2822->cleanup($whereconds->{$_key})
+		$whereconds->{$_key} =  Kanadzuchi::Address->canonify($whereconds->{$_key})
 						if( $_key eq 'recipient' || $_key eq 'addresser' );
 
 		if( $_key eq 'bounced' )
@@ -251,7 +251,8 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		# 0 records in the database
 		$Cmd->finish() unless( $nrecordsin );
 
-		$pagination->resultsperpage( $nrecordsin < $linesapage ? $linesapage : int($nrecordsin/10) );
+		$linesapage = 5000 if( $nrecordsin > $linesapage );
+		$pagination->resultsperpage( $linesapage );
 		$pagination->set($nrecordsin);
 		$pagination->colnameorderby( $OrderBy->{'column'} );
 		$pagination->descendorderby( $OrderBy->{'descend'} ? 1 : 0 );
