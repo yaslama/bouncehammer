@@ -17,4 +17,23 @@
   3. Create the new configuration file ``available-countries''
       # cd <install-dir>/etc
       # cp ./available-countries-example ./available-countries
+
 -----------------------------------------------------------------------
+* 2.4.x => 2.5.0
+
+  1. Run ./configure script, ``make'', and ``make install''
+
+  2. Create the new database table 't_dailyupdates'
+      # cd <install-dir>/share/script
+      # cat <your-db>-dailyupdates.sql | <your-db-client-command>
+
+-----------------------------------------------------------------------
+* 2.5.0 => 2.6.0
+
+  1. Run ./configure script, ``make'', and ``make install''
+
+  2. Update database table for new reasons.
+      # cd ./src/sql
+      # cat update-2.6.0.sql | <your-db-client-command>
+
+
