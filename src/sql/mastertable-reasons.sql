@@ -4,8 +4,8 @@ INSERT INTO t_reasons VALUES( 3, 'hostunknown', 'Bad destination system address(
 INSERT INTO t_reasons VALUES( 4, 'hasmoved', 'Mailbox has moved(x.1.6)', 0 );
 INSERT INTO t_reasons VALUES( 5, 'filtered', 'Mailbox disabled, not accepting messages(x.2.0,x.2.1)', 0 );
 INSERT INTO t_reasons VALUES( 6, 'suspend', 'Suspended', 0 );
-INSERT INTO t_reasons VALUES( 7, '_reserved-07', '', 0 );
-INSERT INTO t_reasons VALUES( 8, '_reserved-08', '', 0 );
+INSERT INTO t_reasons VALUES( 7, 'rejected', 'Bad sender address(x.1.8)', 0 );
+INSERT INTO t_reasons VALUES( 8, 'expired', 'Delivery time expired(x.4.7)', 0 );
 INSERT INTO t_reasons VALUES( 9, 'mailboxfull', 'Mailbox is full(x.2.2)', 0 );
 INSERT INTO t_reasons VALUES( 10, 'exceedlimit', 'Message length exceeds administrative limit.(x.2.3)', 0 );
 INSERT INTO t_reasons VALUES( 11, 'systemfull', 'Mail system full(x.3.1)', 0 );
@@ -13,7 +13,8 @@ INSERT INTO t_reasons VALUES( 12, 'notaccept', 'System not accepting network mes
 INSERT INTO t_reasons VALUES( 13, 'mesgtoobig', 'Message too big for system(x.3.4)', 0 );
 INSERT INTO t_reasons VALUES( 14, 'mailererror', 'Unknown mailer error', 0 );
 INSERT INTO t_reasons VALUES( 15, 'securityerr', 'Other or undefined security status(x.7.x)', 0 );
-INSERT INTO t_reasons VALUES( 16, '_reserved-16', '', 0 );
+INSERT INTO t_reasons VALUES( 16, 'systemerror', 'Mail system or network error(x.3.5)', 0 );
 INSERT INTO t_reasons VALUES( 17, 'whitelisted', 'It exists surely', 0 );
 INSERT INTO t_reasons VALUES( 18, 'unstable', 'Unstable recipient', 0 );
 INSERT INTO t_reasons VALUES( 19, 'onhold', 'Judgement of the reason is on hold', 0 );
+INSERT INTO t_reasons VALUES( 20, 'contenterr', 'Content error(x.6.x)', 0 );
