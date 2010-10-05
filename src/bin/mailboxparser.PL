@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.37 2010/07/07 11:21:33 ak Exp $
+# $Id: mailboxparser.PL,v 1.38 2010/10/05 10:57:37 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -215,8 +215,6 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			# Skip to the next loop if the file does not seem to email.
 			read( $_eachmailfh, $first5char, 5 );
 			seek( $_eachmailfh, 0, 0 );
-
-			# Skip to the next loop if the file not like email.
 			do { $_eachmailfh->close(); next() } unless( $first5char =~ m{\A[A-Za-z]} );
 
 			# Does first 5 bytes of the message is 'From_' ?
