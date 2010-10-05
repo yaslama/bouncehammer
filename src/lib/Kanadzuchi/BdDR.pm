@@ -1,4 +1,4 @@
-# $Id: BdDR.pm,v 1.3 2010/07/07 11:21:37 ak Exp $
+# $Id: BdDR.pm,v 1.4 2010/10/05 11:06:13 ak Exp $
 # -Id: RDB.pm,v 1.9 2010/03/04 08:31:40 ak Exp -
 # -Id: Database.pm,v 1.2 2009/08/29 19:01:14 ak Exp -
 # -Id: Database.pm,v 1.7 2009/08/13 07:13:28 ak Exp -
@@ -32,7 +32,7 @@ __PACKAGE__->mk_accessors(
 	'dbname',	# (String) Database Name
 	'dbtype',	# (String) Database Type
 	'hostname',	# (String) Database Host
-	'port',		# (Integer) Database Port
+	'port',		# (String) Database Port or Socket
 	'username',	# (String) Database User
 	'password',	# (String) Database Password
 	'datasn',	# (String) Data Source Name
@@ -42,6 +42,36 @@ __PACKAGE__->mk_accessors(
 	'raiseerror',	# (Integer) RaiseError for DBI
 	'printerror',	# (Integer) PrintError for DBI
 );
+
+#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
+# ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
+# ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
+#
+my $DBs = [ qw(postgresql mysql sqlite) ];
+my $DBI = {
+	'postgresql' => {
+		'dbtype' => 'PostgreSQL',
+		'dbport' => 5432,
+		'driver' => 'Pg',
+		'dbname' => 'dbname',
+		'socket' => 'host',
+	},
+	'mysql' => {
+		'dbtype' => 'MySQL',
+		'dbport' => 3306,
+		'driver' => 'mysql',
+		'dbname' => 'database',
+		'socket' => 'mysql_socket',
+	},
+	'sqlite' => {
+		'dbtype' => 'SQLite',
+		'dbport' => q(),
+		'driver' => 'SQLite',
+		'dbname' => 'dbname',
+		'socket' => q(),
+	},
+};
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -86,61 +116,58 @@ sub setup
 
 	if( ref($conf) eq q|HASH| )
 	{
-		# Set values to Kanadzuchi::BdDR object
-		foreach my $v ( 'hostname', 'port', 'dbtype' )
-		{
-			$self->{$v} = $conf->{$v} unless defined($self->{$v});
-		}
+		$self->{'dbtype'}   ||= lc $conf->{'dbtype'} || $DBI->{'sqlite'}->{'dbtype'};
+		$self->{'dbname'}   ||= $conf->{'dbname'} || q(:memory:);
+		$self->{'hostname'} ||= $conf->{'hostname'} || 'localhost';
+		$self->{'port'}     ||= $conf->{'port'} || q();
+		$self->{'username'} ||= $conf->{'username'} || q();
+		$self->{'password'} ||= $conf->{'password'} || q();
 
-		$self->{'dbname'}   = $conf->{'dbname'} || ':memory:';
-		$self->{'dbtype'} ||= 'SQLite';
-		$self->{'username'} = $conf->{'username'} || undef();
-		$self->{'password'} = $conf->{'password'} || undef();
+		my $dbtype = lc $self->{'dbtype'};
+		my $dbhost = $self->{'hostname'};
+		my $whatdb = ( $dbtype =~ m{(?>(?:postgre(?>(?:s|sql))|pgsql))} ) ? 'postgresql' : lc $dbtype;
+		my $dbport = $self->{'port'} || ( $dbhost ne 'localhost' ) ? $DBI->{ $whatdb }->{'dbport'} : q();
+		my $datasn = q();
 
-		# Make the data source name
-		my $ty = lc $self->{'dbtype'};
-		my $ch = length($ty) == 1 ? substr( $ty, 0, 1 ) : 'x';
-		my( $dr, $db, $ds, $pt );
+		# Unsupported database
+		return $self unless( grep { $dbtype eq $_ } @$DBs );
 
-		if( $ty =~ m{(?>(?:postgre(?>(?:s|sql))|pgsql))} || $ch eq 'p' )
+		if( $whatdb eq 'sqlite' )
 		{
-			$dr = 'Pg';
-			$pt = $self->{'port'} || 5432;
-			$db = 'PostgreSQL';
-		}
-		elsif( $ty eq 'mysql' || $ch eq 'm' )
-		{
-			$dr = 'mysql';
-			$pt = $self->{'port'} || 3306;
-			$db = 'MySQL';
-		}
-		elsif( $ty eq 'sqlite' || $ch eq 's' )
-		{
-			$dr = 'SQLite';
-			$db = 'SQLite';
+			$datasn = q|dbi:SQLite:dbname=|.$self->{'dbname'};
+			$self->{'username'} = q();
+			$self->{'password'} = q();
+			$self->{'hostname'} = q();
+			$self->{'port'} = q();
 		}
 		else
 		{
-			# Unsupported database type
-			$self->{'dbname'} = q();
-			$self->{'datasn'} = q();
-			return $self;
+			if( $dbhost eq 'localhost' )
+			{
+				# Use UNIX domain socket
+				#  Postgresql: dbi:Pg:dbname=name;host=/path/to/socket/dir;"
+				#  MySQL: dbi:mysql:database=name;mysql_socket=/path/to/socket;
+				#
+				$datasn = sprintf( "dbi:%s:%s=%s;%s=%s", $DBI->{ $whatdb }->{'driver'},
+						$DBI->{ $whatdb }->{'dbname'}, $self->{'dbname'},
+						$DBI->{ $whatdb }->{'socket'}, $dbport );
+				$self->{'port'} = q();
+				$self->{'hostname'} = 'localhost';
+			}
+			else
+			{
+				# Use TCP/IP connection
+				$dbport = $DBI->{ $whatdb }->{'dbport'} unless( $dbport =~ m{\A\d+\z} );
+				$datasn = sprintf( "dbi:%s:%s=%s;host=%s;port=%d", 
+						$DBI->{ $whatdb }->{'driver'},
+						$DBI->{ $whatdb }->{'dbname'}, $self->{'dbname'}, 
+						$dbhost, $dbport );
+				$self->{'port'} = $dbport;
+			}
 		}
 
-		if( defined($self->{'hostname'}) && defined($pt) )
-		{
-			# Use TCP/IP connection
-			$ds = sprintf( "dbi:%s:dbname=%s;host=%s;port=%s;",
-					$dr, $self->{'dbname'}, $self->{'hostname'}, $pt );
-		}
-		else
-		{
-			# Use UNIX Domain socket
-			$ds = sprintf( "dbi:%s:dbname=%s", $dr, $self->{'dbname'} );
-		}
-
-		$self->{'dbtype'} = $db;
-		$self->{'datasn'} = $ds;
+		$self->{'dbtype'} = $DBI->{ $whatdb }->{'dbtype'};
+		$self->{'datasn'} = $datasn;
 	}
 
 	return $self;
