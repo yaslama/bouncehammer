@@ -1,4 +1,4 @@
-# $Id: Address.pm,v 1.7 2010/07/07 01:06:21 ak Exp $
+# $Id: Address.pm,v 1.8 2010/10/05 11:07:45 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                    
@@ -96,6 +96,43 @@ sub parse
 	}
 
 	return $aobjs;
+}
+
+sub canonify
+{
+	# +-+-+-+-+-+-+-+-+
+	# |c|a|n|o|n|i|f|y|
+	# +-+-+-+-+-+-+-+-+
+	#
+	# @Description	Canonify a mail address(S3=canonify,S4=final)
+	# @Param <str>	(String) Email address
+	# @Return	(String) Canonified email address
+	my $class = shift();
+	my $input = shift();
+
+	return q() unless defined $input;
+	return q() if ref $input;
+
+	my $canon = q();
+	my $token = [ reverse split( q{ }, $input ) ];
+
+	if( scalar(@$token) == 1 )
+	{
+		$canon = shift @$token;
+	}
+	else
+	{
+		foreach my $e ( @$token )
+		{
+			chomp($e);
+			next() unless( $e =~ m{\A[<].+[@].+[>]\z} );
+			$canon = $e;
+			last();
+		}
+	}
+
+	$canon =~ y{<>}{}d;	# Remove angle brackets
+	return $canon;
 }
 
 1;
