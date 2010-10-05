@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.30 2010/07/11 10:06:09 ak Exp $
+# $Id: Mail.pm,v 1.31 2010/10/05 11:11:16 ak Exp $
 # -Id: Message.pm,v 1.1 2009/08/29 07:32:59 ak Exp -
 # -Id: BounceMessage.pm,v 1.13 2009/08/21 02:43:14 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -49,7 +49,7 @@ __PACKAGE__->mk_accessors(
 	'destination',		# (String) A domain part of recipinet
 	'senderdomain',		# (String) A domain part of addresser
 	'diagnosticcode',	# (String) Diagnostic-Code:
-	'deliverystatus',	# (Integer) Delivery Status
+	'deliverystatus',	# (String) Delivery Status(DSN)
 	'timezoneoffset',	# (Integer) Time zone offset(seconds)
 );
 
@@ -86,8 +86,8 @@ my $ReasonWhy = {
 	'hasmoved'	=> 4,
 	'filtered'	=> 5,
 	'suspend'	=> 6,
-	# 'reserved'	=> 7,
-	# 'reserved'	=> 8,
+	'rejected'	=> 7,
+	'expired'	=> 8,
 	'mailboxfull'	=> 9,
 	'exceedlimit'	=> 10,
 	'systemfull'	=> 11,
@@ -95,10 +95,11 @@ my $ReasonWhy = {
 	'mesgtoobig'	=> 13,
 	'mailererror'	=> 14,
 	'securityerr'	=> 15,
-	# 'reserved'	=> 16,
+	'systemerror'	=> 16,
 	'whitelisted'	=> 17,
 	'unstable'	=> 18,
 	'onhold'	=> 19,
+	'contenterr'	=> 20,
 };
 
 my $DomainCache = {};
@@ -268,7 +269,7 @@ sub new
 			#                                                     |_|        |___/ 
 			# Empty 'description', Set value into it from 3 variables.
 			$argvs->{'description'} = {
-				'deliverystatus' => $argvs->{'deliverystatus'} || 0,
+				'deliverystatus' => $argvs->{'deliverystatus'} || q(),
 				'diagnosticcode' => $argvs->{'diagnosticcode'} || q(),
 				'timezoneoffset' => $argvs->{'timezoneoffset'} || q(+0000), };
 		}
@@ -279,7 +280,7 @@ sub new
 		$argvs->{'frequency'} = 1 unless( $argvs->{'frequency'} );
 		$argvs->{'timezoneoffset'} = '+0000' unless( $argvs->{'timezoneoffset'} );
 		$argvs->{'diagnosticcode'} = q() unless( defined($argvs->{'diagnosticcode'}) );
-		$argvs->{'deliverystatus'} = 0 unless( defined($argvs->{'deliverystatus'}) );
+		$argvs->{'deliverystatus'} = q() unless( defined($argvs->{'deliverystatus'}) );
 	}
 	return $class->SUPER::new($argvs);
 }
