@@ -14,9 +14,9 @@
 
 @SET_MAKE@
 
-# $Id: Makefile.am,v 1.3 2010/10/05 11:19:09 ak Exp $
+# $Id: Makefile.am,v 1.1 2010/10/05 11:22:36 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
-# This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/Mail/Why,
+# This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/MTA/US,
 # is processed by automake to create Makefile.in.
 
 VPATH = @srcdir@
@@ -36,7 +36,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = src/lib/Kanadzuchi/Mail/Why
+subdir = src/lib/Kanadzuchi/MTA/US
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
@@ -57,7 +57,7 @@ am__installdirs = "$(DESTDIR)$(pkgdatadir)"
 pkgdataDATA_INSTALL = $(INSTALL_DATA)
 DATA = $(pkgdata_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-pkgdatadir = @libdir@/Kanadzuchi/Mail/Why
+pkgdatadir = @libdir@/Kanadzuchi/MTA/US
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AUTOCONF = @AUTOCONF@
@@ -153,12 +153,8 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-distdir = $(BUILDROOT)/dist/lib/Kanadzuchi/Mail/Why
-pkgdata_DATA = ExceedLimit.pm Filtered.pm HostUnknown.pm MailboxFull.pm \
-		RelayingDenied.pm SystemFull.pm MesgTooBig.pm \
-		UserUnknown.pm Rejected.pm SecurityError.pm \
-		SystemError.pm ContentError.pm
-
+distdir = $(BUILDROOT)/dist/lib/Kanadzuchi/MTA/US
+pkgdata_DATA = Google.pm
 all: all-am
 
 .SUFFIXES:
@@ -171,9 +167,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/lib/Kanadzuchi/Mail/Why/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/lib/Kanadzuchi/MTA/US/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  src/lib/Kanadzuchi/Mail/Why/Makefile
+	  $(AUTOMAKE) --foreign  src/lib/Kanadzuchi/MTA/US/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
