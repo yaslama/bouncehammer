@@ -1,4 +1,4 @@
-# $Id: aubyKDDI.pm,v 1.4 2010/07/12 08:07:55 ak Exp $
+# $Id: aubyKDDI.pm,v 1.5 2010/10/05 11:25:20 ak Exp $
 # -Id: aubyKDDI.pm,v 1.1 2009/08/29 08:50:38 ak Exp -
 # -Id: aubyKDDI.pm,v 1.1 2009/07/31 09:04:51 ak Exp -
 # Kanadzuchi::MTA::JP::
@@ -14,7 +14,6 @@ package Kanadzuchi::MTA::JP::aubyKDDI;
 use base 'Kanadzuchi::MTA';
 use strict;
 use warnings;
-use Kanadzuchi::RFC1893;
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -22,13 +21,20 @@ use Kanadzuchi::RFC1893;
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
 my $RxEzweb = {
-	'disable' => qr{\AThe[ ]user[(]s[)][ ]account[ ]is[ ]disabled[.]\z},
-	'limited' => qr{\AThe[ ]user[(]s[)][ ]account[ ]is[ ]temporarily[ ]limited[.]\z},
-	'timeout' => qr{\AThe[ ]following[ ]recipients[ ]did[ ]not[ ]receive[ ]this[ ]message:\z},
+	'disable' => qr{\AThe user[(]s[)] account is disabled[.]\z},
+	'limited' => qr{\AThe user[(]s[)] account is temporarily limited[.]\z},
+	'timeout' => qr{\AThe following recipients did not receive this message:\z},
 };
-my $RxauOne = {
-	'auone' => qr{\AYour[ ]mail[ ]sent[ ]on[:][ ][A-Z][a-z]{2}[,]},
-	'error' => qr{\A\s+Could[ ]not[ ]be[ ]delivered[ ]to[:][ ]},
+my $RxauOne = [
+	qr{\AYour mail sent on:? [A-Z][a-z]{2}[,]},
+	qr{\AYour mail attempted to be delivered on:? [A-Z][a-z]{2}[,]},
+];
+
+my $RxError = {
+	'couldnotbe'  => qr{\A\s+Could not be delivered to:? },
+	'mailboxfull' => qr{\A\s+As their mailbox is full[.]\z},
+	'relaydenied' => qr{\A\s+Due to the following SMTP relay error},
+	'nohostexist' => qr{\A\s+As the remote domain doesnt exist},
 };
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -73,19 +79,20 @@ sub reperit
 	# Received: from ezweb.ne.jp (wmflb12na02.ezweb.ne.jp [222.15.69.197])
 	# Received: from nmomta.auone-net.jp ([aaa.bbb.ccc.ddd]) by ...
 	#
-	$isau1++ if( lc $mhead->{'from'} =~ m{[<]?(?>postmaster[@]ezweb[.]ne[.]jp)[>]?} );
+	$isau1++ if( lc($mhead->{'from'}) =~ m{[<]?(?>postmaster[@]ezweb[.]ne[.]jp)[>]?} );
+	$isau1++ if( $mhead->{'reply-to'} && lc($mhead->{'reply-to'}) =~ m{[<]?.+[@]\w+[.]auone-net[.]jp[>]?\z} );
 	$isau1++ if( $mhead->{'subject'} eq 'Mail System Error - Returned Mail' );
 	return q() unless( $isau1 || scalar @{ $mhead->{'received'} } );
 
-	$isau1++ if( grep { $_ =~ m{\Afrom[ ]ezweb[.]ne[.]jp[ ]} } @{ $mhead->{'received'} } ||
-			grep { $_ =~ m{\Afrom[ ]\w+[.]auone-net[.]jp[ ]} } @{ $mhead->{'received'} } );
+	$isau1++ if( grep { $_ =~ m{\Afrom[ ]ezweb[.]ne[.]jp[ ]} } @{ $mhead->{'received'} } );
+	$isau1++ if( grep { $_ =~ m{\Afrom[ ]\w+[.]auone[-]net[.]jp[ ]} } @{ $mhead->{'received'} } );
 	return q() unless( $isau1 );
 
 	if( defined $mhead->{'x-spasign'} && $mhead->{'x-spasign'} eq 'NG' )
 	{
 		# Content-Type: text/plain; ..., X-SPASIGN: NG (spamghetti, au by KDDI)
 		# Filtered recipient returns message that include 'X-SPASIGN' header
-		$pstat  = Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode('filtered'));
+		$pstat  = Kanadzuchi::RFC3463->status('filtered','p','i');
 		$phead .= q(Status: ).$pstat.qq(\n);
 
 	}
@@ -96,7 +103,7 @@ sub reperit
 		my $diagn = q();	# (String) Pseudo-Diagnostic-Code:
 		my $frcpt = q();	# (String) Pusedo-Final-Recipient:
 		my $icode = q();	# (String) Internal error code
-		my $etype = { 'userunknown' => 'permanent', 'suspended' => 'temporary', 'onhold' => 'permanent' };
+		my $etype = { 'userunknown' => 'p', 'suspended' => 't', 'onhold' => 'p' };
 		my $error = { 'disable' => 0, 'limited' => 0, 'timeout' => 0 };
 
 		# Bounced from ezweb.ne.jp
@@ -158,7 +165,7 @@ sub reperit
 
 		if( $frcpt )
 		{
-			$frcpt = Kanadzuchi::RFC2822->cleanup($frcpt);
+			$frcpt = Kanadzuchi::Address->canonify($frcpt);
 			$icode ||= 'onhold';
 
 			if( Kanadzuchi::RFC2822->is_emailaddress($frcpt) )
@@ -166,49 +173,59 @@ sub reperit
 				$phead .= q(Final-Recipient: RFC822; ).$frcpt.qq(\n);
 			}
 
-			$pstat  = Kanadzuchi::RFC1893->int2code( Kanadzuchi::RFC1893->internalcode( $icode, $etype->{$icode} ) );
+			$pstat  = Kanadzuchi::RFC3463->status( $icode, $etype->{$icode}, 'i' );
 			$phead .= q(Status: ).$pstat.qq(\n);
 			$phead .= q(Diagnostic-Code: ).$diagn.qq(\n);
-			$phead .= q(From: ).$mhead->{'to'}.qq(\n);
-			$phead .= q(Date: ).$mhead->{'date'}.qq(\n);
 		}
 	}
 	else
 	{
 		my $auone = 0;		# (Boolean) Flag, Set 1 if the line begins with the string 'Your mail sent on: ...'
-		my $error = 0;		# (Boolean) Flag, Set 1 if the line begins with the string 'Could not be delivered to..'
 		my $diagn = q();	# (String) Pseudo-Diagnostic-Code:
 
 		# Bounced from auone-net.jp
 		EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 		{
-			# The line which begins with the string 'Your mail sent on: ...'
-			if( ! $auone && $el =~ $RxauOne->{'auone'} )
+			# The line which begins with the string 'Your mail sent on ...'
+			if( ! $auone && ( grep { $el =~ $_ } @$RxauOne || $el =~ $RxError->{'couldnotbe'} ) )
 			{
 				$diagn .= $el;
-				$auone  = 1;
-				next();
-			}
-			elsif( ! $error && $el =~ $RxauOne->{'error'} )
-			{
-				$diagn .= ' '.$el;
-				$error  = 1;
+				$auone += 1;
 				next();
 			}
 
-			next() if( ! $auone || ! $error );
+			next() unless $auone;
 
-			if( $el =~ qr{\A\s+As[ ]their[ ]mailbox[ ]is[ ]full[.]\z} )
+			if( $el =~ $RxError->{'mailboxfull'} )
 			{
 				# Your mail sent on: Thu, 29 Apr 2010 11:04:47 +0900 
 				#     Could not be delivered to: <******@**.***.**>
 				#     As their mailbox is full.
-				$pstat  = Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode('mailboxfull','temporary'));
+				$pstat  = Kanadzuchi::RFC3463->status('mailboxfull','t','i');
 				$phead .= q(Status: ).$pstat.qq(\n);
 				$phead .= q(Diagnostic-Code: ).$diagn.' '.$el.qq(\n);
 				last();
 			}
-		}
+			elsif( $el =~ $RxError->{'relaydenied'} )
+			{
+				# Your mail sent on Thu, 29 Apr 2010 11:15:36 +0900 
+				#     Could not be delivered to <*****@***.****.***> 
+				#     Due to the following SMTP relay error 
+				$phead .= q(Status: 5.0.0).qq(\n);
+				$phead .= q(Diagnostic-Code: ).$diagn.' '.$el.qq(\n);
+				last();
+			}
+			elsif( $el =~ $RxError->{'nohostexist'} )
+			{
+				# Your mail attempted to be delivered on Thu, 29 Apr 2010 12:08:36 +0900 
+				#     Could not be delivered to <*****@***.**.***> 
+				#     As the remote domain doesnt exist.
+				$phead .= q(Status: 5.1.2).qq(\n);
+				$phead .= q(Diagnostic-Code: ).$diagn.' '.$el.qq(\n);
+				last();
+			}
+
+		} # End of foreach(EACH_LINE)
 	}
 
 	return $phead;

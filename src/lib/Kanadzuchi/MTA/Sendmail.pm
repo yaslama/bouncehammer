@@ -1,4 +1,4 @@
-# $Id: Sendmail.pm,v 1.3 2010/07/07 05:42:03 ak Exp $
+# $Id: Sendmail.pm,v 1.4 2010/10/05 11:23:48 ak Exp $
 # Kanadzuchi::MTA::
                                                           
   #####                    ##                  ##  ###    
@@ -36,7 +36,7 @@ sub reperit
 	# |r|e|p|e|r|i|t|
 	# +-+-+-+-+-+-+-+
 	#
-	# @Description	Detect an error from qmail
+	# @Description	Detect an error from Sendmail
 	# @Param <ref>	(Ref->Hash) Message header
 	# @Param <ref>	(Ref->String) Message body
 	# @Return	(String) Pseudo header content

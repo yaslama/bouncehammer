@@ -1,4 +1,4 @@
-# $Id: Postfix.pm,v 1.2 2010/07/05 02:27:04 ak Exp $
+# $Id: Postfix.pm,v 1.3 2010/10/05 11:23:48 ak Exp $
 # Kanadzuchi::MTA::
                                                
  #####                  ##    ###  ##          
@@ -18,9 +18,35 @@ use warnings;
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
 # Postfix manual - bounce(5) - http://www.postfix.org/bounce.5.html
-my $RxPostfix = {
-	'thepostfix' => qr{\A\s+The Postfix program\z},
-	'mailsystem' => qr{\A\s+The mail system\z},
+my $RxPostfix = [
+	qr{\A\s+The Postfix program\z},
+	qr{\A\s+The mail system\z},
+	qr{\AThis is the Postfix program},
+];
+
+my $RxErrors = {
+	'mailboxfull' => [
+		# postfix/src/{local,virtula}/maildir.c:
+		#  vstring_sprintf_prepend(why->reason, "maildir delivery failed: ");
+		qr{maildir delivery failed: User disk quota ?.* exceeded},
+		qr{maildir delivery failed: Domain disk quota ?.* exceeded},
+		qr{mailbox exceeded the local limit},
+	],
+	'exceedlimit' => [
+		qr{message too large},
+	],
+	'systemerror' => [
+		qr{can[']t create user output file},
+		qr{mail forwarding loop for },
+		qr{mail for .+ loops back to myself},
+		qr{mail system configuration error},
+		qr{Server configuration error},
+	],
+	'mailererror' => [
+		# postfix/src/global/pipe_command.c:
+		#  vstring_prepend(why->reason, "Command failed: ", 
+		qr{Command failed: },
+	],
 };
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -34,7 +60,7 @@ sub reperit
 	# |r|e|p|e|r|i|t|
 	# +-+-+-+-+-+-+-+
 	#
-	# @Description	Detect an error from qmail
+	# @Description	Detect an error from Postfix
 	# @Param <ref>	(Ref->Hash) Message header
 	# @Param <ref>	(Ref->String) Message body
 	# @Return	(String) Pseudo header content
@@ -59,16 +85,15 @@ sub reperit
 	my $pbody = q();	# (String) Pseudo body part
 	my $xsmtp = q();	# (String) SMTP Command in transcript of session
 
-	my $rhostsaid = q();	# Remote host said: ...
-	my $statintxt = q();	# #n.n.n Status code in message body
+	my $rhostsaid = q();	# (String) Remote host said: ...
+	my $statintxt = q();	# (String) #n.n.n Status code in message body
+	my $internalc = q();	# (String) Internal Error Code
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
-		if( $xflag == 0 && 
-			( $el =~ $RxPostfix->{'mailsystem'} || $el =~ $RxPostfix->{'thepostfix'} ) ){
-
-			# The mail system
-			# The Postfix program
+		if( $xflag == 0 && grep { $el =~ $_ } @$RxPostfix )
+		{
+			# The mail system, The Postfix program, This is the Postfix program
 			$xflag |= 1;
 			next();
 		}
@@ -78,6 +103,7 @@ sub reperit
 			# <recipient@example.com>: host mx.example.com [102.0.2.3] said:
 			# <recipient@example.net> (expanded from <user@example.net>): host ...
 			# $xflag |= 2 if( $el =~ m{\A[<].+[@].+[>][:]} || $el =~ m{\A[<].+[@].+[>] [(]expanded from} );
+			#
 			$xflag |= 2 if( $el =~ m{\A[<].+[@].+[>][:]?} );
 			$rhostsaid .= $el if( $xflag == 3 && $rhostsaid !~ m{ command[)]\z} );
 
@@ -86,7 +112,8 @@ sub reperit
 			# X-Postfix-Sender: rfc822; daemon@example.net
 			# Arrival-Date: Wed, 29 Apr 2009 16:03:18 +0900
 			#
-			$xflag |= 4 if( $el =~ m{\AReporting-MTA: } );
+			$xflag |= 4 if( $el =~ m{\A--\w.+/.+} # Boundary
+					|| $el =~ m{\AContent-Type: message/} || $el =~ m{\AReporting-MTA: } );
 			next();
 		}
 
@@ -95,10 +122,34 @@ sub reperit
 			#                   The mail system
 			#
 			# <recipient@example.com>: host mx.example.com [102.0.2.3] said:
-			#    550 Unknown user recipient@example.com (in reply to end of DATA
-			#    command)
+			#    550 Unknown user recipient@example.com (in reply to end of DATA command)
+			#
 			$rhostsaid =~ y{ }{ }s;
-			$statintxt = 'Status: '.$1 if( $rhostsaid =~ m{[ ]([45][.][0-7][.][0-7])[ ]} );
+			$rhostsaid =~ s{--\w.+\z}{};
+
+			if( $rhostsaid =~ m{[ ]([45][.]\d+[.]\d+)[ ]} )
+			{
+				# D.S.N. in the error message
+				$statintxt = 'Status: '.$1.qq(\n);
+			}
+			elsif( $rhostsaid =~ m{[ ]([45]\d{2})[ ]} )
+			{
+				# SMTP Status code -> D.S.N. ...
+				$statintxt = 'Status: '.join('.',split(//,$1)).qq(\n);
+			}
+
+			foreach my $_er ( keys %$RxErrors )
+			{
+				last() unless $rhostsaid;
+
+				if( grep { $rhostsaid =~ $_ } @{ $RxErrors->{$_er} } )
+				{
+					$internalc = Kanadzuchi::RFC3463->status($_er,'p','i');
+					$statintxt = 'Status: '.$internalc.qq(\n);
+					last();
+				}
+			}
+
 			$xsmtp = $1 if( $rhostsaid =~ m{[(]in reply to .*([A-Z]{4}).*command[)]} );
 		}
 
@@ -117,7 +168,9 @@ sub reperit
 	}
 
 	$xsmtp ||= 'CONN';
-	$phead  .= __PACKAGE__->xsmtpcommand().$xsmtp.qq(\n);
+	$phead .= $statintxt if( $phead eq q() && $statintxt );
+	$phead .= 'X-Diagnosis: '.$rhostsaid.qq(\n);
+	$phead .= __PACKAGE__->xsmtpcommand().$xsmtp.qq(\n) if( $phead );
 	return $phead.$pbody;
 }
 
