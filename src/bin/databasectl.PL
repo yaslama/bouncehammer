@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.22 2010/08/29 22:26:35 ak Exp $
+# $Id: databasectl.PL,v 1.23 2010/10/05 10:59:07 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -139,9 +139,9 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		Kanadzuchi::Exception::Database->throw( 
 			'-text' => 'Failed to create table objects' ) if( ! $xntableobj || ! $mastertabs );
 
-		( $Rdb->hostname() && $Rdb->port() )
-			? $Cmd->d(2,sprintf("Database host = %s:%d\n", $Rdb->hostname(),$Rdb->port()))
-			: $Cmd->d(2,qq{Database host = Socket\n});
+		( $Rdb->hostname() ne 'localhost' && $Rdb->port() ne q() )
+			? $Cmd->d(2,sprintf("Database host = %s:%s\n", $Rdb->hostname(), $Rdb->port()))
+			: $Rdb->hostname() eq 'localhost' ? $Cmd->d(2,'Database host = Socket'.qq{\n}) : 1;
 
 		$Cmd->d(2,sprintf("Database name = %s(%s)\n", $Rdb->dbname(), $Rdb->dbtype()));
 		$Cmd->d(2,sprintf("Database user = %s\n", $Rdb->username()));

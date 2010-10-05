@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: summarizer.PL,v 1.13 2010/08/28 19:49:03 ak Exp $
+# $Id: summarizer.PL,v 1.14 2010/10/05 11:00:19 ak Exp $
 # -Id: summarizer.PL,v 1.13 2010/02/22 05:09:01 ak Exp -
 # -Id: summarizer.PL,v 1.2 2009/10/06 09:10:32 ak Exp -
 # -Id: summarizer.PL,v 1.3 2009/08/27 05:09:59 ak Exp -
@@ -124,9 +124,9 @@ if( $Cmd->operation & ( $Cmd->option->{'aggregate'} + $Cmd->option->{'dailyupdat
 			}
 			$Cmd->d(2,"Connecting to the database\n") if( defined $Rdb->handle() );
 
-			( $Rdb->hostname() && $Rdb->port() )
-				? $Cmd->d(2,sprintf("Database host = %s:%d\n", $Rdb->hostname(),$Rdb->port()))
-				: $Cmd->d(2,qq{Database host = Socket\n});
+			( $Rdb->hostname() ne 'localhost' && $Rdb->port() ne q() )
+				? $Cmd->d(2,sprintf("Database host = %s:%s\n", $Rdb->hostname(), $Rdb->port()))
+				: $Rdb->hostname() eq 'localhost' ? $Cmd->d(2,'Database host = Socket'.qq{\n}) : 1;
 
 			$Cmd->d(2,sprintf("Database name = %s(%s)\n", $Rdb->dbname(), $Rdb->dbtype()));
 			$Cmd->d(2,sprintf("Database user = %s\n", $Rdb->username()));
