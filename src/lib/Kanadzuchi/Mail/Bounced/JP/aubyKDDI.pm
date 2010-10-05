@@ -1,4 +1,4 @@
-# $Id: aubyKDDI.pm,v 1.2 2010/06/10 10:28:48 ak Exp $
+# $Id: aubyKDDI.pm,v 1.3 2010/10/05 11:29:51 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Bounced::JP::
                                                         
@@ -40,13 +40,8 @@ sub is_filtered
 	}
 	else
 	{
-		if( $stat == Kanadzuchi::RFC1893->standardcode($subj) )
+		if( $subj eq Kanadzuchi::RFC3463->causa($stat) )
 		{
-			$isfi = 1;
-		}
-		elsif( $stat == Kanadzuchi::RFC1893->internalcode($subj) )
-		{
-			# au by KDDI, Status: 5.8.4(Pseudo Header by mailboxparser)
 			$isfi = 1;
 		}
 	}
@@ -68,6 +63,7 @@ sub is_userunknown
 	my $stat = $self->{'deliverystatus'} || return(0);
 	my $subj = 'userunknown';
 	my $isuu = 0;
+	my $rxuu = qr{User unknown};
 
 	if( defined($self->{'reason'}) && length($self->{'reason'}) )
 	{
@@ -75,18 +71,22 @@ sub is_userunknown
 	}
 	else
 	{
-		if( $stat == Kanadzuchi::RFC1893->standardcode($subj) )
+		if( $subj eq Kanadzuchi::RFC3463->causa($stat) )
 		{
 			# au by KDDI
 			#  Status: 5.1.1
 			#  Diagnostic-Code: SMTP; 550 <***@ezweb.ne.jp>: User unknown
 			$isuu = 1;
 		}
-		elsif( $stat == 500 || $stat == Kanadzuchi::RFC1893->internalcode($subj) )
+		elsif( $stat eq '5.0.0' )
 		{
 			#  Final-Recipient: rfc822; ***@ezweb.ne.jp
 			#  Action: failed
 			#  Status: 5.0.0
+			$isuu = 1;
+		}
+		elsif( $self->{'diagnosticcode'} =~ $rxuu )
+		{
 			$isuu = 1;
 		}
 	}

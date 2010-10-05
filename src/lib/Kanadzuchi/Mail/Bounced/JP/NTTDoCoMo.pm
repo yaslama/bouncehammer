@@ -1,4 +1,4 @@
-# $Id: NTTDoCoMo.pm,v 1.3 2010/07/04 23:48:40 ak Exp $
+# $Id: NTTDoCoMo.pm,v 1.4 2010/10/05 11:29:51 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Bounced::
                                                                   
@@ -48,15 +48,11 @@ sub is_filtered
 	}
 	else
 	{
-		if( $stat == 521 || $stat == Kanadzuchi::RFC1893->standardcode($subj) )
+		if( $subj eq Kanadzuchi::RFC3463->causa($stat) )
 		{
 			# NTT DoCoMo,
 			#  Status: 5.2.0, 5.2.1?
 			#  Diagnostic-Code: SMTP; 550 Unknown user ***@docomo.ne.jp
-			$isfi = 1;
-		}
-		elsif( $stat == Kanadzuchi::RFC1893->internalcode($subj) )
-		{
 			$isfi = 1;
 		}
 		else
@@ -70,7 +66,7 @@ sub is_filtered
 			my $diag = $self->{'diagnosticcode'};
 
 			if( $self->{'smtpcommand'} eq 'DATA' 
-				&& ( $flib->habettextu($diag) || $ulib->habettextu($diag) ) ){
+				&& ( $flib->textumhabet($diag) || $ulib->textumhabet($diag) ) ){
 
 				$isfi = 1;
 			}
@@ -102,15 +98,11 @@ sub is_userunknown
 	}
 	else
 	{
-		if( $stat == Kanadzuchi::RFC1893->standardcode($subj) )
+		if( $subj eq Kanadzuchi::RFC3463->causa($stat) )
 		{
 			# NTT DoCoMo
 			#  Status: 5.1.1
 			#  Diagnostic-Code: SMTP; 550 Unknown user ***@docomo.ne.jp
-			$isuu = 1;
-		}
-		elsif( $stat == Kanadzuchi::RFC1893->internalcode($subj) )
-		{
 			$isuu = 1;
 		}
 		else
@@ -119,7 +111,7 @@ sub is_userunknown
 			my $ulib = q|Kanadzuchi::Mail::Why::UserUnknown|;
 			my $diag = $self->{'diagnosticcode'};
 
-			if( $self->{'smtpcommand'} eq 'RCPT' && $ulib->habettextu($diag) )
+			if( $self->{'smtpcommand'} eq 'RCPT' && $ulib->textumhabet($diag) )
 			{
 				$isuu = 1;
 			}
@@ -152,9 +144,8 @@ sub is_mailboxfull
 	}
 	else
 	{
-		if( $diag =~ $rxmf && ( $stat == Kanadzuchi::RFC1893->standardcode($subj)
-			|| $stat == Kanadzuchi::RFC1893->internalcode($subj) ) ){
-
+		if( $diag =~ $rxmf && $subj eq Kanadzuchi::RFC3463->causa($stat) )
+		{
 			$ismf = 1;
 		}
 	}
@@ -185,7 +176,7 @@ sub is_toobigmesg
 	}
 	else
 	{
-		if( $stat == Kanadzuchi::RFC1893->standardcode($subj) )
+		if( $subj eq Kanadzuchi::RFC3463->causa($stat) )
 		{
 			# Action: failed
 			# Status: 5.3.4
@@ -194,7 +185,7 @@ sub is_toobigmesg
 		}
 		elsif( $diag =~ $rxtb )
 		{
-			if( $stat == Kanadzuchi::RFC1893->internalcode($subj) || int($stat/100) == 5 )
+			if( $subj eq Kanadzuchi::RFC3463->causa($stat) || $self->is_permerror() )
 			{
 				$istb = 1;
 			}

@@ -1,4 +1,4 @@
-# $Id: SoftBank.pm,v 1.5 2010/07/07 06:15:30 ak Exp $
+# $Id: SoftBank.pm,v 1.6 2010/10/05 11:29:51 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Bounced::JP::
                                                         
@@ -39,15 +39,11 @@ sub is_filtered
 	}
 	else
 	{
-		if( $stat == Kanadzuchi::RFC1893->standardcode($subj) )
+		if( $subj eq Kanadzuchi::RFC3463->causa($stat) )
 		{
 			# SoftBank Mobile
 			#   Status: 5.2.0
 			#   Diagnostic-Code: <None>
-			$isfi = 1;
-		}
-		elsif( $stat == Kanadzuchi::RFC1893->internalcode($subj) )
-		{
 			$isfi = 1;
 		}
 		else
@@ -61,7 +57,7 @@ sub is_filtered
 			my $diag = $self->{'diagnosticcode'};
 
 			if( $self->{'smtpcommand'} eq 'DATA' 
-				&& ( $flib->habettextu($diag) || $ulib->habettextu($diag) ) ){
+				&& ( $flib->textumhabet($diag) || $ulib->textumhabet($diag) ) ){
 
 				$isfi = 1;
 			}
@@ -94,15 +90,11 @@ sub is_userunknown
 	}
 	else
 	{
-		if( $stat == Kanadzuchi::RFC1893->standardcode($subj) )
+		if( $subj eq Kanadzuchi::RFC3463->causa($stat) )
 		{
 			# Softbank Mobile
 			#   Status: 5.1.1
 			#   Diagnostic-Code: SMTP; 550 Invalid recipient: <***@d.vodafone.ne.jp>
-			$isuu = 1;
-		}
-		elsif( $stat == Kanadzuchi::RFC1893->internalcode($subj) && $diag =~ $rxuu )
-		{
 			$isuu = 1;
 		}
 		else
@@ -111,7 +103,7 @@ sub is_userunknown
 			my $ulib = q|Kanadzuchi::Mail::Why::UserUnknown|;
 
 			if( $self->{'smtpcommand'} eq 'RCPT' &&
-					( $diag =~ $rxuu || $ulib->habettextu($diag) ) ){
+					( $diag =~ $rxuu || $ulib->textumhabet($diag) ) ){
 
 				$isuu = 1;
 			}

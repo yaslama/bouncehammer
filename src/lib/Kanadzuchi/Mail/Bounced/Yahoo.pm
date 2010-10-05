@@ -1,4 +1,4 @@
-# $Id: Yahoo.pm,v 1.3 2010/07/07 11:21:51 ak Exp $
+# $Id: Yahoo.pm,v 1.4 2010/10/05 11:29:47 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Bounced::
                                               
@@ -43,16 +43,13 @@ sub is_filtered
 	}
 	else
 	{
-		if( $stat == Kanadzuchi::RFC1893->standardcode($subj) )
+		if( $subj eq Kanadzuchi::RFC3463->causa($stat) )
 		{
 			$isfi = 1;
 		}
 		elsif( $diag =~ $rxfi )
 		{
-			if( $self->is_permerror() || $stat == Kanadzuchi::RFC1893->internalcode($subj) )
-			{
-				$isfi = 1;
-			}
+			$isfi = 1 if( $self->is_permerror());
 		}
 	}
 	return $isfi;
@@ -86,7 +83,7 @@ sub is_userunknown
 	}
 	else
 	{
-		if( $stat == Kanadzuchi::RFC1893->standardcode($subj) )
+		if( $subj eq Kanadzuchi::RFC3463->causa($stat) )
 		{
 			$isuu = 1;
 		}
@@ -96,7 +93,7 @@ sub is_userunknown
 			# Status: 5.0.0
 			# Remote-MTA: DNS; mx1.mail.yahoo.co.jp
 			# Diagnostic-Code: SMTP; 554 delivery error: dd This user doesn't have a yahoo.co.jp account
-			$isuu = 1 if( $self->is_permerror() || $stat == Kanadzuchi::RFC1893->internalcode($subj) );
+			$isuu = 1 if( $self->is_permerror() );
 		}
 	}
 	return $isuu;
@@ -126,14 +123,13 @@ sub is_mailboxfull
 	}
 	else
 	{
-		if( $stat == Kanadzuchi::RFC1893->standardcode($subj,'permanent') ||
-			$stat == Kanadzuchi::RFC1893->standardcode($subj,'temporary') ){
-
+		if( $subj eq Kanadzuchi::RFC3463->causa($stat) )
+		{
 			$ismf = 1;
 		}
 		elsif( $diag =~ $rxmf )
 		{
-			$ismf = 1 if( $stat == Kanadzuchi::RFC1893->internalcode($subj) );
+			$ismf = 1;
 		}
 	}
 	return $ismf;
