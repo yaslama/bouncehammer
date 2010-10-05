@@ -5,7 +5,7 @@
 # This is the auto-Makefile for BounceHammer, is processed by automake to create Makefile.in.
 ENGINENAME = Kanadzuchi
 SYSTEMNAME = BounceHammer
-SYSVERSION = 2.5.0
+SYSVERSION = 2.6.0
 CMD_MODULE = ./Modules.PL
 CMD_IMPLEM = ./Implement.PL
 PATCH_TBOP = ./diff/perl-TB-option-on-filehandle.patch
@@ -96,6 +96,9 @@ uninstall-old-files:
 	rm -rf @prefix@/lib/Kanadzuchi/Mbox/
 	rm -rf @prefix@/share/template/standard/help/
 
+	@echo "Uninstall files which are renamed at ver 2.6.0"
+	rm -f @prefix@/lib/Kanadzuchi/Mail/Why/Makefile.am
+	rm -f @prefix@/lib/Kanadzuchi/MTA/Google.pm
 
 message:
 	@echo
@@ -113,6 +116,7 @@ message:
 	@echo "  4. Edit @sysconfdir@/bouncehammer.cf "
 	@echo "  5. Install the perl module: 'DBD::Pg' or 'DBD::mysql' or 'DBD::SQLite'."
 	@echo "  6. @bindir@/* command line tools are avaliable"
+	@echo "  7. bin/mailboxparser -v /path/to/message.eml"
 	@echo
 if WEBUI
 	@echo "-----------------------------------------------------------------------------"
