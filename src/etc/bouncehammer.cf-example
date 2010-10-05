@@ -1,5 +1,5 @@
 # bouncehammer.cf
-# $Id: bouncehammer.cf-example,v 1.11 2010/07/12 08:07:19 ak Exp $
+# $Id: bouncehammer.cf-example,v 1.12 2010/10/05 11:01:46 ak Exp $
 # This config file is YAML format. bin/* scripts read this file by
 # using (YAML|JSON)::Syck/ Perl module.
 #  ______   ______ _____ _____ __  __ 
@@ -92,9 +92,15 @@ database:
 
   # Database host or IP address, and port number
   #  Postgresql = 5432, MySQL = 3306 by default. If the dbtype value is
-  #  'SQLite', the system ignores the 'port' value.
-  # Connect to the database via UNIX domain socket, set empty value into
-  # 'hostname' and 'port'. 
+  #  'SQLite', the system ignore 'hostname' and 'port'.
+  #  Connect to the database via UNIX domain socket, set empty value into
+  #  'hostname' and 'port', or set the path to the socket into 'port'.
+  #   * Socket
+  #      hostname: 'localhost' or Empty
+  #      port: '/path/to/socket' or '/path/to/socket/dir' or Empty
+  #   * TCP/IP
+  #      hostname: IP address or Hostname
+  #      port: Port number the db is listening
   hostname: '127.0.0.1'
   port: 5432
 
