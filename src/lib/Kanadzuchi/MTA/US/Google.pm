@@ -1,7 +1,8 @@
-# $Id: Google.pm,v 1.2 2010/07/04 23:45:49 ak Exp $
+# $Id: Google.pm,v 1.1 2010/10/05 11:22:36 ak Exp $
+# -Id: Google.pm,v 1.2 2010/07/04 23:45:49 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: Google.pm,v 1.1 2009/07/31 09:04:38 ak Exp -
-# Kanadzuchi::MTA::
+# Kanadzuchi::MTA::US::
 
   ####                        ###          
  ##  ##  ####   ####   #####   ##   ####   
@@ -10,16 +11,18 @@
  ##  ## ##  ## ##  ##  #####   ##  ##      
   ####   ####   ####      ##  ####  ####   
                       #####                
-package Kanadzuchi::MTA::Google;
-use base 'Kanadzuchi::MTA';
+package Kanadzuchi::MTA::US::Google;
 use strict;
 use warnings;
-use Kanadzuchi::RFC1893;
-use Kanadzuchi::RFC2822;
+use base 'Kanadzuchi::MTA';
 
 my $RxPermGmail = qr{Delivery to the following recipient failed permanently:};
 my $RxTempGmail = qr{Delivery to the following recipient has been delayed:};
-my $RxErrorHead = qr{The error that the other server returned was:};
+my $RxFromGmail = {
+	'begin' => qr{Technical details of permanent failure:},
+	'state' => qr{The error that the other server returned was:},
+	'endof' => qr{\A----- Original message -----\z},
+};
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -89,8 +92,6 @@ sub reperit
 	my $error = 'onhold';	# (String) Error reason: userunknown, filtered, mailboxfull...
 	my $xsmtp = q();	# (String) SMTP Command in transcript of session
 
-	$phead .= sprintf( "Date: %s\n", $mhead->{'date'} );
-	$phead .= sprintf( "From: %s\n", $mhead->{'to'} );
 	$frcpt  = $1 if( lc($mhead->{'x-failed-recipients'}) =~ m{\A[ ]?(.+[@].+)[ ]*\z} );
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
@@ -110,73 +111,108 @@ sub reperit
 		{
 			my $_rcpt = $1;
 			my $_2822 = q|Kanadzuchi::RFC2822|;
+			my $_addr = q|Kanadzuchi::Address|;
 
-			$frcpt ||= $_rcpt if( $_2822->is_emailaddress($_2822->cleanup($_rcpt)) );
+			$frcpt ||= $_rcpt if $_2822->is_emailaddress($_addr->canonify($_rcpt));
 			next();
 		}
 
+		last() if( $el =~ $RxFromGmail->{'endof'} );
 		$el =~ s{=\z}{}g;
-		$pbody .= $el if( $el =~ m{\A\w} );
-
-		last() if( $el =~ m{[(]state[ ]\d+[)][.]} );
-		last() if( $el =~ m{\A\s*[-][-]+} || $el =~ m{\A[.]\z} );
+		$pbody .= $el if( $el =~ m{\A[^\s]+} );
+		last() if( $el =~ m{[(]state[ ]\d+[)][.]} || $pbody =~ m{[(]state[ ]\d+[)][.]} );
 	}
 
-	$pbody =~ s{\A.+$RxErrorHead }{};
-	$pstat =  $1 if( $pbody =~ m{[(][#](\d[.]\d[.]\d)[)]} );
-	$state =  $1 if( $pbody =~ m{[(]state[ ](\d+)[)][.]} );
 
-	if( $pbody =~ m{\d{3}[ ]\d{3}[ ](\d[.]\d[.]\d)[ ][<](.+?)[>]:?(.+)\z} )
+	$pbody  =~ s/\A.*$RxFromGmail->{'begin'}.+$RxFromGmail->{'state'} //;
+	$dcode   = $pbody;
+	$state   = $1 if( $pbody =~ m{[(]state[ ](\d+)[)][.]} );
+	$pstat ||= $1 if( $pbody =~ m{[(][#](\d[.]\d[.]\d+)[)]} );
+	$pstat ||= $1 if( $dcode =~ m{\d{3}[ ]\d{3}[ ](\d[.]\d[.]\d+)} );
+
+	if( $dcode =~ m{\d{3}[ ]\d{3}[ ](\d[.]\d[.]\d+)[ ][<](.+?)[>]:?.+\z} )
 	{
 		# There is D.S.N. code in the body part.
 		# 550 550 5.1.1 <userunknown@example.jp>... User Unknown (state 14).
 		# 450 450 4.2.2 <mailboxfull@example.jp>... Mailbox Full (state 14).
 		$pstat ||= $1;
 		$frcpt ||= $2;
-		$dcode = $3;
 	}
-	else
+
+	if( ! $pstat || $pstat =~ m{\A[45][.]0[.]0\z} )
 	{
-		# There is NO D.S.N. code in the body part.
+		# There is NO D.S.N. code in the body part or D.S.N. is 5.0.0,4.0.0.
+		$pstat = q();
 		if( $state == 14 )
 		{
-			$error = 'userunknown';
+			# Technical details of permanent failure: 
+			# Google tried to deliver your message, but it was rejected by the recipient domain. 
+			# We recommend contacting the other email provider for further information about the
+			# cause of this error. The error that the other server returned was:
+			# 550 550 5.2.2 <*****@****.**>... Mailbox Full (state 14).
+			#
+			# -- OR --
+			#
+			# Technical details of permanent failure: 
+			# Google tried to deliver your message, but it was rejected by the recipient domain.
+			# We recommend contacting the other email provider for further information about the
+			# cause of this error. The error that the other server returned was:
+			# 550 550 5.1.1 <******@*********.**>... User Unknown (state 14).
+			# 
+			$xsmtp = 'RCPT';
+			$error = 'onhold';	# ...
+		}
+		elsif( $state == 13 )
+		{
+			# Technical details of permanent failure: 
+			# Google tried to deliver your message, but it was rejected by the recipient domain.
+			# We recommend contacting the other email provider for further information about the
+			# cause of this error. The error that the other server returned was: 
+			# 550 550 5.7.1 <****@gmail.com>... Access denied (state 13).
+			$xsmtp = 'MAIL';
+			$error = 'rejected';
 		}
 		elsif( $state == 18 )
 		{
+			# Technical details of permanent failure: 
+			# Google tried to deliver your message, but it was rejected by the recipient domain.
+			# We recommend contacting the other email provider for further information about the
+			# cause of this error. The error that the other server returned was:
+			# 550 550 Unknown user *****@***.**.*** (state 18).
+			$xsmtp = 'DATA';
 			$error = 'filtered';
 		}
-
-
-		if( $pbody =~ m{\d{3}[ ]\d{3}[ ][<](.+?)[>]:[ ](User unknown.+)\z} )
+		elsif( $state )
 		{
-			# 550 550 <userunknown@example.com>: User unknown (state 14).
-			$frcpt ||= $1;
-			$dcode = $2;
-		}
-		elsif( $pbody =~ m{\d{3}[ ]\d{3}[ ](.+)[ ]([^\s]+[@][^\s]+)[ ](.+)\z} )
-		{
-			# 550 550 Unknown user is-user-unknown@example.ne.jp (state 14).
-			# 550 550 Unknown user filtered-address@example.ne.jp (state 18).
-			$frcpt ||= $2;
-			$dcode = $1.' '.$3;
+			# There is the code (state xx) that Kanadzuchi does not know.
+			# state 6(TLS?), 8(AUTH?), 9, 12, 15, 17,
+			#
+			# Technical details of permanent failure:
+			# Google tried to deliver your message, but it was rejected by the recipient domain.
+			# We recommend contacting the other email provider for further information about the
+			# cause of this error. The error that the other server returned was:
+			# 550 550 5.7.1 SPF unauthorized mail is prohibited. (state 15).
+			#
+			$error = 'onhold';
 		}
 		else
 		{
 			# Unsupported error message in body part.
-			;
+			$error = 'undefined';
 		}
 
 	}
 
 	return q() unless( $frcpt );
-	$pstat ||= Kanadzuchi::RFC1893->int2code(Kanadzuchi::RFC1893->internalcode($error));
-	$xsmtp  = $state == 14 ? 'RCPT' : $state == 18 ? 'DATA' : 'CONN';
+	$pstat ||= Kanadzuchi::RFC3463->status($error,'p','i');
+	$xsmtp ||= 'CONN';
 	$phead .= __PACKAGE__->xsmtpcommand().$xsmtp.qq(\n);
-	$phead .=  q(Diagnostic-Code: SMTP; ).qq($dcode\n);
-	$phead .=  q(Status: ).qq($pstat\n);
+
+	$phead .=  q(X-Diagnosis: SMTP; ).qq($dcode\n);
+	$phead .=  q(Status: ).$pstat.qq(\n);
 	$phead .=  q(Final-Recipient: rfc822; ).qq($frcpt\n);
 	$phead .=  q(To: ).qq($frcpt\n);
+
 	return $phead;
 }
 
