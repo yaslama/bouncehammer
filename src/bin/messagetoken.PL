@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: messagetoken.PL,v 1.7 2010/06/25 19:34:06 ak Exp $
+# $Id: messagetoken.PL,v 1.8 2010/10/05 11:00:52 ak Exp $
 # -Id: messagetoken.PL,v 1.3 2010/02/21 20:09:01 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi:Command::
@@ -83,6 +83,7 @@ foreach my $sig qw( INT QUIT TERM KILL )
 if( $Cmd->operation & $Cmd->option->{'token'} )
 {
 	require Kanadzuchi::String;
+	require Kanadzuchi::Address;
 	require Kanadzuchi::RFC2822;
 
 	try{
@@ -103,8 +104,8 @@ if( $Cmd->operation & $Cmd->option->{'token'} )
 		$Cmd->abort();
 	};
 
-	my $addresser = Kanadzuchi::RFC2822->cleanup(lc $AaR->{'addresser'});
-	my $recipient = Kanadzuchi::RFC2822->cleanup(lc $AaR->{'recipient'});
+	my $addresser = Kanadzuchi::Address->canonify(lc $AaR->{'addresser'});
+	my $recipient = Kanadzuchi::Address->canonify(lc $AaR->{'recipient'});
 	my $mesgtoken = Kanadzuchi::String->token( $addresser, $recipient );
 
 	$Cmd->d( 1, sprintf("Addresser = %s\n", $addresser ) );
