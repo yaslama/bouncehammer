@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.31 2010/08/28 17:22:09 ak Exp $
+# $Id: Search.pm,v 1.32 2010/10/05 11:18:18 ak Exp $
 # -Id: Search.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Search.pm,v 1.11 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -56,7 +56,7 @@ sub onlinesearch
 	require Kanadzuchi::Mail::Stored::BdDR;
 	require Kanadzuchi::BdDR::Page;
 	require Kanadzuchi::BdDR::BounceLogs;
-	require Kanadzuchi::RFC2822;
+	require Kanadzuchi::Address;
 	require Kanadzuchi::Time;
 	require Kanadzuchi::Metadata;
 	require Kanadzuchi::Crypt;
@@ -144,7 +144,6 @@ sub onlinesearch
 		# |_|    \___/|____/ |_| |_____|____/   \__\_\\___/|_____|_| \_\|_|  
 		#
 
-		my $rfc2822c = q|Kanadzuchi::RFC2822|;	# (String) RFC2822 Class name
 		my $wcparams = {};			# (Ref->Hash) WHERE Condition
 		my $validcnd = 0;			# (Boolean) Validation for WHERE Cond.
 		my $rcptinqp = $cgiqueryp->param('fe_recipient') || q();
@@ -154,7 +153,7 @@ sub onlinesearch
 		{
 			# Pre-Process Recipient address
 			$wcparams->{'recipient'} =  lc $rcptinqp;
-			$wcparams->{'recipient'} =  $rfc2822c->cleanup($wcparams->{'recipient'});
+			$wcparams->{'recipient'} =  Kanadzuchi::Address->canonify($wcparams->{'recipient'});
 			$wherecond->{'recipient'} = $wcparams->{'recipient'} if length $wcparams->{'recipient'};
 		}
 

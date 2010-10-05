@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.2 2010/07/12 17:55:00 ak Exp $
+# $Id: Search.pm,v 1.3 2010/10/05 11:17:15 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::HTTP::
                                            
@@ -21,7 +21,7 @@ use base 'Kanadzuchi::API::HTTP';
 use Kanadzuchi::Mail::Stored::BdDR;
 use Kanadzuchi::BdDR::Page;
 use Kanadzuchi::BdDR::BounceLogs;
-use Kanadzuchi::RFC2822;
+use Kanadzuchi::Address;
 use Kanadzuchi::Log;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -64,7 +64,7 @@ sub search
 
 	if( $thecolumn eq 'recipient' || $thecolumn eq 'addresser' )
 	{
-		$wherecond->{$thecolumn} = Kanadzuchi::RFC2822->cleanup( lc $thestring );
+		$wherecond->{$thecolumn} = Kanadzuchi::Address->canonify( lc $thestring );
 	}
 	else
 	{
