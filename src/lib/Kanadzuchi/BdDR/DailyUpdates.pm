@@ -1,4 +1,4 @@
-# $Id: DailyUpdates.pm,v 1.2 2010/08/28 17:27:44 ak Exp $
+# $Id: DailyUpdates.pm,v 1.4 2010/10/05 11:16:31 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::BdDR::
                                                                                   
@@ -33,10 +33,8 @@ install_inflate_rule(
 	);
 install_table( 't_dailyupdates' => schema { 
 			pk('id');
-			columns( join( ',', qw{
-					id thetime thedate inserted updated skipped
-					failed executed modified description disabled} )
-			); 
+			columns( qw{ id thetime thedate inserted updated skipped
+				failed executed modified description disabled} ); 
 		}
 	);
 

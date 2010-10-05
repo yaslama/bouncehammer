@@ -1,4 +1,4 @@
-# $Id: BounceLogs.pm,v 1.13 2010/08/16 11:59:15 ak Exp $
+# $Id: BounceLogs.pm,v 1.14 2010/09/23 14:07:52 ak Exp $
 # -Id: BounceLogs.pm,v 1.9 2010/03/04 08:33:28 ak Exp -
 # -Id: BounceLogs.pm,v 1.1 2009/08/29 08:58:48 ak Exp -
 # -Id: BounceLogs.pm,v 1.6 2009/08/27 05:09:55 ak Exp -
@@ -49,11 +49,9 @@ install_inflate_rule(
 
 install_table( 't_bouncelogs' => schema { 
 			pk('id');
-			columns( join( ',', qw{
-					id addresser recipient senderdomain destination
-					token frequency bounced updated hostgroup 
-					provider reason description disabled } )
-			); 
+			columns( qw{ id addresser recipient senderdomain destination
+				token frequency bounced updated hostgroup 
+				provider reason description disabled } ); 
 		}
 	);
 

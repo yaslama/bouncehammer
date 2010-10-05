@@ -1,4 +1,4 @@
-# $Id: Masters.pm,v 1.12 2010/07/07 11:21:44 ak Exp $
+# $Id: Masters.pm,v 1.13 2010/09/23 14:07:55 ak Exp $
 # -Id: Addressers.pm,v 1.4 2010/03/04 08:33:28 ak Exp -
 # -Id: Addressers.pm,v 1.4 2010/02/21 20:42:02 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -29,37 +29,37 @@ install_utf8_columns('description');
 # Addressers
 install_table( 't_addressers' => schema { 
 			pk('id');
-			columns( join(',',qw{id email description disabled}) );
+			columns( qw{id email description disabled} );
 		} );
 
 # SenderDomains
 install_table( 't_senderdomains' => schema { 
 			pk('id');
-			columns( join(',',qw{id domainname description disabled}) );
+			columns( qw{id domainname description disabled} );
 		} );
 
 # Destinations
 install_table( 't_destinations' => schema { 
 			pk('id');
-			columns( join(',',qw{id domainname description disabled}) );
+			columns( qw{id domainname description disabled} );
 		} );
 
 # HostGroups
 install_table( 't_hostgroups' => schema { 
 			pk('id');
-			columns( join(',',qw{id name description disabled}) );
+			columns( qw{id name description disabled} );
 		} );
 
 # Providers
 install_table( 't_providers' => schema { 
 			pk('id');
-			columns( join(',',qw{id name description disabled}) );
+			columns( qw{id name description disabled} );
 		} );
 
 # Reasons
 install_table( 't_reasons' => schema { 
 			pk('id');
-			columns( join(',',qw{id why description disabled}) );
+			columns( qw{id why description disabled} );
 		} );
 
 1;
