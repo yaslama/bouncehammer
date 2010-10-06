@@ -1,4 +1,4 @@
-# $Id: Kanadzuchi.pm,v 1.29 2010/08/16 11:56:40 ak Exp $
+# $Id: Kanadzuchi.pm,v 1.30 2010/10/05 14:06:50 ak Exp $
 # -Id: TheHammer.pm,v 1.4 2009/09/01 23:19:41 ak Exp -
 # -Id: Herculaneum.pm,v 1.13 2009/08/27 05:09:23 ak Exp -
 # -Id: Version.pm,v 1.35 2009/08/27 05:09:29 ak Exp -
