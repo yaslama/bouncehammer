@@ -1,4 +1,4 @@
-/* $Id: reason.css,v 1.4 2010/06/22 12:59:04 ak Exp $ */
+/* $Id: reason.css,v 1.5 2010/10/06 05:17:46 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Reason classes */
 div.reason {
@@ -19,12 +19,16 @@ div.hasmoved	{ background: #ee7800; }
 div.filtered	{ background: #ea5506; color: #f8fbf8; }
 div.mailboxfull	{ background: #b8d200; }
 div.exceedlimit	{ background: #c3d825; }
+div.rejected	{ background: #ffd900; }
+div.expired	{ background: #a6c8b2; }
 div.systemfull	{ background: #00a497; color: #f8fbf8; }
 div.notaccept	{ background: #0094c8; color: #f8fbf8; }
 div.mesgtoobig	{ background: #007b43; color: #f8fbf8; }
 div.suspend	{ background: #752100; color: #f8fbf8; }
 div.mailererror	{ background: #44617b; color: #f8fbf8; }
 div.securityerr	{ background: #1e50a2; color: #f8fbf8; }
+div.systemerror { background: #007bbb; color: #f8f8f8; }
+div.contenterr	{ background: #4d5aaf; color: #f8f8f8; }
 div.whitelisted	{ background: #eeeeee; border-color: #888888; }
 div.unstable	{ background: #674196; color: #f8fbf8; }
 div.onhold	{ background: #595857; color: #f8fbf8; }

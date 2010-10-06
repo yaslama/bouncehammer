@@ -1,33 +1,9 @@
 <h6>宛先分類</h6>
 <div class = 'description'>
 	<dl>
-		<dt>予約済み</dt>
-		<dd>reserved: RFC2606および各NICで予約されているドメイン名</dd>
-
-		<dt>携帯電話</dt>
-		<dd>cellphone: 主に携帯電話メールで使用されるドメイン名</dd>
-
-		<dt>スマートフォン</dt>
-		<dd>smartphone: 主にスマートフォンで使用されるドメイン名</dd>
-
-		<dt>PC</dt>
-		<dd>
-			プロバイダから割当てられた、会社、組織で使用されるもの等、
-			主にパソコンで使用されるメールアドレスのドメイン
-		<dd>
-
-		<dt>WebMail</dt>
-		<dd>
-			Webメールサービスで使用されるドメイン<br />
-			例) <span style = "font-style: italic;">
-				gmail.com, yahoo.co.jp, hotmail.co.jp, aol.jpなど</span>
-		</dd>
-
-		<dt>ご近所</dt>
-		<dd>neighbor: etc/neighbor-domainsで定義されるドメイン名。自社・自組織の関連ドメイン用。</dd>
-
-		<dt>未定義/不明</dt>
-		<dd>undefined: 未定義または不明なカテゴリ</dd>
-
+	[%- FOREACH g IN tt_groupmember -%]
+		<dt>[% g.key %]</dt>
+		<dd>[% tt_hostgroup.${g.key} %]</dd>
+	[%- END -%]
 	</dl>
 </div>

@@ -1,5 +1,6 @@
 [%- PROCESS "words.tt" -%]
 [%- FOREACH R IN pv_tablecontents -%]
+	[%- NEXT IF R.name.substr(0,1) == '_' -%]
 	[%- IF pv_tablename == 'senderdomains' OR pv_tablename == 'destinations' OR pv_tablename == 'addressers' -%]
 		[%- pv_prototype.form_remote_tag( {
 				url => "${pv_scriptname}/tables/${pv_tablename}/update",
@@ -38,24 +39,26 @@
 				<td class = 'theID'>[% R.id %] &nbsp;</td>
 				<td class = 'shortName' id = 'jx_name_of_[% R.id %]'>
 					[%- IF pv_tablename == 'reasons' -%]
-						<div class = 'reason [% R.name %]'>[% R.name %]</div>
+						<div class = 'reason [% R.name %]' title = '[% tt_reason.${R.name} %]'>[% R.name %]</div>
 					[%- ELSE -%]
 						[% R.name %]
 					[%- END -%]
 				</td>
 				<td class = 'longDescription'>
 					[%- IF pv_tablename == 'reasons' -%]
-					<input type = 'text' id = 'jx_desc_of_[% R.id %]' class = 'readonlytext'
-						name = 'fe_desc' readonly = 'readonly'
-						value = '[% tt_reason.${R.name} %][% IF R.description %]([% R.description %])[% END %]' />
+						<input type = 'text' id = 'jx_desc_of_[% R.id %]' class = 'readonlytext'
+							name = 'fe_desc' readonly = 'readonly'
+							value = '[% tt_reason.${R.name} %]: [% tt_tellmewhy.${R.name} %]'
+							title = '[% tt_tellmewhy.${R.name} %]' />
 					[%- ELSIF pv_tablename == 'hostgroups' -%]
-					<input type = 'text' id = 'jx_desc_of_[% R.id %]' class = 'readonlytext'
-						name = 'fe_desc' readonly = 'readonly'
-						value = '[% tt_hostgroup.${R.name} %][% IF R.description %]([% R.description %])[% END %]' />
+						<input type = 'text' id = 'jx_desc_of_[% R.id %]' class = 'readonlytext'
+							name = 'fe_desc' readonly = 'readonly'
+							value = '[% tt_hostgroup.${R.name} %]: [% tt_groupmember.${R.name} %]'
+							title = '[% tt_groupmember.${R.name} %]' />
 					[%- ELSE -%]
-					<input type = 'text' id = 'jx_desc_of_[% R.id %]' class = 'readonlytext'
-						name = 'fe_desc'
-							value = '[% R.description %]' readonly = 'readonly' />
+						<input type = 'text' id = 'jx_desc_of_[% R.id %]' class = 'readonlytext'
+							name = 'fe_desc'
+								value = '[% R.description %]' readonly = 'readonly' />
 					[%- END -%]
 				</td>
 				<td class = 'theMethod'>

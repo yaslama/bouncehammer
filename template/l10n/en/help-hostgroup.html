@@ -1,30 +1,9 @@
 <h6>Host group</h6>
 <div class = 'description'>
 	<dl>
-		<dt>Reserved</dt>
-		<dd>RFC2606 or Reserved Top Level DNS Names.</dd>
-
-		<dt>Cellphone</dt>
-		<dd>Email domains which are used by mainly cellular phone.</dd>
-
-		<dt>Smartphone</dt>
-		<dd>Email domains which are used by mainly smartphone</dd>
-
-		<dt>PC</dt>
-		<dd>PC address(domain), ISP, company, organization, and so on</dt>
-
-		<dt>Webmail</dt>
-		<dd>
-			Domains used by web-based e-mail service. <br />
-			e.g. <span style = "font-style: italic;">
-				gmail.com, yahoo.com, hotmail.com, aol.com, and such.</span>
-		</dd>
-
-		<dt>Neighbor</dt>
-		<dd>Domain names which are defined at the config file: etc/neighbor-domains</dd>
-
-		<dt>Undefined</dt>
-		<dd>Undefined host group.</dd>
-
+	[%- FOREACH g IN tt_groupmember -%]
+		<dt>[% g.key %]</dt>
+		<dd>[% tt_hostgroup.${g.key} %]</dd>
+	[%- END -%]
 	</dl>
 </div>

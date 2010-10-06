@@ -1,4 +1,4 @@
-[%# $Id: reason.tt,v 1.2 2010/08/28 17:19:11 ak Exp $ -%]
+[%# $Id: reason.tt,v 1.3 2010/10/06 05:17:41 ak Exp $ -%]
 [%# Reason names definiations in English -%]
 [%- SET tt_reason = { 
 		'_'		=> '- Select Reason -',
@@ -7,16 +7,44 @@
 		'hostunknown'	=> 'Host Unknown',
 		'hasmoved'	=> 'Has Moved',
 		'filtered'	=> 'Filtered',
+		'rejected'	=> 'Rejected'
 		'suspend'	=> 'Suspended',
+		'expired'	=> 'Delivery Expired',
 		'mailboxfull'	=> 'Mailbox Full',
 		'exceedlimit'	=> 'Exceed Limit',
 		'systemfull'	=> 'Mail System Full',
 		'notaccept'	=> 'Not Accept',
 		'mesgtoobig'	=> 'Message Too Big',
-		'mailererror'	=> 'Unknown Mailer Error',
+		'mailererror'	=> 'Mailer Error',
 		'securityerr'	=> 'Security Error',
+		'systemerror'	=> 'Mail System Error'
 		'whitelisted'	=> 'Whitelisted',
 		'unstable'	=> 'Unstable',
 		'onhold'	=> 'On Hold',
+		'contenterr'	=> 'Content/Media Error',
 	}
 -%]
+[%- SET tt_tellmewhy = {
+		'undefined'	=> 'Other or undefined status.',
+		'userunknown'	=> 'Bad destination mailbox address(X.1.1), Rejected after SMTP RCPT TO command.'
+		'hostunknown'	=> 'Bad destination system address(X.1.2), It could not connect to the host.',
+		'hasmoved'	=> 'Mailbox has moved(X.1.6)',
+		'filtered'	=> 'Mailbox disabled, not accepting messages(X.2.0,X.2.1), Rejected after SMTP DATA command.',
+		'rejected'	=> 'Bad sender address(x.1.8), Rejected after SMTP MAIL FROM command.',
+		'suspend'	=> 'Mailbox temporarily disabled.',
+		'expired'	=> 'Delivery time expired(x.4.7), Message could not be delivered.',
+		'mailboxfull'	=> 'Mailbox is full(x.2.2)',
+		'exceedlimit'	=> 'Message length exceeds administrative limit.(x.2.3)',
+		'systemfull'	=> 'Mail system full(x.3.1)',
+		'notaccept'	=> 'System not accepting network messages(x.3.2)',
+		'mesgtoobig'	=> 'Message too big for system(x.3.4)',
+		'mailererror'	=> 'Unknown mailer error, mailer died unexpectedly.',
+		'securityerr'	=> 'Rejected due to security or policy reason.',
+		'systemerror'	=> 'Mail system or network error.',
+		'whitelisted'	=> 'Manually-Operated: Recipient address surely exists.',
+		'unstable'	=> 'Manually-Operated: Unstable recipient address.',
+		'onhold'	=> 'Judgement of the reason is on hold, due to lack of error details.',
+		'contenterr'	=> 'Content or media error(x.6.x)',
+	}
+-%]
+

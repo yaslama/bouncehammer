@@ -1,4 +1,4 @@
-[%# $Id: reason.tt,v 1.2 2010/08/28 17:19:14 ak Exp $ -%]
+[%# $Id: reason.tt,v 1.3 2010/10/06 05:17:43 ak Exp $ -%]
 [%# Reason names definiations in English -%]
 [%- SET tt_reason = { 
 		'_'		=> '- 差戻理由を選択 -',
@@ -7,7 +7,9 @@
 		'hostunknown'	=> '不明なホスト',
 		'hasmoved'	=> '移転済み',
 		'filtered'	=> 'フィルタによる拒否',
+		'rejected'	=> '発信者アドレス拒否',
 		'suspend'	=> '一時停止中',
+		'expired'	=> '配送時間切れ',
 		'mailboxfull'	=> 'メールボックスいっぱい',
 		'exceedlimit'	=> 'メールサイズ上限超過',
 		'systemfull'	=> 'メールサーバ溢れ中',
@@ -15,8 +17,33 @@
 		'mesgtoobig'	=> 'メールが大きすぎる',
 		'mailererror'	=> 'メールプログラムエラー',
 		'securityerr'	=> 'セキュリティ上のエラー',
+		'systemerror'	=> 'メールシステムのエラー',
 		'whitelisted'	=> 'ホワイトリスト指定済み',
 		'unstable'	=> '不安定な受信者',
 		'onhold'	=> '差戻理由の決定を保留中',
+		'contenterr'	=> 'メール内容・形式のエラー',
+	}
+-%]
+[%- SET tt_tellmewhy = {
+		'undefined'	=> '未定義または不明な理由(判別できなかったものも含む)',
+		'userunknown'	=> '宛先メールボックスが存在しない(X.1.1) SMTP RCPT TOコマンドで拒否された'
+		'hostunknown'	=> '宛先ホスト・ドメインが存在しないため、接続できなかった(X.1.2)',
+		'hasmoved'	=> '宛先メールボックスは移転した、転送はされない(X.1.6)',
+		'filtered'	=> '宛先メールボックスは存在するが受け取り拒否(x.2.0)、ドメイン指定拒否(携帯電話), SMTP DATAコマンド以降での拒否',
+		'rejected'	=> '発信者アドレスによる拒否(x.1.8), SMTP MAIL FROMコマンドで拒否された',
+		'suspend'	=> '宛先メールボックスは一時的に閉鎖または無効になっている',
+		'expired'	=> '配送時間切れ(x.4.7) メールは配信されなかった',
+		'mailboxfull'	=> 'メールボックスがいっぱい(x.2.2)',
+		'exceedlimit'	=> 'メールの長さが許容できる制限値を超えている(x.2.3)',
+		'systemfull'	=> 'メールサーバのディスク全体が容量不足など(x.3.1)',
+		'notaccept'	=> 'メールサーバは外部からのメールを受け取らない(x.3.2)',
+		'mesgtoobig'	=> 'メールサイズが大きすぎる(x.3.4)',
+		'mailererror'	=> 'メールプログラムエラー(不意に終了した場合など)',
+		'securityerr'	=> 'セキュリティ上の理由または管理方針により拒否された',
+		'systemerror'	=> 'メールサーバまたはネットワークのエラー',
+		'whitelisted'	=> '手動選択: 宛先メールアドレスは確実に存在している',
+		'unstable'	=> '手動選択: 受信できたり出来なかったりと不安定な宛先',
+		'onhold'	=> 'エラーの詳細欠損によりエラー理由の決定保留',
+		'contenterr'	=> 'メール形式によるエラー(x.6.x)',
 	}
 -%]
