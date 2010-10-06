@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: make-dummy-data.pl,v 1.3 2010/08/28 17:28:45 ak Exp $
+# $Id: make-dummy-data.pl,v 1.4 2010/10/05 14:05:00 ak Exp $
 use strict;
 use warnings;
 use Digest::MD5;
@@ -32,12 +32,12 @@ my $reasons = [ qw(
 		undefined userunknown hostunknown hasmoved filtered
 		suspend mailboxfull exceedlimit systemfull notaccept
 		mesgtoobig mailererror securityerr whitelisted unstable
-		onhold
+		onhold rejected expired contenterr systemerror
 	) ];
 my $outputformat = qq|- { "bounced": %d, "addresser": "%s", "recipient": "%s", |
 			. qq|"senderdomain": "%s", "destination": "%s", "reason": "%s", |
 			. qq|"hostgroup": "%s", "provider": "%s", "frequency": %d, |
-			. qq|"description": { "deliverystatus": 5%d, "diagnosticcode": "Dummy Record", |
+			. qq|"description": { "deliverystatus": "5.%d.%d", "diagnosticcode": "Dummy Record", |
 			. qq|"timezoneoffset": "+0900" }, "token": "%s" }\n|;
 
 
@@ -58,7 +58,7 @@ while( $createdcount < $howmanylines )
 	printf( STDOUT $outputformat, 
 			$bouncedat, $addresser, $recipient, $senderdomain, $destination, $reasonwhy, 
 			$destinations->[ $randomindex ]->{'hostgroup'}, $destinations->[ $randomindex ]->{'provider'},
-			int(rand(1e3)), int(rand(1e2)), $messagetoken );
+			int(rand(1e3)), int(rand(1e1)), int(rand(1e1)), $messagetoken );
 
 	$createdcount++;
 }

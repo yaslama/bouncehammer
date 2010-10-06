@@ -1,4 +1,4 @@
-# $Id: 063_mail-stored-bddr.t,v 1.7 2010/07/02 09:00:28 ak Exp $
+# $Id: 063_mail-stored-bddr.t,v 1.8 2010/10/05 14:04:22 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -32,7 +32,7 @@ my $T = new Kanadzuchi::Test(
 		'updated' => bless( localtime(), 'Time::Piece' ),
 		'timezoneoffset' => q(+0900),
 		'diagnosticcode' => q(Test),
-		'deliverystatus' => 512,
+		'deliverystatus' => '5.1.2',
 		'hostgroup' => 'rfc2606',
 		'provider' => 'rfc2606',
 		'reason' => 'hostunknown',

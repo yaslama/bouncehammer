@@ -1,4 +1,4 @@
-# $Id: 061_mail-stored-yaml.t,v 1.10 2010/07/11 09:20:38 ak Exp $
+# $Id: 061_mail-stored-yaml.t,v 1.11 2010/10/05 14:04:22 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -140,7 +140,7 @@ CONSTRUCTORS: {
 		is( $entity->senderdomain(), $jsoned->{'senderdomain'}, q{->senderdomain == }.$jsoned->{'senderdomain'} );
 		is( $entity->destination(), $jsoned->{'destination'}, q{->destination == }.$jsoned->{'destination'} );
 
-		is( $entity->deliverystatus(), 534, $T->class.q{->loadandnew()->deliverystatus() } );
+		is( $entity->deliverystatus(), '5.3.4', $T->class.q{->loadandnew()->deliverystatus() } );
 		is( $entity->diagnosticcode(), q(Test record), $T->class.q{->loadandnew()->diagnosticcode() } );
 		is( $entity->timezoneoffset(), q(+0900), $T->class.q{->loadandnew()->timezoneoffset() } );
 	}
@@ -342,4 +342,4 @@ SKIP: {
 }
 
 __DATA__
-- { "bounced": 166222661, "addresser": "postmaster@example.jp", "recipient": "very-very-big-message-to-you@gmail.com", "senderdomain": "example.jp", "destination": "gmail.com", "reason": "mesgtoobig", "hostgroup": "webmail", "provider": "google", "description": { "deliverystatus": 534, "timezoneoffset": "+0900", "diagnosticcode": "Test record" }, "token": "aeaaeb939a918caaef3be00f19b66506" }
+- { "bounced": 166222661, "addresser": "postmaster@example.jp", "recipient": "very-very-big-message-to-you@gmail.com", "senderdomain": "example.jp", "destination": "gmail.com", "reason": "mesgtoobig", "hostgroup": "webmail", "provider": "google", "description": { "deliverystatus": "5.3.4", "timezoneoffset": "+0900", "diagnosticcode": "Test record" }, "token": "aeaaeb939a918caaef3be00f19b66506" }
