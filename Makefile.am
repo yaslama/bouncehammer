@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.51 2010/08/16 11:56:37 ak Exp $
+# $Id: Makefile.am,v 1.52 2010/10/06 09:03:37 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -101,7 +101,8 @@ uninstall-old-files:
 	rm -f @prefix@/lib/Kanadzuchi/MTA/Google.pm
 
 message:
-	@echo
+	@echo "-----------------------------------------------------------------------------"
+	@echo " ****** Upgrade(2.6.0 or later) information is available at ./UPGRADE ******"
 	@echo "-----------------------------------------------------------------------------"
 	@echo " $(SYSTEMNAME) $(SYSVERSION) "
 	@echo "-----------------------------------------------------------------------------"
@@ -109,7 +110,7 @@ message:
 	@echo
 	@echo "  1. Setup and start database(PostgreSQL, MySQL, or SQLite)"
 	@echo "  2. Create tables"
-	@echo "       a. Run @datadir@/script/{PostgreSQL,MySQL,SQLite}.sql"
+	@echo "       a. Run @datadir@/script/{PostgreSQL,MySQL,SQLite}*.sql"
 	@echo "       b. Run @datadir@/script/mastertable-*.sql"
 	@echo "       c. Run @datadir@/script/records-example.sql"
 	@echo "  3. Copy @sysconfdir@/bouncehammer.cf-example @sysconfdir@/bouncehammer.cf"
@@ -133,6 +134,8 @@ endif
 	@echo "-----------------------------------------------------------------------------"
 	@echo " To show this screen, type 'make message' and hit 'Return' key"
 	@echo " See more description at BounceHmammer website; http://bouncehammer.jp/"
+	@echo "-----------------------------------------------------------------------------"
+	@echo " ****** Upgrade(2.6.0 or later) information is available at ./UPGRADE ******"
 	@echo "-----------------------------------------------------------------------------"
 	@echo
 
