@@ -109,7 +109,10 @@
 
 					<tr>
 						<td class = 'key'>[% tt_term.reason %]</td>
-						<td class = 'value'>[% INCLUDE "select-reason.html" %]</td>
+						<td class = 'value'>
+							[% INCLUDE "select-reason.html" %]<br />
+							<span class = 'shortdescription'>[% tt_tellmewhy.${B.reason} %]</span>
+						</td>
 						<td class = 'extra'></td>
 					</tr>
 

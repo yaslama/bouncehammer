@@ -1,4 +1,4 @@
-[%# $Id: hostgroup.tt,v 1.3 2010/10/06 05:17:43 ak Exp $ -%]
+[%# $Id: hostgroup.tt,v 1.4 2010/10/06 08:57:15 ak Exp $ -%]
 [%# Host Group definiations in English -%]
 [%- SET tt_hostgroup = { 
 		'_'		=> '- 宛先分類を選択 -',
@@ -13,9 +13,9 @@
 -%]
 [%- SET tt_groupmember = { 
 		'undefined'	=> '未定義または不明な分類',
-		'reserved'	=> 'RFC2606および各NICで予約されているドメイン名',
-		'cellphone'	=> '主に携帯電話メールで使用されるドメイン名',
-		'smartphone'	=> '主にスマートフォンで使用されるドメイン名',
+		'reserved'	=> 'RFC2606および各NICで予約されているドメイン名:例) example.com, example.org, example.jpなど',
+		'cellphone'	=> '主に携帯電話メールで使用されるドメイン名:例) docomo.ne.jp, ezweb.ne.jp, softbank.ne.jpなど',
+		'smartphone'	=> '主にスマートフォンで使用されるドメイン名:例) i.softbank.jp, docomo.blackberry.comなど',
 		'pc'		=> 'プロバイダ・会社・組織で使用されるものなど、主にパソコンで使用されるメールアドレスのドメイン'
 		'webmail'	=> '著名なWebメールサービスで使用されるドメイン:例) gmail.com, yahoo.co.jp, hotmail.co.jp, aol.jpなど',
 		'neighbor'	=> 'etc/neighbor-domainsで定義されるドメイン名。自社・自組織の関連ドメイン用',

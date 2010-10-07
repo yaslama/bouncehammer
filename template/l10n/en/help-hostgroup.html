@@ -3,7 +3,7 @@
 	<dl>
 	[%- FOREACH g IN tt_groupmember -%]
 		<dt>[% g.key %]</dt>
-		<dd>[% tt_hostgroup.${g.key} %]</dd>
+		<dd title = '[% tt_groupmember.${g.key} %]'>[% tt_hostgroup.${g.key} %]</dd>
 	[%- END -%]
 	</dl>
 </div>

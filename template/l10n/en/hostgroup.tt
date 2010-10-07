@@ -1,4 +1,4 @@
-[%# $Id: hostgroup.tt,v 1.3 2010/10/06 05:17:41 ak Exp $ -%]
+[%# $Id: hostgroup.tt,v 1.4 2010/10/06 08:57:12 ak Exp $ -%]
 [%# Host Group definiations in English -%]
 [%- SET tt_hostgroup = { 
 		'_'		=> '- Select Host Group -',
@@ -13,9 +13,9 @@
 -%]
 [%- SET tt_groupmember = { 
 		'undefined'	=> 'Undefined host group.',
-		'reserved'	=> 'Top level DNS names which are reserved by RFC2606 or each NIC.',
+		'reserved'	=> 'Top level DNS names which are reserved by RFC2606 or each NIC, e.g.) example.com, example.org',
 		'cellphone'	=> 'Email domains which are used by mainly cellular phone.',
-		'smartphone'	=> 'Email domains which are used by mainly smartphone',
+		'smartphone'	=> 'Email domains which are used by mainly smartphone, e.g.) o2.co.uk',
 		'pc'		=> 'PC, domains of ISP, company, and so on.',
 		'webmail'	=> 'Domains used by major web-based e-mail service, e.g.) aol.com, hotmail.com, gmail.com, yahoo.com',
 		'neighbor'	=> 'Your own domains: Domain names which are defined at the config file: etc/neighbor-domains',

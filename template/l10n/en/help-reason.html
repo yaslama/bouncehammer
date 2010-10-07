@@ -3,7 +3,7 @@
 	<dl>
 	[%- FOREACH w IN tt_tellmewhy -%]
 		<dt>[% w.key %]</dt>
-		<dd>[% tt_reason.${w.key} %]</dd>
+		<dd title = '[% tt_tellmewhy.${w.key} %]'>[% tt_reason.${w.key} %]</dd>
 	[%- END -%]
 	</dl>
 </div>

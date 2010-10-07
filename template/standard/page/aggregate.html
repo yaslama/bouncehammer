@@ -2,6 +2,7 @@
 [%- PROCESS "words.tt" -%]
 [%- PROCESS "terms.tt" -%]
 [%- PROCESS "reason.tt" -%]
+[%- PROCESS "hostgroup.tt" -%]
 [% INCLUDE "dtd-xhtml.html" %]
 <head>
 	[% INCLUDE "meta-http-equiv.html" %]
@@ -84,7 +85,10 @@
 					<tr>
 						<td class = 'name'>
 							[%- IF pv_columnname == 'reason' -%]
-								<div class = 'reason [% E.name %]' title = '[% reason.${E.name} %]'>[% E.name %]</div>
+								<div class = 'reason [% E.name %]' 
+									title = '[% tt_reason.${E.name} %][% tt_tellmewhy.${E.name} %]'>[% E.name %]</div>
+							[%- ELSIF pv_columnname == 'hostgroup' -%]
+								<span title = '[% tt_hostgroup.${E.name} %][% tt_groupmember.${E.name} %]'>[% E.name %]</div>
 							[%- ELSE -%]
 								[% E.name %]
 							[%- END -%]
