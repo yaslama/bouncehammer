@@ -102,7 +102,7 @@ uninstall-old-files:
 
 message:
 	@echo "-----------------------------------------------------------------------------"
-	@echo " ****** Upgrade(2.6.0 or later) information is available at ./UPGRADE ******"
+	@echo " ****** Upgrade information is available at ./UPGRADE ******"
 	@echo "-----------------------------------------------------------------------------"
 	@echo " $(SYSTEMNAME) $(SYSVERSION) "
 	@echo "-----------------------------------------------------------------------------"
@@ -135,7 +135,7 @@ endif
 	@echo " To show this screen, type 'make message' and hit 'Return' key"
 	@echo " See more description at BounceHmammer website; http://bouncehammer.jp/"
 	@echo "-----------------------------------------------------------------------------"
-	@echo " ****** Upgrade(2.6.0 or later) information is available at ./UPGRADE ******"
+	@echo " ****** Upgrade information is available at ./UPGRADE ******"
 	@echo "-----------------------------------------------------------------------------"
 	@echo
 
