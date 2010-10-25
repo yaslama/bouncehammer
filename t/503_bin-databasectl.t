@@ -1,4 +1,4 @@
-# $Id: 503_bin-databasectl.t,v 1.13 2010/08/16 12:06:26 ak Exp $
+# $Id: 503_bin-databasectl.t,v 1.14 2010/10/25 20:09:01 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -238,16 +238,16 @@ SKIP: {
 			$thisent = $yamlobj->{'status'};
 			is( $thisent->{'record'}, $Recs, '(3) status->record = '.$Recs );
 			is( $thisent->{'insert'}, 0, '(3) status->insert = 0' );
-			is( $thisent->{'update'}, 19, '(3) status->update = 19' );
+			is( $thisent->{'update'}, 18, '(3) status->update = 18' );
 
 			$thisent = $yamlobj->{'status'}->{'skipped'};
 			is( $thisent->{'no-senderdomain'}, 1, '(3) skipped->no-senderdomain = 1' );
-			is( $thisent->{'too-old-or-same'}, 17, '(3) skipped->too-old-or-same = 17' );
+			is( $thisent->{'too-old-or-same'}, 18, '(3) skipped->too-old-or-same = 18' );
 			is( $thisent->{'is-whitelisted'}, 0, '(3) skipped->is-whitelisted = 0' );
 			is( $thisent->{'exceeds-limit'}, 0, '(3) skipped->exceeds-limit = 0' );
 
 			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'};
-			is( $thisent->{'bouncelogs'}, 55, '(3) cache->bouncelogs = 55' );
+			is( $thisent->{'bouncelogs'}, 54, '(3) cache->bouncelogs = 54' );
 
 			$thisent = $yamlobj->{'status'}->{'cache'}->{'positive'}->{'mastertables'};
 			is( $thisent->{'addressers'}, 0, '(3) cache->matertables->addressers = 0' );
