@@ -1,4 +1,4 @@
-# $Id: qmail.pm,v 1.4 2010/10/05 11:23:48 ak Exp $
+# $Id: qmail.pm,v 1.5 2010/10/25 20:09:25 ak Exp $
 # Kanadzuchi::MTA::
                          ##  ###    
   #####  ##  ##  ####         ##    
@@ -141,6 +141,7 @@ sub reperit
 	return q() unless( lc($mhead->{'subject'}) eq 'failure notice' );
 	return q() unless( grep { $_ =~ m{\A[(]qmail[ ]+\d+[ ]+invoked[ ]+for[ ]+bounce[)]} } @{ $mhead->{'received'} } );
 
+	my $xmode = { 'begin' => 1 << 0, 'error' => 1 << 1, 'endof' => 1 << 2 };
 	my $xflag = 0;		# (Integer) Flag, 1 = is qmail
 	my $pstat = '5.0.0';	# (String) Pseudo status value
 	my $phead = q();	# (String) Pseudo email header
@@ -160,7 +161,7 @@ sub reperit
 	{
 		if( $xflag == 0 && $el =~ $RxQSBMF->{'begin'} )
 		{
-			$xflag |= 1;
+			$xflag |= $xmode->{'begin'};
 			next();
 		}
 

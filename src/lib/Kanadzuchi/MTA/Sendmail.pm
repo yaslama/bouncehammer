@@ -1,4 +1,4 @@
-# $Id: Sendmail.pm,v 1.4 2010/10/05 11:23:48 ak Exp $
+# $Id: Sendmail.pm,v 1.5 2010/10/25 20:09:25 ak Exp $
 # Kanadzuchi::MTA::
                                                           
   #####                    ##                  ##  ###    
@@ -47,6 +47,7 @@ sub reperit
 	return q() unless( $mhead->{'subject'} =~ m{see transcript for details\z} );
 	return q() unless( $mhead->{'from'} =~ m{\AMail Delivery Subsystem} );
 
+	my $xmode = { 'begin' => 1 << 0, 'error' => 1 << 1, 'endof' => 1 << 2 };
 	my $xflag = 0;		# (Integer) Flag, 1 = is Sendmail, 2 = ...While talking..., 4 = Reporting MTA
 	my $phead = q();	# (String) Pseudo email header
 	my $xsmtp = q();	# (String) SMTP Command in transcript of session
@@ -56,18 +57,18 @@ sub reperit
 		if( $xflag == 0 && $el =~ $RxSendmail )
 		{
 			# ----- Transcript of session follows -----
-			$xflag |= 1;
+			$xflag |= $xmode->{'begin'};
 			next();
 		}
 
-		if( $xflag == 1 )
+		if( $xflag == $xmode->{'begin'} )
 		{
 			# ... while talking to mta.example.org.:
-			$xflag |= 2 if( $el =~ m{\A[.]+ while talking to .+[:]\z} );
+			$xflag |= $xmode->{'error'} if( $el =~ m{\A[.]+ while talking to .+[:]\z} );
 			next();
 		}
 
-		if( $xflag == 3 )
+		if( $xflag == ( $xmode->{'begin'} + $xmode->{'error'} ) )
 		{
 			# ... while talking to mta.example.jp.:
 			# >>> DATA

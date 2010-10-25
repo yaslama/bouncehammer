@@ -1,4 +1,4 @@
-# $Id: Google.pm,v 1.1 2010/10/05 11:22:36 ak Exp $
+# $Id: Google.pm,v 1.2 2010/10/25 20:09:28 ak Exp $
 # -Id: Google.pm,v 1.2 2010/07/04 23:45:49 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: Google.pm,v 1.1 2009/07/31 09:04:38 ak Exp -
@@ -82,6 +82,7 @@ sub reperit
 	return q() unless( $mhead->{'from'} =~ m{[@]googlemail[.]com[>]?\z} );
 	return q() unless( $mhead->{'subject'} =~ m{Delivery[ ]Status[ ]Notification} );
 
+	my $xmode = { 'begin' => 1 << 0, 'error' => 1 << 1, 'endof' => 1 << 2 };
 	my $xflag = 0;		# (Integer) Flag, is Gmail or not.
 	my $state = 0;		# (Integer) (state xx).
 	my $phead = q();	# (String) Pusedo header
@@ -101,13 +102,13 @@ sub reperit
 		if( $xflag == 0 && ( $el =~ $RxPermGmail || $el =~ $RxTempGmail ) )
 		{
 			# The line match with 'Delivery to the following...'
-			$xflag |= 1;
+			$xflag |= $xmode->{'begin'};
 			next();
 		}
 		next() unless( $xflag );
 
 		# ^Irecipient-address-here@example.jp
-		if( ( $xflag & 1 ) && $el =~ m{\A\s+([^\s]+[@][^\s]+)\z} )
+		if( ( $xflag & $xmode->{'begin'} ) && $el =~ m{\A\s+([^\s]+[@][^\s]+)\z} )
 		{
 			my $_rcpt = $1;
 			my $_2822 = q|Kanadzuchi::RFC2822|;

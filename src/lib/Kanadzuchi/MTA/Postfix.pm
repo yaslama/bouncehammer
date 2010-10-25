@@ -1,4 +1,4 @@
-# $Id: Postfix.pm,v 1.3 2010/10/05 11:23:48 ak Exp $
+# $Id: Postfix.pm,v 1.4 2010/10/25 20:09:25 ak Exp $
 # Kanadzuchi::MTA::
                                                
  #####                  ##    ###  ##          
@@ -80,6 +80,7 @@ sub reperit
 	return q() unless( $mhead->{'subject'} eq 'Undelivered Mail Returned to Sender' );
 	return q() unless( $mhead->{'from'} =~ m{ [(]Mail Delivery System[)]\z} );
 
+	my $xmode = { 'begin' => 1 << 0, 'error' => 1 << 1, 'endof' => 1 << 2 };
 	my $xflag = 0;		# (Integer) Flag, 1 = is Posftix, 2 = <addr>...said:, 4 = Reporting MTA
 	my $phead = q();	# (String) Pseudo email header
 	my $pbody = q();	# (String) Pseudo body part
@@ -94,17 +95,17 @@ sub reperit
 		if( $xflag == 0 && grep { $el =~ $_ } @$RxPostfix )
 		{
 			# The mail system, The Postfix program, This is the Postfix program
-			$xflag |= 1;
+			$xflag |= $xmode->{'begin'};
 			next();
 		}
 
-		if( ( $xflag & 1 ) && ! ( $xflag & 4 ) )
+		if( ( $xflag & $xmode->{'begin'} ) && ! ( $xflag & $xmode->{'endof'} ) )
 		{
 			# <recipient@example.com>: host mx.example.com [102.0.2.3] said:
 			# <recipient@example.net> (expanded from <user@example.net>): host ...
 			# $xflag |= 2 if( $el =~ m{\A[<].+[@].+[>][:]} || $el =~ m{\A[<].+[@].+[>] [(]expanded from} );
 			#
-			$xflag |= 2 if( $el =~ m{\A[<].+[@].+[>][:]?} );
+			$xflag |= $xmode->{'error'} if( $el =~ m{\A[<].+[@].+[>][:]?} );
 			$rhostsaid .= $el if( $xflag == 3 && $rhostsaid !~ m{ command[)]\z} );
 
 			# Reporting-MTA: dns; mx.example.jp
@@ -112,12 +113,12 @@ sub reperit
 			# X-Postfix-Sender: rfc822; daemon@example.net
 			# Arrival-Date: Wed, 29 Apr 2009 16:03:18 +0900
 			#
-			$xflag |= 4 if( $el =~ m{\A--\w.+/.+} # Boundary
+			$xflag |= $xmode->{'endof'} if( $el =~ m{\A--\w.+/.+} # Boundary
 					|| $el =~ m{\AContent-Type: message/} || $el =~ m{\AReporting-MTA: } );
 			next();
 		}
 
-		if( ( $xflag & 2 ) && length($xsmtp) == 0 )
+		if( ( $xflag & $xmode->{'error'} ) && length($xsmtp) == 0 )
 		{
 			#                   The mail system
 			#
@@ -153,7 +154,7 @@ sub reperit
 			$xsmtp = $1 if( $rhostsaid =~ m{[(]in reply to .*([A-Z]{4}).*command[)]} );
 		}
 
-		if( $xflag & 7 )
+		if( $xflag & ( $xmode->{'begin'} + $xmode->{'error'} + $xmode->{'endof'} ) )
 		{
 			if( $el =~ m{\AStatus: } && length($statintxt) )
 			{

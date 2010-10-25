@@ -1,12 +1,14 @@
-# $Id: Exim.pm,v 1.1 2010/10/05 11:20:35 ak Exp $
+# $Id: Exim.pm,v 1.2 2010/10/25 20:09:25 ak Exp $
 # Kanadzuchi::MTA::
-                               
- ######            ##          
- ##      ##  ##        ##  ##  
- ####     ####    ###  ######  
- ##        ##      ##  ######  
- ##       ####     ##  ##  ##  
- ######  ##  ##   #### ##  ##  
+                              
+ ######           ##          
+ ##      ##  ##       ##  ##  
+ ####     ####   ###  ######  
+ ##        ##     ##  ######  
+ ##       ####    ##  ##  ##  
+ ######  ##  ##  #### ##  ##  
+
+# See http://www.exim.org/
 package Kanadzuchi::MTA::Exim;
 use base 'Kanadzuchi::MTA';
 use strict;
@@ -117,6 +119,7 @@ sub reperit
 	return q() unless( $mhead->{'subject'} =~ m{\AMail delivery failed(:?: returning message to sender)?\z} );
 	return q() unless( $mhead->{'from'} =~ m{\AMail Delivery System} );
 
+	my $xmode = { 'begin' => 1 << 0, 'error' => 1 << 1, 'endof' => 1 << 2 };
 	my $xflag = 0;		# (Integer) Flag
 	my $pstat = q();	# (String) Stauts code
 	my $phead = q();	# (String) Pseudo email header
@@ -134,23 +137,23 @@ sub reperit
 		if( $xflag == 0 && $el =~ $RxEximMTA->{'begin'} )
 		{
 			# This message was created automatically by mail delivery software.
-			$xflag |= 1;
+			$xflag |= $xmode->{'begin'};
 			next();
 		}
 
-		if( $xflag == 1 )
+		if( $xflag == $xmode->{'begin'} )
 		{
 			# A message that you sent could not be delivered to one or more of its
 			# recipients. This is a permanent error. The following address(es) failed:
 			#  -- OR --
 			# could not be delivered to one or more of its recipients. The following
 			# address(es) failed: ***@****.**
-			$xflag |= 2 if( $el =~ $RxBounced->{'mail'} 
+			$xflag |= $xmode->{'error'} if( $el =~ $RxBounced->{'mail'} 
 					|| $el =~ $RxBounced->{'from'} || $el =~ $RxBounced->{'rcpt'} );
 			next();
 		}
 
-		if( $xflag == 3 )
+		if( ( $xflag & $xmode->{'begin'} ) && ( $xflag & $xmode->{'error'} ) )
 		{
 			#  ****@****.**
 			#    local delivery failed
