@@ -1,4 +1,4 @@
-# $Id: 025_statistics-stored-yaml.t,v 1.4 2010/10/05 11:30:56 ak Exp $
+# $Id: 025_statistics-stored-yaml.t,v 1.5 2010/10/24 06:42:01 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,7 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Statistics::Stored::YAML;
 use Path::Class::File;
-use Test::More ( tests => 919 );
+use Test::More ( tests => 922 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||

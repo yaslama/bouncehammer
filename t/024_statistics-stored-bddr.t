@@ -1,4 +1,4 @@
-# $Id: 024_statistics-stored-bddr.t,v 1.5 2010/10/05 11:30:56 ak Exp $
+# $Id: 024_statistics-stored-bddr.t,v 1.6 2010/10/24 06:42:01 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,7 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Statistics::Stored::BdDR;
 use List::Util;
-use Test::More ( tests => 1163 );
+use Test::More ( tests => 1169 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
