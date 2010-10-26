@@ -4,13 +4,14 @@
  Copyright (C) 2009,2010 Cubicroot Co. Ltd. ALL RIGHTS RESERVED.
 -----------------------------------------------------------------------
 
-* 2.5.0 => 2.6.0	2010/10/xx
+* 2.5.0 => 2.6.0	2010/10/26
 
   1. Run ./configure script, ``make'', and ``make install''
 
-  2. Update database table for new reasons.
+  2. Update database table for registering new bounce reasons.
       # cd ./src/sql
       # cat update-2.6.0.sql | <your-db-client-command>
+
 
 -----------------------------------------------------------------------
 * 2.4.x => 2.5.0	2010/08/30
@@ -20,6 +21,7 @@
   2. Create the new database table 't_dailyupdates'
       # cd <install-dir>/share/script
       # cat <your-db>-dailyupdates.sql | <your-db-client-command>
+
 
 -----------------------------------------------------------------------
 * 2.3.x => 2.4.0	2010/07/15

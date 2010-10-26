@@ -1,14 +1,66 @@
-		BOUNCEHAMMER/RELEASE_NOTES.JA (utf-8/LF)
------------------------------------------------------------------------
  $Id: RELEASE_NOTES.JA,v 1.49 2010/08/29 20:13:42 ak Exp $
+-----------------------------------------------------------------------
+ ##                                      ##  ##                                     
+ ##      ####  ##  ## #####   #### ####  ##  ##  ####  ##  ## ##  ##  ####  #####   
+ #####  ##  ## ##  ## ##  ## ##   ##  ## ######     ## ###### ###### ##  ## ##  ##  
+ ##  ## ##  ## ##  ## ##  ## ##   ###### ##  ##  ##### ###### ###### ###### ##      
+ ##  ## ##  ## ##  ## ##  ## ##   ##     ##  ## ##  ## ##  ## ##  ## ##     ##      
+ #####   ####   ##### ##  ##  #### ####  ##  ##  ##### ##  ## ##  ##  ####  ##      
+                                                                                    
+              BOUNCEHAMMER/RELEASE_NOTES.JA (utf-8/LF)
+-----------------------------------------------------------------------
+ Copyright (C) 2009,2010 Cubicroot Co. Ltd. ALL RIGHTS RESERVED.
+ 開発: 株式会社キュービックルート (http://cubicroot.jp/)
 -----------------------------------------------------------------------
  オープンソースのバウンスメール解析システム``BounceHammer''のリリース
  ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
  リリースした日付、その下に変更点を書いています。BounceHammerのサイト
  http://bouncehammer.jp/ で更に多くの情報が得られます。
+
+ その他の情報は下記のサイトでご覧になれまます。
+
+  - http://sourceforge.jp/projects/bouncehammer/
+  - http://www.ohloh.net/p/bouncehammer
+  - http://twitter.com/bouncehammer
 -----------------------------------------------------------------------
- Copyright (C) 2009,2010 Cubicroot Co. Ltd. ALL RIGHTS RESERVED.
------------------------------------------------------------------------
+
+
+2.6.0/2.0.0	2010/10/26
+
+  新機能:
+    * 新しいエラー理由: 発信者アドレスによる拒否(rejected)、 システムエ
+      ラー(systemerror)、内容・形式によるエラー(contenterr)、配送時間切
+      れ(expired) 。
+    * 解析精度の向上: 新しくEximに対応, Gmail, qmail, 幾つかのMDA(mail.
+      local, procmail, maildrop, vpopmail, vmailmgr)の精度が向上。
+    * 出力データの'deliverystatus'のフォーマット変更:  整数値から文字列
+      になりました。例) 512 -> "5.1.2"
+
+  細かな改善点:
+    * lib/Kanadzuchi/BdDR/内のデータベース用クラスファイル: BounceLogs.
+      pm, Masters.pm, DailyUpdates.pmのコード改善(thanks to @nekokak)
+    * WebUI/システム情報(Profile)のページ表題が空であった部分を修正。
+    * bin/datadumperコマンドで取得する1ページあたりの行数を調整。
+    * lib/Kanadzuchi/MTA/Google.pmはサブディレクトリUS/に移動しました。
+    * UNIXドメインソケットでのデータベース接続の改善。
+    * RFC 3463, 3886, 4468, 4954, 5248, 5336対応。
+
+  修正されたバグ:
+    * lib/Kanadzuchi/MTA/*.pmでバウンスメール解析中に出る警告メッセージ
+      ``Use of uninitialized value...''を修正。
+
+  新しいファイル:
+    * lib/Kanadzuchi/Mail/Why/ContentError.pm
+    * lib/Kanadzuchi/Mail/Why/Rejected.pm
+    * lib/Kanadzuchi/Mail/Why/SecurityError.pm
+    * lib/Kanadzuchi/Mail/Why/SystemError.pm
+    * lib/Kanadzuchi/MDA.pm
+    * lib/Kanadzuchi/MTA/Exim.pm
+    * lib/Kanadzuchi/MTA/Fallback.pm
+    * lib/Kanadzuchi/MTA/US/Google.pm
+    * lib/Kanadzuchi/RFC3463.pm (Obsoletes: RFC1893.pm)
+    * src/sql/update-2.6.0.sql
+
 
 -----------------------------------------------------------------------
 2.5.0/2.0.0	2010/08/30

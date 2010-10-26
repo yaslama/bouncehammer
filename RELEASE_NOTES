@@ -1,17 +1,69 @@
-		BOUNCEHAMMER/RELEASE_NOTES
------------------------------------------------------------------------
  $Id: RELEASE_NOTES,v 1.72 2010/08/29 20:13:42 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
- This listing show the release notes of ``BounceHammer'': open-sourced
- Bounce Mail Parser system. The list shows the version of BounceHammer
- engine, the version of BounceHammer's configuration file, the date of
- release, and a summary of the changes in that release.  More informa-
- tion about BounceHammer available at ``http://bouncehammer.jp/'' .
+ ##                                      ##  ##                                     
+ ##      ####  ##  ## #####   #### ####  ##  ##  ####  ##  ## ##  ##  ####  #####   
+ #####  ##  ## ##  ## ##  ## ##   ##  ## ######     ## ###### ###### ##  ## ##  ##  
+ ##  ## ##  ## ##  ## ##  ## ##   ###### ##  ##  ##### ###### ###### ###### ##      
+ ##  ## ##  ## ##  ## ##  ## ##   ##     ##  ## ##  ## ##  ## ##  ## ##     ##      
+ #####   ####   ##### ##  ##  #### ####  ##  ##  ##### ##  ## ##  ##  ####  ##      
+
+                   BOUNCEHAMMER/RELEASE_NOTES
 -----------------------------------------------------------------------
  Copyright (C) 2009,2010 Cubicroot Co. Ltd. ALL RIGHTS RESERVED.
+ Developed by Cubicroot Co. Ltd. (http://cubicroot.jp/)
 -----------------------------------------------------------------------
+ This listing show the release notes of ``BounceHammer'': open-sourced
+ Bounce Mail Parser. The list shows the version of BounceHammer engine,
+ the version of BounceHammer's configuration file, the date of release,
+ and a summary of the changes in that release.  More information about
+ BounceHammer is available at http://bouncehammer.jp/ (Japanese).
+
+ Other information is available at the following sites:
+
+  - http://sourceforge.jp/projects/bouncehammer/
+  - http://www.ohloh.net/p/bouncehammer
+  - http://twitter.com/bouncehammer
+-----------------------------------------------------------------------
+
+
+2.6.0/2.0.0	2010/10/26
+
+  New functionality:
+    * New reasons: rejected, systemerror, contenterr, and expired.
+    * Improved analytical accuracy for bounce messages via Exim, Gmail,
+      qmail, and from MDAs:  mail.local(sendmail), procmail,  maildrop,
+      dovecot, vdelivermail(vpopmail), and vdeliver(vmailmgr).
+    * Changing format of 'deliverystatus' at YAML/JSON, int -> "string"
+      e.g.) 512 -> "5.1.2"
+
+  Assorted improvements and code cleanup:
+    * Code refactoring for database classes: BounceLogs.pm, BounceLogs/
+      Masters.pm, and DailyUpdates.pm in lib/Kanadzuchi/BdDR/ ( thanks 
+      to @nekokak)
+    * Fixed an issue that the page title of WebUI/Profile is empty.
+    * Tune the number of lines a page at bin/datadumper commnad.
+    * lib/Kanadzuchi/MTA/Google.pm has moved to US/ sub directory.
+    * Improved connetion to database via UNIX domain socket.
+    * Support RFC 3463, 3886, 4468, 4954, 5248, and 5336.
+
+  Fixed bugs:
+    * Fixed warning: ``Use of uninitialized value...'' which appears in
+      lib/Kanadzuchi/MTA/*.pm when parsing bounced email.
+
+  New files:
+    * lib/Kanadzuchi/Mail/Why/ContentError.pm
+    * lib/Kanadzuchi/Mail/Why/Rejected.pm
+    * lib/Kanadzuchi/Mail/Why/SecurityError.pm
+    * lib/Kanadzuchi/Mail/Why/SystemError.pm
+    * lib/Kanadzuchi/MDA.pm
+    * lib/Kanadzuchi/MTA/Exim.pm
+    * lib/Kanadzuchi/MTA/Fallback.pm
+    * lib/Kanadzuchi/MTA/US/Google.pm
+    * lib/Kanadzuchi/RFC3463.pm (Obsoletes: RFC1893.pm)
+    * src/sql/update-2.6.0.sql
+
 
 -----------------------------------------------------------------------
 2.5.0/2.0.0	2010/08/30
