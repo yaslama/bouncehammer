@@ -1,4 +1,4 @@
-# $Id: 504_bin-datadumper.t,v 1.19 2010/10/24 06:42:01 ak Exp $
+# $Id: 504_bin-datadumper.t,v 1.20 2010/10/26 03:46:25 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Test::More ( tests => 456 );
 
 
 SKIP: {
-	my $Skip = 426;	# How many skips
+	my $Skip = 456;	# How many skips
 	eval{ require IPC::Cmd; }; 
 	skip('Because no IPC::Cmd for testing',$Skip) if($@);
 

@@ -1,4 +1,4 @@
-# $Id: 115_bddr-bouncelogs-masters.t,v 1.9 2010/10/05 11:30:57 ak Exp $
+# $Id: 115_bddr-bouncelogs-masters.t,v 1.10 2010/10/26 03:46:25 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -33,7 +33,7 @@ my $Page = undef();
 #
 
 SKIP: {
-	my $howmanyskips = 2861;
+	my $howmanyskips = 2864;
 	eval { require DBI; }; skip( 'Because no DBI for testing', $howmanyskips ) if( $@ );
 	eval { require DBD::SQLite; }; skip( 'Because no DBD::SQLite for testing', $howmanyskips ) if( $@ );
 

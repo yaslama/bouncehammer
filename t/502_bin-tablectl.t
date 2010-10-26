@@ -1,4 +1,4 @@
-# $Id: 502_bin-tablectl.t,v 1.17 2010/10/05 11:30:57 ak Exp $
+# $Id: 502_bin-tablectl.t,v 1.18 2010/10/26 03:46:25 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Test::More ( tests => 1651 );
 
 
 SKIP: {
-	my $Skip = 1643;	# How many skips
+	my $Skip = 1651;	# How many skips
 	eval{ require IPC::Cmd; }; 
 	skip('Because no IPC::Cmd for testing',$Skip) if($@);
 
