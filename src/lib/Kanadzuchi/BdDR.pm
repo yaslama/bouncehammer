@@ -1,4 +1,4 @@
-# $Id: BdDR.pm,v 1.4 2010/10/05 11:06:13 ak Exp $
+# $Id: BdDR.pm,v 1.5 2010/10/28 07:12:49 ak Exp $
 # -Id: RDB.pm,v 1.9 2010/03/04 08:31:40 ak Exp -
 # -Id: Database.pm,v 1.2 2009/08/29 19:01:14 ak Exp -
 # -Id: Database.pm,v 1.7 2009/08/13 07:13:28 ak Exp -
@@ -126,7 +126,7 @@ sub setup
 		my $dbtype = lc $self->{'dbtype'};
 		my $dbhost = $self->{'hostname'};
 		my $whatdb = ( $dbtype =~ m{(?>(?:postgre(?>(?:s|sql))|pgsql))} ) ? 'postgresql' : lc $dbtype;
-		my $dbport = $self->{'port'} || ( $dbhost ne 'localhost' ) ? $DBI->{ $whatdb }->{'dbport'} : q();
+		my $dbport = $self->{'port'} || ( ( $dbhost ne 'localhost' ) ? $DBI->{ $whatdb }->{'dbport'} : q() );
 		my $datasn = q();
 
 		# Unsupported database
