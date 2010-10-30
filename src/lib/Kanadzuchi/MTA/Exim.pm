@@ -1,4 +1,4 @@
-# $Id: Exim.pm,v 1.2 2010/10/25 20:09:25 ak Exp $
+# $Id: Exim.pm,v 1.3 2010/10/30 11:40:47 ak Exp $
 # Kanadzuchi::MTA::
                               
  ######           ##          
@@ -148,8 +148,7 @@ sub reperit
 			#  -- OR --
 			# could not be delivered to one or more of its recipients. The following
 			# address(es) failed: ***@****.**
-			$xflag |= $xmode->{'error'} if( $el =~ $RxBounced->{'mail'} 
-					|| $el =~ $RxBounced->{'from'} || $el =~ $RxBounced->{'rcpt'} );
+			$xflag |= $xmode->{'error'} if( $el =~ $RxBounced->{'mail'} || $el =~ $RxBounced->{'rcpt'} );
 			next();
 		}
 
