@@ -165,7 +165,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
-# $Id: Makefile.am,v 1.52 2010/10/06 09:03:37 ak Exp $
+# $Id: Makefile.am,v 1.53 2010/10/30 17:31:08 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -624,9 +624,20 @@ reverse-patch:
 	fi
 
 sublocalstatedir:
-	mkdir -pm 0755 @localstatedir@/{cache,db,incoming,log,mail,run,spool,tmp}
+	mkdir -pm 0755 @localstatedir@/cache
+	mkdir -pm 0755 @localstatedir@/db
+	mkdir -pm 0755 @localstatedir@/incoming
+	mkdir -pm 0755 @localstatedir@/log
+	mkdir -pm 0755 @localstatedir@/mail
+	mkdir -pm 0755 @localstatedir@/run
+	mkdir -pm 0755 @localstatedir@/spool
+	mkdir -pm 0755 @localstatedir@/tmp
 	$(CHMOD) g+w  @localstatedir@/db
-	$(CHMOD) 1777 @localstatedir@/{cache,incoming,run,spool,tmp}
+	$(CHMOD) 1777 @localstatedir@/cache
+	$(CHMOD) 1777 @localstatedir@/incoming
+	$(CHMOD) 1777 @localstatedir@/run
+	$(CHMOD) 1777 @localstatedir@/spool
+	$(CHMOD) 1777 @localstatedir@/tmp
 
 uninstall-old-files:
 	@echo "Uninstall files which are removed at ver 2.3.0"
