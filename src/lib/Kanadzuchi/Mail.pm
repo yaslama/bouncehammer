@@ -1,4 +1,4 @@
-# $Id: Mail.pm,v 1.31 2010/10/05 11:11:16 ak Exp $
+# $Id: Mail.pm,v 1.33 2010/11/13 19:21:54 ak Exp $
 # -Id: Message.pm,v 1.1 2009/08/29 07:32:59 ak Exp -
 # -Id: BounceMessage.pm,v 1.13 2009/08/21 02:43:14 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -23,8 +23,8 @@ use warnings;
 use Kanadzuchi::String;
 use Kanadzuchi::Address;
 use Kanadzuchi::Metadata;
-use Kanadzuchi::Time;
 use Kanadzuchi::RFC2606;
+use Kanadzuchi::Time;
 use Kanadzuchi::Mail::Group;
 use Kanadzuchi::Mail::Group::Neighbor;
 use Kanadzuchi::Mail::Group::WebMail;
@@ -45,6 +45,7 @@ __PACKAGE__->mk_accessors(
 	'addresser',		# (K::Address) From: in the original message
 	'recipient',		# (K::Address) Final-Recipient:, To: in the original message
 	'frequency',		# (Integer) Frequency of bounce
+	'smtpagent',		# (String) SMTP Agent, MTA
 	'description',		# (Ref->Hash) Description
 	'destination',		# (String) A domain part of recipinet
 	'senderdomain',		# (String) A domain part of addresser
@@ -224,7 +225,7 @@ sub new
 				# |____/ \___||___/\___|_|    |_|___/ |_| |_/_/   \_\____/|_| |_|
 				#                                                                
 				# 'description' is not empty, Build 'description' as hash reference.
-				foreach my $x ( 'deliverystatus', 'diagnosticcode', 'timezoneoffset' )
+				foreach my $x ( 'deliverystatus', 'diagnosticcode', 'timezoneoffset', 'smtpagent' )
 				{
 					next() if( defined($argvs->{$x}) );
 					$argvs->{$x} = $argvs->{'description'}->{$x};
@@ -245,7 +246,7 @@ sub new
 				last() unless( ref($json) eq q|HASH| );
 				$argvs->{'description'} = $json;
 
-				foreach my $y ( 'deliverystatus', 'diagnosticcode', 'timezoneoffset' )
+				foreach my $y ( 'deliverystatus', 'diagnosticcode', 'timezoneoffset', 'smtpagent' )
 				{
 					next() if( defined($argvs->{$y}) );
 					next() unless( defined($json->{$y}) );
@@ -271,16 +272,18 @@ sub new
 			$argvs->{'description'} = {
 				'deliverystatus' => $argvs->{'deliverystatus'} || q(),
 				'diagnosticcode' => $argvs->{'diagnosticcode'} || q(),
-				'timezoneoffset' => $argvs->{'timezoneoffset'} || q(+0000), };
+				'timezoneoffset' => $argvs->{'timezoneoffset'} || q(+0000),
+				'smtpagent'      => $argvs->{'smtpagent'} || q(), };
 		}
 	}
 
 	SET_DEFAULT_VALUES: {
 
-		$argvs->{'frequency'} = 1 unless( $argvs->{'frequency'} );
-		$argvs->{'timezoneoffset'} = '+0000' unless( $argvs->{'timezoneoffset'} );
-		$argvs->{'diagnosticcode'} = q() unless( defined($argvs->{'diagnosticcode'}) );
-		$argvs->{'deliverystatus'} = q() unless( defined($argvs->{'deliverystatus'}) );
+		$argvs->{'frequency'} = 1 unless $argvs->{'frequency'};
+		$argvs->{'smtpagent'} = q() unless defined $argvs->{'smtpagent'};
+		$argvs->{'timezoneoffset'} = '+0000' unless $argvs->{'timezoneoffset'};
+		$argvs->{'diagnosticcode'} = q() unless defined $argvs->{'diagnosticcode'};
+		$argvs->{'deliverystatus'} = q() unless defined $argvs->{'deliverystatus'};
 	}
 	return $class->SUPER::new($argvs);
 }
@@ -380,10 +383,11 @@ sub damn
 	map { $damn->{$_} = $self->{$_}->address if( ref($self->{$_}) eq q|Kanadzuchi::Address| ) } @$aobj;
 
 	$damn->{'bounced'} = $self->{'bounced'}->epoch() if( ref($self->{'bounced'}) eq q|Time::Piece| );
-	$damn->{'description'} = ${ Kanadzuchi::Metadata->to_string($self->{'description'}) };
-	$damn->{'diagnosticcode'} = $self->{'description'}->{'diagnosticcode'};
-	$damn->{'deliverystatus'} = $self->{'description'}->{'deliverystatus'};
-	$damn->{'timezoneoffset'} = Kanadzuchi::Time->second2tz($self->{'description'}->{'timezoneoffset'});
+	$damn->{'description'} = ${ Kanadzuchi::Metadata->to_string( $self->{'description'} ) };
+	$damn->{'smtpagent'} = $self->{'description'}->{'smtpagent'} || q();
+	$damn->{'diagnosticcode'} = $self->{'description'}->{'diagnosticcode'} || q();
+	$damn->{'deliverystatus'} = $self->{'description'}->{'deliverystatus'} || q();
+	$damn->{'timezoneoffset'} = $self->{'description'}->{'timezoneoffset'} || '+0000';
 
 	return $damn;
 }
