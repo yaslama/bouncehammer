@@ -1,4 +1,4 @@
-# $Id: Address.pm,v 1.8 2010/10/05 11:07:45 ak Exp $
+# $Id: Address.pm,v 1.9 2010/11/13 19:19:23 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                    
@@ -67,9 +67,9 @@ sub new
 
 sub parse
 {
-	# +-+-+-+-+-+-+
-	# |p|a|r|s|e|r|
-	# +-+-+-+-+-+-+
+	# +-+-+-+-+-+
+	# |p|a|r|s|e|
+	# +-+-+-+-+-+
 	#
 	# @Description	Mail address parser
 	# @Param <ref>	(Ref->Array) text include any email address
@@ -125,13 +125,14 @@ sub canonify
 		foreach my $e ( @$token )
 		{
 			chomp($e);
-			next() unless( $e =~ m{\A[<].+[@].+[>]\z} );
+			next() unless( $e =~ m{\A[<]?.+[@].+[.][a-z]{2,}[>]?\z} );
 			$canon = $e;
 			last();
 		}
 	}
 
-	$canon =~ y{<>}{}d;	# Remove angle brackets
+	$canon =~ y{<>[]():;}{}d;	# Remove brackets, colons
+	$canon =~ y/{}'"`//d;		# Remove brackets, quotations
 	return $canon;
 }
 
