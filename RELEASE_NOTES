@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES,v 1.72 2010/08/29 20:13:42 ak Exp $
+ $Id: RELEASE_NOTES,v 1.73 2010/11/14 09:25:02 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -28,6 +28,45 @@
 -----------------------------------------------------------------------
 
 
+2.6.1/2.0.0	2010/11/19
+
+  Assorted improvements and code cleanup:
+    * Status: 4.4.1 is classified into the reason 'expired'.
+    * Status: 5.1.3 is classified into the reason 'userunknown'.
+    * The error 'Relaying denied' is classified into 'systemerror'.
+    * Kanadzuchi::Mail::Bounced->is_mailererror() is removed.
+    * New sub field in each parsed record: description->smtpagent .
+    * Code refactoring for Kanadzuchi::MTA and Kanadzuchi::MTA::* .
+    * Code refactoring for Kanadzuchi::Mail and Kanadzuchi::Mail::* .
+    * Code refactoring for Kanadzuchi::Address and Kanadzuchi::Time .
+    * Improved analytical accuracy of  au by KDDI(@ezweb.ne.jp), qmail,
+      Postfix, Exim, Gmail, and Sendmail.
+
+  Fixed bugs:
+    * (patch:001) Fixed an issue that db socket path that is explicitly
+      specified in etc/bouncehammer.cf is ignored by Kanadzuchi::BdDR->
+      setup().
+    * (patch:002) Fixed an issue that the warning message: ``Use of un-
+      initialized value in regexp compilation at Kanadzuchi/MTA/Exim.pm
+      '' is displays.
+    * (patch:003) Fixed an issue  that  the  minimum  version number of
+      Time::Piece is 1.12 at Modules.PL, but bouncehammer requires 1.14
+      or later (Thanks to @tfmagician).
+    * (patch:004) Fixed an issue that ``make install''  which is run by
+      root(tcsh) fails on FreeBSD (Thanks to junior908).
+
+  New files:
+    * lib/Kanadzuchi/Mail/Why/MailerError.pm
+    * lib/Kanadzuchi/Mail/Why/NotAccept.pm
+
+  Removed files:
+    * lib/Kanadzuchi/RFC1893.pm
+    * lib/Kanadzuchi/Mail/Bounced/JP/aubyKDDI.pm
+    * lib/Kanadzuchi/Mail/Bounced/JP/NTTDoCoMo.pm
+    * lib/Kanadzuchi/Mail/Bounced/JP/SoftBank.pm
+
+
+-----------------------------------------------------------------------
 2.6.0/2.0.0	2010/10/26
 
   New functionality:
