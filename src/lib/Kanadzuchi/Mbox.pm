@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.25 2010/10/05 11:14:38 ak Exp $
+# $Id: Mbox.pm,v 1.26 2010/11/13 19:22:26 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -214,23 +214,6 @@ sub breakit
 	my $agentmodule = q();		# (String) Agent class name
 	my $isforwarded = 0;		# (Integer) Is forwarded message
 
-	if( $$thebodypart =~ m{^[Ss]tatus: [45][.][1-7][.]\d+(.*)}m )
-	{
-		# THere is Status: header except 5.0.0, 4.0.0
-		unless( $$thebodypart =~ m{^[Dd]iagnostic-[Cc]ode: }m )
-		{
-			$pseudofield .= 'X-Diagnosis: '.$1.qq(\n);
-		}
-		$pseudofield .= Kanadzuchi::MTA->xsmtpcommand().'DATA'.qq(\n);
-		return $pseudofield.$$thebodypart;
-	}
-	elsif( $$thebodypart =~ m{^[Dd]iagnostic-[Cc]ode: .*\b([45][.][1-7][.]\d+\b)}m )
-	{
-		$pseudofield .= 'Status: '.$1.qq(\n);
-		$pseudofield .= Kanadzuchi::MTA->xsmtpcommand().'DATA'.qq(\n);
-		return $pseudofield.$$thebodypart;
-	}
-
 	# Most famous MTAs
 	foreach my $mta ( @$MostFamousMTAs )
 	{
@@ -253,6 +236,19 @@ sub breakit
 		{
 			require Kanadzuchi::MTA::Fallback;
 			$pseudofield .= Kanadzuchi::MTA::Fallback->reperit( $theheadpart, $thebodypart );
+
+			unless( $pseudofield )
+			{
+				if( $$thebodypart =~ m{^[Ss]tatus: [45][.][0-7][.]\d+(.*)}m )
+				{
+					unless( $$thebodypart =~ m{^[Dd]iagnostic-[Cc]ode: }m )
+					{
+						$pseudofield .= 'X-SMTP-Diagnosis: '.$1.qq(\n);
+					}
+					$pseudofield .= Kanadzuchi::MTA->xsmtpcommand('DATA');
+					$pseudofield .= Kanadzuchi::MTA->xsmtpagent('unknown');
+				}
+			}
 		}
 	}
 	return $pseudofield.$$thebodypart;
@@ -324,7 +320,7 @@ sub parseit
 	my $seek = 0;
 
 	my $agentclasses = [ map { 'Kanadzuchi::MTA::'.$_ } @$MostFamousMTAs ];
-	my $emailheaders = [ 'From', 'To', 'Date', 'Subject', 'Content-Type', 'Reply-To' ];
+	my $emailheaders = [ 'From', 'To', 'Date', 'Subject', 'Content-Type', 'Reply-To', 'Message-Id' ];
 	my $agentheaders = [];
 
 	# Load each agent's headers
@@ -365,7 +361,7 @@ sub parseit
 		$_mail->{'head'} = { 
 				'received' => [], 'subject' => q(), 'from' => q(),
 				'to' => q(), 'date' => q(), 'content-type' => q(),
-				'reply-to' => q() };
+				'reply-to' => q(), 'message-id' => q() };
 
 		# 2. Parse email headers
 		my $__continued = 0;	# Flag; Continued from the previous line.
@@ -456,10 +452,12 @@ sub parseit
 		$_mail->{'body'} =~ s{^[Tt]o:[ ]*(.+)$}{<<<<: To: $1}m;
 		$_mail->{'body'} =~ s{^[Xx]-[Aa]ctual-[Rr]ecipient:[ ]*[Rf][Ff][Cc]822;[ ]*(.+)$}{<<<<: X-Actual-Recipient: $1}m;
 		$_mail->{'body'} =~ s{^[Xx]-[Aa]ctual-[Rr]ecipient:[ ]*(.+)$}{<<<<: X-Actual-Recipient: $1}m;
-		$_mail->{'body'} =~ s{^[Xx]-[Dd]iagnosis:[ ]*(.+)$}{<<<<: X-Diagnosis: $1}m;
 		$_mail->{'body'} =~ s{^[Xx]-[Pp]ostfix-[Ss]ender:[ ]*(.+)$}{<<<<: X-Postfix-Sender: $1}m;
 		$_mail->{'body'} =~ s{^[Xx]-[Ee]nvelope-[Ff]rom:[ ]*(.+)$}{<<<<: X-Envelope-From: $1}m;
-		$_mail->{'body'} =~ s{^[Xx]-SMTP-[C]ommand:[ ]*(.+)$}{<<<<: X-SMTP-Command: $1}m;
+		$_mail->{'body'} =~ s{^[Xx]-SMTP-Agent:[ ]*(.+)$}{<<<<: X-SMTP-Agent: $1}m;
+		$_mail->{'body'} =~ s{^[Xx]-SMTP-Command:[ ]*(.+)$}{<<<<: X-SMTP-Command: $1}m;
+		$_mail->{'body'} =~ s{^[Xx]-SMTP-Diagnosis:[ ]*(.+)$}{<<<<: X-SMTP-Diagnosis: $1}m;
+		$_mail->{'body'} =~ s{^[Xx]-SMTP-Status:[ ]*(.+)$}{<<<<: X-SMTP-Status: $1}m;
 
 		$_mail->{'body'} =~ s{^\w.+[\r\n]}{}gm;			# Delete non-required headers
 		$_mail->{'body'} =~ s{^<<<<:\s}{}gm;			# Delete the mark
