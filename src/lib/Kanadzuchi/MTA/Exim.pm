@@ -1,4 +1,4 @@
-# $Id: Exim.pm,v 1.3 2010/10/30 11:40:47 ak Exp $
+# $Id: Exim.pm,v 1.4 2010/11/13 19:18:03 ak Exp $
 # Kanadzuchi::MTA::
                               
  ######           ##          
@@ -43,43 +43,50 @@ use warnings;
 # deliver.c:6426|"------ This is a copy of the message's headers. ------\n");
 #
 my $RxEximMTA = {
+	'from' => qr/\AMail Delivery System/,
 	'begin' => qr/\AThis message was created automatically by mail delivery software[.]\z/,
 	'endof' => qr/\A------ This is a copy of the message.+headers[.] ------\z/,
+	'subject' => qr/\AMail delivery failed(:?: returning message to sender)?\z/,
+	'message-id' => qr/\A[<]\w+[-]\w+[-]\w+[@].+\z/,
+	# Message-Id: <E1P1YNN-0003AD-Ga@example.org>
 };
 
 my $RxBounced = {
-	'mail' => qr/\AA message that you sent could not be delivered to one or more of its\z/,
-	'rcpt' => qr/\Acould not be delivered to one or more of its recipients[.] The following\z/,
-	'ldaf' => qr/\A {4}local delivery failed\z/,
+	'mail' => qr/\AA message that you sent could not be delivered to (?:one or more|all) of its/,
+	'rcpt' => qr/\Acould not be delivered to one or more of its recipients[.] The following/,
 };
 
 # src/transports/smtp.c
 my $RxSMTPErr = {
-	'mail' => qr/\A {4}SMTP error from remote (?:mail server|mailer) after MAIL FROM:/,
-	'rcpt' => qr/\A {4}SMTP error from remote (?:mail server|mailer) after RCPT TO:/,
-	'data' => qr/\A {4}SMTP error from remote (?:mail server|mailer) after (?:DATA|end of data):/,
+	'mail' => qr/SMTP error from remote (?:mail server|mailer) after MAIL FROM:/,
+	'rcpt' => qr/SMTP error from remote (?:mail server|mailer) after RCPT TO:/,
+	'data' => qr/SMTP error from remote (?:mail server|mailer) after (?:DATA|end of data):/,
 };
 
 # find exim/ -type f -exec grep 'message = US' {} /dev/null \;
 my $RxTrError = {
+	'userunknown' => [
+		qr/user not found/,
+	],
 	'hostunknown' => [
-		qr/ {4}all relevant MX records point to non-existent hosts/,
-		qr/ {4}Unrouteable address/,
-		qr/ {4}all host address lookups failed permanently/,
+		qr/all relevant MX records point to non-existent hosts/,
+		qr/Unrouteable address/,
+		qr/all host address lookups failed permanently/,
 	],
 	'mailboxfull' => [
-		qr/ {4}mailbox is full:?/,
+		qr/mailbox is full:?/,
 		qr/error: quota exceed/i,
 	],
 	'notaccept' => [
-		qr/ {4}an MX or SRV record indicated no SMTP service/,
-		qr/ {4}no host found for existing SMTP connection/
+		qr/an MX or SRV record indicated no SMTP service/,
+		qr/no host found for existing SMTP connection/
 	],
 	'systemerror' => [
-		qr/ {4}delivery to (?:file|pipe) forbidden/,
+		qr/delivery to (?:file|pipe) forbidden/,
+		qr/local delivery failed/,
 	],
 	'contenterr' => [
-		qr/ {4}Too many ["]Received["] headers /,
+		qr/Too many ["]Received["] headers /,
 	],
 };
 
@@ -88,6 +95,7 @@ my $RxTrError = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+sub xsmtpagent { 'X-SMTP-Agent: Exim'.qq(\n); }
 sub emailheaders
 {
 	# +-+-+-+-+-+-+-+-+-+-+-+-+
@@ -116,105 +124,92 @@ sub reperit
 	my $mbody = shift() || return q();
 
 	return q() unless defined $mhead->{'x-failed-recipients'};
-	return q() unless( $mhead->{'subject'} =~ m{\AMail delivery failed(:?: returning message to sender)?\z} );
-	return q() unless( $mhead->{'from'} =~ m{\AMail Delivery System} );
+	return q() unless( $mhead->{'subject'} =~ $RxEximMTA->{'subject'} );
+	return q() unless( $mhead->{'from'} =~ $RxEximMTA->{'from'} );
+	# return q() unless( $mhead->{'message-id'} =~ $RxEximMTA->{'message-id'} );
 
 	my $xmode = { 'begin' => 1 << 0, 'error' => 1 << 1, 'endof' => 1 << 2 };
 	my $xflag = 0;		# (Integer) Flag
 	my $pstat = q();	# (String) Stauts code
 	my $phead = q();	# (String) Pseudo email header
 	my $xsmtp = q();	# (String) SMTP Command in transcript of session
+	my $causa = q();	# (String) Error reason
+	my $ucode = Kanadzuchi::RFC3463->status('undefined','p','i');
 
 	my $statintxt = q();	# (String) #n.n.n
-	my $diagnosis = q();	# (String) Diagnostic-Code:
+	my $rhostsaid = q();	# (String) Diagnostic-Code:
 	my $ldafailed = 0;	# (Integer) local delivery failed
 	my $smtperror = 0;	# (Integer) Flag, SMTP Error
 	my $smtpermap = { 'mail' => 'rejected', 'rcpt' => 'userunknown', 'data' => 'filtered' };
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
-		next() if( $el =~ m{\A\z} );
-		if( $xflag == 0 && $el =~ $RxEximMTA->{'begin'} )
+		if( ($el =~ $RxEximMTA->{'begin'}) .. ($el =~ $RxEximMTA->{'endof'}) )
 		{
 			# This message was created automatically by mail delivery software.
-			$xflag |= $xmode->{'begin'};
-			next();
-		}
-
-		if( $xflag == $xmode->{'begin'} )
-		{
-			# A message that you sent could not be delivered to one or more of its
-			# recipients. This is a permanent error. The following address(es) failed:
-			#  -- OR --
-			# could not be delivered to one or more of its recipients. The following
-			# address(es) failed: ***@****.**
-			$xflag |= $xmode->{'error'} if( $el =~ $RxBounced->{'mail'} || $el =~ $RxBounced->{'rcpt'} );
-			next();
-		}
-
-		if( ( $xflag & $xmode->{'begin'} ) && ( $xflag & $xmode->{'error'} ) )
-		{
-			#  ****@****.**
-			#    local delivery failed
-			if( $el =~ $RxBounced->{'ldaf'} )
+			#
+			if( $el =~ $RxBounced->{'mail'} || $el =~ $RxBounced->{'rcpt'} )
 			{
-				$ldafailed =  1;
-				$diagnosis =  $el;
-				$diagnosis =~ s{\A }{}g;
+				# A message that you sent could not be delivered to one or more of its
+				# recipients. This is a permanent error. The following address(es) failed:
+				#  -- OR --
+				# could not be delivered to one or more of its recipients. The following
+				# address(es) failed: ***@****.**
+				$rhostsaid = $el;
 				next();
 			}
 
-			SMTP_ERROR: foreach my $se ( keys %$RxSMTPErr )
+			if( $rhostsaid )
 			{
-				if( $el =~ $RxSMTPErr->{$se} )
-				{
-					$diagnosis .= $el;
-					$smtperror += 1;
-					$xsmtp = uc $se;
-					$pstat = Kanadzuchi::RFC3463->status($smtpermap->{$se},'p','i') || '5.0.900';
-					next(EACH_LINE);
-				}
-			}
-
-			TRANSPORT_ERROR: foreach my $er ( keys %$RxTrError )
-			{
-				if( grep { $el =~ $_ } @{ $RxTrError->{$er} } )
-				{
-					$diagnosis .= $diagnosis ? ': '.$el : $el;
-					$pstat  = Kanadzuchi::RFC3463->status($er,'p','i') || '5.0.900';
-					$phead .= 'Status: '.$pstat.qq(\n);
-					last();
-				}
+				last() if( $el =~ $RxEximMTA->{'endof'} );
+				$rhostsaid .= ' '.$el;
 			}
 		}
-
-		if( $smtperror )
-		{
-			# SMTP Error
-			$diagnosis .= ' '.$el if( $el =~ m{\A[ ]{4}.+\z} );
-		}
-
-		last() if( $el =~ $RxEximMTA->{'endof'} );
 	}
 
-	if( $smtperror )
+	return q() unless $rhostsaid;
+	$rhostsaid =~ s{\A }{}g;
+	$rhostsaid =~ s{ \z}{}g;
+	$rhostsaid =~ y{ }{ }s;
+	$rhostsaid =~ s{\A.+address[(]es[)] failed: }{};
+
+	SMTP_ERROR: foreach my $s ( keys %$RxSMTPErr )
 	{
-		$diagnosis =~ y{ }{}s;
-		if( $diagnosis =~ m{\b([45][.][0-9][.][0-9]+)\b} )
+		if( $rhostsaid =~ $RxSMTPErr->{ $s } )
 		{
-			$phead = 'Status: '.$1.qq(\n);
-		}
-		elsif( $pstat )
-		{
-			$phead .= 'Status: '.$pstat.qq(\n);
+			$xsmtp = uc $s;
+			last();
 		}
 	}
 
-	$xsmtp ||= 'CONN';
-	$phead ||= 'Status: 5.0.0'.qq(\n) if( $ldafailed );
-	$phead .=  'Final-Recipient: '.$mhead->{'x-failed-recipients'}.qq(\n);
-	$phead .=  'X-Diagnosis: '.$diagnosis.qq(\n);
-	$phead .=  __PACKAGE__->xsmtpcommand().$xsmtp.qq(\n) if( $phead );
+	TRANSPORT_ERROR: foreach my $t ( keys %$RxTrError )
+	{
+		if( grep { $rhostsaid =~ $_ } @{ $RxTrError->{ $t } } )
+		{
+			$causa = $t;
+			last();
+		}
+	}
+
+	if( $rhostsaid =~ m{\b([45][.][0-9][.][0-9]+)\b} )
+	{
+		$pstat = $1;
+	}
+	elsif( $causa )
+	{
+		$pstat = Kanadzuchi::RFC3463->status( $causa, 'p', 'i' );
+	}
+	else
+	{
+		$pstat = $ucode if $rhostsaid;
+	}
+
+	$phead .= 'Final-Recipient: '.$mhead->{'x-failed-recipients'}.qq(\n);
+	$phead .= __PACKAGE__->xsmtpdiagnosis($rhostsaid);
+	$phead .= __PACKAGE__->xsmtpcommand($xsmtp);
+	$phead .= __PACKAGE__->xsmtpstatus($pstat);
+	$phead .= __PACKAGE__->xsmtpagent();
+
 	return $phead;
 }
 

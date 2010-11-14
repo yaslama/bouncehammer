@@ -1,4 +1,4 @@
-# $Id: Sendmail.pm,v 1.5 2010/10/25 20:09:25 ak Exp $
+# $Id: Sendmail.pm,v 1.6 2010/11/13 19:18:03 ak Exp $
 # Kanadzuchi::MTA::
                                                           
   #####                    ##                  ##  ###    
@@ -23,13 +23,20 @@ use warnings;
 # savemail.c:1041|			mci))
 # savemail.c:1042|	goto writeerr;
 #
-my $RxSendmail = qr{\A\s+[-]+ Transcript of session follows [-]+\z};
+my $RxSendmail = {
+	'from' => qr{\AMail Delivery Subsystem},
+	'begin'	=> qr{\A\s+[-]+ Transcript of session follows [-]+\z},
+	'error' => qr{\A[.]+ while talking to .+[:]\z},
+	'endof' => qr{\AReporting-MTA: },
+	'subject' => qr{see transcript for details\z},
+};
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+sub xsmtpagent { 'X-SMTP-Agent: Sendmail'.qq(\n); }
 sub reperit
 {
 	# +-+-+-+-+-+-+-+
@@ -44,47 +51,46 @@ sub reperit
 	my $mhead = shift() || return q();
 	my $mbody = shift() || return q();
 
-	return q() unless( $mhead->{'subject'} =~ m{see transcript for details\z} );
-	return q() unless( $mhead->{'from'} =~ m{\AMail Delivery Subsystem} );
+	return q() unless( $mhead->{'subject'} =~ $RxSendmail->{'subject'} );
+	return q() unless( $mhead->{'from'} =~ $RxSendmail->{'from'} );
 
-	my $xmode = { 'begin' => 1 << 0, 'error' => 1 << 1, 'endof' => 1 << 2 };
-	my $xflag = 0;		# (Integer) Flag, 1 = is Sendmail, 2 = ...While talking..., 4 = Reporting MTA
 	my $phead = q();	# (String) Pseudo email header
+	my $pstat = q();	# (String) Stauts code
 	my $xsmtp = q();	# (String) SMTP Command in transcript of session
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
-		if( $xflag == 0 && $el =~ $RxSendmail )
+		if( ($el =~ $RxSendmail->{'begin'}) .. ($el =~ $RxSendmail->{'endof'}) )
 		{
-			# ----- Transcript of session follows -----
-			$xflag |= $xmode->{'begin'};
-			next();
-		}
+			if( ! length($xsmtp) & $el =~ m{\A[>]{3}[ ]([A-Z]{4})[ ]?} )
+			{
+				# ----- Transcript of session follows -----
+				# ... while talking to mta.example.org.:
+				# >>> DATA
+				# <<< 550 Unknown user recipient@example.jp
+				# 554 5.0.0 Service unavailable
+				# ...
+				# Reporting-MTA: dns; mx.example.jp
+				# Received-From-MTA: DNS; x1x2x3x4.dhcp.example.ne.jp
+				# Arrival-Date: Wed, 29 Apr 2009 16:03:18 +0900
+				$xsmtp = $1;
+				next();
+			}
 
-		if( $xflag == $xmode->{'begin'} )
-		{
-			# ... while talking to mta.example.org.:
-			$xflag |= $xmode->{'error'} if( $el =~ m{\A[.]+ while talking to .+[:]\z} );
-			next();
-		}
+			if( ! length($pstat) & $el =~ m{\A\d{3} ([45][.]\d[.]\d+)} )
+			{
+				# 554 5.0.0 Service unavailable
+				$pstat = $1;
+				next();
+			}
 
-		if( $xflag == ( $xmode->{'begin'} + $xmode->{'error'} ) )
-		{
-			# ... while talking to mta.example.jp.:
-			# >>> DATA
-			# <<< 550 Unknown user recipient@example.jp
-			# 554 5.0.0 Service unavailable
-			$xsmtp = $1 if( length($xsmtp) == 0 && $el =~ m{\A[>]{3}[ ]([A-Z]{4})[ ]} );
-
-			# Reporting-MTA: dns; mx.example.jp
-			# Received-From-MTA: DNS; x1x2x3x4.dhcp.example.ne.jp
-			# Arrival-Date: Wed, 29 Apr 2009 16:03:18 +0900
-			last() if( $el =~ m{\AReporting-MTA: } );
+			last() if( $xsmtp && $pstat );
 		}
 	}
 
-	$xsmtp ||= 'CONN';
-	$phead  .= __PACKAGE__->xsmtpcommand().$xsmtp.qq(\n);
+	$phead .= __PACKAGE__->xsmtpcommand($xsmtp);
+	$phead .= __PACKAGE__->xsmtpstatus($pstat);
+	$phead .= __PACKAGE__->xsmtpagent();
 	return $phead;
 }
 

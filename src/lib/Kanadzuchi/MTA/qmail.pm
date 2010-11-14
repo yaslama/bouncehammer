@@ -1,4 +1,4 @@
-# $Id: qmail.pm,v 1.5 2010/10/25 20:09:25 ak Exp $
+# $Id: qmail.pm,v 1.6 2010/11/13 19:18:04 ak Exp $
 # Kanadzuchi::MTA::
                          ##  ###    
   #####  ##  ##  ####         ##    
@@ -35,85 +35,76 @@ my $RxQSBMF = {
 	'begin'	=> qr{\AHi[.] This is the qmail},
 	'endof' => qr{\A--- Below this line is a copy of the message[.]\z},
 	'sorry' => qr{\A[Ss]orry[,.][ ]},
+	'subject' => qr{\Afailure notice},
+	'received' => qr{\A[(]qmail[ ]+\d+[ ]+invoked[ ]+for[ ]+bounce[)]},
 };
 
 my $RxSMTPError = {
-	'greet'   => qr{\A(?:Error:)?Connected to .+ but greeting failed[.]\z},
-	'helo'    => qr{\A(?:Error:)?Connected to .+ but my name was rejected[.]\z},
-	'mail'    => qr{\A(?:Error:)?Connected to .+ but sender was rejected[.]\z},
-	'rcpt'    => qr{\A(?:Error:)?.+ does not like recipient[.]\z},
-	'data'    => qr{\A(?:Error:)?.+ failed on DATA command[.]\z},
-	'payload' => qr{\A(?:Error:)?.+ failed after I sent the message[.]\z},
+	'conn'	=> [
+		qr{(?:Error:)?Connected to .+ but greeting failed[.]}
+	],
+	'mail'	=> [
+		qr{(?:Error:)?Connected to .+ but my name was rejected[.]},	# HELO,EHLO
+		qr{(?:Error:)?Connected to .+ but sender was rejected[.]},	# MAIL FROM
+	],
+	'rcpt'	=> [
+		qr{(?:Error:)?.+ does not like recipient[.]},			# RCPT TO
+	],
+	'data'	=> [
+		qr{(?:Error:)?.+ failed on DATA command[.]},			# DATA
+		qr{(?:Error:)?.+ failed after I sent the message[.]},		# . ?
+	],
 };
 
-my $RxOtherMesg = {
-	'expired' => [
-		qr{this message has been in the queue too long},
-	],
+my $RxqmailError = {
 	'userunknown' => [
-		qr{\AThis address no longer accepts mail},
-	],
-	'filtered' => [ 
-		qr{\AUser unknown},
+		qr{no mailbox here by that name[.]},
 	],
 	'mailboxfull' => [
 		qr{disk quota exceeded},
-		qr{Mailbox is FULL},
-		qr{\Amailbox .+ would be over the allowed quota[.]},
-		qr{\AMail quota exceeded},
-		qr{\Amaildrop: maildir over quota[.]},
-		qr{\AMessage rejected[.] Not enough storage space in user[']s mailbox to accept message},
-		qr{Recipient[']s mailbox is full, message returned to sender},
-		qr{\AThe users mailfolder is over the allowed quota [(]size[)][.]},
-		qr{\AUser has exceeded quota, bouncing mail},
-		qr{\A[Uu]ser is over quota},
-		qr{\AUser over quota[.] [(][#]5[.]1[.]1[)]\z},	# qmail-toaster
-		qr{\AUser over quota},
+	],
+	'expired' => [
+		qr{this message has been in the queue too long},
+	],
+	'hostunknown' => [
+		qr{\ASorry, I couldn[']t find any host named },
+	],
+	'systemerror' => [
+		qr{bad interpreter: No such file or directory},
+		qr{Sorry, I wasn[']t able to establish an SMTP connection},
+		qr{Sorry, I couldn[']t find a mail exchanger or IP address},
+		qr{Sorry[.] Although I[']m listed as a best[-]preference MX or A for that host,},
+		qr{system error},
+		qr{Unable to\b},
 	],
 	'systemfull' => [
-		qr{\A\d+ Requested action not taken: mailbox unavailable [(]not enough free space[)]},
+		qr{Requested action not taken: mailbox unavailable [(]not enough free space[)]},
 	],
-	'systemerr' => [
-		qr{Unable to chdir to maildir},
-		qr{bad interpreter: No such file or directory},
-		qr{Unable to switch to /},
-		qr{system error},
+	'ldaperror' => [
+		# qmail-ldap-1.03-20040101.patch:19817 - 19866
+		qr{Mailaddress is administrative?le?y disabled},		# 5.2.1
+		qr{[Ss]orry, no mailbox here by that name},			# 5.1.1
+		qr{The message exeeded the maximum size the user accepts},	# 5.2.3
+		qr{Temporary failure in LDAP lookup},				# 4.4.3
+		qr{Unable to login into LDAP server, bad credentials},		# 4.4.3
+		qr{Timeout while performing search on LDAP server},		# 4.4.3
+		qr{Unable to contact LDAP server},				# 4.4.3
+		qr{Too many results returned but needs to be unique},		# 5.3.5
+		qr{LDAP attribute is not given but mandatory},			# 5.3.5
+		qr{Illegal value in LDAP attribute},				# 5.3.5
+		qr{Temporary error while executing qmail-forward},		# 4.4.4
+		qr{Permanent error while executing qmail-forward},		# 5.4.4
+		qr{Automatic homedir creator crashed},				# 4.3.0
+		qr{Temporary error in automatic homedir creation},		# 4.3.0 or 5.3.0
 	],
 };
-
-# qmail-ldap-1.03-20040101.patch:19817 - 19866
-my $RxLDAPError = [
-	qr{\AMailaddress is administrative?le?y disabled},		# 5.2.1
-	qr{\A[Ss]orry, no mailbox here by that name},			# 5.1.1
-	qr{\AThe message exeeded the maximum size the user accepts},	# 5.2.3
-	qr{\ATemporary failure in LDAP lookup},				# 4.4.3
-	qr{\AUnable to login into LDAP server, bad credentials},	# 4.4.3
-	qr{\ATimeout while performing search on LDAP server},		# 4.4.3
-	qr{\AUnable to contact LDAP server},				# 4.4.3
-	qr{\AToo many results returned but needs to be unique},		# 5.3.5
-	qr{\ALDAP attribute is not given but mandatory},		# 5.3.5
-	qr{\AIllegal value in LDAP attribute},				# 5.3.5
-	qr{\ATemporary error while executing qmail-forward},		# 4.4.4
-	qr{\APermanent error while executing qmail-forward},		# 5.4.4
-	qr{\AAutomatic homedir creator crashed},			# 4.3.0
-	qr{\ATemporary error in automatic homedir creation},		# 4.3.0 or 5.3.0
-];
-
-my $RxConnError = [
-	qr{\ASorry, I couldn[']t find any host named },
-	qr{\ASorry, I wasn[']t able to establish an SMTP connection},
-];
-
-my $RxMXRRError = [
-	qr{\ASorry, I couldn[']t find a mail exchanger or IP address},
-	qr{\ASorry[.] Although I[']m listed as a best[-]preference MX or A for that host,},
-];
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+sub xsmtpagent { 'X-SMTP-Agent: qmail'.qq(\n); }
 sub reperit
 {
 	# +-+-+-+-+-+-+-+
@@ -138,166 +129,126 @@ sub reperit
 	# by qmail, see http://cr.yp.to/qmail.html
 	#   e.g.) Received: (qmail 12345 invoked for bounce); 29 Apr 2009 12:34:56 -0000
 	#         Subject: failure notice
-	return q() unless( lc($mhead->{'subject'}) eq 'failure notice' );
-	return q() unless( grep { $_ =~ m{\A[(]qmail[ ]+\d+[ ]+invoked[ ]+for[ ]+bounce[)]} } @{ $mhead->{'received'} } );
+	return q() unless( lc($mhead->{'subject'}) =~ $RxQSBMF->{'subject'} );
+	return q() unless( grep { $_ =~ $RxQSBMF->{'received'} } @{ $mhead->{'received'} } );
 
-	my $xmode = { 'begin' => 1 << 0, 'error' => 1 << 1, 'endof' => 1 << 2 };
-	my $xflag = 0;		# (Integer) Flag, 1 = is qmail
-	my $pstat = '5.0.0';	# (String) Pseudo status value
+	my $pstat = q();	# (String) Pseudo status value
 	my $phead = q();	# (String) Pseudo email header
 	my $pbody = q();	# (String) Pseudo body part
 	my $xsmtp = q();	# (String) SMTP Command in transcript of session
+	my $causa = q();	# (String) Error reason
 
-	my $smtperror = { 'mail' => 0, 'rcpt' => 0, 'data' => 0, 'payload' => 0 };
-	my $errortype = { 'smtp' => 0, 'conn' => 0 };
 	my $rhostsaid = q();	# (String) Remote host said: ...
-	my $sorrythat = q();	# (String) Sorry, ....
 	my $rcptintxt = q();	# (String) Recipient address in message body
 	my $statintxt = q();	# (String) #n.n.n Status code in message body
-	my $altofdiag = q();	# (String) Diagnostic-Code, alternative
-	my $altofstat = q();	# (String) #n.n.n. Status code, alternative
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
-		if( $xflag == 0 && $el =~ $RxQSBMF->{'begin'} )
+		if( ($el =~ $RxQSBMF->{'begin'}) .. ($el =~ $RxQSBMF->{'endof'}) )
 		{
-			$xflag |= $xmode->{'begin'};
-			next();
-		}
+			if( ! $rcptintxt && $el =~ m{\A(?:To[ ]*:)?[<](.+[@].+)[>]:\z} )
+			{
+				# Get a mail address from the recipient paragraph.
+				$rcptintxt = $1;
+				next();
+			}
 
-		DETECT_AN_ERROR: {
-			unless( $errortype->{'smtp'} )
+			if( $rcptintxt )
 			{
 				# The line which begins with the string 'Remote host said:'
-				SMTP_ERROR: foreach my $_se ( keys(%$smtperror) )
-				{
-					if( $el =~ $RxSMTPError->{$_se} )
-					{
-						$smtperror->{$_se} = 1;
-						$errortype->{smtp} = 1;
-						$altofdiag = $el;
-						$xsmtp = uc $_se;
-						last(DETECT_AN_ERROR);
-					}
-				}
-
-				# Simple error message
-				SIMPLE_MESG: foreach my $_er ( keys(%$RxOtherMesg) )
-				{
-					if( grep { $el =~ $_ } @{ $RxOtherMesg->{$_er} } )
-					{
-						$altofstat = Kanadzuchi::RFC3463->status($_er,'p','i').qq(\n);
-						$errortype->{smtp} = 1;
-						$altofdiag = $el;
-						$xsmtp = 'DATA';
-						last(DETECT_AN_ERROR);
-					}
-				}
-
-				# qmail-ldap errors
-				if( grep { $el =~ $_ } @$RxLDAPError )
-				{
-					$smtperror->{rcpt} = 1;
-					$errortype->{smtp} = 1;
-					$altofdiag = $el;
-					$xsmtp = 'RCPT';
-
-					# Mailaddress is administrativley disabled. (LDAP-ERR #220)
-					if( $el =~ m{[ ][(]LDAP[-]ERR[ ][#]\d+[)]\z} )
-					{
-						$statintxt = '5.3.5';
-					}
-					last(DETECT_AN_ERROR);
-				}
-			}
-
-			if( ! $errortype->{'conn'} && $el =~ $RxQSBMF->{'sorry'} )
-			{
-				# The line which begins with the string 'Sorry,...'
-				if( grep { $el =~ $_ } @$RxConnError, @$RxMXRRError )
-				{
-					$errortype->{conn} = 1;
-					$altofdiag = $el;
-					last(DETECT_AN_ERROR)
-				}
+				last() if( $el =~ m{\A\z} );
+				$rhostsaid .= $el.' ';
+				next();
 			}
 		}
-
-		# Get a mail address from the recipient paragraph.
-		$rcptintxt = $1 if( $rcptintxt eq q() && $el =~ m{\A(?:To[ ]*:)?[<](.+[@].+)[>][:]\z} );
-		$statintxt = $1 if( $statintxt eq q() && $el =~ m{[ ][(][#](\d[.]\d[.]\d+)[)]\z} );
-		$statintxt ||= $altofstat || q();
-		$rhostsaid = $1 if( $errortype->{'smtp'} && $el =~ m{\ARemote host said:[ ]*(.+)\z} );
-		$sorrythat = $1 if( $errortype->{'conn'} && $el =~ m{\A(Sorry, .*)\z} );
-
-		last() if( $el =~ $RxQSBMF->{'endof'} );
 
 	} # End of foreach(EACH_LINE)
 
-	# Return if it does not include the line begins with 'Hi. This is the qmail...'
-	return q() unless( $xflag );
+	return q() unless $rcptintxt;
+	return q() unless $rhostsaid;
+	$rhostsaid =~ y{ }{}s;
+	$rhostsaid =~ s{\A }{}g;
+	$rhostsaid =~ s{ \z}{}g;
 
-	if( $errortype->{'smtp'} || $errortype->{'conn'} )
+	if( $rhostsaid =~ $RxQSBMF->{'sorry'} )
 	{
-		# Add the pseudo Content-Type header if it does not exist.
-		$mhead->{'content-type'} ||= q(message/delivery-status);
-
-		if( Kanadzuchi::RFC2822->is_emailaddress($rcptintxt) )
+		# The line which begins with the string 'Sorry,...'
+		$xsmtp = 'CONN';
+	}
+	else
+	{
+		DETECT:
 		{
-			$phead .= q(Final-Recipient: RFC822; ).$rcptintxt.qq(\n);
-		}
-
-		# Add the text that 'Remote host said' or 'Sorry,...' into Diagnostic-Code header.
-		$phead .= q(X-Diagnosis: ).($rhostsaid || $sorrythat || $altofdiag ).qq(\n);
-
-		if( $errortype->{'smtp'} )
-		{
-			if( $rhostsaid =~ m{\A\d{3}[-\s](\d[.]\d[.]\d+)[ ]} )
+			SMTP_ERROR: foreach my $e ( keys(%{ $RxSMTPError }) )
 			{
-				# Remote host said: 550-5.1.1 The email account ...
-				$phead .= q(Status: ).$1.qq(\n);
-			}
-			elsif( $statintxt ne q() )
-			{
-				# Status code in text/message body
-				$phead .= q(Status: ).$statintxt.qq(\n);
-			}
-			else
-			{
-				my $causa = q();
-				if( $smtperror->{'rcpt'} )
+				if( grep { $rhostsaid =~ $_ } @{ $RxSMTPError->{$e} } )
 				{
-					# RCPT TO: *** does not like recipient
-					$causa = 'userunknown';
+					$xsmtp = uc $e;
+					last();
 				}
-				elsif( $smtperror->{'data'} || $smtperror->{'payload'} )
+			}
+
+			QMAIL_ERROR: foreach my $q ( keys(%{ $RxqmailError }) )
+			{
+				if( grep { $rhostsaid =~ $_ } @{ $RxqmailError->{$q} } )
 				{
-					# failed on DATA command
-					$causa = 'filtered';
-				}
-				elsif( $smtperror->{'mail'} || $smtperror->{'greet'} || $smtperror->{'helo'} )
-				{
-					# Rejected after HELO,EHLO,MAIL command
-					$causa = 'rejected';
-					$pstat = Kanadzuchi::RFC3463->status('rejected','p','i');
+					$causa = $q;
+					$xsmtp ||= 'DATA';
+
+					if( $q eq 'ldaperror' )
+					{
+						# qmail-ldap errors
+						# $xsmtp ||= 'RCPT';
+
+						# Mailaddress is administrativley disabled. (LDAP-ERR #220)
+						if( $rhostsaid =~ m{[ ][(]LDAP[-]ERR[ ][#]\d+[)]\z} )
+						{
+							$causa = 'systemerror';
+						}
+					}
+					last(DETECT);
 				}
 				else
 				{
-					$causa = 'undefined';
+					$causa ||= 'undefined';
+					$xsmtp ||= 'DATA';
 				}
-
-				$pstat  = Kanadzuchi::RFC3463->status( $causa, 'p', 'i' );
-				$phead .= q(Status: ).$pstat.qq(\n);
 			}
-		}
-		elsif( $errortype->{'conn'} && $statintxt )
-		{
-			$phead .= q(Status: ).$statintxt.qq(\n);
 		}
 	}
 
-	$xsmtp ||= 'CONN';
-	$phead  .= __PACKAGE__->xsmtpcommand().$xsmtp.qq(\n) if( $phead );
+	if( $rhostsaid =~ m{[ ][(][#]([[45][.]\d[.]\d+)[)]\z} ||
+		$rhostsaid =~ m{\b\d{3}[-\s]([45][.]\d[.]\d+)\b} ){
+
+		# Remote host said: 550-5.1.1 The email account ...
+		# Remote host said: 550 5.7.1 <user@example.jp>... Access denied
+		$statintxt = $1;
+	}
+	else
+	{
+		$pstat = Kanadzuchi::RFC3463->status( ( $causa || 'undefined' ), 'p', 'i' );
+	}
+
+	# Add the pseudo Content-Type header if it does not exist.
+	$mhead->{'content-type'} ||= q(message/delivery-status);
+
+	if( Kanadzuchi::RFC2822->is_emailaddress($rcptintxt) )
+	{
+		$phead .= q(Final-Recipient: RFC822; ).$rcptintxt.qq(\n);
+	}
+	else
+	{
+		$rcptintxt = Kanadzuchi::Address->canonify($rhostsaid);
+		$phead .= q(Final-Recipient: RFC822; ).$rcptintxt.qq(\n) 
+				if( Kanadzuchi::RFC2822->is_emailaddress($rcptintxt) );
+	}
+
+	# Add the text that 'Remote host said' or 'Sorry,...' into X-SMTP-Diagnosis header.
+	$phead .= __PACKAGE__->xsmtpdiagnosis( $rhostsaid );
+	$phead .= __PACKAGE__->xsmtpstatus( ($statintxt || $pstat) );
+	$phead .= __PACKAGE__->xsmtpcommand($xsmtp);
+	$phead .= __PACKAGE__->xsmtpagent();
+
 	return $phead;
 }
 

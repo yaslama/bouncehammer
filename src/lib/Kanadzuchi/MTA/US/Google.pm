@@ -1,4 +1,4 @@
-# $Id: Google.pm,v 1.2 2010/10/25 20:09:28 ak Exp $
+# $Id: Google.pm,v 1.3 2010/11/13 19:18:08 ak Exp $
 # -Id: Google.pm,v 1.2 2010/07/04 23:45:49 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: Google.pm,v 1.1 2009/07/31 09:04:38 ak Exp -
@@ -16,12 +16,87 @@ use strict;
 use warnings;
 use base 'Kanadzuchi::MTA';
 
-my $RxPermGmail = qr{Delivery to the following recipient failed permanently:};
-my $RxTempGmail = qr{Delivery to the following recipient has been delayed:};
 my $RxFromGmail = {
-	'begin' => qr{Technical details of permanent failure:},
-	'state' => qr{The error that the other server returned was:},
+	'from' => qr{[@]googlemail[.]com[>]?\z},
+	'begin' => qr{Delivery to the following recipient},
+	'start' => qr{Technical details of (?:permanent|temporary) failure:},
+	'error' => qr{The error that the other server returned was:},
 	'endof' => qr{\A----- Original message -----\z},
+	'subject' => qr{Delivery[ ]Status[ ]Notification},
+};
+
+my $StateCodeMap = {
+	# Technical details of permanent failure: 
+	# Google tried to deliver your message, but it was rejected by the recipient domain.
+	# We recommend contacting the other email provider for further information about the
+	# cause of this error. The error that the other server returned was:
+	# 500 Remote server does not support TLS (state 6).
+	'6'  => { 'xsmtp' => 'MAIL', 'causa' => 'systemerror', 'error' => 'p' },
+
+	# http://www.google.td/support/forum/p/gmail/thread?tid=08a60ebf5db24f7b&hl=en
+	# Technical details of permanent failure:
+	# Google tried to deliver your message, but it was rejected by the recipient domain. 
+	# We recommend contacting the other email provider for further information about the
+	# cause of this error. The error that the other server returned was:
+	# 535 SMTP AUTH failed with the remote server. (state 8).
+	'8'  => { 'xsmtp' => 'AUTH', 'causa' => 'systemerror', 'error' => 'p' },
+
+	# http://www.google.co.nz/support/forum/p/gmail/thread?tid=45208164dbca9d24&hl=en
+	# Technical details of temporary failure: 
+	# Google tried to deliver your message, but it was rejected by the recipient domain.
+	# We recommend contacting the other email provider for further information about the
+	# cause of this error. The error that the other server returned was:
+	# 454 454 TLS missing certificate: error:0200100D:system library:fopen:Permission denied (#4.3.0) (state 9).
+	'9'  => { 'xsmtp' => 'AUTH', 'causa' => 'systemerror', 'error' => 't' },
+
+	# http://www.google.com/support/forum/p/gmail/thread?tid=5cfab8c76ec88638&hl=en
+	# Technical details of permanent failure: 
+	# Google tried to deliver your message, but it was rejected by the recipient domain.
+	# We recommend contacting the other email provider for further information about the
+	# cause of this error. The error that the other server returned was:
+	# 500 Remote server does not support SMTP Authenticated Relay (state 12). 
+	'12' => { 'xsmtp' => 'AUTH', 'causa' => 'systemerror', 'error' => 'p' },
+
+	# Technical details of permanent failure: 
+	# Google tried to deliver your message, but it was rejected by the recipient domain.
+	# We recommend contacting the other email provider for further information about the
+	# cause of this error. The error that the other server returned was: 
+	# 550 550 5.7.1 <****@gmail.com>... Access denied (state 13).
+	'13' => { 'xsmtp' => 'MAIL', 'causa' => 'rejected', 'error' => 'p' },
+
+	# Technical details of permanent failure: 
+	# Google tried to deliver your message, but it was rejected by the recipient domain.
+	# We recommend contacting the other email provider for further information about the
+	# cause of this error. The error that the other server returned was:
+	# 550 550 5.1.1 <******@*********.**>... User Unknown (state 14).
+	# 550 550 5.2.2 <*****@****.**>... Mailbox Full (state 14).
+	# 
+	'14' => { 'xsmtp' => 'RCPT', 'causa' => 'userunknown', 'error' => 'p' },
+
+	# http://www.google.cz/support/forum/p/gmail/thread?tid=7090cbfd111a24f9&hl=en
+	# Technical details of permanent failure:
+	# Google tried to deliver your message, but it was rejected by the recipient domain.
+	# We recommend contacting the other email provider for further information about the
+	# cause of this error. The error that the other server returned was:
+	# 550 550 5.7.1 SPF unauthorized mail is prohibited. (state 15).
+	# 554 554 Error: no valid recipients (state 15). 
+	'15' => { 'xsmtp' => 'DATA', 'causa' => 'filtered', 'error' => 'p' },
+
+	# http://www.google.com/support/forum/p/Google%20Apps/thread?tid=0aac163bc9c65d8e&hl=en
+	# Technical details of permanent failure:
+	# Google tried to deliver your message, but it was rejected by the recipient domain.
+	# We recommend contacting the other email provider for further information about the
+	# cause of this error. The error that the other server returned was:
+	# 550 550 <****@***.**> No such user here (state 17).
+	# 550 550 #5.1.0 Address rejected ***@***.*** (state 17).
+	'17' => { 'xsmtp' => 'DATA', 'causa' => 'filtered', 'error' => 'p' },
+
+	# Technical details of permanent failure: 
+	# Google tried to deliver your message, but it was rejected by the recipient domain.
+	# We recommend contacting the other email provider for further information about the
+	# cause of this error. The error that the other server returned was:
+	# 550 550 Unknown user *****@***.**.*** (state 18).
+	'18' => { 'xsmtp' => 'DATA', 'causa' => 'filtered', 'error' => 'p' },
 };
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
@@ -29,6 +104,7 @@ my $RxFromGmail = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+sub xsmtpagent { 'X-SMTP-Agent: US::Google'.qq(\n); }
 sub emailheaders
 {
 	# +-+-+-+-+-+-+-+-+-+-+-+-+
@@ -70,7 +146,7 @@ sub reperit
 	#	This is an automatically generated Delivery Status Notification
 	#	Delivery to the following recipient failed permanently:
 	#
-	#		recipient-address-here@example.jp
+	#	     recipient-address-here@example.jp
 	#
 	#	Technical details of permanent failure: 
 	#	Google tried to deliver your message, but it was rejected by the
@@ -79,140 +155,122 @@ sub reperit
 	#	that the other server returned was: 
 	#	550 550 <recipient-address-heare@example.jp>: User unknown (state 14).
 	#
-	return q() unless( $mhead->{'from'} =~ m{[@]googlemail[.]com[>]?\z} );
-	return q() unless( $mhead->{'subject'} =~ m{Delivery[ ]Status[ ]Notification} );
+	#   -- OR --
+	#	THIS IS A WARNING MESSAGE ONLY.
+	#	
+	#	YOU DO NOT NEED TO RESEND YOUR MESSAGE.
+	#	
+	#	Delivery to the following recipient has been delayed:
+	#	
+	#	     mailboxfull@example.jp
+	#	
+	#	Message will be retried for 2 more day(s)
+	#	
+	#	Technical details of temporary failure:
+	#	Google tried to deliver your message, but it was rejected by the recipient
+	#	domain. We recommend contacting the other email provider for further infor-
+	#	mation about the cause of this error. The error that the other server re-
+	#	turned was: 450 450 4.2.2 <mailboxfull@example.jp>... Mailbox Full (state 14).
+	#
+	return q() unless( $mhead->{'from'} =~ $RxFromGmail->{'from'} );
+	return q() unless( $mhead->{'subject'} =~ $RxFromGmail->{'subject'} );
 
-	my $xmode = { 'begin' => 1 << 0, 'error' => 1 << 1, 'endof' => 1 << 2 };
-	my $xflag = 0;		# (Integer) Flag, is Gmail or not.
-	my $state = 0;		# (Integer) (state xx).
 	my $phead = q();	# (String) Pusedo header
 	my $pbody = q();	# (String) Boby part for rewriting
 	my $pstat = q();	# (String) Pseudo D.S.N.
-	my $frcpt = q();	# (String) X-Final-Recipients: header or email address in the body.
-	my $dcode = q();	# (String) Diagnostic-Code: header or error text.
-	my $error = 'onhold';	# (String) Error reason: userunknown, filtered, mailboxfull...
+	my $causa = 'onhold';	# (String) Error reason: userunknown, filtered, mailboxfull...
 	my $xsmtp = q();	# (String) SMTP Command in transcript of session
+	my $error = 'p';	# (String) p = permanent, t = temporary
 
-	$frcpt  = $1 if( lc($mhead->{'x-failed-recipients'}) =~ m{\A[ ]?(.+[@].+)[ ]*\z} );
+	# (String) X-Final-Recipients: header or email address in the body.
+	my $rcptintxt = $1 if( lc($mhead->{'x-failed-recipients'}) =~ m{\A[ ]?(.+[@].+)[ ]*\z} );
+	my $statintxt = q();	# (String) Status(D.S.N.) in the error message.
+	my $rhostsaid = q();	# (String) Error message from remote host
+	my $statecode = 0;	# (Integer) (state xx). at the end of the error message.
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
-		next() if( $el =~ m{\A\z} );
-
-		if( $xflag == 0 && ( $el =~ $RxPermGmail || $el =~ $RxTempGmail ) )
+		if( ($el =~ $RxFromGmail->{'begin'}) .. ($el =~ $RxFromGmail->{'endof'}) )
 		{
-			# The line match with 'Delivery to the following...'
-			$xflag |= $xmode->{'begin'};
+			# Technical details of permanent failure:=20
+			# Google tried to deliver your message, but it was rejected by the recipient =
+			# domain. We recommend contacting the other email provider for further inform=
+			# ation about the cause of this error. The error that the other server return=
+			# ed was: 554 554 5.7.0 Header error (state 18).
+			#
+			$el =~ s{=\z}{};
+			if( $el =~ m{\A\s+(.+[@].+)\z} )
+			{
+				$rcptintxt = Kanadzuchi::Address->canonify($1);
+				$rcptintxt = q() unless Kanadzuchi::RFC2822->is_emailaddress($rcptintxt)
+			}
+			else
+			{
+				$rhostsaid .= $el;
+			}
 			next();
 		}
-		next() unless( $xflag );
-
-		# ^Irecipient-address-here@example.jp
-		if( ( $xflag & $xmode->{'begin'} ) && $el =~ m{\A\s+([^\s]+[@][^\s]+)\z} )
-		{
-			my $_rcpt = $1;
-			my $_2822 = q|Kanadzuchi::RFC2822|;
-			my $_addr = q|Kanadzuchi::Address|;
-
-			$frcpt ||= $_rcpt if $_2822->is_emailaddress($_addr->canonify($_rcpt));
-			next();
-		}
-
-		last() if( $el =~ $RxFromGmail->{'endof'} );
-		$el =~ s{=\z}{}g;
-		$pbody .= $el if( $el =~ m{\A[^\s]+} );
-		last() if( $el =~ m{[(]state[ ]\d+[)][.]} || $pbody =~ m{[(]state[ ]\d+[)][.]} );
 	}
 
+	return q() unless $rhostsaid;
+	$rhostsaid =~ s/\A.*$RxFromGmail->{'begin'}.+$RxFromGmail->{'error'} //;
+	$rhostsaid =~ s/([(]state \d+[)][.]).+\z/$1/;
+	$rhostsaid =~ y{ }{}s;
 
-	$pbody  =~ s/\A.*$RxFromGmail->{'begin'}.+$RxFromGmail->{'state'} //;
-	$dcode   = $pbody;
-	$state   = $1 if( $pbody =~ m{[(]state[ ](\d+)[)][.]} );
-	$pstat ||= $1 if( $pbody =~ m{[(][#](\d[.]\d[.]\d+)[)]} );
-	$pstat ||= $1 if( $dcode =~ m{\d{3}[ ]\d{3}[ ](\d[.]\d[.]\d+)} );
+	$statecode = $1 if( $rhostsaid =~ m{[(]state[ ](\d+)[)][.]} );		  # (state 18).
+	$statintxt = $1 if( $rhostsaid =~ m{[(][#]([45][.]\d[.]\d+)[)]}		  # (#5.1.1)
+			||  $rhostsaid =~ m{\d{3}[ ]\d{3}[ ]([45][.]\d[.]\d+)} ); # 550 550 5.1.1
 
-	if( $dcode =~ m{\d{3}[ ]\d{3}[ ](\d[.]\d[.]\d+)[ ][<](.+?)[>]:?.+\z} )
+	if( $rhostsaid =~ m{\d{3}[ ]\d{3}[ ](\d[.]\d[.]\d+)[ ][<](.+?)[>]:?.+\z} )
 	{
 		# There is D.S.N. code in the body part.
 		# 550 550 5.1.1 <userunknown@example.jp>... User Unknown (state 14).
 		# 450 450 4.2.2 <mailboxfull@example.jp>... Mailbox Full (state 14).
-		$pstat ||= $1;
-		$frcpt ||= $2;
+		$statintxt ||= $1;
+		$rcptintxt ||= $2;
+	}
+	else
+	{
+		$rcptintxt ||= Kanadzuchi::Address->canonify($rhostsaid);
+		$rcptintxt ||= $1 if( $rhostsaid =~ m{\s+([^\s]+[@][^\s+])\s+[(]state \d+[)][.]\z} );
 	}
 
-	if( ! $pstat || $pstat =~ m{\A[45][.]0[.]0\z} )
+	if( ! $statintxt || $statintxt =~ m{\A[45][.]0[.]0\z} )
 	{
 		# There is NO D.S.N. code in the body part or D.S.N. is 5.0.0,4.0.0.
-		$pstat = q();
-		if( $state == 14 )
+		if( $statecode )
 		{
-			# Technical details of permanent failure: 
-			# Google tried to deliver your message, but it was rejected by the recipient domain. 
-			# We recommend contacting the other email provider for further information about the
-			# cause of this error. The error that the other server returned was:
-			# 550 550 5.2.2 <*****@****.**>... Mailbox Full (state 14).
-			#
-			# -- OR --
-			#
-			# Technical details of permanent failure: 
-			# Google tried to deliver your message, but it was rejected by the recipient domain.
-			# We recommend contacting the other email provider for further information about the
-			# cause of this error. The error that the other server returned was:
-			# 550 550 5.1.1 <******@*********.**>... User Unknown (state 14).
-			# 
-			$xsmtp = 'RCPT';
-			$error = 'onhold';	# ...
-		}
-		elsif( $state == 13 )
-		{
-			# Technical details of permanent failure: 
-			# Google tried to deliver your message, but it was rejected by the recipient domain.
-			# We recommend contacting the other email provider for further information about the
-			# cause of this error. The error that the other server returned was: 
-			# 550 550 5.7.1 <****@gmail.com>... Access denied (state 13).
-			$xsmtp = 'MAIL';
-			$error = 'rejected';
-		}
-		elsif( $state == 18 )
-		{
-			# Technical details of permanent failure: 
-			# Google tried to deliver your message, but it was rejected by the recipient domain.
-			# We recommend contacting the other email provider for further information about the
-			# cause of this error. The error that the other server returned was:
-			# 550 550 Unknown user *****@***.**.*** (state 18).
-			$xsmtp = 'DATA';
-			$error = 'filtered';
-		}
-		elsif( $state )
-		{
-			# There is the code (state xx) that Kanadzuchi does not know.
-			# state 6(TLS?), 8(AUTH?), 9, 12, 15, 17,
-			#
-			# Technical details of permanent failure:
-			# Google tried to deliver your message, but it was rejected by the recipient domain.
-			# We recommend contacting the other email provider for further information about the
-			# cause of this error. The error that the other server returned was:
-			# 550 550 5.7.1 SPF unauthorized mail is prohibited. (state 15).
-			#
-			$error = 'onhold';
+			if( grep { $statecode == $_ } keys %$StateCodeMap )
+			{
+				$xsmtp = $StateCodeMap->{ $statecode }->{'xsmtp'};
+				$causa = $StateCodeMap->{ $statecode }->{'causa'};
+				$error = $StateCodeMap->{ $statecode }->{'error'};
+			}
+			else
+			{
+				$causa = 'onhold';
+			}
 		}
 		else
 		{
 			# Unsupported error message in body part.
-			$error = 'undefined';
+			$causa = 'undefined';
 		}
 
+		$pstat = Kanadzuchi::RFC3463->status( $causa, $error, 'i' );
+	}
+	else
+	{
+		$pstat = $statintxt;
 	}
 
-	return q() unless( $frcpt );
-	$pstat ||= Kanadzuchi::RFC3463->status($error,'p','i');
-	$xsmtp ||= 'CONN';
-	$phead .= __PACKAGE__->xsmtpcommand().$xsmtp.qq(\n);
-
-	$phead .=  q(X-Diagnosis: SMTP; ).qq($dcode\n);
-	$phead .=  q(Status: ).$pstat.qq(\n);
-	$phead .=  q(Final-Recipient: rfc822; ).qq($frcpt\n);
-	$phead .=  q(To: ).qq($frcpt\n);
+	return q() unless $rcptintxt;
+	$phead .= __PACKAGE__->xsmtpcommand($xsmtp);
+	$phead .= __PACKAGE__->xsmtpagent();
+	$phead .= __PACKAGE__->xsmtpdiagnosis($rhostsaid);
+	$phead .= __PACKAGE__->xsmtpstatus($pstat);
+	$phead .= q(Final-Recipient: rfc822; ).$rcptintxt.qq(\n);
+	$phead .= q(To: ).$rcptintxt.qq(\n);
 
 	return $phead;
 }

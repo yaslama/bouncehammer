@@ -1,4 +1,4 @@
-# $Id: Fallback.pm,v 1.1 2010/10/05 11:21:25 ak Exp $
+# $Id: Fallback.pm,v 1.2 2010/11/13 19:18:03 ak Exp $
 # Kanadzuchi::MTA::
                                                     
  ######       ###  ###  ##                  ##      
@@ -18,6 +18,21 @@ use warnings;
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+sub xsmtpagent
+{
+	# +-+-+-+-+-+-+-+-+-+-+
+	# |x|s|m|t|p|a|g|e|n|t|
+	# +-+-+-+-+-+-+-+-+-+-+
+	#
+	# @Description	Return pseudo-header for SMTP Agent(MTA)
+	# @Param <str>	(String) SMTP agnet name
+	# @Returns	(String) Pseudo-header
+	my $class = shift(); 
+	my $agent = shift() || q();
+	$agent = '('.$agent.')' if $agent;
+	return 'X-SMTP-Agent: Fallback'.$agent.qq(\n);
+}
+
 sub reperit
 {
 	# +-+-+-+-+-+-+-+
@@ -34,11 +49,13 @@ sub reperit
 	my $mdata = Kanadzuchi::MDA->parse($mhead,$mbody) || return q();
 	my $pstat = 0;
 	my $phead = q();
+	my $ucode = Kanadzuchi::RFC3463->status('undefind','p','i');
 
-	$pstat  = Kanadzuchi::RFC3463->status($mdata->{'reason'},'p','i') || '5.0.900';
-	$phead .= 'Status: '.$pstat.qq(\n);
-	$phead .= 'Diagnostic-Code: '.$mdata->{'message'}.qq(\n);
-	$phead .= __PACKAGE__->xsmtpcommand().qq(QUIT\n) if( $phead );
+	$pstat  = Kanadzuchi::RFC3463->status($mdata->{'reason'},'p','i') || $ucode;
+	$phead .= __PACKAGE__->xsmtpstatus($pstat);
+	$phead .= __PACKAGE__->xsmtpdiagnosis($mdata->{'message'});
+	$phead .= __PACKAGE__->xsmtpcommand('QUIT');
+	$phead .= __PACKAGE__->xsmtpagent( $mdata->{'mda'} );
 	return $phead;
 }
 
