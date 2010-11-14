@@ -1,4 +1,4 @@
-# $Id: Log.pm,v 1.20 2010/10/05 11:08:28 ak Exp $
+# $Id: Log.pm,v 1.21 2010/11/13 19:19:55 ak Exp $
 # -Id: Log.pm,v 1.2 2009/10/06 06:21:47 ak Exp -
 # -Id: Log.pm,v 1.11 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -59,10 +59,10 @@ $OutputFormat->{'json'} .= qq|"description": %s, "token": "%s" }|;
 $OutputFormat->{'yaml'} .= qq|- |.$OutputFormat->{'json'};
 
 # Dump with CSV format
-$OutputFormat->{'csv'} .= qq|%d,%s,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s|;
+$OutputFormat->{'csv'} .= qq|%d,%s,%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s|;
 $OutputHeader->{'csv'} .= q|bounced,addresser,recipient,senderdomain,destination,reason,|;
 $OutputHeader->{'csv'} .= q|hostgroup,provider,frequency,deliverystatus,timezoneoffset,|;
-$OutputHeader->{'csv'} .= q|diagnosticcode,token|.qq|\n|;
+$OutputHeader->{'csv'} .= q|diagnosticcode,mta,token|.qq|\n|;
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -201,7 +201,7 @@ sub dumper
 						$damn->{'senderdomain'}, $damn->{'destination'}, $damn->{'reason'}, 
 						$damn->{'hostgroup'}, $damn->{'provider'}, $damn->{'frequency'}, 
 						$damn->{'deliverystatus'}, $damn->{'timezoneoffset'},
-						$damn->{'diagnosticcode'}, $damn->{'token'} );
+						$damn->{'diagnosticcode'}, $damn->{'smtpagent'}, $damn->{'token'} );
 
 			}
 			else
