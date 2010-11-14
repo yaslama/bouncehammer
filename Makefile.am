@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.53 2010/10/30 17:31:08 ak Exp $
+# $Id: Makefile.am,v 1.54 2010/11/13 19:27:53 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -110,6 +110,12 @@ uninstall-old-files:
 	@echo "Uninstall files which are renamed at ver 2.6.0"
 	rm -f @prefix@/lib/Kanadzuchi/Mail/Why/Makefile.am
 	rm -f @prefix@/lib/Kanadzuchi/MTA/Google.pm
+
+	@echo "Uninstall files which are renamed at ver 2.6.1"
+	rm -f @prefix@/lib/Kanadzuchi/RFC1893.pm
+	rm -f @prefix@/lib/Kanadzuchi/Mail/Bounced/JP/aubyKDDI.pm
+	rm -f @prefix@/lib/Kanadzuchi/Mail/Bounced/JP/NTTDoCoMo.pm
+	rm -f @prefix@/lib/Kanadzuchi/Mail/Bounced/JP/SoftBank.pm
 
 message:
 	@echo "-----------------------------------------------------------------------------"
