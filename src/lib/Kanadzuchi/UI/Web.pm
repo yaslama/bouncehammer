@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.24 2010/08/28 17:22:04 ak Exp $
+# $Id: Web.pm,v 1.26 2010/11/13 19:10:54 ak Exp $
 # -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
 # -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
