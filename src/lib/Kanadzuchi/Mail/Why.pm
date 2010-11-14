@@ -1,4 +1,4 @@
-# $Id: Why.pm,v 1.9 2010/10/05 11:28:36 ak Exp $
+# $Id: Why.pm,v 1.10 2010/11/13 19:13:09 ak Exp $
 # -Id: Pattern.pm,v 1.1 2009/08/29 07:33:13 ak Exp -
 # -Id: Pattern.pm,v 1.3 2009/05/29 08:22:25 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -20,7 +20,9 @@ my $Exemplaria = {
 	'Filtered'	=> [],
 	'HostUnknown'	=> [],
 	'MailboxFull'	=> [],
+	'MailerError'	=> [],
 	'MesgTooBig'	=> [],
+	'NotAccept'	=> [],
 	'Rejected'	=> [],
 	'RelayingDenied' => [],
 	'SecurityError'	=> [],

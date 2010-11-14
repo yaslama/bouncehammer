@@ -1,4 +1,4 @@
-# $Id: MailboxFull.pm,v 1.7 2010/10/05 11:19:09 ak Exp $
+# $Id: MailboxFull.pm,v 1.8 2010/11/13 19:12:55 ak Exp $
 # -Id: MailboxFull.pm,v 1.1 2009/08/29 07:33:28 ak Exp -
 # -Id: MailboxFull.pm,v 1.2 2009/05/11 08:22:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -29,15 +29,24 @@ sub exemplaria
 		qr{delivery failed: over quota},
 		qr{disc quota exceeded},
 		qr{exceeded storage allocation},
+		qr{mail quota exceeded},
 		qr{mailbox over quota},
 		qr{mailbox full},
 		qr{mailbox is full},
+		qr{maildir over quota},
+		qr{not enough storage space in},
+		qr{would be over the allowed quota},
+		qr{over the allowed quota},
 		qr{quota exceeded},
 		qr{recipient reached disk quota},
 		qr{recipient rejected: mailbox would exceed maximum allowed storage},
-		qr{this mailbox is full},
-		qr{too much mail data},
+		qr{too much mail data},	# @docomo.ne.jp
+		qr{user has exceeded quota, bouncing mail},
+		qr{user is over quota},
+		qr{user over quota[.] [(][#]5[.]1[.]1[)]\z},	# qmail-toaster
+		qr{user over quota},
 		qr{was automatically rejected: quota exceeded},
+
 	];
 }
 

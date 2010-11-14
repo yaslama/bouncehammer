@@ -1,4 +1,4 @@
-# $Id: SecurityError.pm,v 1.1 2010/10/05 11:19:09 ak Exp $
+# $Id: SecurityError.pm,v 1.2 2010/11/13 19:12:55 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Why::
                                                                                        
@@ -22,8 +22,12 @@ sub exemplaria
 {
 	my $class = shift();
 	return [ 
+		qr{blocked by spamAssassin},		# rejected by SpamAssassin
+		qr{mail appears to be unsolicited},	# rejected due to spam
+		qr{rejected due to spam content},	# rejected due to spam
 		qr{sorry, that domain isn'?t in my list of allowed rcpthosts},
 		qr{sorry, your don'?t authenticate or the domain isn'?t in my list of allowed rcpthosts},
+		qr{spambouncer identified sPAM},	# SpamBouncer identified SPAM
 	];
 }
 
