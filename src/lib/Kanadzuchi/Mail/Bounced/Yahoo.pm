@@ -1,4 +1,4 @@
-# $Id: Yahoo.pm,v 1.4 2010/10/05 11:29:47 ak Exp $
+# $Id: Yahoo.pm,v 1.5 2010/11/13 19:15:45 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Bounced::
                                               
@@ -35,7 +35,7 @@ sub is_filtered
 	my $diag = $self->{'diagnosticcode'} || q();
 	my $subj = 'filtered';
 	my $isfi = 0;
-	my $rxfi = qr{554 delivery error: dd Sorry your message to[ ].+[ ]cannot be delivered[.][ ]This account has been disabled or discontinued}o;
+	my $rxfi = qr{Sorry your message to .+ cannot be delivered[.] This account has been disabled or discontinued};
 
 	if( defined($self->{'reason'}) && length($self->{'reason'}) )
 	{
@@ -72,9 +72,9 @@ sub is_userunknown
 	my $subj = 'userunknown';
 	my $isuu = 0;
 	my $rxuu = [
-		qr{554[ ]delivery[ ]error[:][ ]dd[ ]This[ ]user[ ]doesn[']?t[ ]have[ ]a[ ]}o,
-		qr{550[ ]Requested[ ]action[ ]not[ ]taken[:][ ]mailbox[ ]unavailable}o,
-		qr{550[ ].+[ ]User[ ]unknow}o,
+		qr{This user doesn[']?t have a yahoo[.].+ account},
+		qr{Requested action not taken: mailbox unavailable},
+		qr{.+ User unknown},
 	];
 
 	if( defined($self->{'reason'}) && length($self->{'reason'}) )
@@ -115,7 +115,7 @@ sub is_mailboxfull
 	my $diag = $self->{'diagnosticcode'} || return(0);
 	my $subj = 'mailboxfull';
 	my $ismf = 0;
-	my $rxmf = qr{554 delivery error: dd Sorry, your message to[ ].+[ ]cannot[ ]be[ ]delivered[.][ ]This account is over quota[.]}o;
+	my $rxmf = qr{Sorry, your message to .+ cannot be delivered[.] This account is over quota[.]};
 
 	if( defined($self->{'reason'}) && length($self->{'reason'}) )
 	{
