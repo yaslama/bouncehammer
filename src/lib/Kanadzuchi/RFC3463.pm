@@ -1,4 +1,4 @@
-# $Id: RFC3463.pm,v 1.1 2010/10/05 11:15:50 ak Exp $
+# $Id: RFC3463.pm,v 1.3 2010/11/13 19:23:26 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                    
@@ -294,11 +294,11 @@ my $StandardCode = {
 		'exceedlimit'	=> [ '4.2.3' ],
 		'systemfull'	=> [ '4.3.1' ],
 		'systemerror'	=> [ '4.3.5' ],
-		'expired'	=> [ '4.4.7' ],
+		'expired'	=> [ '4.4.7', '4.4.1' ],
 	},
 	'permanent' => {
 		# 'undefined'	=> [ '5.0.0', '5.5.1', '5.5.2', '5.5.3', '5.5.4', '5.5.5' ],
-		'userunknown'	=> [ '5.1.1', '5.1.0' ],	# 5.1.3 ?
+		'userunknown'	=> [ '5.1.1', '5.1.0', '5.1.3' ],	# 5.1.3 ?
 		'hostunknown'	=> [ '5.1.2' ],
 		'hasmoved'	=> [ '5.1.6' ],
 		'rejected'	=> [ '5.1.8', '5.1.7' ],
@@ -323,7 +323,8 @@ my $InternalCode = {
 		'mailboxfull'	=> [ '4.0.922' ],
 		'exceedlimit'	=> [ '4.0.923' ],
 		'systemfull'	=> [ '4.0.931' ],
-		'suspended'	=> [ '4.0.990' ],
+		'expired'	=> [ '4.0.947' ],
+		'suspend'	=> [ '4.0.990' ],
 	},
 	'permanent' => {
 		'undefined'	=> [ '5.0.900' ],
@@ -388,7 +389,7 @@ sub causa
 	my $class = shift();
 	my $state = shift() || return q();
 
-	return q() unless( $state =~ m{\A\d[.]\d[.]\d+\z} );
+	return q() unless( $state =~ m{\A[45][.]\d[.]\d+\z} );
 
 	my $causa = q();
 	my $klass = substr($state,0,1) == 4 ? 'temporary' : 'permanent';
