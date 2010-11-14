@@ -3,9 +3,9 @@
 # This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi,
 # is processed by automake to create Makefile.in.
 if WEBUI
-SUBDIRS = API Archive Config Mail MIME MTA BdDR UI Statistics Time
+SUBDIRS = API Archive Config Mail MIME MTA BdDR UI Statistics
 else
-SUBDIRS = Archive Config Mail MIME MTA BdDR UI Statistics Time
+SUBDIRS = Archive Config Mail MIME MTA BdDR UI Statistics
 endif
 modules = Mbox.pm
 distdir = $(BUILDROOT)/dist/lib/Kanadzuchi
