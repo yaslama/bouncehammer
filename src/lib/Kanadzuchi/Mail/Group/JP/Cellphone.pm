@@ -1,4 +1,4 @@
-# $Id: Cellphone.pm,v 1.6 2010/06/16 08:15:34 ak Exp $
+# $Id: Cellphone.pm,v 1.7 2010/11/13 19:14:32 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
                                                             
@@ -46,9 +46,9 @@ sub classisnomina
 {
 	my $class = shift();
 	return {
-		'nttdocomo'	=> 'JP::NTTDoCoMo',
-		'aubykddi'	=> 'JP::aubyKDDI',
-		'softbank'	=> 'JP::SoftBank',
+		'nttdocomo'	=> 'Generic',
+		'aubykddi'	=> 'Generic',
+		'softbank'	=> 'Generic',
 	};
 }
 
