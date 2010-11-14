@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.27 2010/10/05 11:28:11 ak Exp $
+# $Id: Bounced.pm,v 1.29 2010/11/13 19:17:16 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -24,9 +24,9 @@ use warnings;
 use Kanadzuchi::Address;
 use Kanadzuchi::RFC2822;
 use Kanadzuchi::RFC3463;
-use Kanadzuchi::Time;
 use Kanadzuchi::Iterator;
 use Kanadzuchi::MIME::Parser;
+use Kanadzuchi::Time;
 use Time::Piece;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -199,9 +199,33 @@ sub eatit
 		#
 		unless( $bouncemesg->{'deliverystatus'} )
 		{
-			$tempheader->{'deliverystatus'} = $mimeparser->getit('Status') || next();
+			my $_status = {
+				'alt' => $mimeparser->getit('X-SMTP-Status') || q(),
+				'org' => $mimeparser->getit('Status') || q() };
 
-			$tempheader->{'deliverystatus'} =~ s{\A\s*(\d+[.]\d+[.]\d+).*\z}{$1};
+			next() if( ! $_status->{'org'} && ! $_status->{'alt'} );
+
+			if( $_status->{'alt'} eq Kanadzuchi::RFC3463->status('undefined','p','i') )
+			{
+				$tempheader->{'deliverystatus'} = $_status->{'org'} || $_status->{'alt'};
+			}
+			elsif( $_status->{'alt'} eq q() )
+			{
+				$tempheader->{'deliverystatus'} = $_status->{'org'};
+			}
+			else
+			{
+				if( $_status->{'org'} =~ m{\A[45][.]0[.]0} )
+				{
+					$tempheader->{'deliverystatus'} = $_status->{'alt'} || $_status->{'org'};
+				}
+				else
+				{
+					$tempheader->{'deliverystatus'} = $_status->{'org'} || $_status->{'alt'};
+				}
+			}
+
+			$tempheader->{'deliverystatus'} =~ s{\A\s*([45][.]\d[.]\d+).*\z}{$1};
 			next() unless( $tempheader->{'deliverystatus'} );
 			$bouncemesg->{'deliverystatus'} = $tempheader->{'deliverystatus'};
 		}
@@ -215,7 +239,7 @@ sub eatit
 		unless( $bouncemesg->{'diagnosticcode'} )
 		{
 			$tempheader->{'diagnosticcode'} =  $mimeparser->getit('Diagnostic-Code')
-							|| $mimeparser->getit('X-Diagnosis') || q();
+							|| $mimeparser->getit('X-SMTP-Diagnosis') || q();
 			$tempheader->{'diagnosticcode'} =~ y{`"'\r\n}{}d;	# Drop quotation marks and CR/LF
 			$tempheader->{'diagnosticcode'} =~ y{ }{}s;		# Squeeze spaces
 
@@ -223,16 +247,16 @@ sub eatit
 			$bouncemesg->{'diagnosticcode'} = $tempheader->{'diagnosticcode'};
 		}
 
-		# __  __    ____  __  __ _____ ____        ____                                          _ 
-		# \ \/ /   / ___||  \/  |_   _|  _ \      / ___|___  _ __ ___  _ __ ___   __ _ _ __   __| |
-		#  \  /____\___ \| |\/| | | | | |_) |____| |   / _ \| '_ ` _ \| '_ ` _ \ / _` | '_ \ / _` |
-		#  /  \_____|__) | |  | | | | |  __/_____| |__| (_) | | | | | | | | | | | (_| | | | | (_| |
-		# /_/\_\   |____/|_|  |_| |_| |_|         \____\___/|_| |_| |_|_| |_| |_|\__,_|_| |_|\__,_|
-		#                                                                                          
-		unless( $bouncemesg->{'smtpcommand'} )
-		{
-			$bouncemesg->{'smtpcommand'} = $mimeparser->getit('X-SMTP-Command') || q();
-		}
+		# __  __    ____  __  __ _____ ____            
+		# \ \/ /   / ___||  \/  |_   _|  _ \     __/\__
+		#  \  /____\___ \| |\/| | | | | |_) |____\    /
+		#  /  \_____|__) | |  | | | | |  __/_____/_  _\
+		# /_/\_\   |____/|_|  |_| |_| |_|          \/  
+		#                                              
+		$bouncemesg->{'smtpcommand'} = 
+			($mimeparser->getit('X-SMTP-Command') || q()) unless( $bouncemesg->{'smtpcommand'} );
+		$bouncemesg->{'smtpagent'} = 
+			($mimeparser->getit('X-SMTP-Agent') || q()) unless( $bouncemesg->{'smtpagent'} );
 
 		#  ____    _  _____ _____ 
 		# |  _ \  / \|_   _| ____|
@@ -253,44 +277,16 @@ sub eatit
 			next() unless $tempheader->{'arrivaldate'};
 			chomp $tempheader->{'arrivaldate'};
 
-			# Check strange Date header
-			if( $tempheader->{'arrivaldate'} =~ 
-				m{\A\s*\d{1,2}\s*[A-Z][a-z]{2}\s*\d{4}\s*.+\z} ){
-
-				# qmail's Date header, 'Date: 29 Apr 2009 01:39:00 -0000'
-				$tempheader->{'arrivaldate'} = q(Thu, ).$tempheader->{'arrivaldate'};
-			}
-			elsif( $tempheader->{'arrivaldate'} =~ 
-				m{\A\s*(\d{4})[-](\d\d)[-](\d\d)[ ](\d\d:\d\d:\d\d)[ ](.\d{4})\z} ){
-
-				# Mail.app(MacOS X)'s faked Bounce, Arrival-Date: 2010-06-18 17:17:52 +0900
-				$tempheader->{'arrivaldate'} =
-					sprintf("Thu, %d %s %s %s %s", $3, 
-							[Time::Piece->mon_list()]->[$2-1], $1, $4, $5 );
-			}
-
-			if( $tempheader->{'arrivaldate'} =~ m{\A\s*(.+)\s*([-+]\d{4}).*\z} )
+			$bouncemesg->{'arrivaldate'} = Kanadzuchi::Time->canonify( $tempheader->{'arrivaldate'} );
+			if( $bouncemesg->{'arrivaldate'} =~ m{\A(.+)\s+([-+]\d{4})\z} )
 			{
-				# Convert from the time zone offset to the second
-				#   - Date: Tue, 21 Apr 2009 10:01:06 +0900
-				#   - Date: Mon, 13 Apr 2009 18:06:03 -0400
-				#   - Date: Tue, 28 Apr 2009 00:18:18 -0700 (PDT)
-				#
-				$bouncemesg->{'arrivaldate'} = $1;	# Tue, 28 Apr 2009 00:18:18
+				$bouncemesg->{'arrivaldate'} = $1;
 				$bouncemesg->{'timezoneoffset'} = $2;
-				$tempoffset = Kanadzuchi::Time->tz2second($bouncemesg->{'timezoneoffset'});
-				$bouncemesg->{'arrivaldate'} =~ s{[ ]+\z}{}g;
-				chomp $bouncemesg->{'arrivaldate'};
-			}
-			elsif( $tempheader->{'arrivaldate'}
-				=~ m{\A\s*([A-Z][a-z]{2})\s+([A-Z][a-z]{2})\s+(\d+)\s+(\d\d:\d\d:\d\d)\s+(\d{4})} ){
-
-					# Mon Apr 27 01:26:29 2009 GMT
-					$bouncemesg->{'arrivaldate'} = sprintf( "%s, %02d %s %04d %s", $1,$3,$2,$5,$4 );
+				$tempoffset = Kanadzuchi::Time->tz2second($2);
 			}
 			else
 			{
-				next(MIMEPARSER);	# Invalid Date format
+				next();
 			}
 		}
 
@@ -303,14 +299,17 @@ sub eatit
 		# Set hash values to the object.
 		# Keys: rcpt,send,date, and stat are required to processing.
 		next() if( $bouncemesg->{'addresser'}->address =~ m{[@]localhost[.]localdomain\z} );
-		eval{
-			$tempstring = Time::Piece->strptime( $bouncemesg->{'arrivaldate'}, q{%a, %d %b %Y %T} );
-			$tempstring = Time::Piece->new() unless( ref($tempstring) eq q|Time::Piece| );
-		};
+
+		eval{ $tempstring = Time::Piece->strptime( $bouncemesg->{'arrivaldate'}, q{%a, %d %b %Y %T} ); };
+		# bouncehammer stops with the following message if the time format is invalid
+		# Error parsing time at /usr/local/lib/perl5/5.10.0/darwin-thread-multi-2level/Time/Piece.pm line 471.
+		# $tempstring = Time::Piece->new() unless( ref($tempstring) eq q|Time::Piece| );
+		next() if( $@ && ref $tempstring ne q|Time::Piece| );
 
 		$thisobject = __PACKAGE__->new(
 				'addresser' => $bouncemesg->{'addresser'},
 				'recipient' => $bouncemesg->{'recipient'},
+				'smtpagent' => $bouncemesg->{'smtpagent'},
 				'smtpcommand' => $bouncemesg->{'smtpcommand'},
 				'deliverystatus' => $bouncemesg->{'deliverystatus'},
 				'diagnosticcode' => $bouncemesg->{'diagnosticcode'},
@@ -358,7 +357,6 @@ sub tellmewhy
 	elsif( $self->is_mailboxfull()   ){ $rwhy = 'mailboxfull'; }
 	elsif( $self->is_toobigmesg()    ){ $rwhy = 'mesgtoobig'; }
 	elsif( $self->is_exceedlimit()   ){ $rwhy = 'exceedlimit'; }
-	elsif( $self->is_mailererror()   ){ $rwhy = 'mailererror'; }
 	elsif( $self->is_onhold()        ){ $rwhy = 'onhold'; }
 	else{  $rwhy = $self->is_somethingelse() ? $self->{'reason'} : 'undefined'; }
 	return $rwhy;
@@ -405,17 +403,20 @@ sub is_userunknown
 		}
 		else
 		{
-			if( substr($stat,0,1) == 5 )
+			if( $self->{'smtpcommand'} eq 'RCPT' )
 			{
-				$isuu = 1 if( $uclass->textumhabet($dicode) );
-			}
-			elsif( substr($stat,0,1) == 4 )
-			{
-				# Postfix Virtual Mail box
-				# Status: 4.4.7
-				# Diagnostic-Code: SMTP; 450 4.1.1 <***@example.jp>:
-				#   Recipient address rejected: User unknown in virtual mailbox table
-				$isuu = 1 if( $uclass->textumhabet($dicode) );
+				if( substr($stat,0,1) == 5 )
+				{
+					$isuu = 1 if( $uclass->textumhabet($dicode) );
+				}
+				elsif( substr($stat,0,1) == 4 )
+				{
+					# Postfix Virtual Mail box
+					# Status: 4.4.7
+					# Diagnostic-Code: SMTP; 450 4.1.1 <***@example.jp>:
+					#   Recipient address rejected: User unknown in virtual mailbox table
+					$isuu = 1 if( $uclass->textumhabet($dicode) );
+				}
 			}
 		}
 	}
@@ -490,12 +491,16 @@ sub is_filtered
 		}
 		else
 		{
-			eval { require Kanadzuchi::Mail::Why::Filtered; };
-			my $flib = q|Kanadzuchi::Mail::Why::Filtered|;
-
-			if( $flib->textumhabet($self->{'diagnosticcode'}) )
+			if( $self->{'smtpcommand'} eq 'DATA' )
 			{
-				$isfi = 1;
+				my $uclass = q|Kanadzuchi::Mail::Why::UserUnknown|;
+				my $fclass = q|Kanadzuchi::Mail::Why::Filtered|;
+				eval { 
+					require Kanadzuchi::Mail::Why::UserUnknown;
+					require Kanadzuchi::Mail::Why::Filtered;
+				};
+				$isfi = 1 if( $fclass->textumhabet($self->{'diagnosticcode'})
+						|| $uclass->textumhabet($self->{'diagnosticcode'}) );
 			}
 		}
 	}
@@ -530,10 +535,13 @@ sub is_rejected
 		}
 		else
 		{
-			eval { require Kanadzuchi::Mail::Why::Rejected; };
-			my $rlib = q|Kanadzuchi::Mail::Why::Rejected|;
+			if( $self->{'smtpcommand'} eq 'MAIL' )
+			{
+				eval { require Kanadzuchi::Mail::Why::Rejected; };
+				my $rlib = q|Kanadzuchi::Mail::Why::Rejected|;
 
-			$isrj = 1 if( $rlib->textumhabet($self->{'diagnosticcode'}) );
+				$isrj = 1 if $rlib->textumhabet($self->{'diagnosticcode'});
+			}
 		}
 	}
 
@@ -688,35 +696,6 @@ sub is_norelaying
 	return $isnr;
 }
 
-sub is_mailererror
-{
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	# |i|s|_|m|a|i|l|e|r|e|r|r|o|r|
-	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	#
-	# @Description	Whether the message is returned by unknown mailer error
-	# @Param	<None>
-	# @Return	(Integer) 1 = Is returned by unknown mailer error
-	#		(Integer) 0 = is not
-	# @See		http://www.ietf.org/rfc/rfc2822.txt
-	my $self = shift();
-	my $stat = $self->{'deliverystatus'} || return 0;
-	my $diag = $self->{'diagnosticcode'} || q();
-	my $subj = 'mailererror';
-	my $isme = 0;
-	my $rxme = qr{x[-]unix[;][ ]\d{1,3}};
-
-	if( defined $self->{'reason'} && length($self->{'reason'}) )
-	{
-		$isme = 1 if( $self->{'reason'} eq $subj );
-	}
-	else
-	{
-		$isme = 1 if( lc($diag) =~ $rxme || $subj eq Kanadzuchi::RFC3463->causa($stat) );
-	}
-	return $isme;
-}
-
 sub is_somethingelse
 {
 	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -746,22 +725,37 @@ sub is_somethingelse
 
 		unless( $else )
 		{
-			my $dicode = $self->{'diagnosticcode'};
-			my $sclass = q|Kanadzuchi::Mail::Why::SecurityError|;
-			my $yclass = q|Kanadzuchi::Mail::Why::SystemError|;
-
 			eval { 
 				use Kanadzuchi::Mail::Why::SecurityError;
 				use Kanadzuchi::Mail::Why::SystemError;
+				use Kanadzuchi::Mail::Why::NotAccept;
+				use Kanadzuchi::Mail::Why::MailerError;
 			};
 
-			if( $sclass->textumhabet($dicode) )
+			my $dicode = $self->{'diagnosticcode'};
+			my $eclass = q();
+			my $wclass = { 
+				'securityerr' => 'SecurityError', 
+				'systemerror' => 'SystemError', 
+				'notaccept' => 'NotAccept',
+				'mailererror' => 'MailerError', };
+
+			foreach my $w ( keys %$wclass )
 			{
-				$else = 'securityerr';
+				$eclass = q|Kanadzuchi::Mail::Why::|.$wclass->{ $w };
+				if( $eclass->textumhabet( $dicode ) )
+				{
+					$else = $w;
+					last();
+				}
 			}
-			elsif( $yclass->textumhabet($dicode) )
+
+			unless( $else )
 			{
-				$else = 'systemerror';
+				# The error 'Relaying denied' is classfied into the rason 'systemerror'
+				eval { use Kanadzuchi::Mail::Why::RelayingDenied; };
+				$eclass = q|Kanadzuchi::Mail::Why::RelayingDenied|;
+				$else = 'systemerror' if( $eclass->textumhabet( $dicode ) );
 			}
 		}
 	}
