@@ -1,4 +1,4 @@
-# $Id: 031_mta-sendmail.t,v 1.2 2010/10/05 11:30:56 ak Exp $
+# $Id: 031_mta-sendmail.t,v 1.3 2010/11/13 19:13:25 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::MTA::Sendmail;
-use Test::More ( tests => 5 );
+use Test::More ( tests => 8 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -18,7 +18,8 @@ use Test::More ( tests => 5 );
 #
 my $Test = new Kanadzuchi::Test(
 		'class' => q|Kanadzuchi::MTA::Sendmail|,
-		'methods' => [ 'xsmtpcommand', 'emailheaders', 'reperit' ],
+		'methods' => [ 'xsmtpagent', 'xsmtpcommand', 'xsmtpdiagnosis', 
+				'xsmtpstatus', 'emailheaders', 'reperit' ],
 		'instance' => undef(),
 );
 my $Head = {
@@ -33,8 +34,15 @@ my $Head = {
 #
 PREPROCESS: {
 	can_ok( $Test->class(), @{ $Test->methods } );
-	is( $Test->class->xsmtpcommand(), 'X-SMTP-Command: ', '->xsmtpcommand() = X-SMTP-Command:' );
+	is( $Test->class->xsmtpagent(), 'X-SMTP-Agent: Sendmail'.qq(\n),
+		'->xsmtpagent() = X-SMTP-Agent: Sendmail' );
+	is( $Test->class->xsmtpcommand(), 'X-SMTP-Command: CONN'.qq(\n),
+		'->xsmtpcommand() = X-SMTP-Command: CONN' );
 	isa_ok( $Test->class->emailheaders(), q|ARRAY|, '->emailheaders = []' );
+	is( $Test->class->xsmtpdiagnosis('Test'), 'X-SMTP-Diagnosis: Test'.qq(\n),
+		'->xsmtpdiagnosis() = X-SMTP-Diagnosis: Test' );
+	is( $Test->class->xsmtpstatus('5.1.1'), 'X-SMTP-Status: 5.1.1'.qq(\n),
+		'->xsmtpstatus() = X-SMTP-Status: 5.1.1' );
 }
 
 REPERIT: {

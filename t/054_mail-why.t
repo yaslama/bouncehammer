@@ -1,4 +1,4 @@
-# $Id: 054_mail-why.t,v 1.7 2010/10/05 11:30:57 ak Exp $
+# $Id: 054_mail-why.t,v 1.8 2010/11/13 19:13:25 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 852 );
+use Test::More ( tests => 1003 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -16,40 +16,59 @@ use Test::More ( tests => 852 );
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
 my $Classes = {
+        'contenterr'	=> q(Kanadzuchi::Mail::Why::ContentError),
         'filtered'	=> q(Kanadzuchi::Mail::Why::Filtered),
         'hostunknown'	=> q(Kanadzuchi::Mail::Why::HostUnknown),
         'mailboxfull'	=> q(Kanadzuchi::Mail::Why::MailboxFull),
-        'relayingdenied'=> q(Kanadzuchi::Mail::Why::RelayingDenied),
-        'systemfull'	=> q(Kanadzuchi::Mail::Why::SystemFull),
+        'mailererror'	=> q(Kanadzuchi::Mail::Why::MailerError),
         'msgtoobig'	=> q(Kanadzuchi::Mail::Why::MesgTooBig),
-        'userunknown'	=> q(Kanadzuchi::Mail::Why::UserUnknown),
+        'notaccept'	=> q(Kanadzuchi::Mail::Why::NotAccept),
         'rejected'	=> q(Kanadzuchi::Mail::Why::Rejected),
-        'systemerror'	=> q(Kanadzuchi::Mail::Why::SystemError),
+        'relayingdenied'=> q(Kanadzuchi::Mail::Why::RelayingDenied),
         'securityerr'	=> q(Kanadzuchi::Mail::Why::SecurityError),
-        'contenterr'	=> q(Kanadzuchi::Mail::Why::ContentError),
+        'systemerror'	=> q(Kanadzuchi::Mail::Why::SystemError),
+        'systemfull'	=> q(Kanadzuchi::Mail::Why::SystemFull),
+        'userunknown'	=> q(Kanadzuchi::Mail::Why::UserUnknown),
 };
 
 my $Strings = {
-	'filtered'	=> [
-		q{due to extended inactivity new mail is not currently being accepted for this mailbox},
-		q{this account has been disabled or discontinued},
-	],
-        'contenterr'	=> [
+        'contenterr' => [
 		q(The message was rejected because it contains prohibited virus or spam content),
 		q(Message filtered. Please see the faqs section on spam),
 		q(Blocked by policy: No spam please),
 		q(Message rejected due to suspected spam content),
 	],
-        'hostunknown'	=> [
+	'filtered' => [
+		q{due to extended inactivity new mail is not currently being accepted for this mailbox},
+		q{this account has been disabled or discontinued},
+	],
+        'hostunknown' => [
 		q(Recipient address rejected: Unknown domain name),
 		q(Host Unknown),
 	],
-        'mailboxfull'	=> [
+        'mailboxfull' => [
 		q(Mailbox full),
 		q(Mailbox is full),
 		q(Too much mail data),
 		q(Account is over quota),
 		q(Account is temporarily over quota),
+	],
+	'mailererror' => [
+		q(X-Unix; 127),
+		q(Command died with status 9),
+	],
+        'mesgtoobig' => [
+		q(Message size exceeds fixed maximum message size),
+		q(Message size exceeds fixed limit),
+		q(Message size exceeds maximum value),
+	],
+	'notaccept' => [
+		q(Name service error for ...),
+	],
+	'rejected' => [
+		q{domain of sender address example.jp does not exist},
+		q(Domain of sender address exampe.int does not exist),
+		q(Sorry, Your remotehost looks suspiciously like spammer),
 	],
         'relayingdenied'=> [ 
 		q(Relaying denied),
@@ -64,17 +83,7 @@ my $Strings = {
 		q{system config error},
 		q{Too many hops},
 	],
-	'rejected' => [
-		q{domain of sender address example.jp does not exist},
-		q(Domain of sender address exampe.int does not exist),
-		q(Sorry, Your remotehost looks suspiciously like spammer),
-	],
         'systemfull'	=> [ q(Requested mail action aborted: exceeded storage allocation) ],
-        'mesgtoobig'	=> [
-		q(Message size exceeds fixed maximum message size),
-		q(Message size exceeds fixed limit),
-		q(Message size exceeds maximum value),
-	],
         'userunknown'	=> [
 		q(user01@example.jp: ...User Unknown),
 		q(No such mailbox),

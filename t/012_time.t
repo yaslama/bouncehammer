@@ -1,4 +1,4 @@
-# $Id: 012_time.t,v 1.5 2010/08/29 21:03:42 ak Exp $
+# $Id: 012_time.t,v 1.7 2010/11/13 19:13:24 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,7 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Time;
 use Time::Piece;
-use Test::More ( tests => 207 );
+use Test::More ( tests => 360 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -19,9 +19,8 @@ use Test::More ( tests => 207 );
 #
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi::Time|,
-	'methods' => [
-		'to_second', 'tz2second', 'second2tz',
-		'monthname', 'dayofweek', 'hourname', 'o2d', ],
+	'methods' => [ 'to_second', 'monthname', 'dayofweek', 'hourname', 'o2d', 
+			'abbr2tz', 'tz2second', 'second2tz', 'canonify' ],
 	'instance' => undef(), );
 
 #  ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ 
@@ -53,43 +52,16 @@ METHODS: {
 		is( $class->to_second( -4294967296 ), 0, q{ The value: -4294967296} );
 	}
 
-	TIMEZONE_TO_SECOND: {
-		is( $class->tz2second('+0000'), 0, $class.q{->tz2second(+0000)} );
-		is( $class->tz2second('-0000'), 0, $class.q{->tz2second(-0000)} );
-		is( $class->tz2second('-0900'), -32400, $class.q{->tz2second(-0900)} );
-		is( $class->tz2second('+0900'), 32400, $class.q{->tz2second(+0900)} );
-		is( $class->tz2second('-1200'), -43200, $class.q{->tz2second(-1200)} );
-		is( $class->tz2second('+1200'), 43200, $class.q{->tz2second(+1200)} );
-		is( $class->tz2second('-1800'), undef(), $class.q{->tz2second(-1800)} );
-		is( $class->tz2second('+1800'), undef(), $class.q{->tz2second(+1800)} );
-		is( $class->tz2second('NULL'), undef(), $class.q{->tz2second(NULL)} );
-		is( $class->tz2second(), undef(), $class.q{->tz2second()} );
-	}
-
-	SECOND_TO_TIMEZONE: {
-		is( $class->second2tz(0), q{+0000}, $class.q{->second2tz(0)} );
-		is( $class->second2tz(-32400), q{-0900}, $class.q{->second2tz(-32400)} );
-		is( $class->second2tz(32400), q{+0900}, $class.q{->second2tz(32400)} );
-		is( $class->second2tz(-43200), q{-1200}, $class.q{->second2tz(-43200)} );
-		is( $class->second2tz(43200), q{+1200}, $class.q{->second2tz(43200)} );
-		is( $class->second2tz(-65535), q{}, $class.q{->second2tz(65535)} );
-		is( $class->second2tz(65535), q{}, $class.q{->second2tz(65535)} );
-		is( $class->second2tz(0e0), q{+0000}, $class.q{->second2tz(0e0)} );
-		is( $class->second2tz(), q{+0000}, $class.q{->second2tz()} );
-	}
-
 	IRREGULAR_CASE: {
 		foreach my $z ( @{$Kanadzuchi::Test::ExceptionalValues} )
 		{
 			my $argv = defined($z) ? sprintf("%#x",ord($z)) : 'undef()';
 			is( $class->to_second($z), 0, '->to_second() The value: '.$argv );
-			is( $class->tz2second($z), undef(), '->tz2second() The value: '.$argv );
 		}
 
 		foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
 		{
 			is( $class->to_second($n), 0, '->to_second() The value: '.$n );
-			is( $class->tz2second($n), undef(), '->tz2second() The value: '.$n );
 		}
 	}
 
@@ -152,6 +124,118 @@ METHODS: {
 			$time = Time::Piece->strptime($date, "%Y-%m-%d");
 			like( $date, qr{\A\d{4}[-]\d{2}[-]\d{2}\z}, 'offset = '.$o.', date = '.$date );
 			is( $time->epoch, $base->epoch )
+		}
+	}
+
+	CANONIFY: {
+		my $datestrings = [
+			q|Thu, 2 Jul 2008 04:01:03 +0900 (JST)|,
+			q|Thu, 2 Jul 2008 04:01:03 +0900 (GMT)|,
+			q|Thu, 2 Jul 2008 04:01:03 +0900 (UTC)|,
+			q|Thu, 03 Mar 2010 12:46:23 +0900|,
+			q|Thu, 17 Jun 2010 01:43:33 +0900|,
+			q|Thu, 1 Apr 2010 20:51:58 +0900|,
+			q|Thu, 01 Apr 2010 16:25:40 +0900|,
+			q|27 Apr 2009 08:08:54 +0000|,
+			q|Fri,18 Oct 2002 16:03:06 PM|,
+			q|27 Sep 1998 00:51:27 -0400|,
+			q|Sat, 21 Nov 1998 16:38:02 -0500 (EST)|,
+			q|Sat, 21 Nov 1998 13:13:04 -0800 (PST)|,
+			q|    Sat, 21 Nov 1998 15:40:24 -0600|,
+			q|Thu, 19 Nov 98 06:53:46 +0100|,
+			q|03 Apr 1998 09:59:35 +0200|,
+			q|19 Mar 1998 20:55:10 +0100|,
+			q|2010-06-18 17:17:52 +0900|,
+			q|2010-06-18T17:17:52 +0900|,
+			q|Foo, 03 Mar 2010 12:46:23 +0900|,
+			q|Thu, 13 Mar 100 12:46:23 +0900|,
+			q|Thu, 03 Mar 2001 12:46:23 -9900|,
+			q|Thu, 03 Mar 2001 12:46:23 +9900|,
+		];
+
+		my $invaliddates = [
+			q|Thu, 13 Bar 2000 12:46:23 +0900|,
+			q|Thu, 13 Apr 1900 12:46:23 +0900|,
+			q|Thu, 13 Apr 2200 12:46:23 +0900|,
+			q|Thu, 03 Mar 2001 32:46:23 +0900|,
+			q|Thu, 03 Mar 2001 12:86:23 +0900|,
+			q|Thu, 03 Mar 2001 12:46:73 +0900|,
+		];
+
+		foreach my $d ( @$datestrings )
+		{
+			my $time = undef();
+			my $text = Kanadzuchi::Time->canonify($d,0,1);
+			ok( length $text, '->canonify('.$d.') = '.$text );
+
+			$text =~ s/\s+[-+]\d{4}\z//;
+			$time = Time::Piece->strptime($text,q|%a, %d %b %Y %T|);
+			isa_ok( $time, q|Time::Piece| );
+			ok( $time->cdate(), '->cdate() = '.$time->cdate() );
+
+			$time = Kanadzuchi::Time->canonify($d,1,1);
+			isa_ok( $time, q|Time::Piece| );
+			ok( $time->cdate(), '->cdate() = '.$time->cdate() );
+			is( $time->tzoffset(), 0, '->tzoffset() = 0' );
+		}
+
+		foreach my $d ( @$invaliddates )
+		{
+			my $text = Kanadzuchi::Time->canonify($d,0,1);
+			ok( length($text) == 0, '->canonify('.$d.') = '.$text );
+
+			my $time = Kanadzuchi::Time->canonify($d,1,1);
+			is( $time, undef(), '->canonify('.$d.') = undef' );
+		}
+	}
+
+	ABBR2TZ: {
+		is( $class->abbr2tz('GMT'), '+0000', 'GMT = +0000' );
+		is( $class->abbr2tz('UTC'), '-0000', 'UTC = -0000' );
+		is( $class->abbr2tz('JST'), '+0900', 'JST = +0900' );
+		is( $class->abbr2tz('PDT'), '-0700', 'PDT = -0700' );
+		is( $class->abbr2tz('MST'), '-0700', 'MST = -0700' );
+		is( $class->abbr2tz('CDT'), '-0500', 'CDT = -0500' );
+		is( $class->abbr2tz('EDT'), '-0400', 'EDT = -0400' );
+		is( $class->abbr2tz('HST'), '-1000', 'HST = -1000' );
+		is( $class->abbr2tz('UT'),  '-0000', 'UT  = -0000' );
+	}
+
+	TIMEZONE_TO_SECOND: {
+		is( $class->tz2second('+0000'), 0, $class.q{->tz2second(+0000)} );
+		is( $class->tz2second('-0000'), 0, $class.q{->tz2second(-0000)} );
+		is( $class->tz2second('-0900'), -32400, $class.q{->tz2second(-0900)} );
+		is( $class->tz2second('+0900'), 32400, $class.q{->tz2second(+0900)} );
+		is( $class->tz2second('-1200'), -43200, $class.q{->tz2second(-1200)} );
+		is( $class->tz2second('+1200'), 43200, $class.q{->tz2second(+1200)} );
+		is( $class->tz2second('-1800'), undef(), $class.q{->tz2second(-1800)} );
+		is( $class->tz2second('+1800'), undef(), $class.q{->tz2second(+1800)} );
+		is( $class->tz2second('NULL'), undef(), $class.q{->tz2second(NULL)} );
+		is( $class->tz2second(), undef(), $class.q{->tz2second()} );
+	}
+
+	SECOND_TO_TIMEZONE: {
+		is( $class->second2tz(0), q{+0000}, $class.q{->second2tz(0)} );
+		is( $class->second2tz(-32400), q{-0900}, $class.q{->second2tz(-32400)} );
+		is( $class->second2tz(32400), q{+0900}, $class.q{->second2tz(32400)} );
+		is( $class->second2tz(-43200), q{-1200}, $class.q{->second2tz(-43200)} );
+		is( $class->second2tz(43200), q{+1200}, $class.q{->second2tz(43200)} );
+		is( $class->second2tz(-65535), q{}, $class.q{->second2tz(65535)} );
+		is( $class->second2tz(65535), q{}, $class.q{->second2tz(65535)} );
+		is( $class->second2tz(0e0), q{+0000}, $class.q{->second2tz(0e0)} );
+		is( $class->second2tz(), q{+0000}, $class.q{->second2tz()} );
+	}
+
+	IRREGULAR_CASE: {
+		foreach my $z ( @{$Kanadzuchi::Test::ExceptionalValues} )
+		{
+			my $argv = defined($z) ? sprintf("%#x",ord($z)) : 'undef()';
+			is( $class->tz2second($z), undef(), '->tz2second() The value: '.$argv );
+		}
+
+		foreach my $n ( @{$Kanadzuchi::Test::NegativeValues} )
+		{
+			is( $class->tz2second($n), undef(), '->tz2second() The value: '.$n );
 		}
 	}
 }

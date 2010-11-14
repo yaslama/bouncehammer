@@ -1,4 +1,4 @@
-# $Id: 034_mta-us-google.t,v 1.1 2010/10/05 13:26:37 ak Exp $
+# $Id: 034_mta-us-google.t,v 1.2 2010/11/13 19:13:25 ak Exp $
 # -Id: 034_mta-google.t,v 1.2 2010/10/05 11:30:56 ak Exp -
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
@@ -10,7 +10,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::MTA::US::Google;
-use Test::More ( tests => 10 );
+use Test::More ( tests => 14 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -19,7 +19,8 @@ use Test::More ( tests => 10 );
 #
 my $Test = new Kanadzuchi::Test(
 		'class' => q|Kanadzuchi::MTA::US::Google|,
-		'methods' => [ 'xsmtpcommand', 'emailheaders', 'reperit' ],
+		'methods' => [ 'xsmtpagent', 'xsmtpcommand', 'xsmtpdiagnosis',
+				'xsmtpstatus', 'emailheaders', 'reperit' ],
 		'instance' => undef(),
 );
 my $Head = {
@@ -37,7 +38,14 @@ my $Head = {
 #
 PREPROCESS: {
 	can_ok( $Test->class(), @{ $Test->methods } );
-	is( $Test->class->xsmtpcommand(), 'X-SMTP-Command: ', '->xsmtpcommand() = X-SMTP-Command:' );
+	is( $Test->class->xsmtpagent(), 'X-SMTP-Agent: US::Google'.qq(\n),
+		'->xsmtpagent() = X-SMTP-Agent: US::Google' );
+	is( $Test->class->xsmtpcommand(), 'X-SMTP-Command: CONN'.qq(\n),
+		'->xsmtpcommand() = X-SMTP-Command: CONN' );
+	is( $Test->class->xsmtpdiagnosis('Test'), 'X-SMTP-Diagnosis: Test'.qq(\n), 
+		'->xsmtpdiagnosis() = X-SMTP-Diagnosis: Test' );
+	is( $Test->class->xsmtpstatus('5.1.1'), 'X-SMTP-Status: 5.1.1'.qq(\n),
+		'->xsmtpstatus() = X-SMTP-Status: 5.1.1' );
 	isa_ok( $Test->class->emailheaders(), q|ARRAY|, '->emailheaders = []' );
 	is( $Test->class->emailheaders->[0], 'X-Failed-Recipients', 'X-Failed-Recipients' );
 }
@@ -53,11 +61,12 @@ REPERIT: {
 	foreach my $el ( split("\n", $pseudoheader) )
 	{
 		next() if( $el =~ m{\A\z} );
+		ok( $el, $el ) if( $el =~ m{X-SMTP-Agent: } );
 		ok( $el, $el ) if( $el =~ m{X-SMTP-Command: [A-Z]{4}} );
 		ok( $el, $el ) if( $el =~ m{Arrival-Date: } );
 		ok( $el, $el ) if( $el =~ m{Final-Recipient: } );
-		ok( $el, $el ) if( $el =~ m{Status: } );
-		ok( $el, $el ) if( $el =~ m{X-Diagnosis: } );
+		ok( $el, $el ) if( $el =~ m{X-SMTP-Status: } );
+		ok( $el, $el ) if( $el =~ m{X-SMTP-Diagnosis: } );
 		ok( $el, $el ) if( $el =~ m{To: } );
 	}
 }

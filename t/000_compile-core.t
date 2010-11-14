@@ -1,4 +1,4 @@
-# $Id: 000_compile-core.t,v 1.46 2010/10/05 11:30:56 ak Exp $
+# $Id: 000_compile-core.t,v 1.48 2010/11/13 19:13:24 ak Exp $
 use strict;
 use warnings;
 use lib qw(./t/lib ./dist/lib ./src/lib);
@@ -25,9 +25,6 @@ my $Modules = [ qw{
 	Kanadzuchi::Mail::Bounced
 	Kanadzuchi::Mail::Bounced::Generic
 	Kanadzuchi::Mail::Bounced::Yahoo
-	Kanadzuchi::Mail::Bounced::JP::aubyKDDI
-	Kanadzuchi::Mail::Bounced::JP::NTTDoCoMo
-	Kanadzuchi::Mail::Bounced::JP::SoftBank
 	Kanadzuchi::Mail::Group
 	Kanadzuchi::Mail::Group::AU::WebMail
 	Kanadzuchi::Mail::Group::BR::WebMail
@@ -64,13 +61,15 @@ my $Modules = [ qw{
 	Kanadzuchi::Mail::Why::Filtered
 	Kanadzuchi::Mail::Why::HostUnknown
 	Kanadzuchi::Mail::Why::MailboxFull
+	Kanadzuchi::Mail::Why::MailerError
+	Kanadzuchi::Mail::Why::MesgTooBig
+	Kanadzuchi::Mail::Why::NotAccept
 	Kanadzuchi::Mail::Why::Rejected
 	Kanadzuchi::Mail::Why::RelayingDenied
-	Kanadzuchi::Mail::Why::SystemFull
-	Kanadzuchi::Mail::Why::MesgTooBig
-	Kanadzuchi::Mail::Why::UserUnknown
 	Kanadzuchi::Mail::Why::SecurityError
 	Kanadzuchi::Mail::Why::SystemError
+	Kanadzuchi::Mail::Why::SystemFull
+	Kanadzuchi::Mail::Why::UserUnknown
 	Kanadzuchi::Mbox
 	Kanadzuchi::MDA
 	Kanadzuchi::MIME::Parser
@@ -81,7 +80,6 @@ my $Modules = [ qw{
 	Kanadzuchi::MTA::Postfix
 	Kanadzuchi::MTA::qmail
 	Kanadzuchi::MTA::Sendmail
-	Kanadzuchi::RFC1893
 	Kanadzuchi::RFC2606
 	Kanadzuchi::RFC2822
 	Kanadzuchi::RFC3463
@@ -102,7 +100,13 @@ my $Optionals = [ qw{
 	Kanadzuchi::MTA::US::Google
 } ];
 
-plan( tests => scalar @$Modules );
+plan( tests => scalar(@$Modules) + scalar(@$Optionals) );
 foreach my $module ( @$Modules ){ use_ok($module); }
+foreach my $optmod ( @$Optionals )
+{ 
+	my $path = $optmod; $path =~ y{::}{/}; $path =~ s{\z}{.pm};
+	my $dist = -d './dist/lib' ? './dist/lib' : './src/lib';
+	ok( -f $dist.'/'.$path );
+}
 
 __END__
