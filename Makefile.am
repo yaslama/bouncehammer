@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.54 2010/11/13 19:27:53 ak Exp $
+# $Id: Makefile.am,v 1.55 2010/11/15 16:13:24 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
