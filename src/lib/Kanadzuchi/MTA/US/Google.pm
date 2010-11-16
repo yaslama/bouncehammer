@@ -1,4 +1,4 @@
-# $Id: Google.pm,v 1.3 2010/11/13 19:18:08 ak Exp $
+# $Id: Google.pm,v 1.4 2010/11/15 16:12:01 ak Exp $
 # -Id: Google.pm,v 1.2 2010/07/04 23:45:49 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: Google.pm,v 1.1 2009/07/31 09:04:38 ak Exp -
@@ -22,6 +22,7 @@ my $RxFromGmail = {
 	'start' => qr{Technical details of (?:permanent|temporary) failure:},
 	'error' => qr{The error that the other server returned was:},
 	'endof' => qr{\A----- Original message -----\z},
+	'delay' => qr{Delivery to the following recipient has been delayed},
 	'subject' => qr{Delivery[ ]Status[ ]Notification},
 };
 
@@ -253,8 +254,24 @@ sub reperit
 		}
 		else
 		{
-			# Unsupported error message in body part.
-			$causa = 'undefined';
+			if( $rhostsaid =~ $RxFromGmail->{'delay'} )
+			{
+				# Technical details of temporary failure: 
+				# The recipient server did not accept our requests to connect. 
+				# Learn more at http://mail.google.com/support/bin/answer.py?answer=7720 
+				# [test.example.jp. (0): Connection timed out]
+				$causa = 'expired';
+				$error = 't';
+				$rhostsaid =~ s/\A.+$RxFromGmail->{'start'}//;
+				$rhostsaid =~ s/Learn more at.+\[(.+)\].+\z/$1/;
+				$rhostsaid =~ s/\A //g;
+				$rhostsaid =~ s/ \z//g;
+			}
+			else
+			{
+				# Unsupported error message in body part.
+				$causa = 'undefined';
+			}
 		}
 
 		$pstat = Kanadzuchi::RFC3463->status( $causa, $error, 'i' );
