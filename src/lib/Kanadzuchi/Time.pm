@@ -1,4 +1,4 @@
-# $Id: Time.pm,v 1.9 2010/11/13 19:23:03 ak Exp $
+# $Id: Time.pm,v 1.10 2010/11/15 16:11:06 ak Exp $
 # -Id: Time.pm,v 1.1 2009/08/29 09:13:56 ak Exp -
 # -Id: Time.pm,v 1.5 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -324,14 +324,12 @@ sub canonify
 	#
 	# @Description	Canonify date string; strptime() wrapper
 	# @Param <str>	(String) Date string
-	# @Param <flag>	(Integer) To return Time::Piece object or not
 	# @Param <flag>	(Integer) To quiet or not to quiet
 	# @Return	(String|Time::Piece) Canonified date string or Time::Piece object
 	# @See		http://en.wikipedia.org/wiki/ISO_8601
 	# @See		http://www.ietf.org/rfc/rfc3339.txt
 	my $class = shift();
 	my $datev = shift() || return q();
-	my $toobj = shift() || 0;
 	my $quiet = shift() || 0;
 	my $piece = { 
 		'Y' => undef(),		# (Integer) Year
@@ -417,28 +415,21 @@ sub canonify
 	# Check each piece
 	if( grep { ! defined $_ } values %$piece )
 	{
-		warn( ' ***warning: Strange date format ['.$datev.']' ) unless $quiet;
-		return $toobj ? undef() : q();
+		warn ' ***warning: Strange date format ['.$datev.']' unless $quiet;
+		return q();
 	}
 
 	if( $piece->{'Y'} < 1902 || $piece->{'Y'} > 2037 )
 	{
 		# -(2^31) ~ (2^31)
-		return $toobj ? undef() : q();
+		return q();
 	}
 
 	# Build date string
 	#   Thu, 29 Apr 2004 10:01:11 +0900
 	$canonified = sprintf( "%s, %d %s %d %s %s", $piece->{'a'}, $piece->{'d'}, 
 				$piece->{'M'}, $piece->{'Y'}, $piece->{'T'}, $piece->{'z'} );
-
-	return $canonified unless( $toobj );
-
-	eval { $timepiecex = Time::Piece->strptime( $canonified, q{%a, %d %b %Y %T %z} ); };
-	return $timepiecex unless $@;
-
-	warn ' ***warning: '.$@ unless $quiet;
-	return undef();
+	return $canonified;
 }
 
 sub abbr2tz

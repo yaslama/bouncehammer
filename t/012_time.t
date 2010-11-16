@@ -1,4 +1,4 @@
-# $Id: 012_time.t,v 1.7 2010/11/13 19:13:24 ak Exp $
+# $Id: 012_time.t,v 1.8 2010/11/15 16:11:10 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -10,7 +10,7 @@ use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::Time;
 use Time::Piece;
-use Test::More ( tests => 360 );
+use Test::More ( tests => 297 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -129,9 +129,9 @@ METHODS: {
 
 	CANONIFY: {
 		my $datestrings = [
-			q|Thu, 2 Jul 2008 04:01:03 +0900 (JST)|,
-			q|Thu, 2 Jul 2008 04:01:03 +0900 (GMT)|,
-			q|Thu, 2 Jul 2008 04:01:03 +0900 (UTC)|,
+			q|Mon, 2 Apr 2001 04:01:03 +0900 (JST)|,
+			q|Fri, 9 Apr 2004 04:01:03 +0000 (GMT)|,
+			q|Thu, 5 Apr 2007 04:01:03 -0000 (UTC)|,
 			q|Thu, 03 Mar 2010 12:46:23 +0900|,
 			q|Thu, 17 Jun 2010 01:43:33 +0900|,
 			q|Thu, 1 Apr 2010 20:51:58 +0900|,
@@ -151,6 +151,9 @@ METHODS: {
 			q|Thu, 13 Mar 100 12:46:23 +0900|,
 			q|Thu, 03 Mar 2001 12:46:23 -9900|,
 			q|Thu, 03 Mar 2001 12:46:23 +9900|,
+			q|Sat, 21 Nov 1998 13:13:04 -0800 (PST)    |,
+			q|Sat, 21 Nov 1998 13:13:04 -0800 (PST) JST|,
+			q|Sat, 21 Nov 1998 13:13:04 -0800 (PST) Hoge|,
 		];
 
 		my $invaliddates = [
@@ -165,27 +168,19 @@ METHODS: {
 		foreach my $d ( @$datestrings )
 		{
 			my $time = undef();
-			my $text = Kanadzuchi::Time->canonify($d,0,1);
+			my $text = Kanadzuchi::Time->canonify($d,1);
 			ok( length $text, '->canonify('.$d.') = '.$text );
 
 			$text =~ s/\s+[-+]\d{4}\z//;
 			$time = Time::Piece->strptime($text,q|%a, %d %b %Y %T|);
 			isa_ok( $time, q|Time::Piece| );
 			ok( $time->cdate(), '->cdate() = '.$time->cdate() );
-
-			$time = Kanadzuchi::Time->canonify($d,1,1);
-			isa_ok( $time, q|Time::Piece| );
-			ok( $time->cdate(), '->cdate() = '.$time->cdate() );
-			is( $time->tzoffset(), 0, '->tzoffset() = 0' );
 		}
 
 		foreach my $d ( @$invaliddates )
 		{
-			my $text = Kanadzuchi::Time->canonify($d,0,1);
+			my $text = Kanadzuchi::Time->canonify($d,1);
 			ok( length($text) == 0, '->canonify('.$d.') = '.$text );
-
-			my $time = Kanadzuchi::Time->canonify($d,1,1);
-			is( $time, undef(), '->canonify('.$d.') = undef' );
 		}
 	}
 
