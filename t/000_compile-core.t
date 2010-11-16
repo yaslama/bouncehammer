@@ -1,4 +1,4 @@
-# $Id: 000_compile-core.t,v 1.48 2010/11/13 19:13:24 ak Exp $
+# $Id: 000_compile-core.t,v 1.49 2010/11/15 16:10:33 ak Exp $
 use strict;
 use warnings;
 use lib qw(./t/lib ./dist/lib ./src/lib);
