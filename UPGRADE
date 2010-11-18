@@ -1,9 +1,16 @@
                      BOUNCEHAMMER/UPGRADE
 -----------------------------------------------------------------------
- $Id: UPGRADE,v 1.4 2010/10/26 04:12:42 ak Exp $
+ $Id: UPGRADE,v 1.5 2010/11/18 05:25:34 ak Exp $
  Copyright (C) 2009,2010 Cubicroot Co. Ltd. ALL RIGHTS RESERVED.
 -----------------------------------------------------------------------
 
+-----------------------------------------------------------------------
+* 2.6.0 => 2.6.1	2010/11/19
+
+  1. Run ./configure script, ``make'', and ``make install''
+
+
+-----------------------------------------------------------------------
 * 2.5.0 => 2.6.0	2010/10/26
 
   1. Run ./configure script, ``make'', and ``make install''
@@ -15,7 +22,7 @@
   3. If you use etc/avaiable-countries and want to parse bounced emails
      from Google(Gmail), append the following line below the line "us:"
       # vi <install-dir>/etc/avaiable-countries
-      
+ 
       "us":
         "webmail": 1
         "agents": [ "Google" ] <- append this line
