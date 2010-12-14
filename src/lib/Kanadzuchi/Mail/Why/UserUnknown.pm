@@ -1,4 +1,4 @@
-# $Id: UserUnknown.pm,v 1.11 2010/11/13 19:12:56 ak Exp $
+# $Id: UserUnknown.pm,v 1.12 2010/12/12 06:19:35 ak Exp $
 # -Id: UserUnknown.pm,v 1.1 2009/08/29 07:33:28 ak Exp -
 # -Id: UserUnknown.pm,v 1.2 2009/05/11 08:22:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -30,6 +30,7 @@ sub exemplaria
 		qr{no such mailbox},
 		qr{no such user here},
 		qr{no such user},
+		qr{<.+> not found},
 		qr{mailbox not present},
 		qr{mailbox unavailable},
 		qr{recipient address rejected: access denied},
@@ -43,6 +44,7 @@ sub exemplaria
 		qr{sorry, no mailbox here by that name},
 		qr{this address no longer accepts mail},
 		qr{this user doesn[']?t have a .+ account},	# Yahoo!
+		qr{undeliverable address},
 		qr{unknown address},
 		qr{unknown recipient},
 		qr{unknown user},
