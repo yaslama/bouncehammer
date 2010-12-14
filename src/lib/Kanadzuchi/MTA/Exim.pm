@@ -1,4 +1,4 @@
-# $Id: Exim.pm,v 1.4 2010/11/13 19:18:03 ak Exp $
+# $Id: Exim.pm,v 1.6 2010/12/12 06:24:17 ak Exp $
 # Kanadzuchi::MTA::
                               
  ######           ##          
@@ -128,8 +128,6 @@ sub reperit
 	return q() unless( $mhead->{'from'} =~ $RxEximMTA->{'from'} );
 	# return q() unless( $mhead->{'message-id'} =~ $RxEximMTA->{'message-id'} );
 
-	my $xmode = { 'begin' => 1 << 0, 'error' => 1 << 1, 'endof' => 1 << 2 };
-	my $xflag = 0;		# (Integer) Flag
 	my $pstat = q();	# (String) Stauts code
 	my $phead = q();	# (String) Pseudo email header
 	my $xsmtp = q();	# (String) SMTP Command in transcript of session
@@ -138,9 +136,7 @@ sub reperit
 
 	my $statintxt = q();	# (String) #n.n.n
 	my $rhostsaid = q();	# (String) Diagnostic-Code:
-	my $ldafailed = 0;	# (Integer) local delivery failed
-	my $smtperror = 0;	# (Integer) Flag, SMTP Error
-	my $smtpermap = { 'mail' => 'rejected', 'rcpt' => 'userunknown', 'data' => 'filtered' };
+	my $esmtpcomm = {};	# (Ref->Hash) SMTP Command names
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
@@ -173,7 +169,8 @@ sub reperit
 	$rhostsaid =~ y{ }{ }s;
 	$rhostsaid =~ s{\A.+address[(]es[)] failed: }{};
 
-	SMTP_ERROR: foreach my $s ( keys %$RxSMTPErr )
+	# SMTP Error
+	foreach my $s ( keys %$RxSMTPErr )
 	{
 		if( $rhostsaid =~ $RxSMTPErr->{ $s } )
 		{
@@ -182,7 +179,8 @@ sub reperit
 		}
 	}
 
-	TRANSPORT_ERROR: foreach my $t ( keys %$RxTrError )
+	# Transport Error
+	foreach my $t ( keys %$RxTrError )
 	{
 		if( grep { $rhostsaid =~ $_ } @{ $RxTrError->{ $t } } )
 		{
@@ -202,6 +200,19 @@ sub reperit
 	else
 	{
 		$pstat = $ucode if $rhostsaid;
+	}
+
+	if( ! $xsmtp || $xsmtp eq 'CONN' )
+	{
+		$esmtpcomm = __PACKAGE__->SMTPCOMMAND();
+		foreach my $cmd ( keys %$esmtpcomm )
+		{
+			if( $rhostsaid =~ $esmtpcomm->{ $cmd } )
+			{
+				$xsmtp = uc $cmd;
+				last();
+			}
+		}
 	}
 
 	$phead .= 'Final-Recipient: '.$mhead->{'x-failed-recipients'}.qq(\n);

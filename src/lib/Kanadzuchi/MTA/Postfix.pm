@@ -1,4 +1,4 @@
-# $Id: Postfix.pm,v 1.5 2010/11/13 19:18:03 ak Exp $
+# $Id: Postfix.pm,v 1.6 2010/11/28 00:18:13 ak Exp $
 # Kanadzuchi::MTA::
                                                
  #####                  ##    ###  ##          
@@ -99,6 +99,7 @@ sub reperit
 	my $pstat = q();	# (String) #n.n.n Status code in message body
 	my $xsmtp = q();	# (String) SMTP Command in transcript of session
 	my $rhostsaid = q();	# (String) Remote host said: ...
+	my $esmtpcomm = {};	# (Ref->Hash) SMTP Command names
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
@@ -158,7 +159,19 @@ sub reperit
 	{
 		# src/smtp/smtp_proto.c: "host %s said: %s (in reply to %s)",
 		$xsmtp = $1;
-		$xsmtp = 'MAIL' if( $xsmtp eq 'HELO' || $xsmtp eq 'EHLO' );
+	}
+
+	if( ! $xsmtp || $xsmtp eq 'CONN' )
+	{
+		$esmtpcomm = __PACKAGE__->SMTPCOMMAND();
+		foreach my $cmd ( keys %$esmtpcomm )
+		{
+			if( $rhostsaid =~ $esmtpcomm->{ $cmd } )
+			{
+				$xsmtp = uc $cmd;
+				last();
+			}
+		}
 	}
 
 	$pstat ||= Kanadzuchi::RFC3463->status('undefined','p','i');

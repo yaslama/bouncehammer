@@ -1,4 +1,4 @@
-# $Id: qmail.pm,v 1.6 2010/11/13 19:18:04 ak Exp $
+# $Id: qmail.pm,v 1.7 2010/11/28 00:18:13 ak Exp $
 # Kanadzuchi::MTA::
                          ##  ###    
   #####  ##  ##  ####         ##    
@@ -141,6 +141,7 @@ sub reperit
 	my $rhostsaid = q();	# (String) Remote host said: ...
 	my $rcptintxt = q();	# (String) Recipient address in message body
 	my $statintxt = q();	# (String) #n.n.n Status code in message body
+	my $esmtpcomm = {};	# (Ref->Hash) SMTP Command names
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
@@ -241,6 +242,19 @@ sub reperit
 		$rcptintxt = Kanadzuchi::Address->canonify($rhostsaid);
 		$phead .= q(Final-Recipient: RFC822; ).$rcptintxt.qq(\n) 
 				if( Kanadzuchi::RFC2822->is_emailaddress($rcptintxt) );
+	}
+
+	if( ! $xsmtp || $xsmtp eq 'CONN' )
+	{
+		$esmtpcomm = __PACKAGE__->SMTPCOMMAND();
+		foreach my $cmd ( keys %$esmtpcomm )
+		{
+			if( $rhostsaid =~ $esmtpcomm->{ $cmd } )
+			{
+				$xsmtp = uc $cmd;
+				last();
+			}
+		}
 	}
 
 	# Add the text that 'Remote host said' or 'Sorry,...' into X-SMTP-Diagnosis header.
