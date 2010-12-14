@@ -1,4 +1,4 @@
-# $Id: 016_address.t,v 1.4 2010/11/13 19:13:24 ak Exp $
+# $Id: 016_address.t,v 1.5 2010/12/05 21:15:11 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Kanadzuchi::Test;
 use Kanadzuchi::Address;
 use Kanadzuchi::RFC2822;
 use Path::Class;
-use Test::More ( tests => 1186 );
+use Test::More ( tests => 1190 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -69,8 +69,12 @@ CLASS_METHODS: {
 		q{"T E S T" <test@exampe.jp>},
 		q{"Nanashi no gombe" <gombe@example.jp>},
 		q{<root@example.jp>},
+		q{<root@example.jp> root@example.jp},
 		q{User name <user@example.jp>},
+		q{User name <user@example.jp> USER@EXAMPLE.JP},
 		q{dummy@host <dummy@example.jp>},
+		q{dummy@host.int <dummy@example.jp>},
+		q{dummy <dummy@example.jp> dummy@host.int},
 		q{address@example.jp},
 		q{<user@example.com>:},
 		q{"<user@example.org>"},
