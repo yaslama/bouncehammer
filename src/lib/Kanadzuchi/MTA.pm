@@ -1,4 +1,4 @@
-# $Id: MTA.pm,v 1.4 2010/11/13 19:20:47 ak Exp $
+# $Id: MTA.pm,v 1.6 2010/12/12 06:23:51 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                      
@@ -22,6 +22,23 @@ use Kanadzuchi::Address;
 #
 sub emailheaders { return []; }
 sub reperit { return q(); }
+sub SMTPCOMMAND
+{
+	# +-+-+-+-+-+-+-+-+-+-+-+
+	# |S|M|T|P|C|O|M|M|A|N|D|
+	# +-+-+-+-+-+-+-+-+-+-+-+
+	#
+	# @Description	Return SMTP command names and patterns
+	# @Param
+	# @Returns	(Ref->Hash) SMTP Commands
+	return {
+		'helo' => qr{\b(?:HELO|EHLO)\b},
+		'mail' => qr{\bMAIL F(?:ROM|rom)\b},
+		'rcpt' => qr{\bRCPT T[Oo]\b},
+		'data' => qr{\bDATA\b},
+	};
+}
+
 sub xsmtpagent
 { 
 	# +-+-+-+-+-+-+-+-+-+-+

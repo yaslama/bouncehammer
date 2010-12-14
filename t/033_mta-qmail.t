@@ -1,4 +1,4 @@
-# $Id: 033_mta-qmail.t,v 1.3 2010/11/13 19:13:25 ak Exp $
+# $Id: 033_mta-qmail.t,v 1.4 2010/11/28 00:16:49 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::MTA::qmail;
-use Test::More ( tests => 11 );
+use Test::More ( tests => 12 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -19,7 +19,7 @@ use Test::More ( tests => 11 );
 my $Test = new Kanadzuchi::Test(
 		'class' => q|Kanadzuchi::MTA::qmail|,
 		'methods' => [ 'xsmtpagent', 'xsmtpcommand', 'xsmtpdiagnosis',
-				'xsmtpstatus', 'emailheaders', 'reperit' ],
+				'xsmtpstatus', 'emailheaders', 'reperit', 'SMTPCOMMAND' ],
 		'instance' => undef(),
 );
 my $Head = {
@@ -46,6 +46,7 @@ PREPROCESS: {
 		'->xsmtpdiagnosis() = X-SMTP-Diagnosis: Test' );
 	is( $Test->class->xsmtpstatus('5.1.1'), 'X-SMTP-Status: 5.1.1'.qq(\n),
 		'->xsmtpstatus() = X-SMTP-Status: 5.1.1' );
+	isa_ok( $Test->class->SMTPCOMMAND(), q|HASH|, '->SMTPCOMMAND = {}' );
 }
 
 REPERIT: {

@@ -1,4 +1,4 @@
-# $Id: 030_mta.t,v 1.2 2010/11/13 19:13:25 ak Exp $
+# $Id: 030_mta.t,v 1.3 2010/11/28 00:16:49 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::MTA;
-use Test::More ( tests => 7 );
+use Test::More ( tests => 8 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -19,7 +19,7 @@ use Test::More ( tests => 7 );
 my $Test = new Kanadzuchi::Test(
 		'class' => q|Kanadzuchi::MTA|,
 		'methods' => [ 'xsmtpagent', 'xsmtpcommand', 'xsmtpdiagnosis', 
-				'xsmtpstatus', 'emailheaders', 'reperit' ],
+				'xsmtpstatus', 'emailheaders', 'reperit', 'SMTPCOMMAND' ],
 		'instance' => undef(),
 );
 
@@ -40,4 +40,5 @@ PREPROCESS: {
 		'->xsmtpstatus() = X-SMTP-Status: 5.1.1' );
 	isa_ok( $Test->class->emailheaders(), q|ARRAY|, '->emailheaders = []' );
 	is( $Test->class->reperit(), q(), '->reperit = ""' );
+	isa_ok( $Test->class->SMTPCOMMAND(), q|HASH|, '->SMTPCOMMAND = {}' );
 }

@@ -1,4 +1,4 @@
-# $Id: 034_mta-us-google.t,v 1.2 2010/11/13 19:13:25 ak Exp $
+# $Id: 034_mta-us-google.t,v 1.3 2010/11/28 00:16:49 ak Exp $
 # -Id: 034_mta-google.t,v 1.2 2010/10/05 11:30:56 ak Exp -
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
@@ -10,7 +10,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::MTA::US::Google;
-use Test::More ( tests => 14 );
+use Test::More ( tests => 15 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -20,7 +20,7 @@ use Test::More ( tests => 14 );
 my $Test = new Kanadzuchi::Test(
 		'class' => q|Kanadzuchi::MTA::US::Google|,
 		'methods' => [ 'xsmtpagent', 'xsmtpcommand', 'xsmtpdiagnosis',
-				'xsmtpstatus', 'emailheaders', 'reperit' ],
+				'xsmtpstatus', 'emailheaders', 'reperit', 'SMTPCOMMAND' ],
 		'instance' => undef(),
 );
 my $Head = {
@@ -48,6 +48,8 @@ PREPROCESS: {
 		'->xsmtpstatus() = X-SMTP-Status: 5.1.1' );
 	isa_ok( $Test->class->emailheaders(), q|ARRAY|, '->emailheaders = []' );
 	is( $Test->class->emailheaders->[0], 'X-Failed-Recipients', 'X-Failed-Recipients' );
+	isa_ok( $Test->class->SMTPCOMMAND(), q|HASH|, '->SMTPCOMMAND = {}' );
+
 }
 
 REPERIT: {

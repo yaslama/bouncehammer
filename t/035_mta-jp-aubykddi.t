@@ -1,4 +1,4 @@
-# $Id: 035_mta-jp-aubykddi.t,v 1.3 2010/11/13 19:13:25 ak Exp $
+# $Id: 035_mta-jp-aubykddi.t,v 1.4 2010/11/28 00:16:49 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Kanadzuchi::Test;
 use Kanadzuchi::MTA::JP::aubyKDDI;
-use Test::More ( tests => 9 );
+use Test::More ( tests => 10 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -19,7 +19,7 @@ use Test::More ( tests => 9 );
 my $Test = new Kanadzuchi::Test(
 		'class' => q|Kanadzuchi::MTA::JP::aubyKDDI|,
 		'methods' => [ 'xsmtpagent', 'xsmtpcommand', 'xsmtpdiagnosis',
-				'xsmtpstatus', 'emailheaders', 'reperit' ],
+				'xsmtpstatus', 'emailheaders', 'reperit', 'SMTPCOMMAND' ],
 		'instance' => undef(),
 );
 my $Head = {
@@ -54,6 +54,8 @@ PREPROCESS: {
 		'->xsmtpstatus() = X-SMTP-Status: 5.1.1' );
 	isa_ok( $Test->class->emailheaders(), q|ARRAY|, '->emailheaders = []' );
 	is( $Test->class->emailheaders()->[0], 'X-SPASIGN', 'X-SPASIGN' );
+	isa_ok( $Test->class->SMTPCOMMAND(), q|HASH|, '->SMTPCOMMAND = {}' );
+
 }
 
 REPERIT: {
