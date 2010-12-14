@@ -43,13 +43,17 @@ directory:
   conf: '__KANADZUCHIETC__'
   pid: '__KANADZUCHIVAR__/pid'
 
-  # Log storage, -o(--output) option of bin/mailboxparser command
-  # overrides this value.
+  # Log storage, bin/logger command uses the following directory.
   log: '__KANADZUCHIVAR__/log'
 
   # Working directory of commandline tools in bin/ directory.
   tmp: '/tmp/.BounceHammer'
+
+  # Cache directory for WebUI/Download
   cache: '__KANADZUCHIVAR__/cache'
+
+  # Log storage, -o(--output) option of bin/mailboxparser command
+  # overrides this value.
   spool: '__KANADZUCHIVAR__/spool'
 
   # Upload directory(NOT IMPLEMENTED)
