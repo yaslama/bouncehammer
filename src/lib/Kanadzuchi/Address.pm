@@ -1,4 +1,4 @@
-# $Id: Address.pm,v 1.9 2010/11/13 19:19:23 ak Exp $
+# $Id: Address.pm,v 1.10 2010/12/05 21:14:56 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                    
@@ -114,21 +114,31 @@ sub canonify
 	return q() if ref $input;
 
 	my $canon = q();
+	my $addrs = [];
 	my $token = [ reverse split( q{ }, $input ) ];
 
 	if( scalar(@$token) == 1 )
 	{
-		$canon = shift @$token;
+		push( @$addrs, $token->[0] );
 	}
 	else
 	{
 		foreach my $e ( @$token )
 		{
 			chomp($e);
-			next() unless( $e =~ m{\A[<]?.+[@].+[.][a-z]{2,}[>]?\z} );
-			$canon = $e;
-			last();
+			next() unless( $e =~ m{\A[<]?.+[@][-.0-9A-Za-z]+[.][A-Za-z]{2,}[>]?\z} );
+			push( @$addrs, $e );
 		}
+	}
+
+	if( scalar(@$addrs) > 1 )
+	{
+		$canon = [ grep { $_ =~ m{\A[<].+[>]\z} } @$addrs ]->[0];
+		$canon = $addrs->[0] unless $canon;
+	}
+	else
+	{
+		$canon = shift @$addrs;
 	}
 
 	$canon =~ y{<>[]():;}{}d;	# Remove brackets, colons
