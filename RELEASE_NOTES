@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES,v 1.73 2010/11/14 09:25:02 ak Exp $
+ $Id: RELEASE_NOTES,v 1.74 2010/12/15 00:01:41 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -28,6 +28,23 @@
 -----------------------------------------------------------------------
 
 
+2.6.2/2.0.0	2010/12/15
+
+  Assorted improvements and code cleanup:
+    * Improved analytical accuracy of qmail and Courier-MTA.
+
+  Fixed bugs:
+    * Fixed an issue that the macro @sysconfdir in src/etc/Makefile was
+      not expanded.
+    * Fixed an issue that the method 'is_rejected()'  was not called at
+      Kanadzuchi::Mail::Bounced module.
+
+  New files:
+    * lib/Kanadzuchi/MTA/Courier.pm
+    * t/038_mta-courier.t
+
+
+-----------------------------------------------------------------------
 2.6.1/2.0.0	2010/11/19
 
   Assorted improvements and code cleanup:
