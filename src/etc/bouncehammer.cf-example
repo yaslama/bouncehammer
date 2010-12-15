@@ -1,5 +1,5 @@
 # bouncehammer.cf
-# $Id: bouncehammer.cf-example,v 1.12 2010/10/05 11:01:46 ak Exp $
+# $Id: bouncehammer.cf-example,v 1.13 2010/12/14 05:56:58 ak Exp $
 # This config file is YAML format. bin/* scripts read this file by
 # using (YAML|JSON)::Syck/ Perl module.
 #  ______   ______ _____ _____ __  __ 
