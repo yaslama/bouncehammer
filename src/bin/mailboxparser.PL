@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.38 2010/10/05 10:57:37 ak Exp $
+# $Id: mailboxparser.PL,v 1.40 2010/12/22 15:05:35 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -38,6 +38,7 @@ my $Cmd;		# (Kanadzuchi::UI::CLI) Commandline object
 my $Out;		# (String) Output directory for temp log
 my $Bak;		# (String) Backup directory for the mailbox
 my $Fmt;		# (String) Output format
+my $Argc = 0;		# (Integer) The number of files or dirs in argument
 my $Mbox;		# (Path::Class::File) Mailbox Object
 my $Mail = { 'files' => [], 'dirs' => [], };
 my $Skip = {
@@ -132,6 +133,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	if( scalar @{$Mail->{'dirs'}} || scalar @{$Mail->{'files'}} )
 	{
 		# Read from the directory(Maildir)
+		$Argc = ( scalar @{ $Mail->{'dirs'} } + scalar @{ $Mail->{'files'} } );
 		my $pseudofrom = q(From MAILER-DAEMON Sun Dec 31 23:59:59 2000).qq(\n);
 		my $directoryh;		# (GLob) Directory handle
 		my $filesindir = 0;	# (Integer) The number of files in the directory
@@ -263,6 +265,11 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		$parseprogress->message( $debugmessages ) if( $debugmessages );
 	}
 
+	if( scalar(@$chunksofemail) == 0 && $Argc > 0 )
+	{
+		$Cmd->e('No data in the mailboxes');
+		$Cmd->abort();
+	}
 
 	my $kanadzuchilog = new Kanadzuchi::Log();
 	my $templogdevice = undef();	# (IO::File) Temporary log
