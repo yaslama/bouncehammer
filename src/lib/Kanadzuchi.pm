@@ -1,4 +1,4 @@
-# $Id: Kanadzuchi.pm,v 1.32 2010/12/12 06:24:45 ak Exp $
+# $Id: Kanadzuchi.pm,v 1.33 2010/12/30 10:52:34 ak Exp $
 # -Id: TheHammer.pm,v 1.4 2009/09/01 23:19:41 ak Exp -
 # -Id: Herculaneum.pm,v 1.13 2009/08/27 05:09:23 ak Exp -
 # -Id: Version.pm,v 1.35 2009/08/27 05:09:29 ak Exp -
@@ -47,7 +47,7 @@ __PACKAGE__->mk_accessors(
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-our $VERSION = q{2.6.2};
+our $VERSION = q{2.6.3};
 our $SYSNAME = q{BounceHammer};
 our $SYSCONF = q{__KANADZUCHIROOT__/etc/bouncehammer.cf};
 
