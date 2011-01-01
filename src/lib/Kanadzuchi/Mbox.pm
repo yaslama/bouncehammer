@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.27 2010/12/12 06:23:15 ak Exp $
+# $Id: Mbox.pm,v 1.28 2010/12/30 10:52:06 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -284,11 +284,21 @@ sub slurpit
 
 	eval {
 		# Slurp the mailbox, Convert from CRLF to LF,
+		#
+		# mboxes
+		#  mboxo	Original mbox implementation
+		#  mboxcl	Content-Length field in UNIX From_ line
+		#  mboxcl2	From_ in the message body is not quoted.
+		#  mboxrd
+		#  MMDF		No UNIX From_ line, and blank line at the end of the message body.
+		# 		^A^A^A^A(4 Ctrl-As) around the message.
+		#  Eudora	No blank line at the end of the message, From_ ???@???
+		#  Netscape	From_ -
 		@{ $self->{'emails'} } =
 			map( { s{\x0d\x0a}{\n}g; y{\x0d\x0a}{\n\n}; q(From ).$_; }
 				Perl6::Slurp::slurp( $file,
 					{
-						'irs' => qr(\nFrom ), 
+						'irs' => qr(\nFrom ),
 						'chomp' => ENDOF
 					}
 				)
