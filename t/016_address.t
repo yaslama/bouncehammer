@@ -1,4 +1,4 @@
-# $Id: 016_address.t,v 1.5 2010/12/05 21:15:11 ak Exp $
+# $Id: 016_address.t,v 1.6 2010/12/30 10:51:30 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Kanadzuchi::Test;
 use Kanadzuchi::Address;
 use Kanadzuchi::RFC2822;
 use Path::Class;
-use Test::More ( tests => 1190 );
+use Test::More ( tests => 1192 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -75,6 +75,8 @@ CLASS_METHODS: {
 		q{dummy@host <dummy@example.jp>},
 		q{dummy@host.int <dummy@example.jp>},
 		q{dummy <dummy@example.jp> dummy@host.int},
+		q{test@example.gov (The President)},
+		q{Vice President. (U.S.A.) vp@example.gov},
 		q{address@example.jp},
 		q{<user@example.com>:},
 		q{"<user@example.org>"},
