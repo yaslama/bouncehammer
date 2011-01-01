@@ -1,4 +1,4 @@
-# $Id: MDA.pm,v 1.1 2010/10/05 11:09:03 ak Exp $
+# $Id: MDA.pm,v 1.2 2010/12/15 09:00:47 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                        
@@ -54,6 +54,9 @@ my $bMessage = {
 		'mailboxfull' => [
 			qr{Disc quota exceeded\z},
 			qr{Mailbox full or quota exceeded},
+		],
+		'systemerror' => [
+			qr{Temporary file write error},
 		],
 	},
 	'procmail' => {
