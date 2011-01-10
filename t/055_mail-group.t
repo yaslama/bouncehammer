@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.31 2010/07/11 20:37:52 ak Exp $
+# $Id: 055_mail-group.t,v 1.31.2.2 2011/01/10 08:21:53 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -18,6 +18,7 @@ use Test::More ( 'no_plan' );
 my $BaseGrp = q|Kanadzuchi::Mail::Group|;
 my $Classes = {
 	'neighbor'	=> q|Kanadzuchi::Mail::Group::Neighbor|,
+	'smartphone'	=> q|Kanadzuchi::Mail::Group::Smartphone|,
 	'webmail'	=> q|Kanadzuchi::Mail::Group::WebMail|,
 	'auwebmail'	=> q|Kanadzuchi::Mail::Group::AU::WebMail|,
 	'brwebmail'	=> q|Kanadzuchi::Mail::Group::BR::WebMail|,
@@ -50,6 +51,7 @@ my $Domains = {
 	'webmail'	=> [ qw(aol.com aol.jp gmail.com googlemail.com yahoo.com yahoo.co.jp 
 				hotmail.com windowslive.com mac.com me.com ovi.com excite.com
 				lycos.com lycosmail.com ) ],
+	'smartphone'	=> [ qw(vertu.me) ],
 	'auwebmail'	=> [ qw( fastmail.net fastmail.fm ) ],
 	'brwebmail'	=> [ qw( bol.com.br ) ],
 	'cawebmail'	=> [ qw( hushmail.com hush.com ) ],
@@ -60,7 +62,8 @@ my $Domains = {
 	'inwebmail'	=> [ qw( ibibo.com ) ],
 	'ilwebmail'	=> [ qw( walla.co.il ) ],
 	'irwebmail'	=> [ qw( iran.ir ) ],
-	'jpcellphone'	=> [ qw( docomo.ne.jp ezweb.ne.jp softbank.ne.jp d.vodafone.ne.jp jp-k.ne.jp ) ],
+	'jpcellphone'	=> [ qw( docomo.ne.jp ezweb.ne.jp softbank.ne.jp d.vodafone.ne.jp jp-k.ne.jp
+				vertuclub.ne.jp ido.ne.jp eza.ido.ne.jp sky.tu-ka.ne.jp ) ],
 	'jpsmartphone'	=> [ qw( i.softbank.jp docomo.blackberry.com emnet.ne.jp willcom.com ) ],
 	'jpwebmail'	=> [ qw( auone.jp dwmail.jp mail.goo.ne.jp goo.jp infoseek.jp livedoor.com
 				 nifty.com nifmail.jp kitty.jp x-o.jp ) ],
