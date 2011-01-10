@@ -1,4 +1,4 @@
-# $Id: Group.pm,v 1.28 2010/07/11 09:20:28 ak Exp $
+# $Id: Group.pm,v 1.28.2.1 2011/01/08 20:45:42 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::
                                      
@@ -111,5 +111,5 @@ sub reperit
 	return($mdata);
 }
 
-'EXPERIMENTAL IMPLEMENTATION';
+1;
 __END__
