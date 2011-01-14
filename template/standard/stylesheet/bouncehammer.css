@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.21 2010/10/06 08:57:23 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.21.2.1 2011/01/14 05:16:10 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -360,6 +360,7 @@ ul.index a:visited {
 	text-decoration: none; 
 }
 
+
 span.warnings {
 	color: #c9171e; /* Kokihi */
 }
@@ -380,6 +381,37 @@ p.description {
 	margin: 2px 1px 1px 2px;
 	padding: 1px 1px 2px 2px;
 	font-size: 10px;
+}
+
+span.toggle-sign {
+	margin: 1px 4px 1px 2px;
+	padding: 1px 4px;
+	cursor: hand;
+	color: #727171; /* Nibi-iro */
+	font-weight: bold;
+	font-family: 'Courier New', 'Sans Serif';
+	font-size: 12px;
+	border-color: #d4dcd6;	/* Sobakiri-iro */
+	border-style: solid;
+	border-width: 1px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+	background-color: transparent;
+	background-image:
+		-moz-linear-gradient( 
+			top, 
+			rgba(252, 252, 252, 0.1), 
+			rgba(240, 240, 240, 0.3) 10%, 
+			rgba(224, 224, 224, 0.7)
+		);
+	background-image:
+		-webkit-gradient(
+			linear, left top, left bottom,
+			color-stop( 0, rgba(252, 252, 252, 0.1)),
+			color-stop( 50%, rgba(240, 240, 240, 0.3)),
+			color-stop( 90%, rgba(224, 224, 224, 0.7))
+		);
 }
 
 div.description dl { 

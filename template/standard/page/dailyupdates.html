@@ -83,9 +83,9 @@
 				[%- END -%]
 				<form action = '[% "${pv_scriptname}/dailyupdates/" %]' method = 'POST' id = 'jx_switchunit'>
 				[%- IF pv_iexplorer == 0 -%]
-				<div class = 'togglebuttonfield'>
-					<input type = 'button' class = 'flatbutton'
-						onClick = "toggleIt('jx_graphoption');" value = '[%- tt_word.graph %]' />
+				<div>
+					<span id = 'jx_graph-option-sign' class = 'toggle-sign'
+						onClick = "toggleIt('jx_graphoption'); toggleSign(this);">+</span>[%- tt_word.graph %]<br />
 				</div>
 				[%- END -%]
 				<fieldset class = 'graphoption' id = 'jx_graphoption' style = 'display: none;'>
@@ -221,9 +221,8 @@
 					<table class = 'dailyupdates'>
 						<thead class = 'dailyhead'><tr>
 							<th class = 'date'>
-								<span class = 'flatbutton'><strong>
-									<a href = 'javascript:void(0)' 
-										onClick = "toggleIt('jx_dailydata');">&nbsp;X&nbsp;</a></strong></span>
+								<span class = 'toggle-sign' id = 'jx_daily-data-sign'
+										onClick = "toggleIt('jx_dailydata'); toggleSign(this);">-</span>
 								[%- tt_unitoftime.${pv_totalsby} -%]
 								[%- IF pv_pagination.descendorderby == 0 -%]&darr;[%- ELSE -%]&uarr;[%- END -%]
 							</th>

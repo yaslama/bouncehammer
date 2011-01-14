@@ -1,4 +1,4 @@
-/* $Id: search.css,v 1.1 2010/03/29 04:37:01 ak Exp $ */
+/* $Id: search.css,v 1.1.2.1 2011/01/14 05:16:10 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Search form classes */
 div#search-condition {
@@ -21,7 +21,46 @@ div#search-condition div.subgroup {
 }
 
 div#search-query {
-	background: #f8f4e6; /* Zouge-iro */
-	padding: 8px;
+	margin: 6px 1px 12px 2px;
+	padding: 0;
+	border-width: 1px;
+	border-color: #c1e4e9; /* Shiraai */
+	border-style: solid;
+	background-color: #fffffc; /* Gofun-iro */
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
 }
+
+div#search-query div.query-title {
+	margin: 4px 2px;
+	padding: 2px 4px;
+	color: #426579; /* Noshimehana-iro */
+	/* background-color: #ebf6f7; /* Aijiro */
+	-webkit-border-radius: 4px 4px 0 0;
+	-moz-border-radius: 4px;
+	-opera-border-radius: 4px;
+	font-weight: bold;
+	font-size: 11px;
+}
+
+table.where-condition {
+	margin: 4px 12px;
+	font-size: 11px;
+}
+
+table.where-condition td.fieldname {
+	width: 128px;
+	font-weight: bold;
+}
+
+table.where-condition td.fieldname:before {
+	content: '* ';
+}
+
+table.where-condition td.fieldname:after {
+	content: ': ';
+}
+
+
 

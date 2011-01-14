@@ -1,9 +1,6 @@
-/* $Id: dailyupdates.css,v 1.1 2010/08/28 17:14:02 ak Exp $ */
+/* $Id: dailyupdates.css,v 1.1.2.1 2011/01/14 05:16:10 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Daily Updates table classes */
-div.togglebuttonfield {
-	margin: 0px 0px -2px 33px;
-}
 fieldset.graphoption {
 	margin: 2px 12px 2px 24px;
 	padding: 0px 4px;

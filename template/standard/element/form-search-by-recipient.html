@@ -10,10 +10,8 @@
 		<span class = 'shortdescription'>[%- tt_desc.emptyaddress -%]</span>
 
 		<div style = 'margin: 6px 0 4px -2px;'>
-			<span class = 'flatbutton'>
-				<a href = '#' onClick = "toggleIt('jx_search-condition');" 
-					accesskey = '9'>&nbsp; [% tt_word.searchcond %] &nbsp; </a>
-			</span>
+			<span id = 'jx_search-condition-sign' class = 'toggle-sign'
+				onClick = "toggleIt('jx_search-condition'); toggleSign(this);">+</span>[% tt_word.searchcond %]
 		</div>
 
 		<div id = 'jx_search-condition' style = 'display: [% tt_showssearchcond %];'> 

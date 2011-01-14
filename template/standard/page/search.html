@@ -49,26 +49,99 @@
 
 		<div id = 'Central-Ward'>
 			[% INCLUDE "form-search-by-recipient.html" %]
-			<h2>[%- tt_word.searchresults -%]
-				<span style = 'font-size:11px;'>([%- tt_word.sort -%]:
-					[%- IF pv_pagination.colnameorderby == 'id' -%]
-						[%- tt_word.id -%]
-					[%- ELSIF pv_pagination.colnameorderby == 'recipient' -%]
+
+			[% IF pv_hascondition > 0 %]
+			<div id = 'search-query'>
+				<div class = 'query-title'>
+					<span id = 'jx_search-query-sign' class = 'toggle-sign'
+						onClick = "toggleIt('jx_sent-query'); toggleSign(this);">+</span>
+					[%- tt_word.condition -%] ( [%- tt_word.sort -%]: 
+					[%- IF pv_pagination.colnameorderby == 'recipient' -%]
 						[%- tt_term.recipient -%]
 					[%- ELSIF pv_pagination.colnameorderby == 'senderdomain' -%]
 						[%- tt_term.senderdomain -%]
 					[%- ELSIF pv_pagination.colnameorderby == 'destination' -%]
 						[%- tt_term.destination -%]
 					[%- ELSIF pv_pagination.colnameorderby == 'bounced' -%]
-						[%- tt_term.bouncedat -%]
+						[%- tt_term.bounced -%]
 					[%- ELSIF pv_pagination.colnameorderby == 'frequency' -%]
 						[%- tt_term.frequency -%]
+					[%- ELSE -%]
+						[%- tt_word.id -%]
 					[%- END -%]
 					[%- IF pv_pagination.descendorderby == 1 -%]
 						/[%- tt_word.descending -%]
 					[%- END -%] )
-				</span>
-			</h2>
+				</div>
+
+				<table class = 'where-condition' id = 'jx_sent-query' style = 'display:none;'>
+					<tbody>
+					[%- IF pv_searchcondition.recipient -%]
+						<tr>
+							<td class = 'fieldname'>[%- tt_term.recipient %]</td>
+							<td>[%- pv_searchcondition.recipient -%]</td>
+						</tr>
+					[%- END -%]
+					[%- IF pv_searchcondition.addresser -%]
+						<tr>
+							<td class = 'fieldname'>[%- tt_term.addresser %]</td>
+							<td>[%- pv_searchcondition.addresser -%]</td>
+						</tr>
+					[%- END -%]
+					[%- IF pv_searchcondition.senderdomain -%]
+						<tr>
+							<td class = 'fieldname'>[%- tt_term.senderdomain %]</td>
+							<td>[%- pv_searchcondition.senderdomain -%]</td>
+						</tr>
+					[%- END -%]
+					[%- IF pv_searchcondition.destination -%]
+						<tr>
+							<td class = 'fieldname'>[%- tt_term.destination %]</td>
+							<td>[%- pv_searchcondition.destination -%]</td>
+						</tr>
+					[%- END -%]
+					[%- IF pv_searchcondition.reason -%]
+						<tr>
+							<td class = 'fieldname'>[%- tt_term.reason %]</td>
+							<td>
+								[%- tt_reason.${pv_searchcondition.reason} -%]
+								( [%- pv_searchcondition.reason -%] )
+							</td>
+						</tr>
+					[%- END -%]
+					[%- IF pv_searchcondition.hostgroup -%]
+						<tr>
+						<td class = 'fieldname'>[%- tt_term.hostgroup %]</td>
+						<td>
+							[%- tt_hostgroup.${pv_searchcondition.hostgroup} -%]
+							( [%- pv_searchcondition.hostgroup -%] )
+						</td>
+					</tr>
+					[%- END -%]
+					[%- IF pv_searchcondition.provider -%]
+						<tr>
+							<td class = 'fieldname'>[%- tt_term.provider %]</td>
+							<td>[%- pv_searchcondition.provider -%]</td>
+						</tr>
+					[%- END -%]
+					[%- IF pv_searchcondition.token -%]
+						<tr>
+							<td class = 'fieldname'>[%- tt_term.token %]</td>
+							<td>[%- pv_searchcondition.token -%]</td></tr>
+					[%- END -%]
+					[%- IF pv_searchcondition.bounced -%]
+						<tr>
+							<td class = 'fieldname'>[%- tt_term.bounced %]</td>
+							<td>
+								<span style = 'font-size: 13px;'>[% pv_searchcondition.bounced.sign %]</span>
+								[% pv_searchcondition.bounced.date %]
+							</td>
+						</tr>
+					[%- END -%]
+				</table>
+			</div>
+			[% END %]
+
 			<div class = 'pagination'>
 				[% INCLUDE "div-pagination.html" %]
 			</div>
