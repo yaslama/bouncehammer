@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.20 2010/10/05 10:59:43 ak Exp $
+# $Id: datadumper.PL,v 1.20.2.1 2011/01/14 10:42:40 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -58,6 +58,7 @@ my $WhereCondition = {
 	'provider' => q(),	# Provider name
 	'token' => q(),		# Message token
 	'bounced' => 0,		# Bounced date
+	'frequency' => 0,	# Frequency
 };
 
 # ORDER BY
@@ -188,6 +189,15 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 				$whereconds->{'bounced'} = { '>=' => $__timepobj->epoch() };
 			}
 			$Cmd->d( 1, sprintf( "WHERE->%s >= '%s'\n", $_key, $__timepobj->cdate() ) );
+		}
+		elsif( $_key eq 'frequency' )
+		{
+			my $__freq = abs( $whereconds->{'frequency'} );
+			if( $__freq > 1 )
+			{
+				$whereconds->{'frequency'} = { '>=' => $__freq };
+				$Cmd->d( 1, sprintf( "WHERE->%s >= %d\n", $_key, $__freq ) );
+			}
 		}
 		else
 		{
@@ -335,6 +345,7 @@ sub parse_options
 		$opt_count,
 		$opt_destination,
 		$opt_format,
+		$opt_frequency,
 		$opt_host,
 		$opt_hostgroup,
 		$opt_howrecent,
@@ -388,6 +399,8 @@ sub parse_options
 			'token=s'	=> \$opt_token,
 			'h=s'		=> \$opt_howrecent,
 			'howrecent=s'	=> \$opt_howrecent,
+			'f=i'		=> \$opt_frequency,
+			'frequency=i'	=> \$opt_frequency,
 
 			# Order
 			'o=s'		=> \$opt_orderby,
@@ -437,6 +450,7 @@ sub parse_options
 	$WhereCondition->{'hostgroup'} = $opt_hostgroup || q();
 	$WhereCondition->{'addresser'} = $opt_addresser || q();
 	$WhereCondition->{'recipient'} = $opt_recipient || q();
+	$WhereCondition->{'frequency'} = $opt_frequency || q();
 	$WhereCondition->{'destination'} = $opt_destination || q();
 	$WhereCondition->{'senderdomain'} = $opt_senderdomain || q();
 	$WhereCondition->{'disabled'} = 0 unless( $opt_alldata );
@@ -499,6 +513,7 @@ sub help
 	printf( STDERR "    -h, --howrecent <str>      : How recent the mail is past <day> days, e.g.)\n");
 	printf( STDERR "                                 1w = 1 weeks, 2d = 2 days(default), 3h = 3 hours,\n");
 	printf( STDERR "                                 4m = 4 minutes, 5s = 5 seconds, 6y = 6 years.\n");
+	printf( STDERR "    -f, --frequency <n>        : Frequency, -f 3 is equal to '>= 3'\n");
 	printf( STDERR "    -o, --orderby <column>     : ORDER BY column name \n");
 	printf( STDERR "    -O, --orderbydesc <column> : ORDER BY column name DESCENDING\n");
 	printf( STDERR "    --count                    : Count only, print total entries and exit.\n");

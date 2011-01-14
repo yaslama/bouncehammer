@@ -1,4 +1,4 @@
-# $Id: 504_bin-datadumper.t,v 1.20 2010/10/26 03:46:25 ak Exp $
+# $Id: 504_bin-datadumper.t,v 1.20.2.1 2011/01/14 10:42:55 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,7 +7,7 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 456 );
+use Test::More ( tests => 500 );
 
 
 SKIP: {
@@ -26,6 +26,7 @@ SKIP: {
 	require Kanadzuchi::BdDR::BounceLogs;
 	require Kanadzuchi::BdDR::BounceLogs::Masters;
 	require Kanadzuchi::Mail::Stored::YAML;
+	require Kanadzuchi::Mail::Stored::BdDR;
 
 	#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 	# ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -107,6 +108,11 @@ SKIP: {
 			'option' => ' --howrecent 25y',
 			'count' => 36,
 		},
+		{
+			'name' => 'Dump by Frequency',
+			'option' => ' --frequency 2',
+			'count' => 4,
+		},
 	];
 	my $Comm = { 'y' => 74, 'c' => 68 };
 
@@ -186,6 +192,35 @@ SKIP: {
 						isa_ok( $array, q|ARRAY| );
 						ok( scalar(@$array), '->search(id) returns '.scalar(@$array) );
 					}
+				}
+			}
+
+			UPDATE: {
+				my $cond = { 'senderdomain' => 'example.gr.jp' };
+				my $page = Kanadzuchi::BdDR::Page->new();
+				my $data = undef();
+				my $stat = 0;
+
+				$page->reset();
+				$page->set( $Btab->count( $cond ) );
+				is( $page->count(), 4, '->count() = 1 by senderdomain example.gr.jp' );
+
+				while(1)
+				{
+					$data = Kanadzuchi::Mail::Stored::BdDR->searchandnew($BdDR->handle(),$cond,$page);
+					isa_ok( $data, q|Kanadzuchi::Iterator| );
+
+					while( my $_e = $data->next() )
+					{
+						ok( $_e->id(), '->id() = '.$_e->id() );
+						is( $_e->senderdomain(), 'example.gr.jp', '->senderdomain() = example.gr.jp' );
+
+						$_e->bounced( $_e->bounced + 1 );
+
+						$stat = $_e->update( $Btab, $Cdat );
+						ok( $stat, '->update()' );
+					}
+					last() unless($page->next());
 				}
 			}
 		}
