@@ -1,4 +1,4 @@
-/* $Id: search.css,v 1.1.2.1 2011/01/14 05:16:10 ak Exp $ */
+/* $Id: search.css,v 1.1.2.2 2011/01/15 21:02:15 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Search form classes */
 div#search-condition {
@@ -36,11 +36,9 @@ div#search-query div.query-title {
 	margin: 4px 2px;
 	padding: 2px 4px;
 	color: #426579; /* Noshimehana-iro */
-	/* background-color: #ebf6f7; /* Aijiro */
 	-webkit-border-radius: 4px 4px 0 0;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;
-	font-weight: bold;
 	font-size: 11px;
 }
 

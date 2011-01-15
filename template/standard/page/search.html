@@ -129,6 +129,15 @@
 							<td class = 'fieldname'>[%- tt_term.token %]</td>
 							<td>[%- pv_searchcondition.token -%]</td></tr>
 					[%- END -%]
+					[%- IF pv_searchcondition.frequency -%]
+						<tr>
+							<td class = 'fieldname'>[%- tt_term.frequency %]</td>
+							<td>
+								<span style = 'font-size: 13px;'>[% pv_searchcondition.frequency.sign %]</span>
+								[% pv_searchcondition.frequency.freq %]
+							</td>
+						</tr>
+					[%- END -%]
 					[%- IF pv_searchcondition.bounced -%]
 						<tr>
 							<td class = 'fieldname'>[%- tt_term.bounced %]</td>

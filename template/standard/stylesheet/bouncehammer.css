@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.21.2.2 2011/01/14 05:54:35 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.21.2.3 2011/01/15 21:02:15 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -390,7 +390,7 @@ span.toggle-sign {
 	color: #727171; /* Nibi-iro */
 	font-weight: bold;
 	font-family: 'Courier New', 'Sans Serif';
-	font-size: 12px;
+	font-size: 11px;
 	border-color: #d4dcd6;	/* Sobakiri-iro */
 	border-style: solid;
 	border-width: 1px;

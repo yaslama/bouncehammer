@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.32.2.1 2011/01/14 05:15:58 ak Exp $
+# $Id: Search.pm,v 1.32.2.2 2011/01/15 21:02:08 ak Exp $
 # -Id: Search.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Search.pm,v 1.11 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -70,6 +70,7 @@ sub onlinesearch
 	my $advancedx = 0;	# (Boolean) Flag; Does advanced search use?
 	my $dbrecords = 0;	# (Integer) The number of records in the db
 	my $howrecent = -1;	# (Integer) How recent the mail bounced?
+	my $frequency = 1;	# (Integer) Frequency
 	my $paginated = new Kanadzuchi::BdDR::Page();
 	my $bouncelog = new Kanadzuchi::BdDR::BounceLogs::Table('handle' => $bddr->handle());
 	my $cgiqueryp = $self->query();
@@ -198,6 +199,17 @@ sub onlinesearch
 			else
 			{
 				$wherecond->{'bounced'} = { '>=' => 0 };
+			}
+		}
+
+		# Frequency
+		if( $cgiqueryp->param('fe_frequency') )
+		{
+			$frequency = $cgiqueryp->param('fe_frequency');
+			if( $frequency > 1 )
+			{
+				$wherecond->{'frequency'} = { '>=' => $frequency };
+				$advancedx++;
 			}
 		}
 
@@ -453,6 +465,12 @@ sub onlinesearch
 			warn $tp->cdate;
 			$wherecond->{'bounced'}->{'sign'} = '>=';
 			$wherecond->{'bounced'}->{'date'} = $tp->ymd().'('.$tp->wdayname().') '.$tp->hms();
+		}
+
+		if( $frequency > 1 )
+		{
+			$wherecond->{'frequency'}->{'sign'} = '>=';
+			$wherecond->{'frequency'}->{'freq'} = $frequency;
 		}
 
 		$self->tt_params( 
