@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.14 2010/06/16 08:15:16 ak Exp $
+# $Id: WebMail.pm,v 1.14.2.1 2011/01/18 23:14:51 ak Exp $
 # -Id: AOL.pm,v 1.1 2009/08/29 07:33:21 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # -Id: Hotmail.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
@@ -46,6 +46,11 @@ sub nominisexemplaria
 			# http://excite.com/
 			qr{\Aexcite[.](?:com|co[.]jp)\z},
 		],
+		'facebook' => [
+			# Facebook has half a billion users.
+			# http://www.facebook.com/
+			qr{\Afacebook[.]com\z},
+		],
 		'google' => [
 			# GMail http://mail.google.com/mail/
 			qr{\Agmail[.]com\z},
@@ -70,6 +75,11 @@ sub nominisexemplaria
 			qr{\Alive[.](?:at|be|ca|ch|cl|cn|de|dk|fi|fr|hk|ie|in|it|jp|nl|no|ph|ru|se)\z},
 			qr{\Alive[.]co[.](?:in|kr|uk|za)\z},
 			qr{\Alive[.]com[.](?:ar|au|co|mx|my|pe|ph|pk|pt|sg|ve)\z},
+		],
+		'myspace' => [
+			# MySpace Mail has over 15 million users.
+			# http://www.myspace.com/
+			qr{\Amyspace[.]com\z},
 		],
 		'nokia' => [
 			# Ovi by Nokia, http://www.ovi.com/
@@ -100,10 +110,12 @@ sub classisnomina
 		'aol'		=> 'Generic',
 		'apple'		=> 'Generic',
 		'excite'	=> 'Generic',
+		'facebook'	=> 'Generic',
 		'google'	=> 'Generic',
 		'lycos'		=> 'Generic',
-		'nokia'		=> 'Generic',
 		'microsoft'	=> 'Generic',
+		'myspace'	=> 'Generic',
+		'nokia'		=> 'Generic',
 		'yahoo'		=> 'Yahoo',
 	};
 }

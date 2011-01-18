@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES,v 1.76.2.5 2011/01/18 11:38:59 ak Exp $
+ $Id: RELEASE_NOTES,v 1.76.2.6 2011/01/18 23:14:27 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -43,6 +43,8 @@
       vider 'vertu'.
     * Domain name of Disney Mobile 'disney.ne.jp' is classifed into the
       provider 'disney'.
+    * @myspace.com and @facebook.com are  classified into the hostgroup
+      'webmail'.
     * WebUI Improvement: Shows search query in results page.
 
   Fixed bugs:
