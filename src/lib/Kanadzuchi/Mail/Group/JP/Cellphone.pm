@@ -1,4 +1,4 @@
-# $Id: Cellphone.pm,v 1.7.2.2 2011/01/10 08:18:44 ak Exp $
+# $Id: Cellphone.pm,v 1.7.2.3 2011/01/18 06:35:24 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
                                                             
@@ -39,10 +39,13 @@ sub nominisexemplaria
 			qr{\Asoftbank[.]ne[.]jp\z},
 			qr{\A[dhtcrksnq][.]vodafone[.]ne[.]jp\z},
 			qr{\Ajp-[dhtcrksnq][.]ne[.]jp\z},
+		],
+		'disney' => [
+			# MVNO, Disney Mobile; http://disneymobile.jp/
 			qr{\Adisney[.]ne[.]jp\z},
 		],
 		'vertu' => [
-			# VERTU http://www.vertu.com/jp-jp/home
+			# MVNO, VERTU; http://www.vertu.com/jp-jp/home
 			qr{\Avertuclub[.]ne[.]jp\z},
 		],
 		'tu-ka' => [

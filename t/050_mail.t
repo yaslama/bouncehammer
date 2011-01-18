@@ -1,4 +1,4 @@
-# $Id: 050_mail.t,v 1.12 2010/10/05 11:30:56 ak Exp $
+# $Id: 050_mail.t,v 1.12.2.1 2011/01/18 06:35:27 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -67,7 +67,7 @@ my $Suite = {
 		{ 'recipient' => 'POSTMASTER@d.vodafone.ne.jp', 'hostgroup' => 'cellphone', 'provider' => 'softbank', },
 		{ 'recipient' => 'POSTMASTER@softbank.ne.jp', 'hostgroup' => 'cellphone', 'provider' => 'softbank', },
 		{ 'recipient' => 'POSTMASTER@jp-d.ne.jp', 'hostgroup' => 'cellphone', 'provider' => 'softbank', },
-		{ 'recipient' => 'POSTMASTER@disney.ne.jp', 'hostgroup' => 'cellphone', 'provider' => 'softbank', },
+		{ 'recipient' => 'POSTMASTER@disney.ne.jp', 'hostgroup' => 'cellphone', 'provider' => 'disney', },
 	],
 };
 
