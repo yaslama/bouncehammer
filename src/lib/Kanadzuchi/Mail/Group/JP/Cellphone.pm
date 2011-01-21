@@ -1,4 +1,4 @@
-# $Id: Cellphone.pm,v 1.7.2.3 2011/01/18 06:35:24 ak Exp $
+# $Id: Cellphone.pm,v 1.7.2.4 2011/01/21 06:42:28 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
                                                             
@@ -27,6 +27,8 @@ sub nominisexemplaria
 	return {
 		'nttdocomo' => [ 
 			qr{\Adocomo[.]ne[.]jp\z},
+			# qr{\Adocomo-camera[.]ne[.]jp\z},	# photo-server@docomo-camera.ne.jp
+			# qr{\A(?:nttpnet|phone|mozio)[.]ne[.]jp
 		],
 		'aubykddi'  => [
 			qr{\Aezweb[.]ne[.]jp\z},
