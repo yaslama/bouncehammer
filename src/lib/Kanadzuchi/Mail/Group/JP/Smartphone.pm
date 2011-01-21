@@ -1,4 +1,4 @@
-# $Id: Smartphone.pm,v 1.8 2010/06/16 08:15:34 ak Exp $
+# $Id: Smartphone.pm,v 1.8.2.1 2011/01/21 06:43:22 ak Exp $
 # -Id: SmartPhone.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
@@ -35,6 +35,7 @@ sub nominisexemplaria
 		'emobile' => [ 
 			# EMOBILE EMNET
 			qr{\Aemnet[.]ne[.]jp\z},
+			qr{\Abb[.]emobile[.]jp\z},	# https://store.emobile.jp/help/help_mail.html
 		],
 		'softbank' => [ 
 			# SoftBank|Apple iPhone
