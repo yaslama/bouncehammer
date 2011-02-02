@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.14.2.1 2011/01/18 23:14:51 ak Exp $
+# $Id: WebMail.pm,v 1.14.2.2 2011/02/02 02:31:34 ak Exp $
 # -Id: AOL.pm,v 1.1 2009/08/29 07:33:21 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # -Id: Hotmail.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
@@ -37,6 +37,7 @@ sub nominisexemplaria
 			qr{\Aaol[.]co[.](?:nz|uk)\z},
 			qr{\Aaol[.]com[.](?:ar|au|br|co|mx|ve)\z},
 			qr{\Anetscape[.]net\z},
+			qr{\A(?:games|love|wow|ygm)[.]com\z},	# AOL's Project Phoenix
 		],
 		'apple' => [
 			# mobileme, http://me.com/

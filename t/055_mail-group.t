@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.31.2.4 2011/01/21 06:43:44 ak Exp $
+# $Id: 055_mail-group.t,v 1.31.2.5 2011/02/02 02:31:42 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -50,7 +50,7 @@ my $Domains = {
 	'neighbor'	=> [],
 	'webmail'	=> [ qw(aol.com aol.jp gmail.com googlemail.com yahoo.com yahoo.co.jp 
 				hotmail.com windowslive.com mac.com me.com ovi.com excite.com
-				lycos.com lycosmail.com facebook.com myspace.com) ],
+				lycos.com lycosmail.com facebook.com myspace.com love.com ygm.com) ],
 	'smartphone'	=> [ qw(vertu.me) ],
 	'auwebmail'	=> [ qw( fastmail.net fastmail.fm ) ],
 	'brwebmail'	=> [ qw( bol.com.br ) ],
