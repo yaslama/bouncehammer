@@ -1,4 +1,4 @@
-[%# $Id: words.tt,v 1.5 2010/08/28 17:19:14 ak Exp $ -%]
+[%# $Id: words.tt,v 1.5.2.1 2011/02/02 02:49:40 ak Exp $ -%]
 [%# Words in Japanese -%]
 [%- SET tt_word = { 
 		'about'		=> '約',
@@ -23,7 +23,7 @@
 		'datasize'	=> 'データ容量',
 		'datasource'	=> '元データ',
 		'dbhost'	=> 'データベースホスト',
-		'dbserver'	=> 'データベースサーバ',
+		'dbname'	=> 'データベース名',
 		'default'	=> '既定値',
 		'delete'	=> '削除',
 		'deleting'	=> '削除中...',

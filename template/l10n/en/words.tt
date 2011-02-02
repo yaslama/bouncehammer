@@ -1,4 +1,4 @@
-[%# $Id: words.tt,v 1.5 2010/08/28 17:19:11 ak Exp $ -%]
+[%# $Id: words.tt,v 1.5.2.1 2011/02/02 02:49:38 ak Exp $ -%]
 [%# Words in English -%]
 [%- SET tt_word = { 
 		'about'		=> 'About',
@@ -23,7 +23,7 @@
 		'datasize'	=> 'Data Size',
 		'datasource'	=> 'Data Source',
 		'dbhost'	=> 'Database Host',
-		'dbserver'	=> 'Database Server',
+		'dbname'	=> 'Database Name',
 		'default'	=> 'Default',
 		'delete'	=> 'Delete',
 		'deleting'	=> 'Deleting...',
