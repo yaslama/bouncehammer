@@ -1,4 +1,4 @@
-# $Id: Address.pm,v 1.10 2010/12/05 21:14:56 ak Exp $
+# $Id: Address.pm,v 1.10.2.1 2011/02/02 00:45:15 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                    
@@ -116,6 +116,9 @@ sub canonify
 	my $canon = q();
 	my $addrs = [];
 	my $token = [ reverse split( q{ }, $input ) ];
+
+	# Convert character entity; "&lt;" -> ">", "&gt;" -> "<".
+	map { $_ =~ s/&lt;/</g; $_ =~ s/&gt;/>/g; } @$token;
 
 	if( scalar(@$token) == 1 )
 	{

@@ -1,4 +1,4 @@
-# $Id: 016_address.t,v 1.6 2010/12/30 10:51:30 ak Exp $
+# $Id: 016_address.t,v 1.6.2.1 2011/02/02 00:45:11 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Kanadzuchi::Test;
 use Kanadzuchi::Address;
 use Kanadzuchi::RFC2822;
 use Path::Class;
-use Test::More ( tests => 1192 );
+use Test::More ( tests => 1193 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -86,6 +86,7 @@ CLASS_METHODS: {
 		q{(user@example.mil)},
 		q{[user@example.gov]},
 		q|{user@example.int}|,
+		q{&lt;user@example.gl&gt;},
 	];
 
 	CONSTRUCTOR: {
