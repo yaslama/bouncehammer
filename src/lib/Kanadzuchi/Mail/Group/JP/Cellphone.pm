@@ -1,4 +1,4 @@
-# $Id: Cellphone.pm,v 1.7.2.4 2011/01/21 06:42:28 ak Exp $
+# $Id: Cellphone.pm,v 1.7.2.5 2011/02/02 01:28:43 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JP::
                                                             
@@ -63,6 +63,7 @@ sub classisnomina
 		'nttdocomo'	=> 'Generic',
 		'aubykddi'	=> 'Generic',
 		'softbank'	=> 'Generic',
+		'disney'	=> 'Generic',
 		'vertu'		=> 'Generic',
 		'tu-ka'		=> 'Generic',
 	};
