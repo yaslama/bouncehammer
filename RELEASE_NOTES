@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES,v 1.76.2.7 2011/02/02 01:30:03 ak Exp $
+ $Id: RELEASE_NOTES,v 1.76.2.8 2011/02/02 02:31:32 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -28,6 +28,11 @@
 -----------------------------------------------------------------------
 
 2.6.4/2.0.0	2011/02/02
+
+  Assorted improvements and code cleanup:
+    * Support 4 AOL's Project Phoenix domains: 'games.com', 'love.com',
+      'wow.com', and 'ygm.com'.  They are classfied into  the hostgroup
+      'webmail'.
 
   Fixed bugs:
     * Fixed an issue that  bin/mailboxparser command  will exit success
