@@ -1,4 +1,4 @@
-/* $Id: pagination.css,v 1.6 2010/08/28 17:16:40 ak Exp $ */
+/* $Id: pagination.css,v 1.6.2.1 2011/02/02 04:10:12 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Pagination Classes */
 div.pagination {
@@ -14,6 +14,9 @@ div.pageindex {
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;
+	-webkit-box-shadow: 1px 1px 4px #949495;
+	-moz-box-shadow: 1px 1px 4px #949495;
+	box-shadow: 1px 1px 4px #949495;
 	background-image:
 		-moz-linear-gradient( 
 			top, 

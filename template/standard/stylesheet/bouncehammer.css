@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.21.2.3 2011/01/15 21:02:15 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.21.2.4 2011/02/02 04:10:12 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 
 /* IDs */
@@ -140,6 +140,7 @@ h2 {
 	font-size: 16px;
 	font-family: 'Trebuchet MS', Verdana;
 	color: #426579; /* Noshimehana-iro */
+	text-shadow: 1px 1px 1px #eaf4fc; /* Geppaku */
 }
 
 h3 {}
@@ -226,7 +227,7 @@ span.flatbutton, input.flatbutton {
 	width: 80px;
 	margin: 2px;
 	padding: 2px 4px;
-	color: #727171; /* Nibi-iro */
+	color: #474a4d; /* Aisumicha */
 	font-weight: bold;
 	font-size: 10px;
 	border-color: #d4dcd6;	/* Sobakiri-iro */
@@ -235,6 +236,9 @@ span.flatbutton, input.flatbutton {
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;
+	-webkit-box-shadow: 0px 1px 1px #949495;
+	-moz-box-shadow: 0px 1px 1px #949495;
+	box-shadow: 0px 1px 1px #949495;
 	background-color: transparent;
 	background-image:
 		-moz-linear-gradient( 
@@ -330,6 +334,7 @@ ul.index li.itemgroup:hover {
 
 ul.index li.currentpage {
 	font-weight: bold;
+	color: #250d00; /* Kokutan */
 	background: #fcc800; /* Himawari-iro */
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
@@ -387,7 +392,8 @@ span.toggle-sign {
 	margin: 1px 4px 1px 2px;
 	padding: 1px 4px;
 	cursor: pointer;
-	color: #727171; /* Nibi-iro */
+	color: #474a4d; /* Aisumicha */
+	text-shadow: -1px -1px 1px #f8f8f8; /* Hakuji */
 	font-weight: bold;
 	font-family: 'Courier New', 'Sans Serif';
 	font-size: 11px;
@@ -397,6 +403,9 @@ span.toggle-sign {
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;
+	-webkit-box-shadow: 0px 1px 1px #949495;
+	-moz-box-shadow: 0px 1px 1px #949495;
+	box-shadow: 0px 1px 1px #949495;
 	background-color: transparent;
 	background-image:
 		-moz-linear-gradient( 

@@ -1,4 +1,4 @@
-/* $Id: summary.css,v 1.8 2010/07/11 06:48:32 ak Exp $ */
+/* $Id: summary.css,v 1.8.2.1 2011/02/02 04:10:12 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Summary classes */
 div.summary {
@@ -6,12 +6,15 @@ div.summary {
 	margin: 6px 1px 12px 18px;
 	padding: 2px;
 	border-width: 1px;
-	border-color: #c1e4e9; /* Shiraai */
+	border-color: #9ea1a3; /* Suzu-Iro */
 	border-style: solid;
 	background-color: #fffffc; /* Gofun-iro */
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-opera-border-radius: 4px;
+	-webkit-box-shadow: 2px 2px 4px #c0c6c9; /* Haiao */
+	-moz-box-shadow: 2px 2px 4px #c0c6c9; /* Haiao */
+	box-shadow: 2px 2px 4px #c0c6c9; /* Haiao */
 }
 
 div.summary table {
@@ -29,6 +32,7 @@ div.recordsize {
 	font-weight: bold;
 	font-family: 'Gill Sans Lite', 'Century Gothic', Verdana, 'Trebuchet MS';
 	color: #595857; /* Sumi */
+	text-shadow: 2px 2px 2px #afafb0; /* Nezumi-iro */
 	text-align: right;
 	vertical-align: bottom;
 }
