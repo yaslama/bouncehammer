@@ -1,5 +1,5 @@
 # bouncehammer.cf
-# $Id: bouncehammer.cf-example,v 1.13 2010/12/14 05:56:58 ak Exp $
+# $Id: bouncehammer.cf-example,v 1.13.2.1 2011/02/02 01:27:41 ak Exp $
 # This config file is YAML format. bin/* scripts read this file by
 # using (YAML|JSON)::Syck/ Perl module.
 #  ______   ______ _____ _____ __  __ 
@@ -10,7 +10,7 @@
 # 
 # System name and configuration file version, 
 # *** Do not change these key and value ***
-system: 'BounceHammer'
+system: 'bounceHammer'
 version: '2.0.0'
 
 #  _____ ___ _     _____ 
@@ -47,7 +47,7 @@ directory:
   log: '__KANADZUCHIVAR__/log'
 
   # Working directory of commandline tools in bin/ directory.
-  tmp: '/tmp/.BounceHammer'
+  tmp: '/tmp'
 
   # Cache directory for WebUI/Download
   cache: '__KANADZUCHIVAR__/cache'

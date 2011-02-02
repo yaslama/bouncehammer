@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.19 2010/07/07 11:21:55 ak Exp $
+# $Id: CLI.pm,v 1.19.2.1 2011/02/02 01:27:12 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                       
@@ -131,7 +131,7 @@ sub init
 
 	# Check process
 	try {
-		my( $_error, $_piddn, $_pidFH, $_tempd, $_kconf );
+		my( $_error, $_piddn, $_pidFH, $_tempd, $_dname, $_kconf );
 
 		#   ___  _     _           _     _____         _   
 		#  / _ \| |__ (_) ___  ___| |_  |_   _|__  ___| |_ 
@@ -159,17 +159,20 @@ sub init
 		#   |_|\___|_| |_| |_| .__/   \__,_|_|_|   
 		#                    |_|                   
 		# Create the temporary directory
+		$_dname  = lc( $_kconf->{'system'} ).q(.).time().q(.).$self->{'processid'};
 		$_tempd  = $_kconf->{'directory'}->{'tmp'};
+		$_tempd =~ s|/[.]$_kconf->{'system'}/?\z||i;		# Backward compatible for old configuration file.
 		$_tempd  = File::Spec->tmpdir() if( $_tempd eq q() || $_tempd eq '/' || $_tempd =~ m{\A[.]/?\z} );
 		$_tempd  = File::Spec->tmpdir() if( ! -d $_tempd || ! -r _ || ! -w _ || ! -x _ );
-		$_tempd .= q(/).$_kconf->{'system'}.q(.).$self->{'processid'};
+		$_tempd .= q(/).$_dname;
 
 		eval {
 			$self->{'tmpdir'} = new Path::Class::Dir($_tempd);
 			$self->{'tmpdir'}->cleanup();
 			$self->{'tmpdir'}->mkpath() unless( -e $self->{'tmpdir'} );
 		};
-		Kanadzuchi::Exception::Permission->throw( '-text' => $@ ) if($@);
+
+		Kanadzuchi::Exception::Permission->throw( '-text' => $@ ) if $@;
 
 		#        _     _ 
 		#  _ __ (_) __| |
@@ -190,7 +193,7 @@ sub init
 			$self->{'pf'}->touch();
 			$_pidFH = $self->{'pf'}->openw();
 		};
-		Kanadzuchi::Exception::Permission->throw( '-text' => $@ ) if($@);
+		Kanadzuchi::Exception::Permission->throw( '-text' => $@ ) if $@;
 
 		printf( $_pidFH "%d\n", $$ );
 		printf( $_pidFH "%s\n", $self->{'commandline'} );
