@@ -1,5 +1,5 @@
 # test-run.cf
-# $Id: test-run.cf,v 1.9 2010/05/16 23:59:26 ak Exp $
+# $Id: test-run.cf,v 1.9.2.1 2011/02/02 01:27:42 ak Exp $
 # This config file is YAML/JSON format. bin/* scripts read this file by
 # using (YAML|JSON)::Syck Perl module.
 #  ______   ______ _____ _____ __  __ 
@@ -10,7 +10,7 @@
 # 
 # System name and configuration file version, 
 # *** Do not change these key and value ***
-system: 'BounceHammer'
+system: 'bounceHammer'
 version: '2.0.0'
 
 #  _____ ___ _     _____ 

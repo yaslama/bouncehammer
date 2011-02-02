@@ -1,4 +1,4 @@
-# $Id: 080_config-testrun.t,v 1.3 2010/07/07 11:21:57 ak Exp $
+# $Id: 080_config-testrun.t,v 1.3.2.1 2011/02/02 00:45:38 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -31,7 +31,7 @@ my $C = Kanadzuchi::Config::TestRun->configuration();
 #
 PREPROCESS: {
 	isa_ok( $C, q|HASH| );
-	is( $C->{'system'}, 'BounceHammer' );
+	is( $C->{'system'}, 'bounceHammer' );
 	like( $C->{'version'}, qr|\A\d+[.]\d+[.]\d+\z| );
 }
 

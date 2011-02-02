@@ -1,4 +1,4 @@
-# $Id: TestRun.pm,v 1.8 2010/07/07 11:21:46 ak Exp $
+# $Id: TestRun.pm,v 1.8.2.1 2011/02/02 00:45:41 ak Exp $
 # -Id: TestRun.pm,v 1.4 2009/09/01 23:19:46 ak Exp -
 # -Id: TestRun.pm,v 1.2 2009/08/27 05:09:32 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -22,7 +22,7 @@ use Kanadzuchi;
 #
 sub configuration {
 	return {
-		'system'	=> 'BounceHammer',
+		'system'	=> 'bounceHammer',
 		'version'	=> $Kanadzuchi::VERSION,
 		'file'		=> {
 			'maxsize' => 0,

@@ -1,4 +1,4 @@
-# $Id: prove.cf,v 1.10 2010/05/21 03:29:54 ak Exp $
+# $Id: prove.cf,v 1.10.2.1 2011/02/02 01:27:42 ak Exp $
 # This config file is YAML/JSON format. bin/* scripts read this file by
 # using (YAML|JSON)::Syck Perl module.
 #  ______   ______ _____ _____ __  __ 
@@ -9,7 +9,7 @@
 # 
 # System name and configuration file version, 
 # *** Do not change these key and value ***
-system: 'BounceHammer'
+system: 'bounceHammer'
 version: '2.0.0'
 
 #  _____ ___ _     _____ 
