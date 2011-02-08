@@ -149,7 +149,7 @@
 						<td class = 'key'>[% tt_term.bounced %]</td>
 						<td class = 'value'>
 							[% B.bounced %]
-							[%- IF pv_tzoffset != B.tzoffset -%]
+							[%- IF pv_tzoffset != B.tzoffset AND B.tzoffset -%]
 								[% pv_tzoffset %] &lt;- ([% B.tzoffset %])
 							[%- END -%]
 						</td>

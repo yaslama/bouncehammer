@@ -1,5 +1,5 @@
 <select name = 'fe_howrecent' id = 'jx_howrecent' 
-	onChange = "jx_checkbd.innerHTML = '&#9745; [%- tt_words.use -%]';">
+	onChange = "jx_checkbd.innerHTML = '&#9745; [%- tt_word.use -%]';">
 [%- FOREACH h IN tt_howrecent -%]
 	[%- IF h.key == 0 -%]
 		[%- SET tt_isselected = 'selected' -%]
