@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.23 2010/10/05 10:59:07 ak Exp $
+# $Id: databasectl.PL,v 1.23.2.1 2011/02/25 02:28:00 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -723,6 +723,10 @@ sub parse_options
 			{
 				$Cmd->e('Invalid date format: '.$opt_date.', See --help');
 			}
+		}
+		else
+		{
+			$Date = Kanadzuchi::Time-o2d(0) if( -t STDIN );
 		}
 
 		last(DETECT_LOG_FILES) if( scalar(@ARGV) == 0 || $ARGV[0] eq '-' );
