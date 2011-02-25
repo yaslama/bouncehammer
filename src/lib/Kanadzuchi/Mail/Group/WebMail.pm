@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.14.2.2 2011/02/02 02:31:34 ak Exp $
+# $Id: WebMail.pm,v 1.14.2.3 2011/02/25 02:26:51 ak Exp $
 # -Id: AOL.pm,v 1.1 2009/08/29 07:33:21 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # -Id: Hotmail.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
@@ -55,7 +55,6 @@ sub nominisexemplaria
 		'google' => [
 			# GMail http://mail.google.com/mail/
 			qr{\Agmail[.]com\z},
-			qr{\Agmail[.](?:bj|cf|ge|ie|lu|re|ug)\z},
 
 			# GMail in U.K. and Germany
 			qr{\Agooglemail[.]com\z},
