@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.3 2010/06/28 13:19:00 ak Exp $
+# $Id: WebMail.pm,v 1.3.2.1 2011/02/25 02:26:13 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::BR::
                                                    
@@ -18,7 +18,7 @@ use warnings;
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-# Major company's Webmail domains in Brasil
+# Major company's Webmail domains in Brazil
 sub communisexemplar { return qr{[.]br\z}; }
 sub nominisexemplaria
 {
