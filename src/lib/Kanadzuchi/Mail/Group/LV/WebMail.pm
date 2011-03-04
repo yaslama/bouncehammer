@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.2 2010/06/16 08:15:38 ak Exp $
+# $Id: WebMail.pm,v 1.2.2.1 2011/03/04 06:58:57 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::LV::
                                                    
@@ -28,6 +28,10 @@ sub nominisexemplaria
 		'inbokss' => [
 			qr{\Ainbox[.]lv\z},
 		],
+		# http://www.mail.lv/
+		'mail.lv' => [
+			qr{\Amail[.]lv\z},
+		],
 	};
 }
 
@@ -36,6 +40,7 @@ sub classisnomina
 	my $class = shift();
 	return {
 		'inbokss'	=> 'Generic',
+		'mail.lv'	=> 'Generic',
 	};
 }
 
