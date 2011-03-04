@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.8 2010/06/28 13:19:20 ak Exp $
+# $Id: WebMail.pm,v 1.8.2.1 2011/03/04 06:59:35 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::US::
                                                    
@@ -18,7 +18,7 @@ use warnings;
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-# Major company's Webmail domains in United States of America
+# Major company's Webmail domains in the United States of America
 sub nominisexemplaria
 {
 	my $class = shift();
@@ -130,6 +130,12 @@ sub nominisexemplaria
 			qr{\Apcmail[.]com[.]tw\z},
 		],
 
+		# http://www.mail2world.com/
+		# 2000 domain names in http://www.mail2world.com/s/m2wpublic/domains/domains_firstnames.asp
+		'mail2world' => [
+			qr{\Amail2.+[.]com\z},	# Low precision, we can not list all the domains...
+		],
+
 		# http://www.pobox.com/index/
 		'pobox' => [
 			qr{\Aonepost[.]net\z},
@@ -151,6 +157,7 @@ sub classisnomina
 		'lavabit'	=> 'Generic',
 		'luxsci'	=> 'Generic',
 		'mail.com'	=> 'Generic',
+		'mail2world'	=> 'Generic',
 		'pobox'		=> 'Generic',
 	};
 }
