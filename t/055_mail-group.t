@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.31.2.5 2011/02/02 02:31:42 ak Exp $
+# $Id: 055_mail-group.t,v 1.31.2.6 2011/03/04 06:58:28 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -27,6 +27,7 @@ my $Classes = {
 	'czwebmail'	=> q|Kanadzuchi::Mail::Group::CZ::WebMail|,
 	'dewebmail'	=> q|Kanadzuchi::Mail::Group::DE::WebMail|,
 	'egwebmail'	=> q|Kanadzuchi::Mail::Group::EG::WebMail|,
+	'frwebmail'	=> q|Kanadzuchi::Mail::Group::FR::WebMail|,
 	'inwebmail'	=> q|Kanadzuchi::Mail::Group::IN::WebMail|,
 	'ilwebmail'	=> q|Kanadzuchi::Mail::Group::IL::WebMail|,
 	'irwebmail'	=> q|Kanadzuchi::Mail::Group::IR::WebMail|,
@@ -59,6 +60,7 @@ my $Domains = {
 	'czwebmail'	=> [ qw( seznam.cz email.cz ) ],
 	'dewebmail'	=> [ qw( gmx.de ) ],
 	'egwebmail'	=> [ qw( gawab.com giza.cc ) ],
+	'frwebmail'	=> [ qw( voila.fr ) ],
 	'inwebmail'	=> [ qw( ibibo.com ) ],
 	'ilwebmail'	=> [ qw( walla.co.il ) ],
 	'irwebmail'	=> [ qw( iran.ir ) ],
@@ -69,7 +71,7 @@ my $Domains = {
 	'jpwebmail'	=> [ qw( auone.jp dwmail.jp mail.goo.ne.jp goo.jp infoseek.jp livedoor.com
 				 nifty.com nifmail.jp kitty.jp x-o.jp ) ],
 	'krwebmail'	=> [ qw( hanmail.net empas.com ) ],
-	'lvwebmail'	=> [ qw( inbox.lv ) ],
+	'lvwebmail'	=> [ qw( inbox.lv mail.lv ) ],
 	'nowebmail'	=> [ qw( runbox.com ) ],
 	'nzwebmail'	=> [ qw( coolkiwi.com ) ],
 	'ruwebmail'	=> [ qw( mail.ru yandex.ru ) ],
@@ -78,7 +80,7 @@ my $Domains = {
 	'uksmartphone'	=> [ qw( o2.co.uk ) ],
 	'ukwebmail'	=> [ qw( gmx.co.uk postmaster.co.uk yipple.com ) ],
 	'uswebmail'	=> [ qw( bluetie.com lavabit.com luxsci.com inbox.com mail.com usa.com 
-				pobox.com onepost.net ) ],
+				pobox.com onepost.net mail2world.com ) ],
 	'zawebmail'	=> [ qw( webmail.co.za ) ],
 };
 

@@ -1,4 +1,4 @@
-# $Id: Group.pm,v 1.28.2.1 2011/01/08 20:45:42 ak Exp $
+# $Id: Group.pm,v 1.28.2.2 2011/03/04 06:58:22 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::
                                      
@@ -42,7 +42,7 @@ sub postulat
 	my $class = shift();
 
 	# Experimental implementation for the future.
-	my $iso3166list = [ qw(AU BR CA CN CZ DE EG IN IL IR JP KR LV NO NZ RU SG TW UK US ZA) ];
+	my $iso3166list = [ qw(AU BR CA CN CZ DE EG FR IN IL IR JP KR LV NO NZ RU SG TW UK US ZA) ];
 	my $iso3166conf = '__KANADZUCHIROOT__/etc/available-countries';
 	my $countryconf = ( -r $iso3166conf && -s _ && -T _ ) ? JSON::Syck::LoadFile($iso3166conf) : {};
 	my $didfileload = keys %$countryconf ? 1 : 0;
