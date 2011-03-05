@@ -1,4 +1,4 @@
-# $Id: TestRun.pm,v 1.8.2.1 2011/02/02 00:45:41 ak Exp $
+# $Id: TestRun.pm,v 1.8.2.2 2011/03/05 08:15:49 ak Exp $
 # -Id: TestRun.pm,v 1.4 2009/09/01 23:19:46 ak Exp -
 # -Id: TestRun.pm,v 1.2 2009/08/27 05:09:32 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -33,12 +33,13 @@ sub configuration {
 			'conf'	=> '/tmp',
 			'pid'	=> '/tmp',
 			'log'	=> '/tmp',
-			'tmp'	=> '/tmp/',
+			'tmp'	=> '/tmp',
 			'cache'	=> '/tmp',
 			'spool'	=> '/tmp',
 			'incoming' => '/tmp',
 		},
 		'environment'	=> { 'timeout' => 60, },
+		'syslog'	=> { 'enabled' => 0, 'facility' => 'user' }
 	};
 }
 
