@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.23.2.1 2011/02/25 02:28:00 ak Exp $
+# $Id: databasectl.PL,v 1.23.2.2 2011/03/05 08:14:24 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -83,9 +83,17 @@ try {
 
 	$Cmd->init( $Zci );
 	$Cmd->d( 1, sprintf( "Config file = %s\n", $Cmd->cf() ));
+
+	if( $Zci->config->{'syslog'}->{'enabled'} )
+	{
+		$Cmd->d( 2, sprintf("Syslog facility = %s\n", $Zci->config->{'syslog'}->{'facility'} ));
+		$Zci->historique( 'info', 'starting (version '.$Zci->version.')' );
+	}
 }
 otherwise {
-	$Cmd->exception(shift());
+	my $e = shift();
+	$Cmd->exception($e);
+	$Zci->historique('err',$e);
 	$Cmd->abort();
 };
 
@@ -121,23 +129,15 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 	# Set values to Kanadzuchi::BdDR object, Create data source name
 	try {
 		$Rdb->setup( $Zci->config->{'database'} );
-		unless( $Rdb->connect() )
-		{
-			my $errormsg .= 'Failed to connect DB'."\n";
-			my $boundary = '-' x 64;
-			$errormsg .= $boundary;
-			$errormsg .= "\n ".$Rdb->error->{'string'};
-			$errormsg .= $boundary;
-			$errormsg .= "\n";
-			Kanadzuchi::Exception::Database->throw( '-text' => $errormsg );
-		}
+		Kanadzuchi::Exception::Database->throw( 
+				'-text' => 'Failed to connect DB' ) unless( $Rdb->connect() );
 		$Cmd->d(2,"Connecting to the database\n") if( defined $Rdb->handle() );
 
 		# Create master table objects
 		$xntableobj = Kanadzuchi::BdDR::BounceLogs::Table->new( 'handle' => $Rdb->handle() );
 		$mastertabs = Kanadzuchi::BdDR::BounceLogs::Masters::Table->mastertables($Rdb->handle());
 		Kanadzuchi::Exception::Database->throw( 
-			'-text' => 'Failed to create table objects' ) if( ! $xntableobj || ! $mastertabs );
+			'-text' => 'Failed to create tbale object' ) if( ! $xntableobj || ! $mastertabs );
 
 		( $Rdb->hostname() ne 'localhost' && $Rdb->port() ne q() )
 			? $Cmd->d(2,sprintf("Database host = %s:%s\n", $Rdb->hostname(), $Rdb->port()))
@@ -149,7 +149,21 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 
 	}
 	catch Kanadzuchi::Exception::Database with {
-		$Cmd->exception(shift());
+
+		my $e = shift();
+		my $b = '-' x 64;
+		my $m = $e;
+
+		if( length $Rdb->error->{'string'} )
+		{
+			$m .= "\n".$b;
+			$m .= "\n ".$Rdb->error->{'string'};
+			$m .= $b;
+			$m .= "\n";
+			$e .= ': '.$Rdb->error->{'string'};
+		}
+		$Cmd->exception($m);
+		$Zci->historique('err',$e);
 		$Cmd->abort();
 	};
 
@@ -180,7 +194,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		{
 			try {
 				Kanadzuchi::Exception::File->throw(
-					'-text' => 'There is no log file' ) unless( grep { -s $_ && -r _ && -T _ } @$Logs );
+					'-text' => 'No regular log file to update' ) unless( grep { -s $_ && -r _ && -T _ } @$Logs );
 				alarm(0);
 
 				# Prepare the progress bar
@@ -196,7 +210,9 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 				}
 			}
 			otherwise {
-				$Cmd->exception(shift());
+				my $e = shift();
+				$Cmd->exception($e);
+				$Zci->historique('err',$e.', mode=update');
 				$Cmd->abort();
 			};
 		}
@@ -482,6 +498,12 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			$Cmd->batchstatus(\$batchinfo);
 		}
 
+		$Zci->historique('info',
+			sprintf("records=%d, inserted=%d, updated=%d, skipped=%d, failed=%d, mode=update",
+				$thelinesof, $execstatus->{'inserted'}, $execstatus->{'updated'}, 
+				($execstatus->{'nofrom'} + $execstatus->{'tooold'} + $execstatus->{'whited'} + $execstatus->{'exceed'}),
+				$xntableobj->error->{'count'} ));
+
 	} # End of if(UPDATE)
 	elsif( $Cmd->operation & ( $Cmd->option->{'remove'} + $Cmd->option->{'disable'} ) )
 	{
@@ -518,7 +540,11 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 						( $Cond->{'token'} ? $Cond->{'token'} : 'none' ) ) ) unless( $doesexist );
 		}
 		otherwise {
-			$Cmd->exception(shift());
+			my $e = shift();
+			$Cmd->exception($e);
+			$Zci->historique( 'err',
+				sprintf("%s, mode=%s", $e,
+					($Cmd->operation & $Cmd->option->{'remove'}) ? 'remove' : 'disable' ) );
 			$Cmd->abort();
 		};
 
@@ -535,7 +561,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		}
 
 		# Verbose messages of update status and cache information
-		$Cmd->d(2,sprintf("%d Record is successfully %sd\n", $itsstatus, $operation ));
+		$Cmd->d(2,sprintf("%d Record is successfully %s\n", $itsstatus, $operation.'d' ));
 
 		if( $Cmd->operation & $Cmd->option->{'batch'} )
 		{
@@ -551,6 +577,12 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			}
 			$Cmd->batchstatus(\$batchinfo);
 		}
+
+		$Zci->historique( 'info',
+			sprintf("record=1, %s=%d, id=%s, token=%s, mode=%s", 
+				$operation.'d', $itsstatus, 
+				( $Cond->{'id'} ? $Cond->{'id'} : '?' ),
+				( $Cond->{'token'} ? $Cond->{'token'} : 'none' ), $operation ));
 
 	} # End of if(remove|disable)
 
@@ -726,7 +758,7 @@ sub parse_options
 		}
 		else
 		{
-			$Date = Kanadzuchi::Time-o2d(0) if( -t STDIN );
+			$Date = Kanadzuchi::Time->o2d(0) if( -t STDIN );
 		}
 
 		last(DETECT_LOG_FILES) if( scalar(@ARGV) == 0 || $ARGV[0] eq '-' );

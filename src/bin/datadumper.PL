@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.20.2.1 2011/01/14 10:42:40 ak Exp $
+# $Id: datadumper.PL,v 1.20.2.2 2011/03/05 08:14:24 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -133,16 +133,8 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 	# Set values to Kanadzuchi::BdDR object, Create data source name
 	try {
 		$Rdb->setup( $Zci->config->{'database'} );
-		unless( $Rdb->connect() )
-		{
-			my $errormsg .= 'Failed to connect DB'."\n";
-			my $boundary = '-' x 64;
-			$errormsg .= $boundary;
-			$errormsg .= "\n ".$Rdb->error->{'string'};
-			$errormsg .= $boundary;
-			$errormsg .= "\n";
-			Kanadzuchi::Exception::Database->throw( '-text' => $errormsg );
-		}
+		Kanadzuchi::Exception::Database->throw( 
+			'-text' => 'Failed to connect DB' ) unless( $Rdb->connect() );
 		$Cmd->d(2,"Connecting to the database\n") if( defined $Rdb->handle() );
 
 		# Create master table objects
@@ -160,7 +152,19 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 
 	}
 	catch Kanadzuchi::Exception::Database with {
-		$Cmd->exception(shift());
+		my $e = shift();
+		my $b = '-' x 64;
+		my $m = $e;
+
+		if( length $Rdb->error->{'string'} )
+		{
+			$m .= "\n".$b;
+			$m .= "\n ".$Rdb->error->{'string'};
+			$m .= $b;
+			$m .= "\n";
+			$e .= ': '.$Rdb->error->{'string'};
+		}
+		$Cmd->exception($m);
 		$Cmd->abort();
 	};
 

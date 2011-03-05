@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: tablectl.PL,v 1.16 2010/10/05 10:59:07 ak Exp $
+# $Id: tablectl.PL,v 1.16.2.1 2011/03/05 08:14:25 ak Exp $
 # -Id: tablectl.PL,v 1.12 2010/02/21 20:09:01 ak Exp -
 # -Id: tablectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: tablectl.PL,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -84,9 +84,17 @@ try {
 
 	$Cmd->init( $Zci );
 	$Cmd->d( 1, sprintf( "Config file = %s\n", $Cmd->cf() ));
+
+	if( ( $Cmd->operation & $Cmd->option->{'modify'} ) && $Zci->config->{'syslog'}->{'enabled'} )
+	{
+		$Cmd->d( 2, sprintf("Syslog facility = %s\n", $Zci->config->{'syslog'}->{'facility'} ));
+		$Zci->historique( 'info', 'starting (version '.$Zci->version.')' );
+	}
 }
 otherwise {
-	$Cmd->exception(shift());
+	my $e = shift();
+	$Cmd->exception($e);
+	$Zci->historique('err',$e) if ( $Cmd->operation & $Cmd->option->{'modify'} );
 	$Cmd->abort();
 };
 
@@ -109,16 +117,8 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		Kanadzuchi::Exception::Command->throw( '-text' => 'No table name' ) unless( $Alias );
 
 		$Rdb->setup( $Zci->config->{'database'} );
-		unless( $Rdb->connect() )
-		{
-			my $errormsg .= 'Failed to connect DB'."\n";
-			my $boundary = '-' x 64;
-			$errormsg .= $boundary;
-			$errormsg .= "\n ".$Rdb->error->{'string'};
-			$errormsg .= $boundary;
-			$errormsg .= "\n";
-			Kanadzuchi::Exception::Database->throw( '-text' => $errormsg );
-		}
+		Kanadzuchi::Exception::Database->throw(
+				'-text' => 'Failed to connect DB' ) unless( $Rdb->connect() );
 		$Cmd->d(2,"Connecting to the database\n") if(defined $Rdb->handle());
 
 		# Create master table object(Tab)
@@ -134,7 +134,20 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		$Cmd->d(2,sprintf("Using table = %s\n", $Tab->alias()));
 	}
 	otherwise {
-		$Cmd->exception(shift());
+		my $e = shift();
+		my $b = '-' x 64;
+		my $m = $e;
+
+		if( length $Rdb->error->{'string'} )
+		{
+			$m .= "\n".$b;
+			$m .= "\n ".$Rdb->error->{'string'};
+			$m .= $b;
+			$m .= "\n";
+			$e .= ': '.$Rdb->error->{'string'};
+		}
+		$Cmd->exception($m);
+		$Zci->historique('err',$e);
 		$Cmd->abort();
 	};
 
@@ -229,7 +242,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			try {
 				# ID is not given , ID:0 is not valid
 				Kanadzuchi::Exception::Command->throw( 
-					'-text' => q{No or invalid ID} ) unless $Wcond->{'id'};
+					'-text' => 'No or invalid ID' ) unless $Wcond->{'id'};
 
 				if( ! exists($Wcond->{'name'}) && ! exists($Wcond->{'description'}) && ! exists($Wcond->{'disabled'}) )
 				{
@@ -245,7 +258,9 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 				map { $newelement->{$_} = $Wcond->{$_} if( exists $Wcond->{$_} ) } ( qw{name description disabled} )
 			}
 			catch Kanadzuchi::Exception::Command with {
-				$Cmd->exception(shift());
+				my $e = shift();
+				$Cmd->exception($e);
+				$Zci->historique('err',$e.', mode=update');
 				$Cmd->abort();
 			};
 
@@ -256,10 +271,13 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			if( $ismodified )
 			{
 				$Cmd->d(2,'Successfully updated ( ID = '.$Wcond->{'id'}." )\n");
+				$Zci->historique( 'info', sprintf("updated=1, id=%d, mode=update",$Wcond->{'id'}) );
 			}
 			else
 			{
 				$Cmd->d(2,"Failed to UPDATE\n");
+				$Zci->historique( 'err', 
+					sprintf( "updated=0, id=%d, mode=update", $Wcond->{'id'} ) );
 			}
 
 		}
@@ -277,7 +295,9 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 					'-text' => 'No or invalid ID' ) unless $Wcond->{'id'};
 			}
 			catch Kanadzuchi::Exception::Command with {
-				$Cmd->exception(shift());
+				my $e = shift();
+				$Cmd->exception($e);
+				$Zci->historieque('err',$e.', mode=remove');
 				$Cmd->abort();
 			};
 
@@ -288,10 +308,13 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			if( $ismodified )
 			{
 				$Cmd->d(2,'Successfully deleted ( ID = '.$Wcond->{'id'}." )\n");
+				$Zci->historique( 'info', sprintf("removed=1, id=%d, mode=remove",$Wcond->{'id'}) );
 			}
 			else
 			{
 				$Cmd->d(2,"Failed to DELETE\n");
+				$Zci->historique( 'err', 
+					sprintf( "removed=0, id=%d, mode=remove", $Wcond->{'id'} ) );
 			}
 
 		}
@@ -313,7 +336,9 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 				map { $newelement->{$_} = $Wcond->{$_} if( exists($Wcond->{$_}) ) } ( qw{name description disabled} )
 			}
 			catch Kanadzuchi::Exception::Command with {
-				$Cmd->exception(shift());
+				my $e = shift();
+				$Cmd->exception($e);
+				$Zci->historique('err',$e.', mode=insert');
 				$Cmd->abort();
 			};
 
@@ -324,10 +349,15 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			if( $ismodified )
 			{
 				$Cmd->d(2,'Successfully inserted ( ID = '.$ismodified." )\n");
+				$Zci->historique( 'info', 
+					sprintf( "inserted=1, id=%d, name=%s, mode=insert",
+							$ismodified, $newelement->{'name'} ) );
 			}
 			else
 			{
 				$Cmd->d(2,'Failed to INSERT'."\n");
+				$Zci->historique( 'err', 
+					sprintf( "inserted=0, id=?, name=%s, mode=insert", $newelement->{'name'} ) );
 			}
 		}
 	}
