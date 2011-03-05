@@ -1,4 +1,4 @@
-# $Id: 503_bin-databasectl.t,v 1.16 2010/10/26 04:32:48 ak Exp $
+# $Id: 503_bin-databasectl.t,v 1.16.2.1 2011/03/05 08:15:06 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -116,7 +116,7 @@ SKIP: {
 			{
 				$command = $Test->perl().$Test->command().$Opts.' --update '.$d;
 				$xresult = [ IPC::Cmd::run( 'command' => $command ) ];
-				like( $xresult->[4]->[0], qr|There is no log file|, q{No log file of the option }.$d );
+				like( $xresult->[4]->[0], qr|No regular log file to update|, q{No log file of the option }.$d );
 			}
 		}
 

@@ -1,4 +1,4 @@
-# $Id: 010_kanadzuchi.t,v 1.6 2010/07/07 09:04:59 ak Exp $
+# $Id: 010_kanadzuchi.t,v 1.6.2.1 2011/03/05 08:15:05 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -20,7 +20,8 @@ use Test::More ( tests => 121 );
 #
 my $T = new Kanadzuchi::Test(
 	'class' => q|Kanadzuchi|,
-	'methods' => [ 'new', 'is_exception', 'load', 'is_logfile', 'get_logfile' ],
+	'methods' => [ 'new', 'is_exception', 'load', 'is_logfile', 'get_logfile',
+			'historique' ],
 	'instance' => new Kanadzuchi(),
 );
 
