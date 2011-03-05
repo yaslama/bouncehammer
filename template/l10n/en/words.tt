@@ -1,4 +1,4 @@
-[%# $Id: words.tt,v 1.5.2.1 2011/02/02 02:49:38 ak Exp $ -%]
+[%# $Id: words.tt,v 1.5.2.2 2011/03/05 10:28:43 ak Exp $ -%]
 [%# Words in English -%]
 [%- SET tt_word = { 
 		'about'		=> 'About',
@@ -13,6 +13,7 @@
 		'condition'	=> 'Condition',
 		'config'	=> 'Config',
 		'configfile'	=> 'Configuration File',
+		'configname'	=> 'Configuration Name',
 		'contact'	=> 'Contact',
 		'country'	=> 'Country',
 		'countryname'	=> 'Country Name',

@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.26 2010/11/13 19:10:54 ak Exp $
+# $Id: Web.pm,v 1.26.2.1 2011/03/05 10:28:48 ak Exp $
 # -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
 # -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -202,7 +202,8 @@ sub tt_pre_process
 		'pv_systemname' => $Kanadzuchi::SYSNAME,
 		'pv_sysversion' => $Kanadzuchi::VERSION,
 		'pv_scriptname' => $htscript,
-		'pv_head1title' => $Kanadzuchi::SYSNAME.'<sup>'.$majorver.'</sup>',
+		'pv_head1title' => '<sup>'.$majorver.'</sup>',
+		'pv_configname' => $self->{'webconfig'}->{'name'} || 'Undefined',
 		'pv_thepageuri' => 'http://'.$httphost.$htscript,
 		'pv_mylanguage' => $self->{'language'},
 		'pv_prototype' => $self->prototype,

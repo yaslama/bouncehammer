@@ -1,5 +1,5 @@
 # bouncehammer.cf
-# $Id: bouncehammer.cf-example,v 1.13.2.2 2011/03/05 08:14:47 ak Exp $
+# $Id: bouncehammer.cf-example,v 1.13.2.3 2011/03/05 10:28:50 ak Exp $
 # This config file is YAML format. bin/* scripts read this file by
 # using (YAML|JSON)::Syck/ Perl module.
 #  ______   ______ _____ _____ __  __ 
@@ -9,9 +9,12 @@
 # |____/ |_| |____/ |_| |_____|_|  |_|
 # 
 # System name and configuration file version, 
-# *** Do not change these key and value ***
+# *** Do not change the system: and the version: ***
 system: 'bounceHammer'
 version: '2.7.0'
+
+# Setting name
+name: 'Default'
 
 #  _____ ___ _     _____ 
 # |  ___|_ _| |   | ____|

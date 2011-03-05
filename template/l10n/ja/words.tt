@@ -1,4 +1,4 @@
-[%# $Id: words.tt,v 1.5.2.1 2011/02/02 02:49:40 ak Exp $ -%]
+[%# $Id: words.tt,v 1.5.2.2 2011/03/05 10:28:45 ak Exp $ -%]
 [%# Words in Japanese -%]
 [%- SET tt_word = { 
 		'about'		=> '約',
@@ -13,6 +13,7 @@
 		'condition'	=> '条件',
 		'config'	=> '設定',
 		'configfile'	=> '設定ファイル',
+		'configname'	=> '設定名',
 		'contact'	=> 'お問い合わせ',
 		'country'	=> '国',
 		'countryname'	=> '国名',

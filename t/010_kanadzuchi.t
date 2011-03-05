@@ -1,4 +1,4 @@
-# $Id: 010_kanadzuchi.t,v 1.6.2.1 2011/03/05 08:15:05 ak Exp $
+# $Id: 010_kanadzuchi.t,v 1.6.2.2 2011/03/05 10:29:18 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Kanadzuchi::Test;
 use Kanadzuchi;
 use File::Basename qw(basename);
 use Path::Class::File;
-use Test::More ( tests => 121 );
+use Test::More ( tests => 125 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -57,7 +57,10 @@ METHODS: {
 				$object->config( {} );
 				ok( $object->load( q{./src/etc/}.$c ), q{->load(}.$c.q{)} );
 				isa_ok( $object->config, q|HASH| );
-				ok( length($object->config->{'system'}) )
+				ok( length($object->config->{'system'}) );
+				ok( length($object->config->{'version'}) );
+				ok( length($object->config->{'name'}) );
+
 			}
 		}
 

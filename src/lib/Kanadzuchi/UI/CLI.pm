@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.19.2.1 2011/02/02 01:27:12 ak Exp $
+# $Id: CLI.pm,v 1.19.2.2 2011/03/05 10:28:48 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                       
@@ -211,6 +211,7 @@ sub init
 	$self->d(2,sprintf( "Operation = %d [%024b]\n", $self->{'operation'}, $self->{'operation'} ));
 	$self->d(2,sprintf( "Temporary directory = %s\n", $self->{'tmpdir'} ) );
 	$self->d(1,sprintf( "Debug level = %d\n", $self->{'debuglevel'} ));
+	$self->d(1,sprintf( "Config name = %s\n", ( $dzci->config->{'name'} || 'Undefined' ) ));
 
 	return $self;
 }

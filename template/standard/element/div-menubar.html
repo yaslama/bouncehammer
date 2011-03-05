@@ -18,6 +18,7 @@
 	[%- SET tt_thisurl = "${tt_thisurl}${pv_pathinfo}" -%]
 [%- END -%]
 <div id = 'MenuBar'>
+	<div id = 'ConfigName'><strong>[% tt_word.configname %]:</strong> [% pv_configname %]</div>
 [%- IF tt_downloadlink -%]
 	[%- SET tt_linkforyaml = "${tt_downloadlink}/yaml/${tt_colname},${tt_descend}/${pv_encryptedforuri}" -%]
 	[%- SET tt_linkforjson = "${tt_downloadlink}/json/${tt_colname},${tt_descend}/${pv_encryptedforuri}" -%]
