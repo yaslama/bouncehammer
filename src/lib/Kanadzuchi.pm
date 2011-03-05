@@ -1,4 +1,4 @@
-# $Id: Kanadzuchi.pm,v 1.33.2.3 2011/02/02 01:30:05 ak Exp $
+# $Id: Kanadzuchi.pm,v 1.33.2.4 2011/03/05 08:15:25 ak Exp $
 # -Id: TheHammer.pm,v 1.4 2009/09/01 23:19:41 ak Exp -
 # -Id: Herculaneum.pm,v 1.13 2009/08/27 05:09:23 ak Exp -
 # -Id: Version.pm,v 1.35 2009/08/27 05:09:29 ak Exp -
@@ -21,6 +21,8 @@ use 5.008001;
 use warnings;
 use base 'Class::Accessor::Fast::XS';
 use Kanadzuchi::Exceptions;
+use Sys::Syslog qw(:DEFAULT setlogsock);
+use File::Basename;
 use Time::Piece;
 use Error ':try';
 use Errno;
@@ -47,7 +49,7 @@ __PACKAGE__->mk_accessors(
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-our $VERSION = q{2.6.4};
+our $VERSION = q{2.7.0};
 our $SYSNAME = q{bounceHammer};
 our $SYSCONF = q{__KANADZUCHIROOT__/etc/bouncehammer.cf};
 
@@ -190,8 +192,48 @@ sub load
 		$self->{'config'} = Kanadzuchi::Config::TestRun->configuration();
 	}
 
-	return($exception) if( $exception );
-	return(1);
+	return $exception if $exception;
+	return 1;
+}
+
+sub historique
+{
+	# +-+-+-+-+-+-+-+-+-+-+
+	# |h|i|s|t|o|r|i|q|u|e|
+	# +-+-+-+-+-+-+-+-+-+-+
+	#
+	# @Description	Interface to UNIX syslog(3)
+	# @Param <str>	(String) Syslog level
+	# @Param <str>	(String) Log message
+	# @Return	(Integer) 1 = No error occurred
+	#		(Integer) 0 = No log message or Error occurred
+	my $self = shift();
+	my $sllv = shift() || 'info';
+	my $mesg = shift() || return 0;
+
+	# Don't send message to syslogd if it's disabled in boncehammer.cf
+	return 0 unless $self->{'config'}->{'syslog'}->{'enabled'};
+
+	my $logidentstr = lc($SYSNAME).'/'.File::Basename::basename([caller()]->[1]);
+	my $loggingopts = 'ndelay,pid,nofatal';
+	my $logfacility = $self->{'config'}->{'syslog'}->{'facility'} || 'local6';
+
+	# Set prefix or suffix into the log message
+	my $errp = { 
+		'err' => 'error', 
+		'crit' => 'critical', 
+		'alert' => 'alert', 
+		'emerg' => 'emergency'
+	};
+	$mesg  = '***'.($errp->{$sllv} || 'error' ).': '.$mesg if grep { $sllv eq $_ } keys %$errp;
+	$mesg .= sprintf( " by uid=%d", $self->{'user'} );
+	$mesg =~ y{\n\r}{}d;
+
+	openlog( $logidentstr, $loggingopts, $logfacility ) || return 0;
+	syslog( $sllv, $mesg ) || return 0;
+	closelog() || return 0;
+
+	return 1;
 }
 
 sub is_logfile
