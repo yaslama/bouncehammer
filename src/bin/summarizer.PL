@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: summarizer.PL,v 1.14 2010/10/05 11:00:19 ak Exp $
+# $Id: summarizer.PL,v 1.14.2.1 2011/03/05 08:12:38 ak Exp $
 # -Id: summarizer.PL,v 1.13 2010/02/22 05:09:01 ak Exp -
 # -Id: summarizer.PL,v 1.2 2009/10/06 09:10:32 ak Exp -
 # -Id: summarizer.PL,v 1.3 2009/08/27 05:09:59 ak Exp -
@@ -112,16 +112,8 @@ if( $Cmd->operation & ( $Cmd->option->{'aggregate'} + $Cmd->option->{'dailyupdat
 		# Set values to Kanadzuchi::BdDR object, Create data source name
 		try {
 			$Rdb->setup( $Zci->config->{'database'} );
-			unless( $Rdb->connect() )
-			{
-				my $errormsg .= 'Failed to connect DB'."\n";
-				my $boundary = '-' x 64;
-				$errormsg .= $boundary;
-				$errormsg .= "\n ".$Rdb->error->{'string'};
-				$errormsg .= $boundary;
-				$errormsg .= "\n";
-				Kanadzuchi::Exception::Database->throw( '-text' => $errormsg );
-			}
+			Kanadzuchi::Exception::Database->throw( 
+				'-text' => 'Failed to connect DB' ) unless( $Rdb->connect() );
 			$Cmd->d(2,"Connecting to the database\n") if( defined $Rdb->handle() );
 
 			( $Rdb->hostname() ne 'localhost' && $Rdb->port() ne q() )
@@ -132,7 +124,19 @@ if( $Cmd->operation & ( $Cmd->option->{'aggregate'} + $Cmd->option->{'dailyupdat
 			$Cmd->d(2,sprintf("Database user = %s\n", $Rdb->username()));
 		}
 		catch Kanadzuchi::Exception::Database with {
-			$Cmd->exception(shift());
+			my $e = shift();
+			my $b = '-' x 64;
+			my $m = $e;
+
+			if( length $Rdb->error->{'string'} )
+			{
+				$m .= "\n".$b;
+				$m .= "\n ".$Rdb->error->{'string'};
+				$m .= $b;
+				$m .= "\n";
+				$e .= ': '.$Rdb->error->{'string'};
+			}
+			$Cmd->exception($m);
 			$Cmd->abort();
 		};
 
@@ -939,7 +943,7 @@ sub help
 	printf( STDERR "    -D, --database      : (Database) Aggregate records in the database\n");
 	printf( STDERR "\n" );
 	printf( STDERR " * DAILY UPDATES OPTION\n" );
-	printf( STDERR "    -U, --dailyupdates  : \n" );
+	printf( STDERR "    -U, --dailyupdates  : Print DailyUpdates data\n" );
 	printf( STDERR "    -p, --period <x:y>  : Set a certain period of time. The format of period is following,\n");
 	printf( STDERR "                          2009/04/29:2009/05/09 or 2009-12-23:2010-01-23\n" );
 	printf( STDERR "    --totalsby <unit>   : Totals by [d]ay, [w]eek, [m]onth, [y]ear\n");
