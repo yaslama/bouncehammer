@@ -1,5 +1,5 @@
 # test-run.cf
-# $Id: test-run.cf,v 1.9.2.1 2011/02/02 01:27:42 ak Exp $
+# $Id: test-run.cf,v 1.9.2.2 2011/03/05 08:14:48 ak Exp $
 # This config file is YAML/JSON format. bin/* scripts read this file by
 # using (YAML|JSON)::Syck Perl module.
 #  ______   ______ _____ _____ __  __ 
@@ -11,7 +11,7 @@
 # System name and configuration file version, 
 # *** Do not change these key and value ***
 system: 'bounceHammer'
-version: '2.0.0'
+version: '2.7.0'
 
 #  _____ ___ _     _____ 
 # |  ___|_ _| |   | ____|
@@ -95,5 +95,33 @@ database:
   # 'hostname' and 'port'. 
   hostname: '127.0.0.1'
   port: 5432
+
+#  _____ _   ___     _____ ____   ___  _   _ __  __ _____ _   _ _____ 
+# | ____| \ | \ \   / /_ _|  _ \ / _ \| \ | |  \/  | ____| \ | |_   _|
+# |  _| |  \| |\ \ / / | || |_) | | | |  \| | |\/| |  _| |  \| | | |  
+# | |___| |\  | \ V /  | ||  _ <| |_| | |\  | |  | | |___| |\  | | |  
+# |_____|_| \_|  \_/  |___|_| \_\\___/|_| \_|_|  |_|_____|_| \_| |_|  
+#
+# Environment configurations
+environment:
+  # Timeout while read from STDIN(second)
+  timeout: 180
+
+  # Run As ...(Not implemented)
+  runas:
+    user: ''
+    group: 'bouncehammer'
+
+
+#  ______   ______  _     ___   ____ 
+# / ___\ \ / / ___|| |   / _ \ / ___|
+# \___ \\ V /\___ \| |  | | | | |  _ 
+#  ___) || |  ___) | |__| |_| | |_| |
+# |____/ |_| |____/|_____\___/ \____|
+#                                    
+# UNIX syslog(3) configuration, Beginning with bounceHammer 2.7.0
+syslog:
+  enabled: 0
+  facility: 'user'
 
 ...

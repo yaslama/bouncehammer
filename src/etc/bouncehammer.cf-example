@@ -1,5 +1,5 @@
 # bouncehammer.cf
-# $Id: bouncehammer.cf-example,v 1.13.2.1 2011/02/02 01:27:41 ak Exp $
+# $Id: bouncehammer.cf-example,v 1.13.2.2 2011/03/05 08:14:47 ak Exp $
 # This config file is YAML format. bin/* scripts read this file by
 # using (YAML|JSON)::Syck/ Perl module.
 #  ______   ______ _____ _____ __  __ 
@@ -11,7 +11,7 @@
 # System name and configuration file version, 
 # *** Do not change these key and value ***
 system: 'bounceHammer'
-version: '2.0.0'
+version: '2.7.0'
 
 #  _____ ___ _     _____ 
 # |  ___|_ _| |   | ____|
@@ -123,5 +123,20 @@ environment:
   runas:
     user: ''
     group: 'bouncehammer'
+
+#  ______   ______  _     ___   ____ 
+# / ___\ \ / / ___|| |   / _ \ / ___|
+# \___ \\ V /\___ \| |  | | | | |  _ 
+#  ___) || |  ___) | |__| |_| | |_| |
+# |____/ |_| |____/|_____\___/ \____|
+#                                    
+# UNIX syslog(3) configuration, Beginning with bounceHammer 2.7.0
+# mailboxparser, logger, databasectl, and tablectl use this configuration
+syslog:
+  # By default, messages will not be sent syslog(3). If you want to
+  # use syslog(3), set 1 to the value of enabled:.
+  enabled: 0
+  facility: 'local6'
+
 
 ...
