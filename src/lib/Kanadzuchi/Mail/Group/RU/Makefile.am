@@ -1,11 +1,11 @@
-# $Id: Makefile.am,v 1.1 2010/06/09 05:26:12 ak Exp $
-# Copyright (C) 2009,2010 Cubicroot Co. Ltd.
-# This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/Mail/Group/RU,
+# $Id: Makefile.am,v 1.1.2.2 2011/03/10 05:57:15 ak Exp $
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
+# This is the auto-Makefile for bounceHammer/src/lib/Kanadzuchi/Mail/Group/RU,
 # is processed by automake to create Makefile.in.
 
 distdir = $(BUILDROOT)/dist/lib/Kanadzuchi/Mail/Group/RU
 pkgdatadir = @libdir@/Kanadzuchi/Mail/Group/RU
-pkgdata_DATA = WebMail.pm
+pkgdata_DATA = Smartphone.pm WebMail.pm
 
 all-am:
 	test -d $(distdir) || mkdir -p $(distdir)
