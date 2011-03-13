@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.25.2.9 2011/03/13 06:14:53 ak Exp $
+# $Id: Makefile.am,v 1.25.2.10 2011/03/13 08:17:55 ak Exp $
 # Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # This is the auto-Makefile for bounceHammer/src/lib/Kanadzuchi/Mail/Group,
 # is processed by automake to create Makefile.in.
@@ -12,7 +12,7 @@ distdir = $(BUILDROOT)/dist/lib/Kanadzuchi/Mail/Group
 instdir = @prefix@/lib/Kanadzuchi/Mail/Group
 modules = Neighbor.pm
 pkgdatadir = @libdir@/Kanadzuchi/Mail/Group
-pkgdata_DATA = Cellphone.pm Smartphone.pm Webmail.pm
+pkgdata_DATA = Cellphone.pm Smartphone.pm WebMail.pm
 
 all-am: distlib
 	test -d $(distdir) || mkdir -p $(distdir)

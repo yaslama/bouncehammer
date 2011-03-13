@@ -1,4 +1,4 @@
-# $Id: 000_compile-core.t,v 1.50.2.5 2011/03/13 06:58:25 ak Exp $
+# $Id: 000_compile-core.t,v 1.50.2.6 2011/03/13 08:18:21 ak Exp $
 use strict;
 use warnings;
 use lib qw(./t/lib ./dist/lib ./src/lib);
@@ -26,7 +26,6 @@ my $Modules = [ qw{
 	Kanadzuchi::Mail::Bounced::Generic
 	Kanadzuchi::Mail::Bounced::Yahoo
 	Kanadzuchi::Mail::Group
-
 	Kanadzuchi::Mail::Group::AE::Smartphone
 	Kanadzuchi::Mail::Group::AL::Smartphone
 	Kanadzuchi::Mail::Group::AR::Cellphone
