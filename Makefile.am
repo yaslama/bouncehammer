@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.58.2.4 2011/03/13 06:58:04 ak Exp $
+# $Id: Makefile.am,v 1.58.2.5 2011/03/13 10:22:53 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009-2011 Cubicroot Co. Ltd.
@@ -125,14 +125,14 @@ message:
 	@echo "-----------------------------------------------------------------------------"
 	@echo " To use BounceHammer Command line tools"
 	@echo
-	@echo "  1. Setup and start database(PostgreSQL, MySQL, or SQLite)"
+	@echo "  1. Setup and start database (PostgreSQL, MySQL, or SQLite)"
 	@echo "  2. Create tables"
 	@echo "       a. Run @datadir@/script/{PostgreSQL,MySQL,SQLite}*.sql"
 	@echo "       b. Run @datadir@/script/mastertable-*.sql"
 	@echo "       c. Run @datadir@/script/records-example.sql"
-	@echo "  3. Copy @sysconfdir@/bouncehammer.cf-example @sysconfdir@/bouncehammer.cf"
+	@echo "  3. Copy @sysconfdir@/bouncehammer.cf-example as @sysconfdir@/bouncehammer.cf"
 	@echo "  4. Edit @sysconfdir@/bouncehammer.cf "
-	@echo "  5. Install the perl module: 'DBD::Pg' or 'DBD::mysql' or 'DBD::SQLite'."
+	@echo "  5. Install the perl module for DB: 'DBD::Pg', 'DBD::mysql' or 'DBD::SQLite'"
 	@echo "  6. @bindir@/* command line tools are avaliable"
 	@echo "  7. bin/mailboxparser -v /path/to/message.eml"
 	@echo
@@ -150,7 +150,7 @@ if WEBUI
 endif
 	@echo "-----------------------------------------------------------------------------"
 	@echo " To show this screen, type 'make message' and hit 'Return' key"
-	@echo " See more description at BounceHmammer website; http://bouncehammer.jp/"
+	@echo " More description about bounceHmammer is availalbe at http://bouncehammer.jp/"
 	@echo "-----------------------------------------------------------------------------"
 	@echo " ****** Upgrade information is available at ./UPGRADE ******"
 	@echo "-----------------------------------------------------------------------------"
