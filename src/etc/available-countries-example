@@ -1,11 +1,12 @@
-# $Id: available-countries-example,v 1.5.2.1 2011/03/04 06:58:26 ak Exp $
+# $Id: available-countries-example,v 1.5.2.3 2011/03/13 06:58:15 ak Exp $
 # available-countries:
 #   If you use this file, it should be saved as 'available-countries',
 #   Run /bin/cp ./available-countries-example ./available-countries 
-#   Kanadzuchi::Mail::Group reads this file as YAML for getting the parsed re-
-#   sults which  the host group and the provider  are correctly classified. If
-#   this file does not exist,  Kanadzuchi::Mail::Group load  all of modules in
+#   Kanadzuchi::Mail::Group reads  this file as a YAML  for getting the parsed
+#   results which the host group and the provider are properly classified.  If
+#   this file does not exist,  Kanadzuchi::Mail::Group load all the modules in
 #   the directory Kanadzuchi/Mail/Group/<XX> .
+#
 # ----------------------------------------------------------------------------
 # SYNOPSIS:
 #   <CCTLD>:
@@ -22,125 +23,332 @@
 #         MTA::<CCTLD or ISO3166>::*.pm
 #       * The key 'agents' has a value: Load only the module of its name in 
 #         Kanadzuch::MTA::<CCTLD or ISO3166>::<its name>.pm
-# ----------------------------------------------------------------------------
 #
-# Host groups which are used in Australia
-#   webmail: Many domains of FastMail.FM
-"au":
-  "webmail": 1
+# ----------------------------------------------------------------------------
+# EXAMPLE
+# "xx": { "cellphone": 1, "smartphone": 1, "webmail": 1, "agents": [ "mta1", "mta2" ] }
+#
 
-# Host groups which are used in Brasil
-#   webmail: BOL
-"br":
-  "webmail": 1
+# UAE: United Arab Emirates
+"ae": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in Canada
-#   webmail: Hushmail
-"ca":
-  "webmail": 1
+# Republic of Albania
+"al": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in China
-#   webmail: netease
-"cn":
-  "webmail": 1
+# Argentina/Argentine Republic
+"ar": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in Czech Republic/Czechia
-#   webmail: Seznam
-"cz":
-  "webmail": 1
+# Republic of Austria
+"at": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in Bundesrepublik Deutschland
-#   webmail: GMX
-"de":
-  "webmail": 1
+# Commonwealth of Australia
+"au": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in Egypt, The Middle East region.
-#   webmail: Many domains of Gawab
-"eg":
-  "webmail": 1
+# Aruba
+"aw": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in France
-#   webmail: voila
-"fr":
-  "webmail": 1
+# Kingdom of Belgium
+"be": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in India
-#   webmail: ibibo
-"in":
-  "webmail": 1
+# Republic of Bulgaria
+"bg": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in Israel
-#   webmail: Walla!
-"il":
-  "webmail": 1
+# Bermuda Islands
+"bm": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in Iran
-#   webmail: iran.ir
-"ir":
-  "webmail": 1
+# Brasil/Federative Republic of Brazil
+"br": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in Japan
-#   cellphone: NTT DoCoMo, au by KDDI, SoftBank Mobile.
-#   smartphone:iPhone, EMOBILE, WILLCOM, and such.
-#   webmail: auone.jp, dwmail.jp, goo.jp, livedoor.jp, and such.
-#   agents: [ 'mta1', 'mta2',... ]
-"jp":
-  "cellphone": 1
-  "smartphone": 1
-  "webmail": 1
-  "agents": [ "aubyKDDI" ]
+# Commonwealth of The Bahamas
+"bs": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in South Korea
-#   webmail: Daum(Hanmail), Empas
-"kr":
-  "webmail": 1
+# Canada
+"ca": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in Republic of Latvia
-#   webmail: inbokss(inbox.lv), mail.lv
-"lv":
-  "webmail": 1
+# Switzerland/Swiss Confederation/Confoederatio Helvetica
+"ch": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in Norway
-#   webmail: runbox.com
-"no":
-  "webmail": 1
+# Republic of Chile
+"cl": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in New Zealand
-#   webmail: coolkiwi.com
-"nz":
-  "webmail": 1
+# People's Republic of China
+"cn": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in Russia
-#   webmail: mail.ru, yandex, qip
-"ru":
-  "webmail": 1
+# Republic of Colombia
+"co": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in Singapore
-#   webmail: inSing.com
-"sg":
-  "webmail": 1
+# Republic of Costa Rica
+"cr": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in Republic Of China, Taiwan
-#   webmail: Far Eastone(seednet)
-"tw":
-  "webmail": 1
+# Czech Republic/Czechia
+"cz": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in the United Kingdom
-#   smartphone: O2 Telefonica's domain
-#   webmail: gmx, postmaster, yipple
-"uk":
-  "smartphone": 1
-  "webmail": 1
+# Federal Republic of Germany/Bundesrepublik Deutschland
+"de": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in the United States of America
-#   webmail: Many domains of mail.com, pobox and such.
-"us":
-  "webmail": 1
-  "agents": [ "Google" ]
+# Kingdom of Denmark/Kongeriget Danmark
+"dk": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
-# Host groups which are used in South Africa/Zuid-Afrika
-#   webmail: webmail.co.za:South Africa's free email service
-"za":
-  "webmail": 1
+# Dominican Republic
+"do": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
+# Republic of Ecuador
+"ec": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Arab Republic of Egypt
+"eg": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Kingdom of Spain
+"es": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# France/French Republic
+"fr": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Greece/Hellenic Republic
+"gr": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Guatemala
+"gt": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Hong Kong
+"hk": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Honduras
+"hn": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Croatia/Republika Hrvatska
+"hr": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Hungary
+"hu": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Indonesia/Republik Indonesia
+"id": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Ireland
+"ie": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# India
+"in": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Israel
+"il": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Iran
+"ir": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Iceland
+"is": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Italian Republic/Repubblica Italiana
+"it": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Jamaica
+"jm": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Japan
+"jp": { "cellphone": 1, "smartphone": 1, "webmail": 1, "agents": [ "aubyKDDI" ] }
+
+# Republic of Kenya/Jamhuri ya Kenya 
+"ke": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# South Korea
+"kr": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Lebanon/Lebanese Republic
+"lb": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Democratic Socialist Republic of Sri Lanka
+"lk": { "cellphone": 1, "smartphone": 1 }
+
+# Grand Duchy of Luxembourg
+"lu": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Latvia
+"lv": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Kingdom of Morocco
+"ma": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Montenegro
+"me": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Macedonia
+"mk": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Macau
+"mo": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Mauritius
+"mu": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Mexico/United Mexican States
+"mx": { "cellphone": 1, "smartphone": 1 }
+
+# Malaysia
+"my": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Federal Republic of Nigeria
+"ng": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Nicaragua
+"ni": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Kingdom of the Netherlands/Koninkrijk der Nederlanden
+"nl": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Kingdom of Norwa/Kongeriket Norge
+"no": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Federal Democratic Republic of Nepal
+"np": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# New Zealand/Aotearoa
+"nz": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Sultanate of Oman
+"om": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Panama
+"pa": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Peru
+"pe": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of the Philippines/Republika ng Pilipinas
+"ph": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Islamic Republic of Pakistan
+"pk": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Poland/Rzeczpospolita Polska
+"pl": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Commonwealth of Puerto Rico
+"pr": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Portugal/Portuguese Republic
+"pt": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Paraguay
+"py": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Romania
+"ro": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Russian Federation
+"ru": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Kingdom of Saudi Arabia
+"sa": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Kingdom of Sweden/Konungariket Sverige
+"se": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Singapore
+"sg": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Slovakia/Slovak Republic
+"sk": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Suriname/Republiek Suriname
+"sr": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of El Salvador 
+"sv": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# The Kingdom of Thailand
+"th": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Turkey
+"tr": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic Of China, Taiwan
+"tw": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Ukraine
+"ua": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Uganda/Jamhuri ya Uganda
+"ug": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# The United Kingdom
+"uk": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# The United States of America
+"us": { "cellphone": 1, "smartphone": 1, "webmail": 1, "agents": [ "Google" ] }
+
+# Oriental Republic of Uruguay 
+"uy": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Bolivarian Republic of Venezuela
+"ve": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Socialist Republic of Vietnam
+"vn": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# South Africa/Zuid-Afrika
+"za": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+
+# ----------------------------------------------------------------------------
+#  As of present, the following countries are not supported except Vodafone or
+#  Orange. See the code in Kanadzuchi::Mail::Group::Smartphone module.
+# ----------------------------------------------------------------------------
+# 
+#
+# Republic of Botswana
+# "bw": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Congo, Democratic Republic of
+# "cd": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Republic of Cote d'Ivoire
+# "ci": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Republic of Cameroon
+# "cm": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Republic of the Fiji Islands
+# "fj": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Republic of Ghana
+# "gh": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Bailiwick of Jersey
+# "je": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Hashemite Kingdom of Jordan
+# "jo": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Republic of Lithuania/Lietuvos Respublika
+# "lt": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Republica Moldova
+# "md": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Republic of Madagascar
+# "mg": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Republic of Mali
+# "ml": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Republic of Malta/Repubblika ta' Malta
+# "mt": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Republic of Niger
+# "ne": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# the State of Qatar
+# "qa": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Slovenia
+# "si: { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+# Republic of Senegal
+# "sn: { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+#
+#
+#
+#
 ...
