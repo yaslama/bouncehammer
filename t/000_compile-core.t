@@ -1,4 +1,4 @@
-# $Id: 000_compile-core.t,v 1.50.2.2 2011/03/04 06:58:28 ak Exp $
+# $Id: 000_compile-core.t,v 1.50.2.5 2011/03/13 06:58:25 ak Exp $
 use strict;
 use warnings;
 use lib qw(./t/lib ./dist/lib ./src/lib);
@@ -26,32 +26,146 @@ my $Modules = [ qw{
 	Kanadzuchi::Mail::Bounced::Generic
 	Kanadzuchi::Mail::Bounced::Yahoo
 	Kanadzuchi::Mail::Group
+
+	Kanadzuchi::Mail::Group::AE::Smartphone
+	Kanadzuchi::Mail::Group::AL::Smartphone
+	Kanadzuchi::Mail::Group::AR::Cellphone
+	Kanadzuchi::Mail::Group::AR::Smartphone
+	Kanadzuchi::Mail::Group::AT::Cellphone
+	Kanadzuchi::Mail::Group::AT::Smartphone
+	Kanadzuchi::Mail::Group::AU::Cellphone
+	Kanadzuchi::Mail::Group::AU::Smartphone
 	Kanadzuchi::Mail::Group::AU::WebMail
+	Kanadzuchi::Mail::Group::AW::Cellphone
+	Kanadzuchi::Mail::Group::BE::Smartphone
+	Kanadzuchi::Mail::Group::BG::Cellphone
+	Kanadzuchi::Mail::Group::BG::Smartphone
+	Kanadzuchi::Mail::Group::BM::Smartphone
+	Kanadzuchi::Mail::Group::BR::Cellphone
+	Kanadzuchi::Mail::Group::BR::Smartphone
 	Kanadzuchi::Mail::Group::BR::WebMail
+	Kanadzuchi::Mail::Group::BS::Smartphone
+	Kanadzuchi::Mail::Group::CA::Cellphone
+	Kanadzuchi::Mail::Group::CA::Smartphone
 	Kanadzuchi::Mail::Group::CA::WebMail
+	Kanadzuchi::Mail::Group::CH::Cellphone
+	Kanadzuchi::Mail::Group::CH::Smartphone
+	Kanadzuchi::Mail::Group::CL::Smartphone
+	Kanadzuchi::Mail::Group::CN::Smartphone
 	Kanadzuchi::Mail::Group::CN::WebMail
+	Kanadzuchi::Mail::Group::CO::Cellphone
+	Kanadzuchi::Mail::Group::CO::Smartphone
+	Kanadzuchi::Mail::Group::CR::Cellphone
 	Kanadzuchi::Mail::Group::CZ::WebMail
+	Kanadzuchi::Mail::Group::CZ::Smartphone
+	Kanadzuchi::Mail::Group::DE::Cellphone
+	Kanadzuchi::Mail::Group::DE::Smartphone
 	Kanadzuchi::Mail::Group::DE::WebMail
+	Kanadzuchi::Mail::Group::DK::Smartphone
+	Kanadzuchi::Mail::Group::DO::Smartphone
+	Kanadzuchi::Mail::Group::EC::Smartphone
+	Kanadzuchi::Mail::Group::EG::Smartphone
 	Kanadzuchi::Mail::Group::EG::WebMail
+	Kanadzuchi::Mail::Group::ES::Cellphone
+	Kanadzuchi::Mail::Group::ES::Smartphone
+	Kanadzuchi::Mail::Group::FR::Cellphone
+	Kanadzuchi::Mail::Group::FR::Smartphone
 	Kanadzuchi::Mail::Group::FR::WebMail
+	Kanadzuchi::Mail::Group::GR::Smartphone
+	Kanadzuchi::Mail::Group::GT::Smartphone
+	Kanadzuchi::Mail::Group::HK::Smartphone
+	Kanadzuchi::Mail::Group::HN::Smartphone
+	Kanadzuchi::Mail::Group::HR::Cellphone
+	Kanadzuchi::Mail::Group::HR::Smartphone
+	Kanadzuchi::Mail::Group::HU::Smartphone
+	Kanadzuchi::Mail::Group::ID::Smartphone
+	Kanadzuchi::Mail::Group::IE::Cellphone
+	Kanadzuchi::Mail::Group::IE::Smartphone
+	Kanadzuchi::Mail::Group::IN::Cellphone
+	Kanadzuchi::Mail::Group::IN::Smartphone
 	Kanadzuchi::Mail::Group::IN::WebMail
+	Kanadzuchi::Mail::Group::IL::Cellphone
+	Kanadzuchi::Mail::Group::IL::Smartphone
 	Kanadzuchi::Mail::Group::IL::WebMail
 	Kanadzuchi::Mail::Group::IR::WebMail
+	Kanadzuchi::Mail::Group::IS::Cellphone
+	Kanadzuchi::Mail::Group::IS::Cellphone
+	Kanadzuchi::Mail::Group::IT::Cellphone
+	Kanadzuchi::Mail::Group::IT::Smartphone
+	Kanadzuchi::Mail::Group::JM::Smartphone
 	Kanadzuchi::Mail::Group::JP::Cellphone
 	Kanadzuchi::Mail::Group::JP::Smartphone
 	Kanadzuchi::Mail::Group::JP::WebMail
+	Kanadzuchi::Mail::Group::KE::Smartphone
 	Kanadzuchi::Mail::Group::KR::WebMail
+	Kanadzuchi::Mail::Group::LB::Smartphone
+	Kanadzuchi::Mail::Group::LK::Cellphone
+	Kanadzuchi::Mail::Group::LK::Smartphone
+	Kanadzuchi::Mail::Group::LU::Smartphone
 	Kanadzuchi::Mail::Group::LV::WebMail
+	Kanadzuchi::Mail::Group::MA::Smartphone
+	Kanadzuchi::Mail::Group::ME::Smartphone
+	Kanadzuchi::Mail::Group::MK::Smartphone
+	Kanadzuchi::Mail::Group::MO::Smartphone
+	Kanadzuchi::Mail::Group::MU::Cellphone
+	Kanadzuchi::Mail::Group::MX::Cellphone
+	Kanadzuchi::Mail::Group::MX::Smartphone
+	Kanadzuchi::Mail::Group::MY::Smartphone
+	Kanadzuchi::Mail::Group::NG::Smartphone
+	Kanadzuchi::Mail::Group::NI::Cellphone
+	Kanadzuchi::Mail::Group::NI::Smartphone
+	Kanadzuchi::Mail::Group::NL::Cellphone
+	Kanadzuchi::Mail::Group::NL::Smartphone
+	Kanadzuchi::Mail::Group::NO::Smartphone
 	Kanadzuchi::Mail::Group::NO::WebMail
+	Kanadzuchi::Mail::Group::NP::Cellphone
+	Kanadzuchi::Mail::Group::NP::Smartphone
+	Kanadzuchi::Mail::Group::NZ::Cellphone
+	Kanadzuchi::Mail::Group::NZ::Smartphone
 	Kanadzuchi::Mail::Group::NZ::WebMail
+	Kanadzuchi::Mail::Group::OM::Smartphone
+	Kanadzuchi::Mail::Group::PA::Smartphone
+	Kanadzuchi::Mail::Group::PE::Smartphone
+	Kanadzuchi::Mail::Group::PH::Smartphone
+	Kanadzuchi::Mail::Group::PK::Smartphone
+	Kanadzuchi::Mail::Group::PL::Cellphone
+	Kanadzuchi::Mail::Group::PL::Smartphone
+	Kanadzuchi::Mail::Group::PR::Cellphone
+	Kanadzuchi::Mail::Group::PR::Smartphone
+	Kanadzuchi::Mail::Group::PT::Smartphone
+	Kanadzuchi::Mail::Group::PY::Smartphone
+	Kanadzuchi::Mail::Group::RO::Smartphone
+	Kanadzuchi::Mail::Group::RU::Smartphone
 	Kanadzuchi::Mail::Group::RU::WebMail
+	Kanadzuchi::Mail::Group::SA::Smartphone
+	Kanadzuchi::Mail::Group::SE::Cellphone
+	Kanadzuchi::Mail::Group::SE::Smartphone
+	Kanadzuchi::Mail::Group::SG::Cellphone
+	Kanadzuchi::Mail::Group::SG::Smartphone
 	Kanadzuchi::Mail::Group::SG::WebMail
+	Kanadzuchi::Mail::Group::SK::Smartphone
+	Kanadzuchi::Mail::Group::SR::Smartphone
+	Kanadzuchi::Mail::Group::SV::Smartphone
+	Kanadzuchi::Mail::Group::TH::Smartphone
+	Kanadzuchi::Mail::Group::TR::Smartphone
+	Kanadzuchi::Mail::Group::TW::Smartphone
 	Kanadzuchi::Mail::Group::TW::WebMail
+	Kanadzuchi::Mail::Group::UA::Smartphone
+	Kanadzuchi::Mail::Group::UG::Smartphone
+	Kanadzuchi::Mail::Group::UK::Cellphone
 	Kanadzuchi::Mail::Group::UK::Smartphone
 	Kanadzuchi::Mail::Group::UK::WebMail
+	Kanadzuchi::Mail::Group::US::Cellphone
+	Kanadzuchi::Mail::Group::US::Smartphone
 	Kanadzuchi::Mail::Group::US::WebMail
+	Kanadzuchi::Mail::Group::UY::Smartphone
+	Kanadzuchi::Mail::Group::VE::Smartphone
+	Kanadzuchi::Mail::Group::VN::Smartphone
+	Kanadzuchi::Mail::Group::ZA::Cellphone
+	Kanadzuchi::Mail::Group::ZA::Smartphone
 	Kanadzuchi::Mail::Group::ZA::WebMail
 	Kanadzuchi::Mail::Group::Neighbor
+	Kanadzuchi::Mail::Group::Cellphone
 	Kanadzuchi::Mail::Group::Smartphone
 	Kanadzuchi::Mail::Group::WebMail
 	Kanadzuchi::Mail::Stored
