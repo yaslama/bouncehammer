@@ -1,4 +1,4 @@
-# $Id: 151_ui-cli.t,v 1.7 2010/07/11 09:20:38 ak Exp $
+# $Id: 151_ui-cli.t,v 1.7.2.1 2011/03/18 05:45:22 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -11,7 +11,7 @@ use Kanadzuchi::Test;
 use Kanadzuchi::UI::CLI;
 use Path::Class::File;
 use File::Basename qw(basename);
-use Test::More ( tests => 736 );
+use Test::More ( tests => 745 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -97,6 +97,9 @@ foreach my $cf ( './src/etc/prove.cf', './src/etc/test-run.cf', '/dev/null', '/d
 			like( $o->cf->stringify(), qr{/}, q{->cf() = }.$o->cf->stringify() );
 			ok( length($K->config->{'system'}), q{Kanadzuchi->config->system = }.$K->config->{'system'} );
 			is( $l, 1, q{Kanadzuchi->load() = }.$o->cf->stringify() );
+			ok( $o->stream->{in} > -1, q{->stream->in = }.$o->stream->{in} );
+			ok( $o->stream->{out} > -1, q{->stream->out = }.$o->stream->{out} );
+			ok( $o->stream->{error} > -1, q{->stream->error = }.$o->stream->{error} );
 		}
 		else
 		{

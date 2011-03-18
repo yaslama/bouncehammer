@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.19.2.2 2011/03/05 10:28:48 ak Exp $
+# $Id: CLI.pm,v 1.19.2.3 2011/03/18 05:45:24 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                       
@@ -40,6 +40,7 @@ __PACKAGE__->mk_ro_accessors(
 	'commandline',	# (String) Command line
 	'processid',	# (Integer) Process ID
 	'startedat',	# (Time::Piece) Start time
+	'stream',	# (Hashref) Standard streams
 );
 
 # Rewritable accessors
@@ -77,6 +78,11 @@ sub new
 		$argvs->{'calledfrom'} = File::Basename::basename([caller()]->[1]);
 		$argvs->{'option'} = {} unless defined($argvs->{'option'});
 		$argvs->{'silent'} = 0 unless defined($argvs->{'silent'});
+		$argvs->{'stream'} = {
+			'in' => -t STDIN ? 1 : 0,
+			'out' => -t STDOUT ? 1 : 0,
+			'error' => -t STDERR ? 1 : 0,
+		};
 
 		last() unless defined($argvs->{'cf'});
 		last() if( ref($argvs->{'cf'}) eq q|Path::Class::File| );
