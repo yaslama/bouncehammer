@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.17.2.1 2011/03/05 08:14:24 ak Exp $
+# $Id: logger.PL,v 1.17.2.2 2011/03/18 05:46:12 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -235,7 +235,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 		my $howmanyskipd = 0;		# (Integer) The number of skipped records
 
 		# progress bar
-		if( $Cmd->debuglevel > -1 )
+		if( $Cmd->stream->{out} && $Cmd->debuglevel > -1 )
 		{
 			eval { require Term::ProgressBar; };
 			$pprogressbar = new Term::ProgressBar( { 
@@ -293,7 +293,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 		next() unless( @$templogfiles );
 
 		# progress bar
-		if( $Cmd->debuglevel > -1 )
+		if( $Cmd->stream->{out} && $Cmd->debuglevel > -1 )
 		{
 			my $__pbname = $Cmd->operation & $Cmd->option->{'merge'} ? 'Merge' : 'Concatenate';
 			$pprogressbar = new Term::ProgressBar( { 

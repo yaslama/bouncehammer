@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.23.2.2 2011/03/05 08:14:24 ak Exp $
+# $Id: databasectl.PL,v 1.23.2.3 2011/03/18 05:46:12 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -182,7 +182,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		my $theprogbar = undef();	# (Term::ProgressBar) Progress bar
 
 		# Create the log file name by the day(-t, -y, or -b option )
-		if( scalar(@$Logs) == 0 && defined($Date) )
+		if( scalar(@$Logs) == 0 && ( defined($Date) && length($Date) ) )
 		{
 			# Set the log file name
 			push( @$Logs, new Path::Class::File( $Zci->get_logfile('r',{ 'date' => $Date } )) );
@@ -193,12 +193,12 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		if( scalar(@$Logs) )
 		{
 			try {
-				Kanadzuchi::Exception::File->throw(
-					'-text' => 'No regular log file to update' ) unless( grep { -s $_ && -r _ && -T _ } @$Logs );
+				unless( grep { -s $_ && -r _ && -T _ } @$Logs )
+				{
+					Kanadzuchi::Exception::File->throw(
+						'-text' => 'No regular log file to update' )
+				}
 				alarm(0);
-
-				# Prepare the progress bar
-				eval { require Term::ProgressBar; } if( -t STDIN && $Cmd->debuglevel > -1 );
 
 				# Check the number of records in the log files
 				foreach my $f ( @$Logs )
@@ -230,6 +230,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 
 		my $loadedsize = 0;				# (Integer) Loaded data size
 		my $loadedline = 0;				# (Integer) Loaded line
+		my $listoflogs = [];				# (Ref->Array) List of log files
 
 		my $debugmesgs = q();				# (String) Debug message string
 		my $recinthedb = $xntableobj->count();		# (Integer) The number of records in the db
@@ -256,13 +257,16 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		}
 
 		# Prepare the progress bar
-		if( -t STDIN && $Cmd->debuglevel > -1 )
+		if( $Cmd->stream->{out} && $Cmd->debuglevel > -1 )
 		{
+			# Prepare the progress bar
+			require Term::ProgressBar;
+
 			$theprogbar = new Term::ProgressBar( { 
 						'fh' => \*STDERR,
 						'ETA' => 'linear',
 						'name' => '(UPDATE|INSERT)',
-						'count' => -t STDIN ? $thelinesof : $sizeoflogs } );
+						'count' => $Cmd->stream->{in} ? $thelinesof : $sizeoflogs } );
 		}
 
 		LOAD_EACH_FILE: while( my $logfileobj = shift(@$Logs) )
@@ -278,9 +282,16 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			my $execinsert = 0;		# (Integer) Flag; Exec INSERT
 			my $okorfailed = q();		# (String) OK or Failed
 
-			ref($logfileobj) eq q|GLOB|
-				? $filehandle = $logfileobj
-				: open( $filehandle, q{<}, $logfileobj );
+			if( ref($logfileobj) eq q|GLOB| )
+			{
+				$filehandle = $logfileobj;
+				push( @$listoflogs, 'STDIN' );
+			}
+			else
+			{
+				open( $filehandle, q{<}, $logfileobj );
+				push( @$listoflogs, $logfileobj->basename() );
+			}
 
 			READ_EACH_LINE: while( <$filehandle> )
 			{
@@ -499,8 +510,8 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		}
 
 		$Zci->historique('info',
-			sprintf("records=%d, inserted=%d, updated=%d, skipped=%d, failed=%d, mode=update",
-				$thelinesof, $execstatus->{'inserted'}, $execstatus->{'updated'}, 
+			sprintf("logs=%s, records=%d, inserted=%d, updated=%d, skipped=%d, failed=%d, mode=update",
+				join(',', @$listoflogs), $thelinesof, $execstatus->{'inserted'}, $execstatus->{'updated'}, 
 				($execstatus->{'nofrom'} + $execstatus->{'tooold'} + $execstatus->{'whited'} + $execstatus->{'exceed'}),
 				$xntableobj->error->{'count'} ));
 
@@ -755,10 +766,6 @@ sub parse_options
 			{
 				$Cmd->e('Invalid date format: '.$opt_date.', See --help');
 			}
-		}
-		else
-		{
-			$Date = Kanadzuchi::Time->o2d(0) if( -t STDIN );
 		}
 
 		last(DETECT_LOG_FILES) if( scalar(@ARGV) == 0 || $ARGV[0] eq '-' );

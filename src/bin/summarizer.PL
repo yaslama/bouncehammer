@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: summarizer.PL,v 1.14.2.1 2011/03/05 08:12:38 ak Exp $
+# $Id: summarizer.PL,v 1.14.2.2 2011/03/18 05:46:12 ak Exp $
 # -Id: summarizer.PL,v 1.13 2010/02/22 05:09:01 ak Exp -
 # -Id: summarizer.PL,v 1.2 2009/10/06 09:10:32 ak Exp -
 # -Id: summarizer.PL,v 1.3 2009/08/27 05:09:59 ak Exp -
@@ -210,7 +210,6 @@ if( $Cmd->operation & ( $Cmd->option->{'aggregate'} + $Cmd->option->{'dailyupdat
 		#         |___/ |___/          |___/               
 		#                                                         
 		$Cmd->d( 1, sprintf("Aggregate by %s\n", join( ', ', @$Col ) ) );
-		require Term::ProgressBar if( $Cmd->debuglevel > -1 );
 
 		# WHERE Condition
 		if( scalar @$Date )
@@ -247,8 +246,9 @@ if( $Cmd->operation & ( $Cmd->option->{'aggregate'} + $Cmd->option->{'dailyupdat
 		}
 
 		# Prepare the progress bar
-		if( -t STDIN && $Cmd->debuglevel > -1 )
+		if( $Cmd->stream->{out} && $Cmd->debuglevel > -1 )
 		{
+			require Term::ProgressBar;
 			$smprogress = new Term::ProgressBar( { 
 						'fh' => \*STDERR,
 						'ETA' => 'linear',
@@ -508,7 +508,7 @@ if( $Cmd->operation & ( $Cmd->option->{'aggregate'} + $Cmd->option->{'dailyupdat
 		$dailyulogs->totalsby($Unit);
 
 		# Prepare the progress bar
-		if( -t STDIN && $Cmd->debuglevel > -1 )
+		if( $Cmd->stream->{out} && $Cmd->debuglevel > -1 )
 		{
 			require Term::ProgressBar if( $Cmd->debuglevel > -1 );
 			$smprogress = new Term::ProgressBar( { 
