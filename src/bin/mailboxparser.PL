@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.40.2.1 2011/03/05 08:14:25 ak Exp $
+# $Id: mailboxparser.PL,v 1.40.2.2 2011/03/18 05:46:12 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -183,7 +183,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		my $md5digests = [];	# (Ref->Array) MD5 Digest hash values of each file
 
 		# Create progress bar object if it is verbose mode
-		if( scalar @{$Mail->{'files'}} && $Cmd->debuglevel > -1 )
+		if( scalar @{$Mail->{'files'}} && $Cmd->stream->{out} && $Cmd->debuglevel > -1 )
 		{
 			eval { require Term::ProgressBar; };
 			$parseprogress = new Term::ProgressBar( { 
@@ -362,7 +362,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		$howmanyemails += $mailboxparser->nmails();
 
 		# Progress bar for each parser
-		if( $Cmd->debuglevel > -1 )
+		if( $Cmd->stream->{out} && $Cmd->debuglevel > -1 )
 		{
 			eval { require Term::ProgressBar; };
 			$parseprogress = new Term::ProgressBar( { 
@@ -431,9 +431,9 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	$Cmd->d( 0, sprintf( "Parsed emails/bounces(ratio) in the mailbox = %d/%d (%.4f)\n",
 			$howmanyparsed, $howmanybounce, $howmanybounce == 0 ? 0 : ($howmanyparsed / $howmanybounce) ));
 
-	if( ref($kanadzuchilog->device()) eq q|IO::File| && $kanadzuchilog->logfile() )
+	if( $kanadzuchilog->logfile() )
 	{
-		$kanadzuchilog->device->close();
+		$kanadzuchilog->device->close() if( ref($kanadzuchilog->device()) eq q|IO::File| );
 		$kanadzuchilog->logfile->unlock() if( $kanadzuchilog->logfile->locked() );
 		$kanadzuchilog->logfile->remove() if( -f $kanadzuchilog->logfile && ! -s _ );
 	}
