@@ -1,4 +1,4 @@
-# $Id: DailyUpdates.pm,v 1.4 2010/10/05 11:16:31 ak Exp $
+# $Id: DailyUpdates.pm,v 1.4.2.1 2011/03/18 05:45:46 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::BdDR::
                                                                                   
@@ -647,7 +647,10 @@ sub quaerit
 	foreach my $x ( @$data )
 	{
 		my $s = $x->{'executed'} ? int( $x->{'skipped'} / $x->{'executed'} ) : 0;
-		$x->{'estimated'} = $x->{'inserted'} + $x->{'updated'} + $s;
+		my $e = 0;
+
+		map { $e += $x->{$_} } qw(inserted updated skipped failed);
+		$x->{'estimated'} = $e ? ( $x->{'inserted'} + $x->{'updated'} + $s ) : 0;
 	}
 
 	if( defined wantarray() )
