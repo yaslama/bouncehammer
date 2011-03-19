@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.40.2.2 2011/03/18 05:46:12 ak Exp $
+# $Id: mailboxparser.PL,v 1.40.2.3 2011/03/19 09:41:57 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -98,7 +98,7 @@ try {
 otherwise {
 	my $e = shift();
 	$Cmd->exception($e);
-	$Zci->historique('err',$e);
+	$Zci->historique('err','stat='.$e);
 	$Cmd->abort();
 };
 
@@ -276,7 +276,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	if( scalar(@$chunksofemail) == 0 && $Argc > 0 )
 	{
 		$Cmd->e('No data in the mailboxes');
-		$Zci->historique('notice','No data in the mailboxes');
+		$Zci->historique('notice','stat=No data in the mailboxes');
 		$Cmd->abort();
 	}
 
@@ -459,7 +459,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 
 	# syslog
 	$Zci->historique( 'info',
-		sprintf( "size=%d, emails=%d, bounces=%d, parsed=%d, output=%s",
+		sprintf( "size=%d, emails=%d, bounces=%d, parsed=%d, output=%s, stat=ok",
 			$sizeofmailbox, $howmanyemails, $howmanybounce, $howmanyparsed,
 			( $Cmd->operation & $Cmd->option->{'two-way'} )
 				? 'file, screen'

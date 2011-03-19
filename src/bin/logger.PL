@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.17.2.2 2011/03/18 05:46:12 ak Exp $
+# $Id: logger.PL,v 1.17.2.3 2011/03/19 09:41:57 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -89,7 +89,7 @@ try {
 otherwise {
 	my $e = shift();
 	$Cmd->exception($e);
-	$Zci->historique('err',$e);
+	$Zci->historique('err','stat='.$e);
 	$Cmd->abort();
 };
 
@@ -200,7 +200,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 	if( scalar(@$tmplogsinhdd) == 0 )
 	{
 		$Cmd->d(1,q{There is no temporary log file}.qq{\n} );
-		$Zci->historique('notice','There is no temporary log file');
+		$Zci->historique('notice','stat=There is no temporary log file');
 		$Cmd->finish();
 	}
 
@@ -209,7 +209,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 	{
 		print( STDOUT $howmanytemps.qq(\n) );
 		$Zci->historique( 'info', 
-			sprintf("size=?, temporarylogs=%d, regularlogs=0, mode=list",$howmanytemps) );
+			sprintf("size=?, temporarylogs=%d, regularlogs=0, mode=list, stat=ok",$howmanytemps) );
 		$Cmd->finish();
 	}
 
@@ -611,7 +611,7 @@ if( $Cmd->operation & ( $Cmd->option->{'concatenate'} + $Cmd->option->{'merge'} 
 	}
 
 	$Zci->historique('info', 
-		sprintf("size=%d, temporarylogs=%d, regularlogs=%d, mode=%s",
+		sprintf("size=%d, temporarylogs=%d, regularlogs=%d, mode=%s, stat=ok",
 			$sizeoftmplog, $howmanytemps, scalar(keys(%$statusbydate)),
 			( $Cmd->operation & $Cmd->option->{'merge'} ) ? 'merge' : 'concatenate' ));
 

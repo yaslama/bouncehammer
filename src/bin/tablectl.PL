@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: tablectl.PL,v 1.16.2.1 2011/03/05 08:14:25 ak Exp $
+# $Id: tablectl.PL,v 1.16.2.2 2011/03/19 09:41:57 ak Exp $
 # -Id: tablectl.PL,v 1.12 2010/02/21 20:09:01 ak Exp -
 # -Id: tablectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: tablectl.PL,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -94,7 +94,7 @@ try {
 otherwise {
 	my $e = shift();
 	$Cmd->exception($e);
-	$Zci->historique('err',$e) if ( $Cmd->operation & $Cmd->option->{'modify'} );
+	$Zci->historique('err','stat='.$e) if ( $Cmd->operation & $Cmd->option->{'modify'} );
 	$Cmd->abort();
 };
 
@@ -147,7 +147,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			$e .= ': '.$Rdb->error->{'string'};
 		}
 		$Cmd->exception($m);
-		$Zci->historique('err',$e);
+		$Zci->historique('err','stat='.$e);
 		$Cmd->abort();
 	};
 
@@ -260,7 +260,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			catch Kanadzuchi::Exception::Command with {
 				my $e = shift();
 				$Cmd->exception($e);
-				$Zci->historique('err',$e.', mode=update');
+				$Zci->historique('err','mode=update, stat='.$e);
 				$Cmd->abort();
 			};
 
@@ -271,13 +271,14 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			if( $ismodified )
 			{
 				$Cmd->d(2,'Successfully updated ( ID = '.$Wcond->{'id'}." )\n");
-				$Zci->historique( 'info', sprintf("updated=1, id=%d, mode=update",$Wcond->{'id'}) );
+				$Zci->historique( 'info', 
+					sprintf("updated=1, id=%d, mode=update, stat=ok",$Wcond->{'id'}) );
 			}
 			else
 			{
 				$Cmd->d(2,"Failed to UPDATE\n");
 				$Zci->historique( 'err', 
-					sprintf( "updated=0, id=%d, mode=update", $Wcond->{'id'} ) );
+					sprintf( "updated=0, id=%d, mode=update, stat=failed", $Wcond->{'id'} ) );
 			}
 
 		}
@@ -308,13 +309,14 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			if( $ismodified )
 			{
 				$Cmd->d(2,'Successfully deleted ( ID = '.$Wcond->{'id'}." )\n");
-				$Zci->historique( 'info', sprintf("removed=1, id=%d, mode=remove",$Wcond->{'id'}) );
+				$Zci->historique( 'info', 
+					sprintf("removed=1, id=%d, mode=remove, stat=ok",$Wcond->{'id'}) );
 			}
 			else
 			{
 				$Cmd->d(2,"Failed to DELETE\n");
 				$Zci->historique( 'err', 
-					sprintf( "removed=0, id=%d, mode=remove", $Wcond->{'id'} ) );
+					sprintf( "removed=0, id=%d, mode=remove, stat=failed", $Wcond->{'id'} ) );
 			}
 
 		}
@@ -338,7 +340,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			catch Kanadzuchi::Exception::Command with {
 				my $e = shift();
 				$Cmd->exception($e);
-				$Zci->historique('err',$e.', mode=insert');
+				$Zci->historique('err','mode=insert, stat='.$e);
 				$Cmd->abort();
 			};
 
@@ -350,14 +352,15 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			{
 				$Cmd->d(2,'Successfully inserted ( ID = '.$ismodified." )\n");
 				$Zci->historique( 'info', 
-					sprintf( "inserted=1, id=%d, name=%s, mode=insert",
+					sprintf( "inserted=1, id=%d, name=%s, mode=insert, stat=ok",
 							$ismodified, $newelement->{'name'} ) );
 			}
 			else
 			{
 				$Cmd->d(2,'Failed to INSERT'."\n");
 				$Zci->historique( 'err', 
-					sprintf( "inserted=0, id=?, name=%s, mode=insert", $newelement->{'name'} ) );
+					sprintf( "inserted=0, id=?, name=%s, mode=insert,stat=failed",
+						$newelement->{'name'} ) );
 			}
 		}
 	}

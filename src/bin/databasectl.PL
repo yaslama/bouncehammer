@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.23.2.3 2011/03/18 05:46:12 ak Exp $
+# $Id: databasectl.PL,v 1.23.2.4 2011/03/19 09:41:56 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -93,7 +93,7 @@ try {
 otherwise {
 	my $e = shift();
 	$Cmd->exception($e);
-	$Zci->historique('err',$e);
+	$Zci->historique('err','stat='.$e);
 	$Cmd->abort();
 };
 
@@ -163,7 +163,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			$e .= ': '.$Rdb->error->{'string'};
 		}
 		$Cmd->exception($m);
-		$Zci->historique('err',$e);
+		$Zci->historique('err','stat='.$e);
 		$Cmd->abort();
 	};
 
@@ -212,7 +212,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			otherwise {
 				my $e = shift();
 				$Cmd->exception($e);
-				$Zci->historique('err',$e.', mode=update');
+				$Zci->historique('err','mode=update, stat='.$e);
 				$Cmd->abort();
 			};
 		}
@@ -510,7 +510,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		}
 
 		$Zci->historique('info',
-			sprintf("logs=%s, records=%d, inserted=%d, updated=%d, skipped=%d, failed=%d, mode=update",
+			sprintf("logs=%s, records=%d, inserted=%d, updated=%d, skipped=%d, failed=%d, mode=update, stat=ok",
 				join(',', @$listoflogs), $thelinesof, $execstatus->{'inserted'}, $execstatus->{'updated'}, 
 				($execstatus->{'nofrom'} + $execstatus->{'tooold'} + $execstatus->{'whited'} + $execstatus->{'exceed'}),
 				$xntableobj->error->{'count'} ));
@@ -554,8 +554,8 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 			my $e = shift();
 			$Cmd->exception($e);
 			$Zci->historique( 'err',
-				sprintf("%s, mode=%s", $e,
-					($Cmd->operation & $Cmd->option->{'remove'}) ? 'remove' : 'disable' ) );
+				sprintf("mode=%s, stat=%s",
+					(($Cmd->operation & $Cmd->option->{'remove'}) ? 'remove' : 'disable'), $e ) );
 			$Cmd->abort();
 		};
 
@@ -590,7 +590,7 @@ if( $Cmd->operation & $Cmd->option->{'database'} )
 		}
 
 		$Zci->historique( 'info',
-			sprintf("record=1, %s=%d, id=%s, token=%s, mode=%s", 
+			sprintf("record=1, %s=%d, id=%s, token=%s, mode=%s, stat=ok", 
 				$operation.'d', $itsstatus, 
 				( $Cond->{'id'} ? $Cond->{'id'} : '?' ),
 				( $Cond->{'token'} ? $Cond->{'token'} : 'none' ), $operation ));
