@@ -1,4 +1,4 @@
-# $Id: Kanadzuchi.pm,v 1.33.2.4 2011/03/05 08:15:25 ak Exp $
+# $Id: Kanadzuchi.pm,v 1.33.2.5 2011/03/19 11:04:35 ak Exp $
 # -Id: TheHammer.pm,v 1.4 2009/09/01 23:19:41 ak Exp -
 # -Id: Herculaneum.pm,v 1.13 2009/08/27 05:09:23 ak Exp -
 # -Id: Version.pm,v 1.35 2009/08/27 05:09:29 ak Exp -
@@ -214,9 +214,15 @@ sub historique
 	# Don't send message to syslogd if it's disabled in boncehammer.cf
 	return 0 unless $self->{'config'}->{'syslog'}->{'enabled'};
 
-	my $logidentstr = lc($SYSNAME).'/'.File::Basename::basename([caller()]->[1]);
 	my $loggingopts = 'ndelay,pid,nofatal';
 	my $logfacility = $self->{'config'}->{'syslog'}->{'facility'} || 'local6';
+	my $logidentstr = lc($SYSNAME).'/'.File::Basename::basename([caller()]->[1]);
+
+	if( $logidentstr =~ m{[.]pm\z} )
+	{
+		$logidentstr =  lc($SYSNAME).'/Web/'.File::Basename::basename([caller()]->[1]);
+		$logidentstr =~ s{[.]pm\z}{}; 
+	}
 
 	# Set prefix or suffix into the log message
 	my $errp = { 
