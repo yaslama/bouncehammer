@@ -1,4 +1,4 @@
-# $Id: Delete.pm,v 1.5 2010/08/28 17:22:09 ak Exp $
+# $Id: Delete.pm,v 1.5.2.1 2011/03/19 09:41:42 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::Web::
                                        
@@ -59,17 +59,30 @@ sub deletetherecord
 		my $data = [];		# (Ref->Array) Updated record
 		my $cdat = new Kanadzuchi::BdDR::Cache();
 		my $btab = new Kanadzuchi::BdDR::BounceLogs::Table( 'handle' => $bddr->handle() );
+		my $zchi = $self->{'kanadzuchi'};
 
 		$this = $iter->first();
-		return $self->e( 'nosuchrecord' ) unless( $this->id() );
+		unless( $this->id() )
+		{
+			$zchi->historieque( 'err', 'mode=remove, stat=no such record');
+			return $self->e( 'nosuchrecord' );
+		}
+
 		if( $this->remove( $btab, $cdat ) )
 		{
+			# syslog
+			$zchi->historique( 'info',
+				sprintf("record=1, removed=1, id=%s, token=%s, mode=remove, stat=ok", 
+					( $cond->{'id'} ? $cond->{'id'} : '?' ),
+					( $cond->{'token'} ? $cond->{'token'} : 'none' ) ));
+
 			$data = $this->damn();
 			$data->{'removed'}  = $this->updated->ymd().'('.$this->updated->wdayname().') '.$this->updated->hms();
 			$data->{'bounced'}  = $this->bounced->ymd().'('.$this->bounced->wdayname().') '.$this->bounced->hms();
 			$data->{'bounced'} .= ' '.$this->timezoneoffset() if( $this->timezoneoffset() );
 			$self->tt_params( 'pv_bouncemessages' => [ $data ], 'pv_isremoved' => 1 );
 			$self->tt_process( $file );
+
 		}
 		else
 		{

@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.26.2.1 2011/03/05 10:28:48 ak Exp $
+# $Id: Web.pm,v 1.26.2.2 2011/03/19 09:41:42 ak Exp $
 # -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
 # -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -57,6 +57,9 @@ sub cgiapp_init
 	my $httpalang = $ENV{'HTTP_ACCEPT_LANGUAGE'} || 'en-us';
 	my $httpquery = $self->query();
 	my $htsession = $self->session();
+
+	# System object
+	$self->{'kanadzuchi'} = new Kanadzuchi();
 
 	# Load config file,
 	$self->loadconfig() if( -r $sysconfig && -T _ && -r $webconfig && -T _ );
@@ -191,7 +194,7 @@ sub tt_pre_process
 
 	my $httpport = $ENV{'SERVER_PORT'} || 0;
 	my $httphost = $ENV{'HTTP_HOST'} || 'localhost';
-	my $majorver = $Kanadzuchi::VERSION || '0.0.0';
+	my $majorver = $self->{'kanadzuchi'}->version() || '0.0.0';
 	my $htscript = $ENV{'SCRIPT_NAME'} || '/';
 	my $pathinfo = $ENV{'PATH_INFO'} || q();
 
@@ -200,7 +203,7 @@ sub tt_pre_process
 
 	$self->tt_params( 
 		'pv_systemname' => $Kanadzuchi::SYSNAME,
-		'pv_sysversion' => $Kanadzuchi::VERSION,
+		'pv_sysversion' => $self->{'kanadzuchi'}->version(),
 		'pv_scriptname' => $htscript,
 		'pv_head1title' => '<sup>'.$majorver.'</sup>',
 		'pv_configname' => $self->{'webconfig'}->{'name'} || 'Undefined',
@@ -237,7 +240,12 @@ sub loadconfig
 	# @Param	None
 	my $self = shift();
 	my $sysconfig = shift @{ Kanadzuchi::Metadata->to_object($self->param('cf')) };
-	$self->{'sysconfig'} = $sysconfig if( ref($sysconfig) eq q|HASH| );
+
+	if( ref($sysconfig) eq q|HASH| )
+	{
+		$self->{'sysconfig'} = $sysconfig;
+		$self->{'kanadzuchi'}->{'config'}->{'syslog'} = $sysconfig->{'syslog'};
+	}
 
 	my $webconfig = shift @{ Kanadzuchi::Metadata->to_object($self->param('wf')) };
 	$self->{'webconfig'} = $webconfig if( ref($webconfig) eq q|HASH| );

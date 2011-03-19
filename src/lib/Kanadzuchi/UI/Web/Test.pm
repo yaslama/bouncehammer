@@ -1,4 +1,4 @@
-# $Id: Test.pm,v 1.23 2010/08/28 17:22:09 ak Exp $
+# $Id: Test.pm,v 1.23.2.1 2011/03/19 09:41:42 ak Exp $
 # -Id: Test.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Test.pm,v 1.10 2009/08/17 12:39:31 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -79,6 +79,7 @@ sub onlineparser
 		my $first5byte = q();		# (String) First 5bytes data of mail
 		my $serialized = q();		# (String) Serialized data text(YAML|JSON)
 
+		my $kanadzuchi = $self->{'kanadzuchi'};
 		my $pseudofrom = q(From MAILER-DAEMON Sun Dec 31 23:59:59 2000).qq(\n);
 		my $fileconfig = $self->{'sysconfig'}->{'file'}->{'templog'};
 		my $maxtxtsize = $self->{'webconfig'}->{'upload'}->{'maxsize'};
@@ -139,7 +140,13 @@ sub onlineparser
 		# Check the size of email text
 		$errortitle = 'nosize' if( $sizeofmail == 0 );
 		$errortitle = 'toobig' if( $maxtxtsize > 0 && length($datasource) > $maxtxtsize );
-		$self->e( $errortitle ) if( $errortitle );
+
+		if( $errortitle )
+		{
+			$kanadzuchi->historique('err', 
+				'stat='.( $errortitle eq 'nosize' ? 'mailbox is empty' : 'mailbox is too big') );
+			$self->e( $errortitle );
+		}
 
 		SLURP_AND_EAT: while(1)
 		{
@@ -154,13 +161,25 @@ sub onlineparser
 			$objzcimbox->parseit() || last();
 			$mpiterator = Kanadzuchi::Mail::Bounced->eatit( 
 					$objzcimbox, { 'cache' => $temporaryd, 'verbose' => 0, 'fast' => 1, } );
-			last() unless( $mpiterator->count() );
+
+			unless( $mpiterator->count() )
+			{
+				$kanadzuchi->historique('err','stat=there is no bounced email');
+				last();
+			}
 
 			if( $mpiterator->count > $parseuntil )
 			{
 				splice( @{ $mpiterator->data }, $parseuntil );
 				$mpiterator->count( scalar @{ $mpiterator->data } );
+				$kanadzuchi->historique('warn','stat=too many emails');
 			}
+
+			# syslog
+			$kanadzuchi->historique( 'info',
+				sprintf( "size=%d, emails=%d, bounces=%d, parsed=%d, output=%s, stat=ok",
+					$sizeofmail, $objzcimbox->nmails(), $objzcimbox->nmesgs(), 
+					$mpiterator->count(), $dataformat ));
 
 			# Convert from object to hash reference
 			if( $dataformat eq 'html' )
@@ -330,9 +349,11 @@ sub onlineparser
 					}
 					else
 					{
+						# UPDATE
 						$thisstatus = $o->update( $xntableobj, $tablecache );
 						$okorfailed = ( $thisstatus == 1 ) ? 'updated' : 'failed';
 					}
+
 					$execstatus->{ $yamlkeymap->{ $okorfailed } }++;
 					$theupdated->{ $thisdateis }->{ $okorfailed }++;
 
@@ -353,6 +374,13 @@ sub onlineparser
 
 					$dupdatarec = $dupdataobj->recordit($tobupdated);
 				}
+
+				# syslog
+				$kanadzuchi->historique('info',
+					sprintf("logs=WebUI, records=%d, inserted=%d, updated=%d, skipped=%d, failed=%d, mode=update, stat=ok",
+						$mpiterator->count(), $execstatus->{'inserted'}, $execstatus->{'updated'}, 
+						($execstatus->{'nofrom'} + $execstatus->{'tooold'} + $execstatus->{'whited'} + $execstatus->{'exceed'}),
+						$dupdataobj->db->{'error'}->{'count'} ));
 
 			} # End of if(REGISTERIT)
 

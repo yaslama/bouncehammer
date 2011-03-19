@@ -1,4 +1,4 @@
-# $Id: MasterTables.pm,v 1.19 2010/08/28 17:22:09 ak Exp $
+# $Id: MasterTables.pm,v 1.19.2.1 2011/03/19 09:41:42 ak Exp $
 # -Id: MasterTables.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: MasterTables.pm,v 1.7 2009/08/15 15:06:56 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -104,6 +104,7 @@ sub tablecontrol
 		my $wherecond = {};			# (Ref->Hash) WHERE Condition
 		my $currentid = 0;			# (Integer) Current ID of the record
 		my $tabaction = $cgidquery->param('fe_action') || $ENV{'PATH_INFO'};
+		my $kanadzchi = $self->{'kanadzuchi'};
 
 		$tabaction =~ s{\A.+/([a-zA-Z]+)\z}{$1};
 
@@ -121,14 +122,25 @@ sub tablecontrol
 			$newmtdata->{'disabled'} = 0;
 
 			# The table is read only table, Set error template
-			return $self->e( 'readonlytable' ) if( $tableisro );
+			if( $tableisro )
+			{
+				$kanadzchi->historique( 'err', 
+					'removed=0, id=?, mode=remove, stat=readonly table' );
+				return $self->e( 'readonlytable' );
+			}
 
 			# The table is writable
 			if( Kanadzuchi::RFC2822->is_domainpart($newmtdata->{'name'}) 
 				&& $newmtdata->{'name'} =~ m{[.]} ){
 
 				$currentid = $mastertab->getidbyname( $newmtdata->{'name'} );
-				return $self->e( 'alreadyexists', 'name: '.$newmtdata->{'name'} ) if( $currentid );
+
+				if( $currentid )
+				{
+					$kanadzchi->historique('err',
+						sprintf("mode=insert, stat=%s already exists", $newmtdata->{'name'} ));
+					return $self->e( 'alreadyexists', 'name: '.$newmtdata->{'name'} )
+				}
 
 				# The record does not exist in the mastertable
 				$newmtdata->{'id'} = $mastertab->insert( $newmtdata );
@@ -136,9 +148,15 @@ sub tablecontrol
 				if( $newmtdata->{'id'} )
 				{
 					$tabrecord = [ $newmtdata ];
+					$kanadzchi->historique( 'info', 
+						sprintf( "inserted=1, id=%d, name=%s, mode=insert, stat=ok",
+							 $newmtdata->{'id'}, $newmtdata->{'name'} ) );
 				}
 				else
 				{
+					$kanadzchi->historique( 'err', 
+						sprintf( "inserted=0, id=?, name=%s, mode=insert, stat=failed", 
+								$newmtdata->{'name'} ) );
 					return $self->e( 'failedtocreate', [
 							'name: '.$newmtdata->{'name'},
 							'desciption: '.$newmtdata->{'description'}
@@ -148,6 +166,9 @@ sub tablecontrol
 			else
 			{
 				# Invalid key name
+				$kanadzchi->historique( 'err', 
+					sprintf( "inserted=0, id=?, name=%s, mode=insert, stat=data format error", 
+							$newmtdata->{'name'} ) );
 				return $self->e('dataformaterror', [
 							'name: '.$newmtdata->{'name'},
 							'desciption: '.$newmtdata->{'description'}
@@ -183,6 +204,9 @@ sub tablecontrol
 					'id' => $curmtdata->{'id'},
 					'name' => $curmtdata->{'name'}, 
 					'description' => $curmtdata->{'description'} } ];
+				$kanadzchi->historique( 'err', 
+					sprintf("updated=0, id=%d, mode=update, stat=readonly table",
+						$curmtdata->{'id'} ));
 			}
 			else
 			{
@@ -200,6 +224,11 @@ sub tablecontrol
 							'name' => $newmtdata->{'name'},
 							'disabled' => $newmtdata->{'disabled'},
 							'description' => $newmtdata->{'description'}, } ];
+
+						# syslog
+						$kanadzchi->historique( 'info',
+							sprintf("updated=1, id=%d, mode=update, stat=ok",
+								$curmtdata->{'id'}) );
 					}
 					else
 					{
@@ -210,6 +239,11 @@ sub tablecontrol
 							'id' => $curmtdata->{'id'},
 							'name' => $curmtdata->{'name'}, 
 							'description' => $curmtdata->{'description'} } ];
+
+						# syslog
+						$kanadzchi->historique( 'err', 
+							sprintf( "updated=0, id=%d, mode=update, stat=ok",
+								$curmtdata->{'id'} ));
 					}
 				}
 				else
@@ -221,6 +255,11 @@ sub tablecontrol
 						'id' => $cgidquery->param('fe_id'),
 						'name' => $cgidquery->param('fe_name'),
 						'description' => $cgidquery->param('fe_desc'), } ];
+
+					# syslog
+					$kanadzchi->historique( 'err', 
+						sprintf( "updated=0, id=%d, mode=update, stat=data format error",
+							$cgidquery->param('fe_id') ));
 				}
 			}
 
@@ -266,6 +305,9 @@ sub tablecontrol
 						if( $tableisro )
 						{
 							# The table is read only
+							$kanadzchi->historique( 'err', 
+								sprintf( "removed=0, id=%d, mode=remove, stat=readonly table",
+									$theidwillberm ) );
 							$self->e('readonlytable', 'ID: #'.$theidwillberm );
 						}
 						else
@@ -274,23 +316,35 @@ sub tablecontrol
 							{
 								# Successfully removed
 								$removedrecord = [ $willberemoved ];
+								$kanadzchi->historique( 'info', 
+									sprintf("removed=1, id=%d, mode=remove, stat=ok",
+										$theidwillberm ));
 							}
 							else
 							{
 								# Failed to remove
 								$self->e('failedtodelete', 'ID: #'.$theidwillberm );
+								$kanadzchi->historique( 'err', 
+									sprintf( "removed=0, id=%d, mode=remove, stat=failed",
+										$theidwillberm ));
 							}
 						}
 					}
 					else
 					{
 						# No such record
+						$kanadzchi->historique( 'err', 
+							sprintf( "removed=0, id=%d, mode=remove, stat=no such record",
+								$theidwillberm ));
 						$self->e( 'nosuchrecord', 'ID: #'.$theidwillberm );
 					}
 				}
 				else
 				{
 					# Checkbox is not checked
+					$kanadzchi->historique( 'err', 
+						sprintf( "removed=0, id=%d, mode=remove ,stat=checkbox is off",
+							$theidwillberm ));
 					$self->e( 'checkboxisoff' );
 				}
 			}
