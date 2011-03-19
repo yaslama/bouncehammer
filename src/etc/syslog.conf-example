@@ -1,0 +1,6 @@
+# $Id: syslog.conf-example,v 1.1.2.1 2011/03/19 09:41:17 ak Exp $
+# bounceHammer log: If you use bounceHammer's command line tools with
+# syslog, edit the syslog section in etc/bouncehammer.cf file.
+#
+local6.*			/var/log/bouncehammer.log
+
