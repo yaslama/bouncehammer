@@ -1,4 +1,4 @@
-# $Id: MasterTables.pm,v 1.19.2.1 2011/03/19 09:41:42 ak Exp $
+# $Id: MasterTables.pm,v 1.19.2.2 2011/03/19 11:04:47 ak Exp $
 # -Id: MasterTables.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: MasterTables.pm,v 1.7 2009/08/15 15:06:56 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -51,7 +51,7 @@ sub tablelist
 	my $mastertab = new Kanadzuchi::BdDR::BounceLogs::Masters::Table( 
 				'alias' => $tablename, 'handle' => $bddr->handle() );
 	my $paginated = Kanadzuchi::BdDR::Page->new(
-				'colnameorderby' => lc($self->param('pi_orderby')) || 'id',
+				'colnameorderby' => lc( $self->param('pi_orderby') || 'id' ),
 				'resultsperpage' => $self->param('pi_rpp') || 10 );
 
 	$paginated->resultsperpage(25) if( $tablename eq 'hostgroups' || $tablename eq 'reasons' );

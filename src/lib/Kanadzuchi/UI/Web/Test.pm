@@ -1,4 +1,4 @@
-# $Id: Test.pm,v 1.23.2.1 2011/03/19 09:41:42 ak Exp $
+# $Id: Test.pm,v 1.23.2.2 2011/03/19 11:04:47 ak Exp $
 # -Id: Test.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Test.pm,v 1.10 2009/08/17 12:39:31 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -378,7 +378,7 @@ sub onlineparser
 				# syslog
 				$kanadzuchi->historique('info',
 					sprintf("logs=WebUI, records=%d, inserted=%d, updated=%d, skipped=%d, failed=%d, mode=update, stat=ok",
-						$mpiterator->count(), $execstatus->{'inserted'}, $execstatus->{'updated'}, 
+						$mpiterator->count(), $execstatus->{'insert'}, $execstatus->{'update'}, 
 						($execstatus->{'nofrom'} + $execstatus->{'tooold'} + $execstatus->{'whited'} + $execstatus->{'exceed'}),
 						$dupdataobj->db->{'error'}->{'count'} ));
 
