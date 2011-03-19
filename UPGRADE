@@ -1,8 +1,23 @@
                      BOUNCEHAMMER/UPGRADE
 -----------------------------------------------------------------------
- $Id: UPGRADE,v 1.5.2.3 2011/02/02 01:30:04 ak Exp $
+ $Id: UPGRADE,v 1.5.2.4 2011/03/19 11:05:43 ak Exp $
  Copyright (C) 2009,2010 Cubicroot Co. Ltd. ALL RIGHTS RESERVED.
 -----------------------------------------------------------------------
+
+-----------------------------------------------------------------------
+* 2.6.x => 2.7.0	2011/03/19
+
+  1. Run ./configure script, ``make'', and ``make install''
+  2. If you use etc/available-countires, please marge the file with etc
+     /available-countries-example (new file).  Many countries have been
+     added at version 2.7.0.
+  3. If you want to use bounceHammer with syslog, please merge configu-
+     ration file etc/bouncehammer.cf with etc/bouncehammer.cf-example.
+     Two sections: "name" and "syslog" have been added at this version.
+  4. If you want to display configuration name on WebUI, please add the
+     "name" section into etc/webui.cf with referring the new configura-
+     tion file etc/webui.cf-example.
+
 
 -----------------------------------------------------------------------
 * 2.6.x => 2.6.[1-4]	2011/02/01
