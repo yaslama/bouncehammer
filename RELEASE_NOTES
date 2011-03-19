@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES,v 1.76.2.9 2011/02/02 05:26:28 ak Exp $
+ $Id: RELEASE_NOTES,v 1.76.2.10 2011/03/19 11:05:31 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -14,24 +14,76 @@
  Copyright (C) 2009-2011 Cubicroot Co. Ltd. ALL RIGHTS RESERVED.
  Developed by Cubicroot Co. Ltd. (http://cubicroot.jp/)
 -----------------------------------------------------------------------
- This listing show the release notes of ``BounceHammer'': open-sourced
- Bounce Mail Parser. The list shows the version of BounceHammer engine,
- the version of BounceHammer's configuration file, the date of release,
- and a summary of the changes in that release.  More information about
- BounceHammer is available at http://bouncehammer.jp/ (Japanese).
+ This listing show the release notes of "bounceHammer",  an open source
+ software mainly developed for handling email bounces on UNIX server.
+ The list shows the version of bounceHammer engine, the version of con-
+ figuration file of bounceHammer, the date of release, and a summary of
+ the changes in that release. More information about bounceHammer is a-
+ vailable at our site: http://bouncehammer.jp/ (Japanese).
 
  Other information is available at the following sites:
 
   - http://sourceforge.jp/projects/bouncehammer/
-  - http://www.ohloh.net/p/bouncehammer
   - http://twitter.com/bouncehammer
 -----------------------------------------------------------------------
 
+2.7.0/2.7.0	2011/03/19
+
+  New functionality:
+    * UNIX syslog supported. Four commands: mailboxparser, databasectl,
+      logger, tablectl (except --list mode), and WebUI send messages to
+      syslog.
+    * A configuration name can be set in each etc/*.cf file.
+    * WebUI prints a configuration name on the top of each page.
+
+  Assorted improvements and code cleanup:
+    * Supprot vodafone/blackberry's 35 domains:  mobileemail.vodafone.*
+      are classified into HostGroup/smartphone and Provider/vodafone .
+    * Support orange/blackberry's 25 domains: blackberry.orange.* are
+      classified into HostGroup/smartphone and Provider/orange .
+    * Ovi (ovi.com) has moved from Webmail to Smartphone (HostGroup).
+    * Support 2 domains of satellite phone: Globalstar and Iridium.
+    * Support cellular phone's domains or smartphone's domains of 87
+      countries in the world.
+
+  Fixed bugs:
+    * Minor bug fix for WebUI/Template.
+    * Fixed an issue that bin/databasectl fails with -Uv only.
+    * Fixed an issue that each command's progress bar  fails in verbose
+      mode when the standard-out is other command via pipe line.
+    * Fixed an issue that a lock file left when mailboxparser is called
+      with -2(--two-way) option.
+
+  New files:
+    * etc/syslog.conf-example
+    * lib/Kanadzuchi/Mail/Group/Cellphone.pm
+    * lib/Kanadzuchi/Mail/Group/FR/Webmail.pm
+    * lib/Kanadzuchi/Mail/Group/{AR,AT,AU,BG,BR}/Cellphone.pm
+    * lib/Kanadzuchi/Mail/Group/{CA,CH,CO,CR,DE,ES,FR,HR}/Cellphone.pm
+    * lib/Kanadzuchi/Mail/Group/{IE,IN,IL,IS,IT}/Cellphone.pm
+    * lib/Kanadzuchi/Mail/Group/{LK,MU,MX,NI,NL,NP,NZ}/Cellphone.pm
+    * lib/Kanadzuchi/Mail/Group/{PL,PR,SE,UK,US,ZA}/Cellphone.pm
+    * lib/Kanadzuchi/Mail/Group/{AE,AL,AR,AT,AU}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{BE,BG,BM,BR,BS}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{CA,CH,CL,CN,CO,CZ}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{DE,DK,DO,EC,EG,ES,FR}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{GT,HK,HN,HR,HU}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{ID,IN,IL,IS,IT}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{JM,KE,LB,LK,LU}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{MA,ME,MK,MO,MX,MY}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{NG,NI,NL,NO,NP,NZ,OM}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{PA,PE,PH,PK,PL,PR,PT,PY}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{RO,RU,SA,SE,SG,SK,SR,SV}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{TH,TR,TW}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{UA,UG,US,UY,VE,VN,ZA}/Smartphone.pm
+
+
+-----------------------------------------------------------------------
 2.6.4/2.0.0	2011/02/02
 
   Assorted improvements and code cleanup:
     * Support 4 AOL's Project Phoenix domains: 'games.com', 'love.com',
-      'wow.com', and 'ygm.com'.  They are classfied into  the hostgroup
+      'wow.com', and 'ygm.com'.  They are classified into the hostgroup
       'webmail'.
 
   Fixed bugs:

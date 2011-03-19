@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES.JA,v 1.52.2.8 2011/02/02 02:31:32 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.52.2.9 2011/03/19 11:05:31 ak Exp $
 -----------------------------------------------------------------------
  ##                                      ##  ##                                     
  ##      ####  ##  ## #####   #### ####  ##  ##  ####  ##  ## ##  ##  ####  #####   
@@ -12,19 +12,71 @@
  Copyright (C) 2009-2011 Cubicroot Co. Ltd. ALL RIGHTS RESERVED.
  開発: 株式会社キュービックルート (http://cubicroot.jp/)
 -----------------------------------------------------------------------
- オープンソースのバウンスメール解析システム``BounceHammer''のリリース
- ノートです。BounceHammerのエンジンバージョン/設定ファイルのバージョン
- リリースした日付、その下に変更点を書いています。BounceHammerのサイト
+ オープンソースのバウンスメール解析システム``bounceHammer''のリリース
+ ノートです。bounceHammerのエンジンバージョン/設定ファイルのバージョン
+ リリースした日付、その下に変更点を書いています。bounceHammerのサイト
  http://bouncehammer.jp/ で更に多くの情報が得られます。
 
  その他の情報は下記のサイトでご覧になれまます。
 
   - http://sourceforge.jp/projects/bouncehammer/
-  - http://www.ohloh.net/p/bouncehammer
   - http://twitter.com/bouncehammer
 -----------------------------------------------------------------------
 
+2.7.0/2.7.0	2011/03/19
 
+  新機能:
+    * UNIX syslogをサポートしました。次の4つのコマンド: mailboxparser,
+      databasectl, logger tablectl (--listを除く)とWebUIから実行結果の
+      概要がsyslogに送信されます。
+    * etc/以下の各*.cfファイルで設定名が定義できるようになりました。
+    * WebUIの各ページ上部にwebui.cfで定義された設定名が表示されます。
+
+  細かな改善点:
+    * Vodafone/Blackberry端末用35ドメイン(mobileemail.vodafone.*)がHost
+      Group:smartphoneに、Provider:vodafoneにそれぞれ分類されます。
+    * Orange/Blackberry端末用25ドメイン(blackberry.orange.*)がHostGroup
+      :smartphoneに、Provider:orangeにそれぞれ分類されます。
+    * Ovi(ovi.com)はSmartphoneとして分類されます。
+    * 衛星携帯電話の2ドメイン: グローバルスターとイリジウムはcellphone
+      に分類されます。
+    * 87の国の携帯電話(cellphone)とスマートフォン(smartphone)のドメイン
+      に対応しました。
+
+  修正されたバグ:
+    * WebUI/テンプレートの小さなバグ修正。
+    * databasectlコマンドが -Uv オプションだけで実行した場合に失敗する
+      バグを修正しました。
+    * 各コマンドを冗長モード(-v,--vervose)で実行した際、出力先がパイプ
+      経由であると表示が乱れるバグを修正しました。
+    * mailboxparserコマンドを-2(--two-way)オプション付きで実行した場合
+      にロックファイルが残るバグを修正しました。
+
+  新しいファイル:
+    * etc/syslog.conf-example
+    * lib/Kanadzuchi/Mail/Group/Cellphone.pm
+    * lib/Kanadzuchi/Mail/Group/FR/Webmail.pm
+    * lib/Kanadzuchi/Mail/Group/{AR,AT,AU,BG,BR}/Cellphone.pm
+    * lib/Kanadzuchi/Mail/Group/{CA,CH,CO,CR,DE,ES,FR,HR}/Cellphone.pm
+    * lib/Kanadzuchi/Mail/Group/{IE,IN,IL,IS,IT}/Cellphone.pm
+    * lib/Kanadzuchi/Mail/Group/{LK,MU,MX,NI,NL,NP,NZ}/Cellphone.pm
+    * lib/Kanadzuchi/Mail/Group/{PL,PR,SE,UK,US,ZA}/Cellphone.pm
+    * lib/Kanadzuchi/Mail/Group/{AE,AL,AR,AT,AU}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{BE,BG,BM,BR,BS}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{CA,CH,CL,CN,CO,CZ}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{DE,DK,DO,EC,EG,ES,FR}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{GT,HK,HN,HR,HU}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{ID,IN,IL,IS,IT}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{JM,KE,LB,LK,LU}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{MA,ME,MK,MO,MX,MY}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{NG,NI,NL,NO,NP,NZ,OM}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{PA,PE,PH,PK,PL,PR,PT,PY}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{RO,RU,SA,SE,SG,SK,SR,SV}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{TH,TR,TW}/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Group/{UA,UG,US,UY,VE,VN,ZA}/Smartphone.pm
+
+
+-----------------------------------------------------------------------
 2.6.4/2.0.0	2011/02/02
 
   細かな改善点:
