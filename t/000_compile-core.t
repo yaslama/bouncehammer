@@ -1,4 +1,4 @@
-# $Id: 000_compile-core.t,v 1.50.2.6 2011/03/13 08:18:21 ak Exp $
+# $Id: 000_compile-core.t,v 1.50.2.7 2011/03/24 05:41:49 ak Exp $
 use strict;
 use warnings;
 use lib qw(./t/lib ./dist/lib ./src/lib);
@@ -28,8 +28,10 @@ my $Modules = [ qw{
 	Kanadzuchi::Mail::Group
 	Kanadzuchi::Mail::Group::AE::Smartphone
 	Kanadzuchi::Mail::Group::AL::Smartphone
+	Kanadzuchi::Mail::Group::AL::WebMail
 	Kanadzuchi::Mail::Group::AR::Cellphone
 	Kanadzuchi::Mail::Group::AR::Smartphone
+	Kanadzuchi::Mail::Group::AR::WebMail
 	Kanadzuchi::Mail::Group::AT::Cellphone
 	Kanadzuchi::Mail::Group::AT::Smartphone
 	Kanadzuchi::Mail::Group::AU::Cellphone
@@ -67,6 +69,7 @@ my $Modules = [ qw{
 	Kanadzuchi::Mail::Group::EG::WebMail
 	Kanadzuchi::Mail::Group::ES::Cellphone
 	Kanadzuchi::Mail::Group::ES::Smartphone
+	Kanadzuchi::Mail::Group::ES::WebMail
 	Kanadzuchi::Mail::Group::FR::Cellphone
 	Kanadzuchi::Mail::Group::FR::Smartphone
 	Kanadzuchi::Mail::Group::FR::WebMail
@@ -146,6 +149,7 @@ my $Modules = [ qw{
 	Kanadzuchi::Mail::Group::SR::Smartphone
 	Kanadzuchi::Mail::Group::SV::Smartphone
 	Kanadzuchi::Mail::Group::TH::Smartphone
+	Kanadzuchi::Mail::Group::TH::WebMail
 	Kanadzuchi::Mail::Group::TR::Smartphone
 	Kanadzuchi::Mail::Group::TW::Smartphone
 	Kanadzuchi::Mail::Group::TW::WebMail
@@ -160,6 +164,7 @@ my $Modules = [ qw{
 	Kanadzuchi::Mail::Group::UY::Smartphone
 	Kanadzuchi::Mail::Group::VE::Smartphone
 	Kanadzuchi::Mail::Group::VN::Smartphone
+	Kanadzuchi::Mail::Group::VN::WebMail
 	Kanadzuchi::Mail::Group::ZA::Cellphone
 	Kanadzuchi::Mail::Group::ZA::Smartphone
 	Kanadzuchi::Mail::Group::ZA::WebMail
