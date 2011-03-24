@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.14.2.4 2011/03/09 07:22:19 ak Exp $
+# $Id: WebMail.pm,v 1.14.2.5 2011/03/24 05:40:57 ak Exp $
 # -Id: AOL.pm,v 1.1 2009/08/29 07:33:21 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # -Id: Hotmail.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
@@ -81,6 +81,11 @@ sub nominisexemplaria
 			# http://www.myspace.com/
 			qr{\Amyspace[.]com\z},
 		],
+		'orange' => [
+			# Orange; 
+			# LatinMail; http://www.latinmail.com/
+			qr{\A(?:latinmail|starmedia)[.]com\z},
+		],
 		'yahoo' => [
 			# Yahoo! Mail; http://world.yahoo.com/
 			qr{\Ayahoo[.]com\z},
@@ -111,6 +116,7 @@ sub classisnomina
 		'lycos'		=> 'Generic',
 		'microsoft'	=> 'Generic',
 		'myspace'	=> 'Generic',
+		'orange'	=> 'Generic',
 		'yahoo'		=> 'Yahoo',
 	};
 }

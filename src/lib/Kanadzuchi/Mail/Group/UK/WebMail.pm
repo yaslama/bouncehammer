@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.1.2.2 2011/03/09 07:20:22 ak Exp $
+# $Id: WebMail.pm,v 1.1.2.3 2011/03/24 05:40:59 ak Exp $
 # Copyright (C) 2010-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::UK::
                                                    
@@ -24,16 +24,12 @@ sub nominisexemplaria
 {
 	my $class = shift();
 	return {
-		# http://gmx.co.uk/
-		'gmx.com' => [
-			qr{\Agmx[.]co[.]uk\z},
-		],
-		# http://www.postmaster.co.uk/
 		'spidernetworks' => [
+			# http://www.postmaster.co.uk/
 			qr{\Apostmaster[.]co[.]uk\z},
 		],
-		# http://www.yipple.com/
 		'yipple' => [
+			# http://www.yipple.com/
 			qr{\Ayipple[.]com\z},
 		],
 	};
@@ -43,7 +39,6 @@ sub classisnomina
 {
 	my $class = shift();
 	return {
-		'gmx.com'	=> 'Generic',
 		'spidernetworks'=> 'Generic',
 		'yipple'	=> 'Generic',
 	};

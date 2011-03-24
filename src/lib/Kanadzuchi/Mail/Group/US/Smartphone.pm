@@ -1,4 +1,4 @@
-# $Id: Smartphone.pm,v 1.1.2.2 2011/03/10 05:58:24 ak Exp $
+# $Id: Smartphone.pm,v 1.1.2.3 2011/03/22 06:41:25 ak Exp $
 # -Id: SmartPhone.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # Copyright (C) 2011 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::US::
@@ -81,6 +81,10 @@ sub nominisexemplaria
 			# nTelos; http://www.ntelos.com/
 			qr{\Antelos[.]blackberry[.]com\z},
 		],
+		'pti' => [
+			# IT&E(GUAM,CNMI); http://www.ite.net/
+			qr{\Apti[.]blackberry[.]com\z},
+		],
 		'southernlinc' => [
 			# SouthernLINC Wireless; http://www.southernlinc.com/
 			qr{\Asouthernlinc[.]blackberry[.]com\z},
@@ -126,6 +130,7 @@ sub classisnomina
 		'edgewireless'	=> 'Generic',
 		'metropcs'	=> 'Generic',
 		'ntelos'	=> 'Generic',
+		'pti'		=> 'Generic',
 		'southernlinc'	=> 'Generic',
 		'sprint'	=> 'Generic',
 		'tcs'		=> 'Generic',

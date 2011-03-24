@@ -1,4 +1,4 @@
-# $Id: Smartphone.pm,v 1.1.2.2 2011/03/10 07:10:56 ak Exp $
+# $Id: Smartphone.pm,v 1.1.2.3 2011/03/22 06:41:25 ak Exp $
 # -Id: SmartPhone.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # Copyright (C) 2011 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::ID::
@@ -35,6 +35,10 @@ sub nominisexemplaria
 			# Telkomsel; http://www.telkomsel.com/
 			qr{\Atelkomsel[.]blackberry[.]com\z},
 		],
+		'xl' => [
+			# XL; http://www.xl.co.id/
+			qr{\Axl[.]blackberry[.]com\z},
+		],
 	};
 }
 
@@ -44,6 +48,7 @@ sub classisnomina
 	return {
 		'indosat'	=> 'Generic',
 		'telkomsel'	=> 'Generic',
+		'xl'		=> 'Generic',
 	};
 }
 

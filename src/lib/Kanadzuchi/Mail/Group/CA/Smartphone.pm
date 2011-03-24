@@ -1,4 +1,4 @@
-# $Id: Smartphone.pm,v 1.1.2.1 2011/03/09 06:35:53 ak Exp $
+# $Id: Smartphone.pm,v 1.1.2.2 2011/03/22 06:41:25 ak Exp $
 # -Id: SmartPhone.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # Copyright (C) 2011 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::CA::
@@ -54,6 +54,10 @@ sub nominisexemplaria
 		'virgin' => [
 			qr{\Avirginmobile[.]blackberry[.]com\z},
 		],
+		'wind' => [
+			# WIND Mobile; http://www.windmobile.ca/
+			qr{\Awind[.]blackberry[.]com\z},
+		],
 	};
 }
 
@@ -68,6 +72,7 @@ sub classisnomina
 		'tbaytel'	=> 'Generic',
 		'telus'		=> 'Generic',
 		'virgin'	=> 'Generic',
+		'wind'		=> 'Generic',
 	};
 }
 

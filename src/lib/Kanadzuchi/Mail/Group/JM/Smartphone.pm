@@ -1,4 +1,4 @@
-# $Id: Smartphone.pm,v 1.1.2.2 2011/03/10 08:48:22 ak Exp $
+# $Id: Smartphone.pm,v 1.1.2.3 2011/03/22 06:41:25 ak Exp $
 # -Id: SmartPhone.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # Copyright (C) 2011 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::JM::
@@ -34,6 +34,7 @@ sub nominisexemplaria
 		'lime' => [
 			# LIME Jamaica; http://www.time4lime.com/jm/
 			qr{\Acwjamaica[.]blackberry[.](?:com|net)\z},
+			qr{\Acw[.]blackberry[.](?:com|net)\z},
 		],
 		'digicel' => [
 			# Digicel Jamaica Cellular; http://www.digiceljamaica.com/

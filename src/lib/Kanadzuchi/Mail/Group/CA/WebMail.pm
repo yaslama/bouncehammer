@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.4 2010/06/28 13:19:02 ak Exp $
+# $Id: WebMail.pm,v 1.4.2.1 2011/03/24 05:40:58 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::CA::
                                                    
@@ -23,11 +23,16 @@ sub nominisexemplaria
 {
 	my $class = shift();
 	return {
-		# Hushmail http://www.hushmail.com/
 		'hush' => [
+			# Hushmail http://www.hushmail.com/
 			qr{\Ahushmail[.](?:com|me)\z},
 			qr{\Ahush[.](?:com|ai)\z},
 			qr{\Amac[.]hush[.]com\z},
+		],
+		'zworg' => [
+			# Zworg.com; https://zworg.com/
+			qr{\Azworg[.]com\z},
+			qr{\A(?:irk|mailcanada)[.]ca\z},
 		],
 	};
 }
@@ -37,6 +42,7 @@ sub classisnomina
 	my $class = shift();
 	return {
 		'hush'		=> 'Generic',
+		'zworg'		=> 'Generic',
 	};
 }
 

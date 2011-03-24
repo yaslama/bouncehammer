@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.2.2.1 2011/03/09 07:10:28 ak Exp $
+# $Id: WebMail.pm,v 1.2.2.2 2011/03/24 05:40:59 ak Exp $
 # Copyright (C) 2010-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::NZ::
                                                    
@@ -27,6 +27,10 @@ sub nominisexemplaria
 			# Cool Kiwi http://coolkiwi.com/
 			qr{\Acoolkiwi[.](?:co[.]nz|com)\z},
 		],
+		'orcon' => [
+			# http://www.orcon.net.nz/
+			qr{\Aorcon[.]net[.]nz\z},
+		],
 		'vodafone' => [
 			# https://webmail.vodafone.co.nz/vfwebmail/
 			qr{\A(?:vodafone|es|ihug|pcconnect|quik|wave)[.]co[.]nz\z},
@@ -39,6 +43,7 @@ sub classisnomina
 	my $class = shift();
 	return {
 		'coolkiwi'	=> 'Generic',
+		'orcon'		=> 'Generic',
 		'vodafone'	=> 'Generic',
 	};
 }

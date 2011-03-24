@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.8.2.2 2011/03/09 07:20:38 ak Exp $
+# $Id: WebMail.pm,v 1.8.2.3 2011/03/24 05:40:59 ak Exp $
 # Copyright (C) 2010-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::US::
                                                    
@@ -23,36 +23,27 @@ sub nominisexemplaria
 {
 	my $class = shift();
 	return {
-		# EXPERIMENTAL(Not Tested), Does anyone know other domains of bluetie.com?
-		# http://www.bluetie.com/
 		'bluetie' => [
+			# EXPERIMENTAL(Not Tested), Does anyone know other domains of bluetie.com?
+			# http://www.bluetie.com/
 			qr{\Abluetie[.]com\z},
 		],
-
-		# http://gmx.com/
-		'gmx.com' => [
-			qr{\Agmx[.]com\z},
-		],
-
-		# http://www.inbox.com/
 		'inbox.com' => [
+			# http://www.inbox.com/
 			qr{\Ainbox[.]com\z},
 		],
-
-		# EXPERIMENTAL(Not Tested), Does anyone know other domains of lavabit.com?
-		# http://lavabit.com/
 		'lavabit' => [
+			# EXPERIMENTAL(Not Tested), Does anyone know other domains of lavabit.com?
+			# http://lavabit.com/
 			qr{\Alavabit[.]com\z},
 		],
-
-		# EXPERIMENTAL(Not Tested), Does anyone know other domains of luxsci.com?
-		# http://luxsci.com/
 		'luxsci' => [
+			# EXPERIMENTAL(Not Tested), Does anyone know other domains of luxsci.com?
+			# http://luxsci.com/
 			qr{\Aluxsci[.]com\z},
 		],
-
-		# http://www.mail.com/intl/
 		'mail.com' => [
+			# http://www.mail.com/intl/
 			# 2-4 characters(.com)
 			qr{\A(?:dr|usa|asia|mail|oath|post|rome|skim|toke)[.]com\z},
 
@@ -129,15 +120,21 @@ sub nominisexemplaria
 			qr{\A(?:hk|jp)popstarmail[.]org\z},
 			qr{\Apcmail[.]com[.]tw\z},
 		],
-
-		# http://www.mail2world.com/
-		# 2000 domain names in http://www.mail2world.com/s/m2wpublic/domains/domains_firstnames.asp
 		'mail2world' => [
+			# http://www.mail2world.com/
+			# 2000 domain names in http://www.mail2world.com/s/m2wpublic/domains/domains_firstnames.asp
 			qr{\Amail2.+[.]com\z},	# Low precision, we can not list all the domains...
 		],
-
-		# http://www.pobox.com/index/
+		'myemail' => [
+			# MyEmail.com; http://www.myemail.com/
+			qr{\Amyemail[.]com\z},
+		],
+		'rock.com' => [
+			# Rock.com; http://www.rock.com/
+			qr{\Arock[.]com\z},
+		],
 		'pobox' => [
+			# http://www.pobox.com/index/
 			qr{\Aonepost[.]net\z},
 			qr{\A(?:po|foo|right|topic|immer|siempre)box[.]com\z},
 			qr{\A(?:veri|foo)box[.]net\z},
@@ -152,12 +149,13 @@ sub classisnomina
 	my $class = shift();
 	return {
 		'bluetie'	=> 'Generic',
-		'gmx.com'	=> 'Generic',
 		'inbox.com'	=> 'Generic',
 		'lavabit'	=> 'Generic',
 		'luxsci'	=> 'Generic',
 		'mail.com'	=> 'Generic',
 		'mail2world'	=> 'Generic',
+		'myemail'	=> 'Generic',
+		'rock.com'	=> 'Generic',
 		'pobox'		=> 'Generic',
 	};
 }
