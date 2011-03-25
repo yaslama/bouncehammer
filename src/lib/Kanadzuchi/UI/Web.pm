@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.26.2.2 2011/03/19 09:41:42 ak Exp $
+# $Id: Web.pm,v 1.26.2.3 2011/03/25 00:17:29 ak Exp $
 # -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
 # -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -206,7 +206,7 @@ sub tt_pre_process
 		'pv_sysversion' => $self->{'kanadzuchi'}->version(),
 		'pv_scriptname' => $htscript,
 		'pv_head1title' => '<sup>'.$majorver.'</sup>',
-		'pv_configname' => $self->{'webconfig'}->{'name'} || 'Undefined',
+		'pv_configname' => $self->{'configname'},
 		'pv_thepageuri' => 'http://'.$httphost.$htscript,
 		'pv_mylanguage' => $self->{'language'},
 		'pv_prototype' => $self->prototype,
@@ -249,6 +249,7 @@ sub loadconfig
 
 	my $webconfig = shift @{ Kanadzuchi::Metadata->to_object($self->param('wf')) };
 	$self->{'webconfig'} = $webconfig if( ref($webconfig) eq q|HASH| );
+	$self->{'configname'} = $self->{'webconfig'}->{'name'} || 'Undefined';
 }
 
 *error = *e;

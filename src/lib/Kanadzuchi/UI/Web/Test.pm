@@ -1,4 +1,4 @@
-# $Id: Test.pm,v 1.23.2.2 2011/03/19 11:04:47 ak Exp $
+# $Id: Test.pm,v 1.23.2.3 2011/03/25 00:17:29 ak Exp $
 # -Id: Test.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Test.pm,v 1.10 2009/08/17 12:39:31 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -144,7 +144,8 @@ sub onlineparser
 		if( $errortitle )
 		{
 			$kanadzuchi->historique('err', 
-				'stat='.( $errortitle eq 'nosize' ? 'mailbox is empty' : 'mailbox is too big') );
+				'stat='.( $errortitle eq 'nosize' ? 'mailbox is empty' : 'mailbox is too big').
+				'name='.$self->{'configname'} );
 			$self->e( $errortitle );
 		}
 
@@ -164,7 +165,9 @@ sub onlineparser
 
 			unless( $mpiterator->count() )
 			{
-				$kanadzuchi->historique('err','stat=there is no bounced email');
+				$kanadzuchi->historique('err',
+					sprintf("stat=there is no bounced email, name=%s",
+						$self->{'configname'} ));
 				last();
 			}
 
@@ -172,14 +175,16 @@ sub onlineparser
 			{
 				splice( @{ $mpiterator->data }, $parseuntil );
 				$mpiterator->count( scalar @{ $mpiterator->data } );
-				$kanadzuchi->historique('warn','stat=too many emails');
+				$kanadzuchi->historique('warn',
+					sprintf("stat=too many emails, name=%s", 
+						$self->{'configname'} ));
 			}
 
 			# syslog
 			$kanadzuchi->historique( 'info',
-				sprintf( "size=%d, emails=%d, bounces=%d, parsed=%d, output=%s, stat=ok",
+				sprintf( "size=%d, emails=%d, bounces=%d, parsed=%d, output=%s, stat=ok, name=%s",
 					$sizeofmail, $objzcimbox->nmails(), $objzcimbox->nmesgs(), 
-					$mpiterator->count(), $dataformat ));
+					$mpiterator->count(), $dataformat, $self->{'configname'} ));
 
 			# Convert from object to hash reference
 			if( $dataformat eq 'html' )
@@ -377,10 +382,10 @@ sub onlineparser
 
 				# syslog
 				$kanadzuchi->historique('info',
-					sprintf("logs=WebUI, records=%d, inserted=%d, updated=%d, skipped=%d, failed=%d, mode=update, stat=ok",
+					sprintf("logs=WebUI, records=%d, inserted=%d, updated=%d, skipped=%d, failed=%d, mode=update, stat=ok, name=%s",
 						$mpiterator->count(), $execstatus->{'insert'}, $execstatus->{'update'}, 
 						($execstatus->{'nofrom'} + $execstatus->{'tooold'} + $execstatus->{'whited'} + $execstatus->{'exceed'}),
-						$dupdataobj->db->{'error'}->{'count'} ));
+						$dupdataobj->db->{'error'}->{'count'}, $self->{'configname'} ));
 
 			} # End of if(REGISTERIT)
 

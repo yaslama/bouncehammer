@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: tablectl.PL,v 1.16.2.2 2011/03/19 09:41:57 ak Exp $
+# $Id: tablectl.PL,v 1.16.2.3 2011/03/25 00:17:28 ak Exp $
 # -Id: tablectl.PL,v 1.12 2010/02/21 20:09:01 ak Exp -
 # -Id: tablectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: tablectl.PL,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -88,7 +88,7 @@ try {
 	if( ( $Cmd->operation & $Cmd->option->{'modify'} ) && $Zci->config->{'syslog'}->{'enabled'} )
 	{
 		$Cmd->d( 2, sprintf("Syslog facility = %s\n", $Zci->config->{'syslog'}->{'facility'} ));
-		$Zci->historique( 'info', 'starting (version '.$Zci->version.')' );
+		$Zci->historique( 'info', 'stat=starting (version '.$Zci->version.')' );
 	}
 }
 otherwise {

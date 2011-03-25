@@ -1,4 +1,4 @@
-# $Id: Delete.pm,v 1.5.2.1 2011/03/19 09:41:42 ak Exp $
+# $Id: Delete.pm,v 1.5.2.2 2011/03/25 00:17:29 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::Web::
                                        
@@ -64,7 +64,8 @@ sub deletetherecord
 		$this = $iter->first();
 		unless( $this->id() )
 		{
-			$zchi->historieque( 'err', 'mode=remove, stat=no such record');
+			$zchi->historieque( 'err',
+				'mode=remove, stat=no such record, name='.$self->{'configname'} );
 			return $self->e( 'nosuchrecord' );
 		}
 
@@ -72,9 +73,9 @@ sub deletetherecord
 		{
 			# syslog
 			$zchi->historique( 'info',
-				sprintf("record=1, removed=1, id=%s, token=%s, mode=remove, stat=ok", 
+				sprintf("record=1, removed=1, id=%s, token=%s, mode=remove, stat=ok, name=%s", 
 					( $cond->{'id'} ? $cond->{'id'} : '?' ),
-					( $cond->{'token'} ? $cond->{'token'} : 'none' ) ));
+					( $cond->{'token'} ? $cond->{'token'} : 'none' ), $self->{'configname'} ));
 
 			$data = $this->damn();
 			$data->{'removed'}  = $this->updated->ymd().'('.$this->updated->wdayname().') '.$this->updated->hms();

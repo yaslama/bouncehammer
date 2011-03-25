@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.17.2.3 2011/03/19 09:41:57 ak Exp $
+# $Id: logger.PL,v 1.17.2.4 2011/03/25 00:17:28 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -83,7 +83,7 @@ try {
 	if( $Zci->config->{'syslog'}->{'enabled'} )
 	{
 		$Cmd->d( 2, sprintf("Syslog facility = %s\n", $Zci->config->{'syslog'}->{'facility'} ));
-		$Zci->historique( 'info', 'starting (version '.$Zci->version.')' );
+		$Zci->historique( 'info', 'stat=starting (version '.$Zci->version.')' );
 	}
 }
 otherwise {

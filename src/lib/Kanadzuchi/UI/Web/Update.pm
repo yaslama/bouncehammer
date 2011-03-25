@@ -1,4 +1,4 @@
-# $Id: Update.pm,v 1.15.2.1 2011/03/19 09:41:42 ak Exp $
+# $Id: Update.pm,v 1.15.2.2 2011/03/25 00:17:29 ak Exp $
 # -Id: Update.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Update.pm,v 1.6 2009/08/13 07:13:58 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -69,7 +69,9 @@ sub updatetherecord
 		$this = $iter->first();
 		unless( $this->id() )
 		{
-			$zchi->historieque('err', 'mode=update, stat=no such record');
+			$zchi->historieque('err', 
+				sprintf("mode=update, stat=no such record, name=%s",
+					$self->{'configname'} ));
 			return $self->e('nosuchrecord', 'ID: #'.$cond->{'id'});
 		}
 
@@ -86,8 +88,8 @@ sub updatetherecord
 
 			# syslog
 			$zchi->historique('info',
-				sprintf("logs=WebUI, records=1, inserted=0, updated=%d, skipped=0, failed=%d, mode=update, stat=ok",
-					( $stat ? 1 : 0 ), ( $stat ? 0 : 1 ) ));
+				sprintf("logs=WebUI, records=1, inserted=0, updated=%d, skipped=0, failed=%d, mode=update, stat=ok, name=%s",
+					( $stat ? 1 : 0 ), ( $stat ? 0 : 1 ), $self->{'configname'} ));
 
 			return('Failed') unless( $stat );
 		}

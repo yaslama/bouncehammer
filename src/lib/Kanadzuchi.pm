@@ -1,15 +1,15 @@
-# $Id: Kanadzuchi.pm,v 1.33.2.5 2011/03/19 11:04:35 ak Exp $
+# $Id: Kanadzuchi.pm,v 1.33.2.7 2011/03/25 00:17:29 ak Exp $
 # -Id: TheHammer.pm,v 1.4 2009/09/01 23:19:41 ak Exp -
 # -Id: Herculaneum.pm,v 1.13 2009/08/27 05:09:23 ak Exp -
 # -Id: Version.pm,v 1.35 2009/08/27 05:09:29 ak Exp -
-# Copyright (C) 2009,2010 Cubicroot Co. Ltd.
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 
- ##  ##                           ##                      ##      ##    
- ## ##    ####  #####   ####      ##  ###### ##  ##  #### ##            
- ####        ## ##  ##     ##  #####     ##  ##  ## ##    #####  ###    
- ####     ##### ##  ##  ##### ##  ##    ##   ##  ## ##    ##  ##  ##    
- ## ##   ##  ## ##  ## ##  ## ##  ##   ##    ##  ## ##    ##  ##  ##    
- ##  ##   ##### ##  ##  #####  #####  ######  #####  #### ##  ## ####   
+ ##  ##                          ##                     ##      ##    
+ ## ##   ####  #####   ####      ## ###### ##  ##  #### ##            
+ ####       ## ##  ##     ##  #####    ##  ##  ## ##    #####  ###    
+ ####    ##### ##  ##  ##### ##  ##   ##   ##  ## ##    ##  ##  ##    
+ ## ##  ##  ## ##  ## ##  ## ##  ##  ##    ##  ## ##    ##  ##  ##    
+ ##  ##  ##### ##  ##  #####  ##### ######  #####  #### ##  ## ####   
 package Kanadzuchi;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -214,26 +214,57 @@ sub historique
 	# Don't send message to syslogd if it's disabled in boncehammer.cf
 	return 0 unless $self->{'config'}->{'syslog'}->{'enabled'};
 
+	my $settingname = q();
 	my $loggingopts = 'ndelay,pid,nofatal';
 	my $logfacility = $self->{'config'}->{'syslog'}->{'facility'} || 'local6';
 	my $logidentstr = lc($SYSNAME).'/'.File::Basename::basename([caller()]->[1]);
+	my $execuserstr = $ENV{'LOGNAME'} || $ENV{'USER'};
 
 	if( $logidentstr =~ m{[.]pm\z} )
 	{
+		# Called from WebUI
 		$logidentstr =  lc($SYSNAME).'/Web/'.File::Basename::basename([caller()]->[1]);
 		$logidentstr =~ s{[.]pm\z}{}; 
+
+		unless( $execuserstr )
+		{
+			if( $ENV{'REMOTE_ADDR'} && $ENV{'REMOTE_PORT'} )
+			{
+				$execuserstr = $ENV{'REMOTE_ADDR'}.':'.$ENV{'REMOTE_PORT'};
+			}
+			else
+			{
+				$execuserstr = '?';
+			}
+		}
+	}
+	else
+	{
+		# Called from command line tools
+		$settingname = $self->{'config'}->{'name'} || 'Undefined';
+		$mesg .= ', name='.$settingname;
 	}
 
 	# Set prefix or suffix into the log message
+	#  Emergency     (level 0)
+	#  Alert         (level 1)
+	#  Critical      (level 2)
+	#  Error         (level 3)
+	#  Warning       (level 4)
+	#  Notice        (level 5)
+	#  Info          (level 6)
+	#  Debug         (level 7)
 	my $errp = { 
 		'err' => 'error', 
 		'crit' => 'critical', 
 		'alert' => 'alert', 
 		'emerg' => 'emergency'
 	};
-	$mesg  = '***'.($errp->{$sllv} || 'error' ).': '.$mesg if grep { $sllv eq $_ } keys %$errp;
-	$mesg .= sprintf( " by uid=%d", $self->{'user'} );
+
+	$mesg .= '***'.($errp->{$sllv} || 'error' ).': '.$mesg if grep { $sllv eq $_ } keys %$errp;
+	$mesg .= sprintf( " by uid=%d(%s)", $self->{'user'}, $execuserstr );
 	$mesg =~ y{\n\r}{}d;
+	$mesg =~ y{ }{}s;
 
 	openlog( $logidentstr, $loggingopts, $logfacility ) || return 0;
 	syslog( $sllv, $mesg ) || return 0;
