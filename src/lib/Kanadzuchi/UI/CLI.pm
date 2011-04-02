@@ -1,4 +1,4 @@
-# $Id: CLI.pm,v 1.19.2.3 2011/03/18 05:45:24 ak Exp $
+# $Id: CLI.pm,v 1.19.2.4 2011/04/02 05:23:17 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::UI::
                       
@@ -394,8 +394,15 @@ sub exception
 	eval { $head ||= $eobj->head(); };
 	unless( $self->{'silent'} )
 	{
-		printf( STDERR qq{ ***error: [%s] %s [%s:%d]\n}, 
-			$head, $eobj->{'-text'}, $eobj->{'-file'}, $eobj->{'-line'} );
+		if( ref($eobj) eq q|HASH| )
+		{
+			printf( STDERR qq{ ***error: [%s] %s [%s:%d]\n}, 
+				$head, $eobj->{'-text'}, $eobj->{'-file'}, $eobj->{'-line'} );
+		}
+		else
+		{
+			printf( STDERR qq{ ***error: [%s] %s\n}, $head, $eobj );
+		}
 	}
 }
 
