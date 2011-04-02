@@ -1,4 +1,4 @@
-# $Id: Google.pm,v 1.5 2010/11/17 04:59:59 ak Exp $
+# $Id: Google.pm,v 1.5.2.1 2011/04/02 05:23:39 ak Exp $
 # -Id: Google.pm,v 1.2 2010/07/04 23:45:49 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: Google.pm,v 1.1 2009/07/31 09:04:38 ak Exp -
@@ -191,7 +191,7 @@ sub reperit
 	my $error = 'p';	# (String) p = permanent, t = temporary
 
 	# (String) X-Final-Recipients: header or email address in the body.
-	my $rcptintxt = $1 if( lc($mhead->{'x-failed-recipients'}) =~ m{\A[ ]?(.+[@].+)[ ]*\z} );
+	my $rcptintxt = $1 if( $mhead->{'x-failed-recipients'} =~ m{\A[ ]?(.+[@].+)[ ]*\z}i );
 	my $statintxt = q();	# (String) Status(D.S.N.) in the error message.
 	my $rhostsaid = q();	# (String) Error message from remote host
 	my $statecode = 0;	# (Integer) (state xx). at the end of the error message.
