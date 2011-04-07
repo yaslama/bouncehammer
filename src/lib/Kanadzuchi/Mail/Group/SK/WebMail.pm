@@ -1,6 +1,6 @@
-# $Id: WebMail.pm,v 1.4.2.2 2011/04/07 06:53:15 ak Exp $
+# $Id: WebMail.pm,v 1.1.2.1 2011/04/07 06:53:17 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
-# Kanadzuchi::Mail::Group::DE::
+# Kanadzuchi::Mail::Group::SK::
                                                    
  ##  ##         ##     ##  ##           ##  ###    
  ##  ##   ####  ##     ######   ####         ##    
@@ -8,7 +8,7 @@
  ######  ###### ##  ## ##  ##   #####   ##   ##    
  ######  ##     ##  ## ##  ##  ##  ##   ##   ##    
  ##  ##   ####  #####  ##  ##   #####  #### ####   
-package Kanadzuchi::Mail::Group::DE::WebMail;
+package Kanadzuchi::Mail::Group::SK::WebMail;
 use base 'Kanadzuchi::Mail::Group';
 use strict;
 use warnings;
@@ -18,20 +18,19 @@ use warnings;
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-# Major company's Webmail domains in Germany(Bundesrepublik Deutschland)
-# sub communisexemplar { return qr{[.]de\z}; }
+# Major company's Webmail domains in lovakia/Slovak Republic
+sub communisexemplar { return qr{[.]sk\z}; }
 sub nominisexemplaria
 {
 	my $class = shift();
 	return {
-		# GMX - http://www.gmx.net/
-		'gmx' => [
-			qr{\Agmx[.](?:at|ca|cc|ch|cn|de|es|eu|fr|hk|ie|it)\z},
-			qr{\Agmx[.](?:li|lu|ph|pt|ru|se|sg|tm|tw|us)\z},
-			qr{\Agmx[.](?:biz|com|info|name|net)\z},
-			qr{\Agmx[.]co[.](?:in|uk)\z},
-			qr{\Agmx[.]com[.](?:br|my|tr)\z},
-			qr{\Acaramail[.]com\z},	# GMX Caramail
+		'centrum' => [
+			# Centrum.sk; http://pobox.centrum.sk/
+			qr{\Apobox[.]sk\z},
+		],
+		'sme' => [
+			# SME.sk; http://post.sme.sk/
+			qr{\Apost[.]sk\z},
 		],
 	};
 }
@@ -40,7 +39,8 @@ sub classisnomina
 {
 	my $class = shift();
 	return {
-		'gmx'	=> 'Generic',
+		'centrum'	=> 'Generic',
+		'sme'		=> 'Generic',
 	};
 }
 

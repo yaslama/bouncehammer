@@ -1,4 +1,4 @@
-# $Id: Group.pm,v 1.28.2.5 2011/03/13 06:58:18 ak Exp $
+# $Id: Group.pm,v 1.28.2.6 2011/04/07 07:01:59 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::
                                      
@@ -42,8 +42,8 @@ sub postulat
 	my $class = shift();
 	my $iso3166list = [ qw( AE AL AR AT AU AW BE BG BM BR BS CA CH CL CN CO CR CZ DE DK DO
 				EC EG ES FR GR GT HK HN HR HU ID IE IN IL IR IS IT JM JP KE KR
-				LB LK LU LV MA ME MK MO MU MX MY NG NI NO NL NP NZ OM 
-				PA PE PH PK PL PR PT PY RO RU SA SE SG SK SR SV TH TR TW
+				LB LK LU LV MA MD ME MK MO MU MX MY NG NI NO NL NP NZ OM 
+				PA PE PH PK PL PR PT PY RO RS RU SA SE SG SK SR SV TH TR TW
 				UA UG UK US UY VE VN ZA) ];
 	my $iso3166conf = '__KANADZUCHIROOT__/etc/available-countries';
 	my $countryconf = ( -r $iso3166conf && -s _ && -T _ ) ? JSON::Syck::LoadFile($iso3166conf) : {};

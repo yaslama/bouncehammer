@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.1.2.1 2011/03/24 05:40:58 ak Exp $
+# $Id: WebMail.pm,v 1.1.2.2 2011/04/07 06:53:15 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::AR::
                                                    
@@ -24,6 +24,10 @@ sub nominisexemplaria
 {
 	my $class = shift();
 	return {
+		'ciudad' => [
+			# Ciudad.com; http://www.ciudad.com.ar/
+			qr{\Aciudad[.]com[.]ar\z},
+		],
 		'uol' => [
 			# UOL; http://www.uolmail.com.ar/
 			qr{\Auolsinectis[.]com[.]ar\z},
@@ -35,6 +39,7 @@ sub classisnomina
 {
 	my $class = shift();
 	return {
+		'ciudad'	=> 'Generic',
 		'uol'		=> 'Generic',
 	};
 }

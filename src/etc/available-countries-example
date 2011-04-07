@@ -1,4 +1,4 @@
-# $Id: available-countries-example,v 1.5.2.3 2011/03/13 06:58:15 ak Exp $
+# $Id: available-countries-example,v 1.5.2.4 2011/04/07 07:01:59 ak Exp $
 # available-countries:
 #   If you use this file, it should be saved as 'available-countries',
 #   Run /bin/cp ./available-countries-example ./available-countries 
@@ -170,6 +170,9 @@
 # Kingdom of Morocco
 "ma": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
+# Republica Moldova
+"md": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
 # Montenegro
 "me": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
@@ -235,6 +238,9 @@
 
 # Romania
 "ro": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
+
+# Republic of Serbia
+"rs": { "cellphone": 1, "smartphone": 1, "webmail": 1 }
 
 # Russian Federation
 "ru": { "cellphone": 1, "smartphone": 1, "webmail": 1 }

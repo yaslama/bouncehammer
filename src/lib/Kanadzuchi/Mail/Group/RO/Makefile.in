@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# $Id: Makefile.am,v 1.1.2.1 2011/03/09 07:15:40 ak Exp $
+# $Id: Makefile.am,v 1.1.2.2 2011/04/07 06:53:16 ak Exp $
 # Copyright (C) 2011 Cubicroot Co. Ltd.
 # This is the auto-Makefile for bounceHammer/src/lib/Kanadzuchi/Mail/Group/RO,
 # is processed by automake to create Makefile.in.
@@ -154,7 +154,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 distdir = $(BUILDROOT)/dist/lib/Kanadzuchi/Mail/Group/RO
-pkgdata_DATA = Smartphone.pm
+pkgdata_DATA = Smartphone.pm WebMail.pm
 all: all-am
 
 .SUFFIXES:

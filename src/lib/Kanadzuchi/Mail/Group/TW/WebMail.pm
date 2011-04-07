@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.3 2010/06/28 13:19:18 ak Exp $
+# $Id: WebMail.pm,v 1.3.2.1 2011/04/07 06:53:17 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::TW::
                                                    
@@ -24,8 +24,12 @@ sub nominisexemplaria
 {
 	my $class = shift();
 	return {
-		# http://www.seed.net.tw/
+		'kingnet' => [
+			# KingNet(Gmail); http://mail.kingnet.com.tw/
+			qr{kingnet[.]com[.]tw\z},
+		],
 		'seednet' => [
+			# http://www.seed.net.tw/
 			qr{\Aseed[.]net[.]tw\z},
 			qr{\Atpts[1-8][.]seed[.]net[.]tw\z},
 			qr{\A(?:venus|mars|saturn|titan|iris|libra|pavo)[.]seed[.]net[.]tw\z},
@@ -38,6 +42,7 @@ sub classisnomina
 {
 	my $class = shift();
 	return {
+		'kingnet'	=> 'Generic',
 		'seednet'	=> 'Generic',
 	};
 }

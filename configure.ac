@@ -1,6 +1,6 @@
 dnl #                                               -*- Autoconf -*-
 dnl # Process this file with autoconf to produce a configure script.
-dnl # $Id: configure.ac,v 1.68.2.6 2011/03/24 05:43:42 ak Exp $
+dnl # $Id: configure.ac,v 1.68.2.7 2011/04/07 07:01:59 ak Exp $
 dnl # -Id: configure.ac,v 1.8 2009/12/01 10:35:23 ak Exp -
 dnl # -Id: configure.ac,v 1.35 2009/08/27 05:09:04 ak Exp -
 dnl # Copyright (C) 2009-2011 Cubicroot Co. Ltd.
@@ -191,6 +191,7 @@ AC_CONFIG_FILES([Makefile
                  src/lib/Kanadzuchi/Mail/Group/LU/Makefile
                  src/lib/Kanadzuchi/Mail/Group/LV/Makefile
                  src/lib/Kanadzuchi/Mail/Group/MA/Makefile
+                 src/lib/Kanadzuchi/Mail/Group/MD/Makefile
                  src/lib/Kanadzuchi/Mail/Group/ME/Makefile
                  src/lib/Kanadzuchi/Mail/Group/MK/Makefile
                  src/lib/Kanadzuchi/Mail/Group/MO/Makefile
@@ -213,6 +214,7 @@ AC_CONFIG_FILES([Makefile
                  src/lib/Kanadzuchi/Mail/Group/PT/Makefile
                  src/lib/Kanadzuchi/Mail/Group/PY/Makefile
                  src/lib/Kanadzuchi/Mail/Group/RO/Makefile
+                 src/lib/Kanadzuchi/Mail/Group/RS/Makefile
                  src/lib/Kanadzuchi/Mail/Group/RU/Makefile
                  src/lib/Kanadzuchi/Mail/Group/SA/Makefile
                  src/lib/Kanadzuchi/Mail/Group/SE/Makefile

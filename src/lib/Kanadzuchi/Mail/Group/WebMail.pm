@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.14.2.5 2011/03/24 05:40:57 ak Exp $
+# $Id: WebMail.pm,v 1.14.2.6 2011/04/07 06:53:15 ak Exp $
 # -Id: AOL.pm,v 1.1 2009/08/29 07:33:21 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # -Id: Hotmail.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
@@ -45,7 +45,9 @@ sub nominisexemplaria
 		],
 		'excite' => [
 			# http://excite.com/
-			qr{\Aexcite[.](?:com|co[.]jp)\z},
+			qr{\Aexcite[.](?:at|ch|com|cz|de|dk|es|eu|fr|ie|it)\z},
+			qr{\Aexcite[.](?:jp|li|lt|lv|nl|pl|se)\z},
+			qr{\Aexcite[.]co[.](jp|uk)\z},
 		],
 		'facebook' => [
 			# Facebook has half a billion users.
