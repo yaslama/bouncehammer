@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.31.2.12 2011/04/07 07:01:59 ak Exp $
+# $Id: 055_mail-group.t,v 1.31.2.13 2011/04/26 09:06:39 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -176,7 +176,7 @@ my $Domains = {
 	'webmail'	=> [ qw( aol.com aol.jp gmail.com googlemail.com yahoo.com yahoo.co.jp 
 				hotmail.com windowslive.com mac.com me.com excite.com
 				lycos.com lycosmail.com facebook.com myspace.com love.com ygm.com
-				latinmail.com ) ],
+				latinmail.com myopera.com ) ],
 	'smartphone'	=> [ qw( vertu.me mobileemail.vodafone.net 360.com ovi.com blackberry.orange.fr ) ],
 	'aesmartphone'	=> [ qw( du.blackberry.com etisalat.blackberry.com ) ],
 	'alsmartphone'	=> [ qw( amc.blackberry.com ) ],
