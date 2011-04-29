@@ -1,4 +1,4 @@
-# $Id: ContentError.pm,v 1.2 2010/12/12 06:19:35 ak Exp $
+# $Id: ContentError.pm,v 1.2.2.1 2011/04/29 06:58:09 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Why::
                                                                                     
@@ -16,11 +16,13 @@ use base 'Kanadzuchi::Mail::Why';
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-# Regular expressions of 'Rejected'
+# Regular expressions of 'ContentError'
 sub exemplaria
 {
 	my $class = shift();
 	return [ 
+		qr{because the recipient is not accepting mail with attachments},	# AOL Phoenix
+		qr{because the recipient is not accepting mail with embedded images},	# AOL Phoenix
 		qr{blocked by policy: no spam please},
 		qr{domain of sender address .+ does not exist},
 		qr{message filtered},

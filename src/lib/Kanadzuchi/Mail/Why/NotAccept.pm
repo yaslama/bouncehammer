@@ -1,4 +1,4 @@
-# $Id: NotAccept.pm,v 1.1 2010/11/13 19:12:55 ak Exp $
+# $Id: NotAccept.pm,v 1.1.2.1 2011/04/29 06:58:09 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Why::
                                                             
@@ -23,6 +23,8 @@ sub exemplaria
 	my $class = shift();
 	return [
 		qr{name service error for },	# Malformed MX RR or host not found
+		qr{we do not accept mail from hosts with dynamic ip or generic dns ptr-records}, # MAIL.RU
+		qr{we do not accept mail from dynamic ips}, # MAIL.RU
 	];
 }
 
