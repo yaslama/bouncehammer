@@ -1,4 +1,4 @@
-# $Id: Exim.pm,v 1.6 2010/12/12 06:24:17 ak Exp $
+# $Id: Exim.pm,v 1.6.2.1 2011/04/29 06:59:43 ak Exp $
 # Kanadzuchi::MTA::
                               
  ######           ##          
@@ -69,24 +69,24 @@ my $RxTrError = {
 		qr/user not found/,
 	],
 	'hostunknown' => [
-		qr/all relevant MX records point to non-existent hosts/,
-		qr/Unrouteable address/,
-		qr/all host address lookups failed permanently/,
+		qr/all relevant MX records point to non-existent hosts/i,
+		qr/Unrouteable address/i,
+		qr/all host address lookups failed permanently/i,
 	],
 	'mailboxfull' => [
-		qr/mailbox is full:?/,
+		qr/mailbox is full:?/i,
 		qr/error: quota exceed/i,
 	],
 	'notaccept' => [
-		qr/an MX or SRV record indicated no SMTP service/,
-		qr/no host found for existing SMTP connection/
+		qr/an MX or SRV record indicated no SMTP service/i,
+		qr/no host found for existing SMTP connection/i,
 	],
 	'systemerror' => [
-		qr/delivery to (?:file|pipe) forbidden/,
-		qr/local delivery failed/,
+		qr/delivery to (?:file|pipe) forbidden/i,
+		qr/local delivery failed/i,
 	],
 	'contenterr' => [
-		qr/Too many ["]Received["] headers /,
+		qr/Too many ["]Received["] headers /i,
 	],
 };
 
@@ -132,6 +132,7 @@ sub reperit
 	my $phead = q();	# (String) Pseudo email header
 	my $xsmtp = q();	# (String) SMTP Command in transcript of session
 	my $causa = q();	# (String) Error reason
+	my $frcpt = $mhead->{'x-failed-recipients'};
 	my $ucode = Kanadzuchi::RFC3463->status('undefined','p','i');
 
 	my $statintxt = q();	# (String) #n.n.n
@@ -213,9 +214,19 @@ sub reperit
 				last();
 			}
 		}
+
+		unless( $xsmtp )
+		{
+			# Destination domain is included in From: Address
+			#  From: Mail Delivery System <postmaster@mta11.example.jp>
+			#  X-Failed-Recipients: hoge@example.jp
+			(my $_dest = $frcpt) =~ s{\A.+[@]}{};
+
+			$xsmtp = 'DATA' if( $mhead->{'from'} =~ $_dest );
+		}
 	}
 
-	$phead .= 'Final-Recipient: '.$mhead->{'x-failed-recipients'}.qq(\n);
+	$phead .= 'Final-Recipient: '.$frcpt.qq(\n);
 	$phead .= __PACKAGE__->xsmtpdiagnosis($rhostsaid);
 	$phead .= __PACKAGE__->xsmtpcommand($xsmtp);
 	$phead .= __PACKAGE__->xsmtpstatus($pstat);
