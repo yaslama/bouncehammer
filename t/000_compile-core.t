@@ -1,4 +1,4 @@
-# $Id: 000_compile-core.t,v 1.50.2.8 2011/04/07 07:01:59 ak Exp $
+# $Id: 000_compile-core.t,v 1.50.2.9 2011/04/29 07:00:03 ak Exp $
 use strict;
 use warnings;
 use lib qw(./t/lib ./dist/lib ./src/lib);
@@ -183,6 +183,7 @@ my $Modules = [ qw{
 	Kanadzuchi::Mail::Why
 	Kanadzuchi::Mail::Why::ContentError
 	Kanadzuchi::Mail::Why::ExceedLimit
+	Kanadzuchi::Mail::Why::Expired
 	Kanadzuchi::Mail::Why::Filtered
 	Kanadzuchi::Mail::Why::HostUnknown
 	Kanadzuchi::Mail::Why::MailboxFull
