@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.30.2.1 2011/04/29 06:59:17 ak Exp $
+# $Id: Bounced.pm,v 1.30.2.2 2011/05/13 06:28:38 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -694,7 +694,7 @@ sub is_norelaying
 
 	if( defined $self->{'reason'} && length($self->{'reason'}) )
 	{
-		return 0 if( $self->{'reason'} ne 'securityerr' && $self->{'reason'} ne 'undefined' );
+		return 0 if( $self->{'reason'} !~ m{\A(?:securityerr|systemerror|undefined)\z} );
 	}
 
 	my $rclass = q|Kanadzuchi::Mail::Why::RelayingDenied|;
