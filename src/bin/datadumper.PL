@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.20.2.2 2011/03/05 08:14:24 ak Exp $
+# $Id: datadumper.PL,v 1.20.2.3 2011/05/13 06:29:07 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -21,6 +21,7 @@ package Kanadzuchi::Command::Datadumper;
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 use lib '__KANADZUCHIROOT__/lib';
+use lib '__PERLEXTERNALLIB__';
 use strict;
 use warnings;
 use Kanadzuchi;

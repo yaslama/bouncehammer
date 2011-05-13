@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: bouncehammer.PL,v 1.5 2010/07/12 15:22:09 ak Exp $
+# $Id: bouncehammer.PL,v 1.5.2.1 2011/05/13 06:29:25 ak Exp $
 # -Id: bouncehammer.PL,v 1.5 2010/02/21 20:11:18 ak Exp -
 # -Id: bouncehammer.cgi,v 1.2 2009/10/05 08:56:49 ak Exp -
 # -Id: bouncehammer.PL,v 1.1 2009/08/27 05:10:08 ak Exp -
@@ -7,6 +7,7 @@
 
 package Kanadzuchi::UI::Web::CGI;
 use lib '__KANADZUCHIROOT__/lib';
+use lib '__PERLEXTERNALLIB__';
 use strict;
 use warnings;
 use Kanadzuchi::UI::Web::Dispatch;

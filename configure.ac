@@ -1,6 +1,6 @@
 dnl #                                               -*- Autoconf -*-
 dnl # Process this file with autoconf to produce a configure script.
-dnl # $Id: configure.ac,v 1.68.2.7 2011/04/07 07:01:59 ak Exp $
+dnl # $Id: configure.ac,v 1.68.2.8 2011/05/13 06:32:31 ak Exp $
 dnl # -Id: configure.ac,v 1.8 2009/12/01 10:35:23 ak Exp -
 dnl # -Id: configure.ac,v 1.35 2009/08/27 05:09:04 ak Exp -
 dnl # Copyright (C) 2009-2011 Cubicroot Co. Ltd.
@@ -89,6 +89,17 @@ else
 	fi
 fi
 
+AC_ARG_WITH([perl-extlib],
+	AC_HELP_STRING(
+		[--with-perl-extlib=PATH],
+		[PATH to perl external library directory which hold modules installed by cpanm -l]),
+	[WITH_PERLEXTLIB=$withval],[WITH_PERLEXTLIB=none])
+if test "x$WITH_PERLEXTLIB" = "xnone"; then
+	PERL_EXTLIB='PERL_EXTLIB'
+else
+	PERL_EXTLIB="$WITH_PERLEXTLIB"
+fi
+
 dnl # Checks for libraries.
 MISSING_PERL_MODULES=''
 MISSING_MODULE_COUNT=0
@@ -126,6 +137,12 @@ else
 	AC_MSG_RESULT(yes)
 	PI_IMPLEMENT_TB=YES
 fi
+
+dnl # Inspired from configure script in MRTG source package
+echo 'ordering CD from http://cubicroot.jp/order/bouncehammer-cdrom '
+sleep 1
+echo '... '
+echo 'just kidding ;-)'
 
 dnl # Checks for header files.
 

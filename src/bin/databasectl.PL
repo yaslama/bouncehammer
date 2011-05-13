@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.23.2.5 2011/03/25 00:17:28 ak Exp $
+# $Id: databasectl.PL,v 1.23.2.6 2011/05/13 06:29:06 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -20,6 +20,7 @@ package Kanadzuchi::Command::Databasectl;
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 use lib '__KANADZUCHIROOT__/lib';
+use lib '__PERLEXTERNALLIB__';
 use strict;
 use warnings;
 use Kanadzuchi;

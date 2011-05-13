@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: summarizer.PL,v 1.14.2.2 2011/03/18 05:46:12 ak Exp $
+# $Id: summarizer.PL,v 1.14.2.3 2011/05/13 06:29:07 ak Exp $
 # -Id: summarizer.PL,v 1.13 2010/02/22 05:09:01 ak Exp -
 # -Id: summarizer.PL,v 1.2 2009/10/06 09:10:32 ak Exp -
 # -Id: summarizer.PL,v 1.3 2009/08/27 05:09:59 ak Exp -
@@ -19,6 +19,7 @@ package Kanadzuchi::Command::Summarizer;
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 use lib '__KANADZUCHIROOT__/lib';
+use lib '__PERLEXTERNALLIB__';
 use strict;
 use warnings;
 use Kanadzuchi;

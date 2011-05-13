@@ -1256,6 +1256,8 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-perl=PATH        Path to perl binary, ex) /usr/local/bin/perl
+  --with-perl-extlib=PATH PATH to perl external library directory which hold
+                          modules installed by cpanm -l
 
 Report bugs to <bugs@bouncehammer.jp>.
 _ACEOF
@@ -2972,6 +2974,20 @@ else
 	fi
 fi
 
+
+# Check whether --with-perl-extlib was given.
+if test "${with_perl_extlib+set}" = set; then
+  withval=$with_perl_extlib; WITH_PERLEXTLIB=$withval
+else
+  WITH_PERLEXTLIB=none
+fi
+
+if test "x$WITH_PERLEXTLIB" = "xnone"; then
+	PERL_EXTLIB='PERL_EXTLIB'
+else
+	PERL_EXTLIB="$WITH_PERLEXTLIB"
+fi
+
 MISSING_PERL_MODULES=''
 MISSING_MODULE_COUNT=0
 for PM in `$PERL ./Modules.PL $LIST_ARGV`; do
@@ -3015,6 +3031,11 @@ else
 echo "${ECHO_T}yes" >&6; }
 	PI_IMPLEMENT_TB=YES
 fi
+
+echo 'ordering CD from http://cubicroot.jp/order/bouncehammer-cdrom '
+sleep 1
+echo '... '
+echo 'just kidding ;-)'
 
 
 

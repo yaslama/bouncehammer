@@ -33,6 +33,12 @@ $Id: INSTALL,v 1.4 2010/08/16 11:57:31 ak Exp $
    Then, Check again.
    # perl ./Modules.PL check
 
+   ------ OR IF YOU USE cpanm COMMAND ------
+
+   # cpanm -l /usr/local/bouncehammer Time::Piece
+     or
+   # perl ./Modules.PL missing | cut -d' ' -f4 | cpanm -l /usr/local/bouncehammer
+
 -------------------------------------------------------------------------------
  3. Build: configure and make
 
@@ -42,8 +48,14 @@ $Id: INSTALL,v 1.4 2010/08/16 11:57:31 ak Exp $
      --disable-webui=<yes|no>	Disable WebUI, Default is no.
 
   e.g.)
-   # ./configure --prefix=/opt/local/bouncehammer --with-perl=/usr/local/bin/perl
+   # ./configure --prefix=/usr/local/bouncehammer --with-perl=/usr/local/bin/perl
    # make && make test && make install
+   ...
+
+   ------ OR IF YOU INSTALLED REQUIRED PERL MODULES BY cpanm COMMAND ------
+   # PERL5LIB=/usr/local/bouncehammer/lib/perl5 ./configure
+   # make 
+   # PERL5LIB=/usr/local/bouncehammer/lib/perl5 make test && make install
    ...
  
 -------------------------------------------------------------------------------
@@ -82,12 +94,12 @@ $Id: INSTALL,v 1.4 2010/08/16 11:57:31 ak Exp $
      ALTER ROLE
 
    * SQLite
-     # touch /opt/local/bouncehammer/var/db/bouncehammer.db
+     # touch /usr/local/bouncehammer/var/db/bouncehammer.db
 
 -------------------------------------------------------------------------------
  5. Setting up tables of the database
 
-   # cd /opt/local/bouncehammer/share/script
+   # cd /usr/local/bouncehammer/share/script
 
    * MySQL
      # cat ./MySQL*.sql | /usr/local/mysql/bin/mysql -ubouncehammer -Dbouncehammer -h127.0.0.1 -p
@@ -101,13 +113,13 @@ $Id: INSTALL,v 1.4 2010/08/16 11:57:31 ak Exp $
      # cat ./mastertable-* | /usr/local/pgsq/bin/psql -Ubouncehammer -dbouncehammer
 
    * SQLite
-     # cat ./SQLite*.sql | sqlite3 /opt/local/bouncehammer/var/db/bouncehammer
-     # cat ./mastertable-* | sqlite3 /opt/local/bouncehammer/var/db/bouncehammer
+     # cat ./SQLite*.sql | sqlite3 /usr/local/bouncehammer/var/db/bouncehammer
+     # cat ./mastertable-* | sqlite3 /usr/local/bouncehammer/var/db/bouncehammer
 
 -------------------------------------------------------------------------------
  6. Configuration files
 
-   # cd /opt/local/bouncehammer/etc
+   # cd /usr/local/bouncehammer/etc
    # cp ./bouncehammer.cf-example ./bouncehammer.cf
    # cp ./webui.cf-example ./webui.cf
    And edit database sction at bouncehammer.cf
@@ -119,7 +131,7 @@ $Id: INSTALL,v 1.4 2010/08/16 11:57:31 ak Exp $
 -------------------------------------------------------------------------------
  7. Copy CGI script file to the document root
 
-   # cd /opt/local/bouncehammer/share/script
+   # cd /usr/local/bouncehammer/share/script
    # cp ./bouncehammer.cgi /path/to/docroot-of-webui/
    # chmod a+x /path/to/docroot-of-webui/bouncehammer.cgi
 

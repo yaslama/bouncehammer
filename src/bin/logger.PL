@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: logger.PL,v 1.17.2.4 2011/03/25 00:17:28 ak Exp $
+# $Id: logger.PL,v 1.17.2.5 2011/05/13 06:29:07 ak Exp $
 # -Id: logger.PL,v 1.13 2010/02/21 20:09:01 ak Exp -
 # -Id: logger.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: logger.PL,v 1.12 2009/08/27 05:09:59 ak Exp -
@@ -21,6 +21,7 @@ package Kanadzuchi::Command::Logger;
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 use lib '__KANADZUCHIROOT__/lib';
+use lib '__PERLEXTERNALLIB__';
 use strict;
 use warnings;
 use Kanadzuchi;

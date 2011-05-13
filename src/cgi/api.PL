@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: api.PL,v 1.6 2010/07/12 15:22:09 ak Exp $
+# $Id: api.PL,v 1.6.2.1 2011/05/13 06:29:25 ak Exp $
 # -Id: api.PL,v 1.5 2010/02/21 20:11:18 ak Exp -
 # -Id: api.cgi,v 1.3 2009/10/06 00:36:28 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -11,6 +11,7 @@ package Kanadzuchi::API::HTTP::CGI;
 # |/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
 use lib '__KANADZUCHIROOT__/lib';
+use lib '__PERLEXTERNALLIB__';
 use strict;
 use warnings;
 use Kanadzuchi::API::HTTP::Dispatch;
