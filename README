@@ -1,27 +1,41 @@
- $Id: README,v 1.4 2010/03/20 10:00:52 ak Exp $
- Copyright (C) 2009,2010 Cubicroot Co. Ltd.
---------------------------------------------------------------------------------
- BounceHammer: Bounce Message Parser by Cubicroot Co. Ltd.
---------------------------------------------------------------------------------
+ $Id: README,v 1.4.2.1 2011/05/18 07:33:21 ak Exp $
+-----------------------------------------------------------------------
+ Copyright (C) 2009-2011 Cubicroot Co. Ltd. ALL RIGHTS RESERVED.
+ Developed by Cubicroot Co. Ltd. (http://cubicroot.jp/)
+------------------------------------------------------------------------
+ bounceHammer: An open source software mainly developed for handling 
+               email bounces on UNIX/Linux server.
+
+ Other information is available at the following sites:
+
+  - http://sourceforge.jp/projects/bouncehammer/
+  - http://twitter.com/bouncehammer
+------------------------------------------------------------------------
 
 ARTISTIC -------------- Artistic License
-AUTHORS --------------- Author of BounceHammer
+AUTHORS --------------- Author of bounceHammer
 GNU-GPL --------------- GNU General Public License version 2
-INSTALL --------------- How to install BounceHammer
-KNOWNBUGS ------------- Known bugs in BounceHammer
+INSTALL --------------- How to install bounceHammer
+Implement.PL ---------- Check -T, -B operation on file handle
+KNOWNBUGS ------------- Known bugs in bounceHammer
 LICENSE --------------- About license
 Makefile.am ----------- Makefile
+Makefile.in ----------- Makefile
 Modules.PL* ----------- Check depended perl modules
 README ---------------- This file
-RELEASE_NOTES --------- Release history of BounceHammer(English)
-RELEASE_NOTES.JA ------ Release history of BounceHammer(Japanese)
-SUPPORT --------------- About BounceHammer commercial support
+RELEASE_NOTES --------- Release history of bounceHammer(English)
+RELEASE_NOTES.JA ------ Release history of bounceHammer(Japanese)
+SUPPORT --------------- About bounceHammer commercial support
 acinclude.m4 ---------- For autoconf
-configure.ac ---------- For ./configure
+aclocal.m4 ------------
+config.guess ----------
+config.sub ------------
+configure ------------- configure script
+configure.ac ----------
 diff/ ----------------- Patches for a certain environment
 examples/ ------------- Examples for make test
+install-sh ------------
+missing ---------------
 src/ ------------------ Source code
 t/ -------------------- Test cases for make test
 template/ ------------- WebUI template files
-
-
