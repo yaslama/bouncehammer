@@ -1,6 +1,6 @@
 dnl #                                               -*- Autoconf -*-
 dnl # Process this file with autoconf to produce a configure script.
-dnl # $Id: configure.ac,v 1.68.2.9 2011/05/13 14:21:23 ak Exp $
+dnl # $Id: configure.ac,v 1.68.2.10 2011/05/18 07:30:27 ak Exp $
 dnl # -Id: configure.ac,v 1.8 2009/12/01 10:35:23 ak Exp -
 dnl # -Id: configure.ac,v 1.35 2009/08/27 05:09:04 ak Exp -
 dnl # Copyright (C) 2009-2011 Cubicroot Co. Ltd.
@@ -140,10 +140,12 @@ else
 fi
 
 dnl # Inspired from configure script in MRTG source package
-echo -n 'ordering CD from http://cubicroot.jp/order/bouncehammer-cdrom .'
+echo -n 'ordering CD from https://cubicroot.jp/order/bouncehammer-cdrom .'
 sleep 1
-echo -n '... '
-echo -n 'just kidding ;-)'
+echo -n '.'
+sleep 1
+echo -n '. '
+echo 'just kidding ;-)'
 
 dnl # Checks for header files.
 

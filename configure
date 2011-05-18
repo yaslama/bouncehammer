@@ -3034,10 +3034,12 @@ echo "${ECHO_T}yes" >&6; }
 	PI_IMPLEMENT_TB=YES
 fi
 
-echo -n 'ordering CD from http://cubicroot.jp/order/bouncehammer-cdrom .'
+echo -n 'ordering CD from https://cubicroot.jp/order/bouncehammer-cdrom .'
 sleep 1
-echo -n '... '
-echo -n 'just kidding ;-)'
+echo -n '.'
+sleep 1
+echo -n '. '
+echo 'just kidding ;-)'
 
 
 
