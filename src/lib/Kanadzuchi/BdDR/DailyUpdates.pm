@@ -1,4 +1,4 @@
-# $Id: DailyUpdates.pm,v 1.4.2.1 2011/03/18 05:45:46 ak Exp $
+# $Id: DailyUpdates.pm,v 1.4.2.2 2011/05/24 02:43:18 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::BdDR::
                                                                                   
@@ -430,7 +430,7 @@ sub new
 	map {
 		$argvs->{$_} = [] if( ! defined $argvs->{$_} 
 					|| ref($argvs->{$_}) ne q|ARRAY| )
-	} qw(data subtotal);
+	} ( 'data', 'subtotal' );
 	$argvs->{'db'} = new Kanadzuchi::BdDR::DailyUpdates::Table( 'handle' => $argvs->{'handle'} );
 	return $class->SUPER::new($argvs);
 }
@@ -649,7 +649,7 @@ sub quaerit
 		my $s = $x->{'executed'} ? int( $x->{'skipped'} / $x->{'executed'} ) : 0;
 		my $e = 0;
 
-		map { $e += $x->{$_} } qw(inserted updated skipped failed);
+		map { $e += $x->{$_} } ('inserted', 'updated', 'skipped', 'failed');
 		$x->{'estimated'} = $e ? ( $x->{'inserted'} + $x->{'updated'} + $s ) : 0;
 	}
 

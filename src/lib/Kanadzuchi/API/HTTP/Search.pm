@@ -1,4 +1,4 @@
-# $Id: Search.pm,v 1.3 2010/10/05 11:17:15 ak Exp $
+# $Id: Search.pm,v 1.3.2.1 2011/05/24 02:43:17 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::HTTP::
                                            
@@ -56,7 +56,7 @@ sub search
 
 	# Build column names
 	push @$validcols, @{ $bouncelog->fields->{'join'} };
-	push @$validcols, qw(recipient hostgroup reason token id);
+	push @$validcols, ( 'recipient', 'hostgroup', 'reason', 'token', 'id' );
 
 	# Experimental implementation except the column 'recipient'
 	return unless grep { lc $thecolumn eq $_ } @$validcols;

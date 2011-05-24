@@ -1,4 +1,4 @@
-# $Id: 117_bddr-dailyupdates.t,v 1.2 2010/08/28 17:22:44 ak Exp $
+# $Id: 117_bddr-dailyupdates.t,v 1.2.2.1 2011/05/24 02:43:21 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -82,7 +82,7 @@ SKIP: {
 				my $this = $uData->{ $d };
 				my $data = {};
 
-				map { $data->{$_} = $this->{$_} } qw(inserted updated skipped);
+				map { $data->{$_} = $this->{$_} } ( qw|inserted updated skipped| );
 				$data->{'thedate'} = $d;
 				$data->{'thetime'} = Time::Piece->strptime($d,'%Y-%m-%d');
 				$data->{'executed'} = 1;
@@ -119,7 +119,7 @@ SKIP: {
 				my $this = $uData->{ $d };
 				my $data = {};
 
-				map { $data->{$_} = $this->{$_} * 10 } qw(inserted updated skipped);
+				map { $data->{$_} = $this->{$_} * 10 } ( qw|inserted updated skipped| );
 				$data->{'thedate'} = $d;
 				$data->{'executed'} = 2;
 

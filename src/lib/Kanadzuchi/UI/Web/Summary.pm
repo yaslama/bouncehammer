@@ -1,4 +1,4 @@
-# $Id: Summary.pm,v 1.15 2010/08/28 17:22:09 ak Exp $
+# $Id: Summary.pm,v 1.15.2.1 2011/05/24 02:43:18 ak Exp $
 # -Id: Summary.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Summary.pm,v 1.1 2009/08/18 02:37:53 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -62,7 +62,7 @@ sub datasummary
 		my $ratio = $maxrr ? sprintf( "%0.4f", $count / $maxrr ) : 0;
 
 		map { $tableconf->{ $tname }->{$_} = 0 
-			unless defined $tableconf->{$tname}->{$_} } qw( readonly maxrecords );
+			unless defined $tableconf->{$tname}->{$_} } ( qw|readonly maxrecords| );
 		$tablesumm->{ $tname } = {
 				'capacity' => $ratio,
 				'screenname' => $mtobj->alias(),

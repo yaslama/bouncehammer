@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: datadumper.PL,v 1.20.2.3 2011/05/13 06:29:07 ak Exp $
+# $Id: datadumper.PL,v 1.20.2.4 2011/05/24 02:43:16 ak Exp $
 # -Id: datadumper.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: datadumper.PL,v 1.3 2009/08/31 06:57:18 ak Exp -
 # -Id: datadumper.pl,v 1.9 2009/08/27 05:09:59 ak Exp -
@@ -103,7 +103,7 @@ otherwise {
 
 
 # Set signal handlers
-foreach my $sig qw( INT QUIT TERM KILL )
+foreach my $sig ( 'INT','QUIT','TERM','KILL','ALRM' )
 {
 	$SIG{$sig} = sub { $Cmd->catch_signal($sig); };
 }

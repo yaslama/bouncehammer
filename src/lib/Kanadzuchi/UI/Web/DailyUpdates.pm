@@ -1,4 +1,4 @@
-# $Id: DailyUpdates.pm,v 1.2 2010/08/28 17:22:09 ak Exp $
+# $Id: DailyUpdates.pm,v 1.2.2.1 2011/05/24 02:43:18 ak Exp $
 # -Id: Summary.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Summary.pm,v 1.1 2009/08/18 02:37:53 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -123,7 +123,7 @@ sub dailyupdates
 		$dailydata = [reverse @$dailydata] if( $descorder );
 	}
 
-	SUMMARY: foreach my $x ( qw(inserted updated skipped failed executed estimated) )
+	SUMMARY: foreach my $x ( qw|inserted updated skipped failed executed estimated| )
 	{
 		$eachdatum = [ map { $_->{ $x } } @$dailydata ];
 		$summarizd->{'sum'}->{ $x } = $dusummary->sum( $eachdatum );
@@ -132,7 +132,7 @@ sub dailyupdates
 		$summarizd->{'max'}->{ $x } = $dusummary->max( $eachdatum );
 		$summarizd->{'stddev'}->{ $x } = $dusummary->sd( $eachdatum );
 
-		foreach my $y ( qw(sum min mean max stddev) )
+		foreach my $y ( qw|sum min mean max stddev| )
 		{
 			next() if( $summarizd->{ $y }->{ $x } eq 'NA' );
 			$summarizd->{ $y }->{ $x } = sprintf("%0.2f",$summarizd->{ $y }->{ $x });
@@ -217,7 +217,7 @@ sub value2config
 
 	if( ! $cgiq || ! $optv || $optv !~ m{\A\d+\z} )
 	{
-		map { $conf->{$_} = 1 } qw(vestimated vinserted vupdated vskipped);
+		map { $conf->{$_} = 1 } ( qw|vestimated vinserted vupdated vskipped| );
 		return $conf;
 	}
 
@@ -256,7 +256,7 @@ sub config2value
 
 	if( ! $cgiq || ref($conf) ne q|HASH| )
 	{
-		map { $optv |= $defs->{$_} } qw(vestimated vinserted vupdated vskipped);
+		map { $optv |= $defs->{$_} } (qw|vestimated vinserted vupdated vskipped| );
 		return $optv;
 	}
 

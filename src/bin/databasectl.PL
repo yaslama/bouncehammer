@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.23.2.6 2011/05/13 06:29:06 ak Exp $
+# $Id: databasectl.PL,v 1.23.2.7 2011/05/24 02:43:16 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
@@ -100,7 +100,7 @@ otherwise {
 
 
 # Set signal handlers
-foreach my $sig qw( INT QUIT TERM KILL )
+foreach my $sig ( 'INT','QUIT','TERM','KILL','ALRM' )
 {
 	$SIG{$sig} = sub { $Cmd->catch_signal($sig); };
 }
