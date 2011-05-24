@@ -80,7 +80,7 @@ $Id: INSTALL,v 1.4 2010/08/16 11:57:31 ak Exp $
    * PostgreSQL
      % su - postgres
      $ cd /usr/local/pgsql
-     $ ./bin/createuser bouncehammer ⏎
+     $ ./bin/createuser bouncehammer
      Shall the new role be a superuser? (y/n) n
      Shall the new role be allowed to create databases? (y/n) y
      Shall the new role be allowed to create more new roles? (y/n) y
