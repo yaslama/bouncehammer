@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: summarizer.PL,v 1.14.2.4 2011/05/24 02:43:17 ak Exp $
+# $Id: summarizer.PL,v 1.14.2.5 2011/05/24 03:28:16 ak Exp $
 # -Id: summarizer.PL,v 1.13 2010/02/22 05:09:01 ak Exp -
 # -Id: summarizer.PL,v 1.2 2009/10/06 09:10:32 ak Exp -
 # -Id: summarizer.PL,v 1.3 2009/08/27 05:09:59 ak Exp -
@@ -86,7 +86,7 @@ otherwise {
 };
 
 # Set signal handlers
-foreach my $sig ( 'INT','QUIT','TERM','KILL','ALRM') )
+foreach my $sig ( 'INT','QUIT','TERM','KILL','ALRM')
 {
 	$SIG{$sig} = sub { $Cmd->catch_signal($sig); };
 }

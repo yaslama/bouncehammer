@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.40.2.7 2011/05/24 02:43:17 ak Exp $
+# $Id: mailboxparser.PL,v 1.40.2.8 2011/05/24 03:28:16 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -104,7 +104,7 @@ otherwise {
 };
 
 # Set signal handlers
-foreach my $sig ( 'INT','QUIT','TERM','KILL','ALRM') )
+foreach my $sig ( 'INT','QUIT','TERM','KILL','ALRM')
 {
 	$SIG{$sig} = sub { $Cmd->catch_signal($sig); };
 }
