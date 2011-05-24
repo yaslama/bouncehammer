@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES.JA,v 1.52.2.9 2011/03/19 11:05:31 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.52.2.10 2011/05/24 03:55:39 ak Exp $
 -----------------------------------------------------------------------
  ##                                      ##  ##                                     
  ##      ####  ##  ## #####   #### ####  ##  ##  ####  ##  ## ##  ##  ####  #####   
@@ -21,6 +21,45 @@
 
   - http://sourceforge.jp/projects/bouncehammer/
   - http://twitter.com/bouncehammer
+-----------------------------------------------------------------------
+
+2.7.1/2.7.0	2011/05/25
+
+  新機能:
+    * 新しいconfigureオプション:--with-perl-extlib=DIR cpanmコマンドで
+      インストールした必要なPerlモジュールディレクトリの指定用
+    * My Opera Mailのドメイン@myopera.comサポート
+    * 各コマンドのsyslogフォーマットを変更
+    * fastmail.fm,Exciteのドメインを幾つか追加でサポート
+    * ヨーロッパと東南アジアの幾つかの国のWebmail用ドメインをサポート
+    * アメリカとインドネシアのスマートフォン用ドメインをサポート
+    * AOL PhoenixのSender Filter(From) でバウンスしたメールは'filtered'
+      に、Content Filter(本文)でバウンス下メールは'contenterr'にそれぞ
+      れ分類されます。
+    * @MAIL.RUのフィルターによって拒否されたバウンスメールは 'filtered'
+      に分類されます。
+    * @MAIL.RUに``We do not accept mail from dynamic IPs'' で拒否された
+      バウンスメールは'notaccept'に分類されます。
+
+  修正されたバグ:
+    * ``Use of uninitialized value in transliteration (tr///) at lib/
+      Kanadzuchi/Address.pm line 147,148''の警告メッセージが表示される
+      問題を修正しました
+    * 次の警告メッセージが表示される問題を修正:  ``Use of uninitialized
+      value in lc at lib/Kanadzuchi/MTA/US/Google.pm line 194''
+    * DBD::* ドライバがインストールされていない場合コマンドラインツール
+      が``Can't use string ("Failed to connect DB at /usr/loc"...) as a
+      HASH ref ...'' という原因の分かりにくいエラーメッセージを出す問題
+      を修正しました
+    * bin/mailboxparserの --skip-norelayingオプションが正しく動作してい
+      ない問題を修正しました
+
+  新しいファイル:
+    * lib/Kanadzuchi/Mail/Group/{AL,AR,ES,MD,PT,RO,SK,TH,VN}/WebMail.pm
+    * lib/Kanadzuchi/Mail/Group/RS/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Why/Expired.pm
+
+
 -----------------------------------------------------------------------
 
 2.7.0/2.7.0	2011/03/19

@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES,v 1.76.2.10 2011/03/19 11:05:31 ak Exp $
+ $Id: RELEASE_NOTES,v 1.76.2.12 2011/05/24 03:55:39 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -19,7 +19,7 @@
  The list shows the version of bounceHammer engine, the version of con-
  figuration file of bounceHammer, the date of release, and a summary of
  the changes in that release. More information about bounceHammer is a-
- vailable at our site: http://bouncehammer.jp/ (Japanese).
+ vailable at our site: http://bouncehammer.jp/ .
 
  Other information is available at the following sites:
 
@@ -27,6 +27,46 @@
   - http://twitter.com/bouncehammer
 -----------------------------------------------------------------------
 
+2.7.1/2.7.0	2011/05/25
+
+  Assorted improvements and code cleanup:
+    * New configure option --with-perl-extlib=dir, dir is the directory
+      which contain required perl modules installed by cpanm -l.
+    * Support My Opera Mail's domain: @myopera.com .
+    * Update syslog format of each command.
+    * Update email domains of fastmail.fm and Excite.
+    * Update webmail domains of some countries in  Europe and Southeast
+      Asia.
+    * Support some smartphone domains of America and Indonesia.
+    * A bounced email which is rejected by  AOL Phoenix's Sender Filter
+      will be classified into the reason 'filtered',and by Content Fil-
+      ter will be classified into the reason 'contenterr'.
+    * A bounced email  which is rejected by  @MAIL.RU's Filter  will be
+      classified into the reason 'filtered'.
+    * A bounced email  which is rejected  by @MAIL. RU with the message
+      "We do not accept mail from dynamic IPs"  will be classified into
+      the reason 'notaccept'.
+
+  Fixed bugs:
+    * Fixed an issue that  the following warning message  is displayed:
+      ``Use of uninitialized value in transliteration (tr///) at lib/
+      Kanadzuchi/Address.pm line 147,148''.
+    * Fixed an issue that  the following warning message  is displayed:
+      ``Use of uninitialized value in lc at lib/Kanadzuchi/MTA/US/
+      Google.pm line 194''.
+    * Fixed an issue that when DBD::* driver module is missing, command
+      line tools shows the following error message:  ``Can't use string
+      ("Failed to connect DB at /usr/loc"...) as a HASH ref ...''.
+    * Fixed an issue that --skip-norelaying option of bin/mailboxparser
+      command does not work propery.
+
+  New files:
+    * lib/Kanadzuchi/Mail/Group/{AL,AR,ES,MD,PT,RO,SK,TH,VN}/WebMail.pm
+    * lib/Kanadzuchi/Mail/Group/RS/Smartphone.pm
+    * lib/Kanadzuchi/Mail/Why/Expired.pm
+
+
+-----------------------------------------------------------------------
 2.7.0/2.7.0	2011/03/19
 
   New functionality:
