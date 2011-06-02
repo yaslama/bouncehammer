@@ -1,6 +1,6 @@
-# $Id: Makefile.am,v 1.3.2.2 2011/05/13 14:21:24 ak Exp $
+# $Id: Makefile.am,v 1.3.2.3 2011/06/02 18:38:46 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
-# This is the auto-Makefile for BounceHammer/src/cgi, is processed by 
+# This is the auto-Makefile for bounceHammer/src/cgi, is processed by 
 # automake to create Makefile.in.
 
 pkgdatadir = @datarootdir@/script
