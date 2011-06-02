@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# $Id: Makefile.am,v 1.3 2010/03/23 20:07:46 ak Exp $
+# $Id: Makefile.am,v 1.3.2.1 2011/06/02 18:39:09 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for BounceHammer/src/libexec,
 # is processed by automake to create Makefile.in.
@@ -305,7 +305,11 @@ distlib:
 	$(CAT) $(modules) | $(SED) \
 		-e 's|__KANADZUCHIROOT__|@prefix@|g' \
 		-e 's|__PERLEXECUTABLE__|!$(PERL)|g' \
-		-e 's|\([^:]\)//|\1/|g' > $(distdir)/$(modules)
+		-e 's|__PERLEXTERNALLIB__|$(PERL_EXTLIB)|g' \
+		-e 's|\([^:]\)//|\1/|g' > $(modules)
+	test "X$(PERL_EXTLIB)" = "X" || \
+		( $(GREP) -v PERL_EXTLIB $(modules) > $(modules).tmp && mv $(modules).tmp $(modules) )
+	/bin/cp $(modules) $(distdir)/$(modules)
 
 install-am: distlib
 	test -d $(instdir) || mkdir -p $(instdir)
