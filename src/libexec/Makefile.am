@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.3.2.3 2011/06/03 09:41:22 ak Exp $
+# $Id: Makefile.am,v 1.3.2.4 2011/06/03 09:48:30 ak Exp $
 # Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # This is the auto-Makefile for bounceHammer/src/libexec,
 # is processed by automake to create Makefile.in.
@@ -8,9 +8,6 @@ distdir = $(BUILDROOT)/dist/libexec
 instdir = @libexecdir@
 
 $(libexec_SCRIPTS):
-
-all-am: distlib
-distlib:
 	test -d $(distdir) || mkdir -p $(distdir)
 	$(CAT) $@ | $(SED) \
 		-e 's|__KANADZUCHIROOT__|@prefix@|g' \
