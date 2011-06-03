@@ -14,9 +14,9 @@
 
 @SET_MAKE@
 
-# $Id: Makefile.am,v 1.3.2.1 2011/06/02 18:39:09 ak Exp $
-# Copyright (C) 2009,2010 Cubicroot Co. Ltd.
-# This is the auto-Makefile for BounceHammer/src/libexec,
+# $Id: Makefile.am,v 1.3.2.2 2011/06/03 09:14:32 ak Exp $
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
+# This is the auto-Makefile for bounceHammer/src/libexec,
 # is processed by automake to create Makefile.in.
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
@@ -306,10 +306,10 @@ distlib:
 		-e 's|__KANADZUCHIROOT__|@prefix@|g' \
 		-e 's|__PERLEXECUTABLE__|!$(PERL)|g' \
 		-e 's|__PERLEXTERNALLIB__|$(PERL_EXTLIB)|g' \
-		-e 's|\([^:]\)//|\1/|g' > $(modules)
+		-e 's|\([^:]\)//|\1/|g' > $(modules).tmp
 	test "X$(PERL_EXTLIB)" = "X" || \
-		( $(GREP) -v PERL_EXTLIB $(modules) > $(modules).tmp && mv $(modules).tmp $(modules) )
-	/bin/cp $(modules) $(distdir)/$(modules)
+		( $(GREP) -v PERL_EXTLIB $(modules).tmp > $(modules) && mv $(modules) $(modules).tmp )
+	/bin/cp $(modules).tmp $(distdir)/$(modules)
 
 install-am: distlib
 	test -d $(instdir) || mkdir -p $(instdir)
