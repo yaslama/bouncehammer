@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mp-startup.pl,v 1.1.2.1 2011/06/02 18:39:09 ak Exp $
+# $Id: mp-startup.pl.IN,v 1.1.2.1 2011/06/03 10:32:30 ak Exp $
 use strict;
 use warnings;
 use lib '__KANADZUCHIROOT__/lib';
