@@ -14,10 +14,11 @@
 
 @SET_MAKE@
 
-# $Id: Makefile.am,v 1.3.2.2 2011/06/03 09:14:32 ak Exp $
+# $Id: Makefile.am,v 1.3.2.3 2011/06/03 09:41:22 ak Exp $
 # Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # This is the auto-Makefile for bounceHammer/src/libexec,
 # is processed by automake to create Makefile.in.
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -45,6 +46,9 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
+am__installdirs = "$(DESTDIR)$(libexecdir)"
+libexecSCRIPT_INSTALL = $(INSTALL_SCRIPT)
+SCRIPTS = $(libexec_SCRIPTS)
 SOURCES =
 DIST_SOURCES =
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -144,7 +148,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-modules = mp-startup.pl
+libexec_SCRIPTS = mp-startup.pl
 distdir = $(BUILDROOT)/dist/libexec
 instdir = @libexecdir@
 all: all-am
@@ -179,6 +183,25 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+install-libexecSCRIPTS: $(libexec_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	test -z "$(libexecdir)" || $(MKDIR_P) "$(DESTDIR)$(libexecdir)"
+	@list='$(libexec_SCRIPTS)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f $$d$$p; then \
+	    f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
+	    echo " $(libexecSCRIPT_INSTALL) '$$d$$p' '$(DESTDIR)$(libexecdir)/$$f'"; \
+	    $(libexecSCRIPT_INSTALL) "$$d$$p" "$(DESTDIR)$(libexecdir)/$$f"; \
+	  else :; fi; \
+	done
+
+uninstall-libexecSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(libexec_SCRIPTS)'; for p in $$list; do \
+	  f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
+	  echo " rm -f '$(DESTDIR)$(libexecdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(libexecdir)/$$f"; \
+	done
 tags: TAGS
 TAGS:
 
@@ -214,12 +237,18 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile
+all-am: Makefile $(SCRIPTS)
 installdirs:
+	for dir in "$(DESTDIR)$(libexecdir)"; do \
+	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
 installcheck: installcheck-am
 install-strip:
@@ -257,7 +286,7 @@ install-data-am:
 
 install-dvi: install-dvi-am
 
-install-exec-am:
+install-exec-am: install-libexecSCRIPTS
 
 install-html: install-html-am
 
@@ -287,40 +316,40 @@ ps: ps-am
 
 ps-am:
 
+uninstall-am: uninstall-libexecSCRIPTS
+
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am
+	install-html-am install-info install-info-am \
+	install-libexecSCRIPTS install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am uninstall uninstall-am \
+	uninstall-libexecSCRIPTS
+
+
+$(libexec_SCRIPTS):
 
 all-am: distlib
 distlib:
 	test -d $(distdir) || mkdir -p $(distdir)
-	$(CAT) $(modules) | $(SED) \
+	$(CAT) $@ | $(SED) \
 		-e 's|__KANADZUCHIROOT__|@prefix@|g' \
 		-e 's|__PERLEXECUTABLE__|!$(PERL)|g' \
 		-e 's|__PERLEXTERNALLIB__|$(PERL_EXTLIB)|g' \
-		-e 's|\([^:]\)//|\1/|g' > $(modules).tmp
-	test "X$(PERL_EXTLIB)" = "X" || \
-		( $(GREP) -v PERL_EXTLIB $(modules).tmp > $(modules) && mv $(modules) $(modules).tmp )
-	/bin/cp $(modules).tmp $(distdir)/$(modules)
-
-install-am: distlib
-	test -d $(instdir) || mkdir -p $(instdir)
-	$(INSTALL) -c -m 0755 $(distdir)/$(modules) $(instdir)/
-
-uninstall-am:
-	rm -f $(instdir)/$(modules)
+		-e 's|\([^:]\)//|\1/|g' > $@.tmp
+	mv $@.tmp $@
+	test "X$(PERL_EXTLIB)" = "X" || ( $(GREP) -v PERL_EXTLIB $@ > $@.tmp && mv $@.tmp $@ )
+	cp -Rp $@ $(distdir)/
 
 .PHONY: clean
 clean:
-	rm -f $(distdir)/$(modules)
+	rm -f $(distdir)/*
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
