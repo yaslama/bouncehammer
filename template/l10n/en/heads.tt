@@ -1,8 +1,9 @@
-[%# $Id: heads.tt,v 1.6.2.1 2011/01/14 05:16:00 ak Exp $ -%]
+[%# $Id: heads.tt,v 1.6.2.2 2011/06/20 03:10:44 ak Exp $ -%]
 [%# Headlines in English -%]
 [%- SET tt_head = { 
 		'aboutus'	=> 'About bounceHammer',
 		'aggregatedby'	=> 'Aggregated By',
+		'contact'	=> 'Contact Us',
 		'dailyupdates'	=> 'Daily Updates',
 		'dashboard'	=> 'Dashboard',
 		'datasummary'	=> 'Data Summary',

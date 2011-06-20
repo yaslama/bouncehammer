@@ -55,6 +55,22 @@
 						</tr>
 
 						<tr>
+							<td class = 'key'>[% tt_word.syslog %]</td>
+							<td class = 'value'>
+								[%- IF pv_sysconfig.syslog -%]
+									[% pv_sysconfig.syslog.facility %]
+									[%- IF pv_sysconfig.syslog.enabled == 1 %]
+										([% tt_word.enabled %])
+									[%- ELSE -%]
+										([% tt_word.disabled %])
+									[%- END -%]
+								[%- ELSE -%]
+									[% tt_word.undefined %]
+								[%- END -%]
+							</td>
+						</tr>
+
+						<tr>
 							<td class = 'key'>[% tt_word.dbname %]</td>
 							<td class = 'value'>
 								[% pv_sysconfig.database.dbname %]

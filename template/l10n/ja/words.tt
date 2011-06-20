@@ -1,4 +1,4 @@
-[%# $Id: words.tt,v 1.5.2.2 2011/03/05 10:28:45 ak Exp $ -%]
+[%# $Id: words.tt,v 1.5.2.3 2011/06/20 03:10:45 ak Exp $ -%]
 [%# Words in Japanese -%]
 [%- SET tt_word = { 
 		'about'		=> '約',
@@ -33,11 +33,13 @@
 		'detail'	=> '詳細',
 		'developer'	=> '開発元',
 		'diagnosticcode'=> 'エラー内容抜粋',
+		'disabled'	=> '無効',
 		'disuse'	=> '不使用',
 		'domainname'	=> 'ドメイン名',
 		'download'	=> 'ダウンロード',
 		'edit'		=> '編集',
 		'email'		=> 'メール',
+		'enabled'	=> '有効',
 		'encrypt'	=> '暗号化',
 		'engine'	=> 'エンジン',
 		'environment'	=> '環境',
@@ -115,11 +117,13 @@
 		'summary'	=> '概要',
 		'switchlang'	=> '切換',
 		'switchunit'	=> '切換',
+		'syslog'	=> 'ログ設定(syslog)',
 		'system'	=> 'システム',
 		'systemname'	=> 'システム名',
 		'table'		=> 'テーブル',
 		'test'		=> '試験',
 		'totalsby'	=> '集計',
+		'undefined'	=> '未定義',
 		'unitoftimes'	=> '回',
 		'unitofrecs'	=> '件',
 		'unlimited'	=> '無制限',

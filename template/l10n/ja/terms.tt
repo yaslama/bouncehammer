@@ -1,4 +1,4 @@
-[%# $Id: terms.tt,v 1.4 2010/08/28 17:19:14 ak Exp $ -%]
+[%# $Id: terms.tt,v 1.4.2.1 2011/06/20 03:10:45 ak Exp $ -%]
 [%# Terms in English -%]
 [%- SET tt_term = { 
 		'addresser'	=> '発信者アドレス',
@@ -14,6 +14,7 @@
 		'recipient'	=> '受信者アドレス',
 		'reason'	=> '差戻理由',
 		'senderdomain'	=> '発信者ドメイン',
+		'thanks'	=> 'bounceHammerをお使い頂きありがとうございます',
 		'token'		=> 'トークン',
 		'updated'	=> '更新日時',
 	}

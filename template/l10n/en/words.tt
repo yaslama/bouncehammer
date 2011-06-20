@@ -1,4 +1,4 @@
-[%# $Id: words.tt,v 1.5.2.2 2011/03/05 10:28:43 ak Exp $ -%]
+[%# $Id: words.tt,v 1.5.2.3 2011/06/20 03:10:45 ak Exp $ -%]
 [%# Words in English -%]
 [%- SET tt_word = { 
 		'about'		=> 'About',
@@ -33,12 +33,14 @@
 		'detail'	=> 'Details',
 		'developer'	=> 'Developer',
 		'diagnosticcode'=> 'Diagnostic Code',
+		'disabled'	=> 'Disabled',
 		'disuse'	=> 'Disuse',
 		'domainname'	=> 'Domain Name',
 		'download'	=> 'Download',
 		'email'		=> 'E-Mail',
 		'edit'		=> 'Edit',
 		'encrypt'	=> 'Encryption',
+		'enabled'	=> 'Enabled',
 		'engine'	=> 'Engine',
 		'environment'	=> 'Environment',
 		'error'		=> 'Error',
@@ -115,11 +117,13 @@
 		'summary'	=> 'Summary',
 		'switchlang'	=> 'Switch',
 		'switchunit'	=> 'Switch',
+		'syslog'	=> 'UNIX syslog',
 		'system'	=> 'System',
 		'systemname'	=> 'System Name',
 		'table'		=> 'Table',
 		'test'		=> 'Test',
 		'totalsby'	=> 'Totals by',
+		'undefined'	=> 'Undefined',
 		'unitoftimes'	=> 'Times',
 		'unitofrecs'	=> 'Records',
 		'unlimited'	=> 'Unlimited',
