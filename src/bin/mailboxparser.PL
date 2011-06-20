@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.40.2.8 2011/05/24 03:28:16 ak Exp $
+# $Id: mailboxparser.PL,v 1.40.2.9 2011/06/20 03:10:33 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -462,7 +462,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	$Zci->historique( 'info',
 		sprintf( "size=%d, emails=%d, bounces=%d, parsed=%d, ratio=%.4f, output=%s, stat=ok",
 			$sizeofmailbox, $howmanyemails, $howmanybounce, $howmanyparsed,
-			( $howmanyparsed / $howmanybounce ),
+			( $howmanybounce ? ( $howmanyparsed / $howmanybounce ) : 0 ),
 			( $Cmd->operation & $Cmd->option->{'two-way'} )
 				? 'file, screen'
 				: ( $Cmd->operation & $Cmd->option->{'log'} )
