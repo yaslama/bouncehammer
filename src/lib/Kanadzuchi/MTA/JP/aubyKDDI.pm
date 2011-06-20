@@ -1,4 +1,4 @@
-# $Id: aubyKDDI.pm,v 1.6 2010/11/13 19:18:06 ak Exp $
+# $Id: aubyKDDI.pm,v 1.6.2.1 2011/06/20 03:09:33 ak Exp $
 # -Id: aubyKDDI.pm,v 1.1 2009/08/29 08:50:38 ak Exp -
 # -Id: aubyKDDI.pm,v 1.1 2009/07/31 09:04:51 ak Exp -
 # Kanadzuchi::MTA::JP::
@@ -100,7 +100,10 @@ sub reperit
 
 		my $RxError = {
 			'notaccept' => [
-				qr{\AThe following recipients did not receive this message:}
+				qr{\AThe following recipients did not receive this message:},
+			],
+			'mailboxfull' => [
+				qr{\AThe user[(]s[)] account is temporarily over quota},
 			],
 			# http://www.naruhodo-au.kddi.com/qa3429203.html
 			'suspend' => [
