@@ -1,4 +1,4 @@
-# $Id: Web.pm,v 1.26.2.3 2011/03/25 00:17:29 ak Exp $
+# $Id: Web.pm,v 1.26.2.4 2011/06/20 03:43:41 ak Exp $
 # -Id: WebUI.pm,v 1.6 2009/10/05 08:51:03 ak Exp -
 # -Id: WebUI.pm,v 1.11 2009/08/27 05:09:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -236,7 +236,7 @@ sub loadconfig
 	# |l|o|a|d|c|o|n|f|i|g|
 	# +-+-+-+-+-+-+-+-+-+-+
 	#
-	# @Description	Load BounceHammer config file
+	# @Description	Load bounceHammer config file
 	# @Param	None
 	my $self = shift();
 	my $sysconfig = shift @{ Kanadzuchi::Metadata->to_object($self->param('cf')) };

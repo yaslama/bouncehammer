@@ -1,6 +1,6 @@
-# $Id: Makefile.am,v 1.1 2010/05/30 06:07:45 ak Exp $
+# $Id: Makefile.am,v 1.1.2.1 2011/06/20 03:43:40 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
-# This is the auto-Makefile for BounceHammer/src/lib/Kanadzuchi/MIME,
+# This is the auto-Makefile for bounceHammer/src/lib/Kanadzuchi/MIME,
 # is processed by automake to create Makefile.in.
 
 distdir = $(BUILDROOT)/dist/lib/Kanadzuchi/MIME

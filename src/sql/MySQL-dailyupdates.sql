@@ -1,5 +1,5 @@
--- $Id: MySQL-dailyupdates.sql,v 1.1 2010/08/16 11:57:56 ak Exp $
--- BounceHammer Daily Updates table for MySQL 4.x
+-- $Id: MySQL-dailyupdates.sql,v 1.1.2.1 2011/06/20 03:43:41 ak Exp $
+-- bounceHammer Daily Updates table for MySQL 4.x
 
 CREATE TABLE t_dailyupdates (
 	id		INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,

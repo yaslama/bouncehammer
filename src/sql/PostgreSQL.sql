@@ -1,5 +1,5 @@
--- $Id: PostgreSQL.sql,v 1.10 2010/04/09 06:40:00 ak Exp $
--- BounceHammer for PostgreSQL
+-- $Id: PostgreSQL.sql,v 1.10.2.1 2011/06/20 03:43:41 ak Exp $
+-- bounceHammer for PostgreSQL
 
 CREATE TABLE t_hostgroups (
 	id		INTEGER NOT NULL,

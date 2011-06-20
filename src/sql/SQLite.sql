@@ -1,5 +1,5 @@
--- $Id: SQLite.sql,v 1.10 2010/04/09 06:40:00 ak Exp $
--- BounceHammer for SQLite
+-- $Id: SQLite.sql,v 1.10.2.1 2011/06/20 03:43:41 ak Exp $
+-- bounceHammer for SQLite
 CREATE TABLE t_hostgroups (
 	id		INTEGER NOT NULL PRIMARY KEY,
 	name		CHARACTER VARYING(15) NOT NULL UNIQUE,

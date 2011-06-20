@@ -1,5 +1,5 @@
--- $Id: PostgreSQL-dailyupdates.sql,v 1.2 2010/08/29 22:44:17 ak Exp $
--- BounceHammer Daily Updates table for PostgreSQL
+-- $Id: PostgreSQL-dailyupdates.sql,v 1.2.2.1 2011/06/20 03:43:41 ak Exp $
+-- bounceHammer Daily Updates table for PostgreSQL
 
 CREATE TABLE t_dailyupdates (
 	id		INTEGER NOT NULL,

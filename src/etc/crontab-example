@@ -1,7 +1,7 @@
-# $Id: crontab-example,v 1.4 2010/07/07 01:08:18 ak Exp $
+# $Id: crontab-example,v 1.4.2.1 2011/06/20 03:43:39 ak Exp $
 # A part of /etc/crontab for example
 #
-# BounceHammer
+# bounceHammer
 BHROOT="__KANADZUCHIROOT__"
 PARSER="__KANADZUCHIBIN__/mailboxparser"
 LOGGER="__KANADZUCHIBIN__/logger"

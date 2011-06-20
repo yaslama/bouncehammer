@@ -1,5 +1,5 @@
--- $Id: MySQL.sql,v 1.9 2010/04/09 06:40:00 ak Exp $
--- BounceHammer for MySQL 4.x
+-- $Id: MySQL.sql,v 1.9.2.1 2011/06/20 03:43:41 ak Exp $
+-- bounceHammer for MySQL 4.x
 
 CREATE TABLE t_hostgroups (
 	id		INTEGER NOT NULL PRIMARY KEY,

@@ -1,4 +1,4 @@
-# $Id: HTTP.pm,v 1.18 2010/07/23 06:48:29 ak Exp $
+# $Id: HTTP.pm,v 1.18.2.1 2011/06/20 03:43:39 ak Exp $
 # -Id: HTTP.pm,v 1.3 2009/10/06 00:36:49 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::API::
@@ -129,7 +129,7 @@ sub loadconfig
 	# |l|o|a|d|c|o|n|f|i|g|
 	# +-+-+-+-+-+-+-+-+-+-+
 	#
-	# @Description	Load BounceHammer config file
+	# @Description	Load bounceHammer config file
 	# @Param	None
 	my $self = shift();
 	my $json = undef();	# Hash reference of config file(JSON::Syck)
