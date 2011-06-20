@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES.JA,v 1.52.2.10 2011/05/24 03:55:39 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.52.2.11 2011/06/20 03:43:59 ak Exp $
 -----------------------------------------------------------------------
  ##                                      ##  ##                                     
  ##      ####  ##  ## #####   #### ####  ##  ##  ####  ##  ## ##  ##  ####  #####   
@@ -21,6 +21,23 @@
 
   - http://sourceforge.jp/projects/bouncehammer/
   - http://twitter.com/bouncehammer
+-----------------------------------------------------------------------
+
+2.7.2/2.7.0	2011/06/20
+
+  細かな改善点
+    * WebUI(管理画面)のテンプレートとCSSの小さな改善
+    * au by KDDI(@ezweb.ne.jp)から帰ってくるmailboxfullのバウンスメール
+      の解析精度が向上しました。Thanks to REALIT Co., Ltd.
+
+  修正されたバグ:
+    * 新規インストール時にcpanmを使ってPerlモジュールを入れていた場合、
+      且つ--with-perl-extlibで構築した場合に、mod_perl2用のスクリプト
+      libexec/mp-startup.plが正しく動作しない問題を修正しました。
+    * mailboxparserコマンドの0除算エラー: ``Illegal division by zero at
+      mailboxparser line 462.''を修正しました。
+
+
 -----------------------------------------------------------------------
 
 2.7.1/2.7.0	2011/05/25

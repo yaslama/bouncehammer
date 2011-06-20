@@ -1,4 +1,4 @@
-# $Id: Kanadzuchi.pm,v 1.33.2.9 2011/06/02 18:41:07 ak Exp $
+# $Id: Kanadzuchi.pm,v 1.33.2.10 2011/06/20 03:43:39 ak Exp $
 # -Id: TheHammer.pm,v 1.4 2009/09/01 23:19:41 ak Exp -
 # -Id: Herculaneum.pm,v 1.13 2009/08/27 05:09:23 ak Exp -
 # -Id: Version.pm,v 1.35 2009/08/27 05:09:29 ak Exp -
@@ -279,7 +279,7 @@ sub is_logfile
 	# |i|s|_|l|o|g|f|i|l|e|
 	# +-+-+-+-+-+-+-+-+-+-+
 	#
-	# @Description	The file is a valid BounceHammer log file name
+	# @Description	The file is a valid bounceHammer log file name
 	# @Param <str>	(String) File name or (Path::Class::File) object
 	# @Return	(Integer) 1 = Is valid temporary file name
 	#		(Integer) 2 = Is valid regular file name
