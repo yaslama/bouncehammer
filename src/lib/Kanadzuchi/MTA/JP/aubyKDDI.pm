@@ -1,4 +1,4 @@
-# $Id: aubyKDDI.pm,v 1.6.2.1 2011/06/20 03:09:33 ak Exp $
+# $Id: aubyKDDI.pm,v 1.6.2.2 2011/06/22 05:35:31 ak Exp $
 # -Id: aubyKDDI.pm,v 1.1 2009/08/29 08:50:38 ak Exp -
 # -Id: aubyKDDI.pm,v 1.1 2009/07/31 09:04:51 ak Exp -
 # Kanadzuchi::MTA::JP::
@@ -196,6 +196,11 @@ sub reperit
 					$causa = 'onhold';
 					$rhostsaid =~ s/\A.+[<]{3} //;
 				}
+				elsif( $rhostsaid =~ m{user unknown} )
+				{
+					$xsmtp = 'DATA';
+					$causa = 'userunknown';
+				}
 				else
 				{
 					$causa = $r;
@@ -216,7 +221,6 @@ sub reperit
 		$phead .= __PACKAGE__->xsmtpdiagnosis($rhostsaid);
 		$phead .= __PACKAGE__->xsmtpagent();
 		$phead .= __PACKAGE__->xsmtpcommand($xsmtp);
-
 		return $phead;
 	}
 	else

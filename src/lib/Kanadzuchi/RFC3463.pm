@@ -1,4 +1,4 @@
-# $Id: RFC3463.pm,v 1.3 2010/11/13 19:23:26 ak Exp $
+# $Id: RFC3463.pm,v 1.3.2.1 2011/06/22 05:35:30 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                    
@@ -342,6 +342,7 @@ my $InternalCode = {
 		'expired'	=> [ '5.0.947' ],
 		'contenterr'	=> [ '5.0.960' ],
 		'securityerr'	=> [ '5.0.970' ],
+		'suspend'	=> [ '5.0.990' ],
 		'mailererror'	=> [ '5.0.991' ],
 		'onhold'	=> [ '5.0.999' ],
 	},
