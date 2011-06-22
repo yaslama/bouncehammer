@@ -1,6 +1,6 @@
-# $Id: Makefile.am,v 1.6 2010/08/28 17:19:14 ak Exp $
+# $Id: Makefile.am,v 1.6.2.1 2011/06/22 05:34:39 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
-# This is the auto-Makefile for BounceHammer/template/l10n/ja,
+# This is the auto-Makefile for bounceHammer/template/l10n/ja,
 # is processed by automake to create Makefile.in.
 
 pkgdatadir = @datarootdir@/template/l10n/ja

@@ -1,6 +1,6 @@
-# $Id: Makefile.am,v 1.6 2010/08/17 12:05:42 ak Exp $
+# $Id: Makefile.am,v 1.6.2.1 2011/06/22 05:34:40 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
-# This is the auto-Makefile for BounceHammer/template/standard/page,
+# This is the auto-Makefile for bounceHammer/template/standard/page,
 # is processed by automake to create Makefile.in.
 
 pkgdatadir = @datarootdir@/template/standard/page
