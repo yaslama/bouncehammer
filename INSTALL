@@ -1,6 +1,6 @@
-$Id: INSTALL,v 1.4.2.1 2011/05/24 03:55:39 ak Exp $
+$Id: INSTALL,v 1.4.2.2 2011/06/22 05:35:58 ak Exp $
 -------------------------------------------------------------------------------
-  To install this system; BounceHammer, cd to the directory that contains this
+  To install this system; bounceHammer, cd to the directory that contains this
   file and type the following commands:
 
    # ./configure
