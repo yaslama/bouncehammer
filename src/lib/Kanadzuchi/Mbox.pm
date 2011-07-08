@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.28 2010/12/30 10:52:06 ak Exp $
+# $Id: Mbox.pm,v 1.28.2.1 2011/07/08 01:03:27 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -482,6 +482,7 @@ sub parseit
 					|X-Postfix-Sender|Envelope-From|X-Envelope-From
 					|Resent-From|Sender|Resent-Reply-To|Apparently-From):[ ]}mx ){
 
+			$_mail->{'body'} .= qq(\n) unless( $_mail->{'body'} =~ m{\n\z}mx );
 			$_mail->{'body'} .= 'From: '.$_mail->{'head'}->{'to'}.qq(\n);
 		}
 
