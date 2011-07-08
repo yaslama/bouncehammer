@@ -1,4 +1,4 @@
-# $Id: SecurityError.pm,v 1.2 2010/11/13 19:12:55 ak Exp $
+# $Id: SecurityError.pm,v 1.2.2.1 2011/06/25 10:50:31 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Why::
                                                                                        
@@ -28,6 +28,7 @@ sub exemplaria
 		qr{sorry, that domain isn'?t in my list of allowed rcpthosts},
 		qr{sorry, your don'?t authenticate or the domain isn'?t in my list of allowed rcpthosts},
 		qr{spambouncer identified sPAM},	# SpamBouncer identified SPAM
+		qr{the message was rejected because it contains prohibited virus or spam content},
 	];
 }
 
