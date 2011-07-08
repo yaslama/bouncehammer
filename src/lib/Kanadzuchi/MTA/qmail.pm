@@ -1,4 +1,4 @@
-# $Id: qmail.pm,v 1.7 2010/11/28 00:18:13 ak Exp $
+# $Id: qmail.pm,v 1.7.2.1 2011/07/08 01:02:05 ak Exp $
 # Kanadzuchi::MTA::
                          ##  ###    
   #####  ##  ##  ####         ##    
@@ -137,6 +137,7 @@ sub reperit
 	my $pbody = q();	# (String) Pseudo body part
 	my $xsmtp = q();	# (String) SMTP Command in transcript of session
 	my $causa = q();	# (String) Error reason
+	my $endof = 0;		# (Integer) The line matched 'endof' regexp.
 
 	my $rhostsaid = q();	# (String) Remote host said: ...
 	my $rcptintxt = q();	# (String) Recipient address in message body
@@ -145,6 +146,9 @@ sub reperit
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
+		$endof = 1 if( $endof == 0 && $el =~ $RxQSBMF->{'endof'} );
+		next() if( $endof || $el =~ m{\A\z} );
+
 		if( ($el =~ $RxQSBMF->{'begin'}) .. ($el =~ $RxQSBMF->{'endof'}) )
 		{
 			if( ! $rcptintxt && $el =~ m{\A(?:To[ ]*:)?[<](.+[@].+)[>]:\z} )
@@ -157,7 +161,6 @@ sub reperit
 			if( $rcptintxt )
 			{
 				# The line which begins with the string 'Remote host said:'
-				last() if( $el =~ m{\A\z} );
 				$rhostsaid .= $el.' ';
 				next();
 			}

@@ -1,4 +1,4 @@
-# $Id: aubyKDDI.pm,v 1.6.2.2 2011/06/22 05:35:31 ak Exp $
+# $Id: aubyKDDI.pm,v 1.6.2.3 2011/07/08 01:02:05 ak Exp $
 # -Id: aubyKDDI.pm,v 1.1 2009/08/29 08:50:38 ak Exp -
 # -Id: aubyKDDI.pm,v 1.1 2009/07/31 09:04:51 ak Exp -
 # Kanadzuchi::MTA::JP::
@@ -69,6 +69,7 @@ sub reperit
 	my $pstat = q();	# (String) Pseudo Status for X-SMTP-STatus
 	my $causa = q();	# (String) Error Reason
 	my $xsmtp = q();	# (String) SMTP command for X-SMTP-Command
+	my $endof = 0;		# (Integer) The line matched 'endof' regexp.
 
 	my $rhostsaid = q();	# (String) Pseudo-Diagnostic-Code:, X-SMTP-Diagnosis:
 	my $rcptintxt = q();	# (String) Pusedo-Final-Recipient:
@@ -134,9 +135,15 @@ sub reperit
 					next();
 				}
 
+				if( $el =~ $RxEzweb->{'endof'} )
+				{
+					$endof = 1;
+					next();
+				}
+
 				if( $rhostsaid )
 				{
-					last() if( $el =~ m{\A--} );
+					next() if( $endof || $el =~ m{\A--} || $el =~ m{\A\z} );
 					if( $el =~ m{\A[<](.+[@].+)[>]:?(.*)\z} )
 					{
 						# The user(s) account is disabled.
@@ -196,7 +203,7 @@ sub reperit
 					$causa = 'onhold';
 					$rhostsaid =~ s/\A.+[<]{3} //;
 				}
-				elsif( $rhostsaid =~ m{user unknown} )
+				elsif( $rhostsaid =~ m{user unknown}i )
 				{
 					$xsmtp = 'DATA';
 					$causa = 'userunknown';
@@ -221,6 +228,7 @@ sub reperit
 		$phead .= __PACKAGE__->xsmtpdiagnosis($rhostsaid);
 		$phead .= __PACKAGE__->xsmtpagent();
 		$phead .= __PACKAGE__->xsmtpcommand($xsmtp);
+
 		return $phead;
 	}
 	else
@@ -251,10 +259,9 @@ sub reperit
 		{
 			if( (grep { $el =~ $_ } @{ $RxauOne->{'begin'} }) .. ($el =~ $RxauOne->{'endof'}) )
 			{
-				# The line which begins with the string 'Your mail sent on ...'
-				last() if( $el =~ m{\A--} || $el =~ m{\A\z} );
+				$endof = 1 if( $endof == 0 && $el =~ $RxauOne->{'endof'} );
+				next() if( $endof || $el =~ m{\A--} || $el =~ m{\A\z} );
 				$rhostsaid .= $el;
-				next();
 			}
 		}
 

@@ -1,4 +1,4 @@
-# $Id: Postfix.pm,v 1.6 2010/11/28 00:18:13 ak Exp $
+# $Id: Postfix.pm,v 1.6.2.1 2011/07/08 01:02:05 ak Exp $
 # Kanadzuchi::MTA::
                                                
  #####                  ##    ###  ##          
@@ -100,9 +100,13 @@ sub reperit
 	my $xsmtp = q();	# (String) SMTP Command in transcript of session
 	my $rhostsaid = q();	# (String) Remote host said: ...
 	my $esmtpcomm = {};	# (Ref->Hash) SMTP Command names
+	my $endof = 0;		# (Integer) The line matched 'endof' regexp.
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
+		$endof = 1 if( $endof == 0 && $el =~ $RxPostfix->{'endof'} );
+		next() if( $endof || $el =~ m{\A--} || $el =~ m{\A\z} );
+
 		if( ( grep { $el =~ $_ } @{ $RxPostfix->{'begin'} }) .. ($el =~ $RxPostfix->{'endof'}) )
 		{
 			# The mail system, The Postfix program, This is the Postfix program
@@ -118,7 +122,7 @@ sub reperit
 			{
 				# <user@example.jp>: host mta.example.jp[192.0.2.44]
 				#    said: 550 Unknown user user@example.jp (in reply to RCPT TO command)
-				last() if( $el =~ m{\A\z} || $el =~ m{\A--} );
+				# last() if( $el =~ m{\A\z} || $el =~ m{\A--} );
 				$rhostsaid .= q{ }.$el;
 				next();
 			}

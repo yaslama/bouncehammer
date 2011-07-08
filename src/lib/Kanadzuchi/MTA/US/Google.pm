@@ -1,4 +1,4 @@
-# $Id: Google.pm,v 1.5.2.1 2011/04/02 05:23:39 ak Exp $
+# $Id: Google.pm,v 1.5.2.2 2011/06/25 10:50:02 ak Exp $
 # -Id: Google.pm,v 1.2 2010/07/04 23:45:49 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: Google.pm,v 1.1 2009/07/31 09:04:38 ak Exp -
@@ -191,10 +191,15 @@ sub reperit
 	my $error = 'p';	# (String) p = permanent, t = temporary
 
 	# (String) X-Final-Recipients: header or email address in the body.
-	my $rcptintxt = $1 if( $mhead->{'x-failed-recipients'} =~ m{\A[ ]?(.+[@].+)[ ]*\z}i );
+	my $rcptintxt = q();	# (String) Content of X-Failed-Recipients: header
 	my $statintxt = q();	# (String) Status(D.S.N.) in the error message.
 	my $rhostsaid = q();	# (String) Error message from remote host
 	my $statecode = 0;	# (Integer) (state xx). at the end of the error message.
+
+	if( defined $mhead->{'x-failed-recipients'} )
+	{
+		$rcptintxt = $1 if( $mhead->{'x-failed-recipients'} =~ m{\A[ ]?(.+[@].+)[ ]*\z}i );
+	}
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
@@ -240,7 +245,7 @@ sub reperit
 	else
 	{
 		$rcptintxt ||= Kanadzuchi::Address->canonify($rhostsaid);
-		$rcptintxt ||= $1 if( $rhostsaid =~ m{\s+([^\s]+[@][^\s+])\s+[(]state \d+[)][.]\z} );
+		$rcptintxt ||= $1 if( $rhostsaid =~ m{\s+([^\s]+[@][^\s]+)\s+[(]state \d+[)][.]\z} );
 	}
 
 	if( ! $statintxt || $statintxt =~ m{\A[45][.]0[.]0\z} )

@@ -1,4 +1,4 @@
-# $Id: Courier.pm,v 1.3 2010/12/13 04:14:48 ak Exp $
+# $Id: Courier.pm,v 1.3.2.1 2011/07/08 01:02:05 ak Exp $
 # Kanadzuchi::MTA::
                                                  
   ####                        ##                 
@@ -63,6 +63,7 @@ sub reperit
 	my $xsmtp = q();	# (String) SMTP Command for X-SMTP-Command:
 	my $causa = q();	# (String) Error reason
 	my $ucode = Kanadzuchi::RFC3463->status('undefined','p','i');
+	my $endof = 0;		# (Integer) The line matched 'endof' regexp.
 
 	my $statintxt = q();	# (String) #n.n.n
 	my $rhostsaid = q();	# (String) Diagnostic-Code:
@@ -72,6 +73,10 @@ sub reperit
 	{
 		if( (grep { $el =~ $_ } @{ $RxCourier->{'begin'} }) .. ($el =~ $RxCourier->{'endof'}) )
 		{
+			$endof = 1 if( $endof == 0 && $el =~ $RxCourier->{'endof'} );
+			$endof = 1 if( $endof == 0 && $el =~ $RxCourier->{'hline'} );
+			next() if( $endof || $el =~ m{\A\z} );
+
 			if( $el =~ m{\A[>]{3}[ ]([A-Z]{4})[ ]?} )
 			{
 				# The original message was received on Wed, 29 Apr 2009 12:38:28 +0900
@@ -105,7 +110,6 @@ sub reperit
 
 			if( $rhostsaid )
 			{
-				last() if( $el =~ m{\A\z} || $el =~ $RxCourier->{'hline'} );
 				$rhostsaid .= ' '.$el;
 			}
 		}

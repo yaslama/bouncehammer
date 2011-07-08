@@ -1,4 +1,4 @@
-# $Id: Exim.pm,v 1.6.2.1 2011/04/29 06:59:43 ak Exp $
+# $Id: Exim.pm,v 1.6.2.2 2011/07/08 01:02:05 ak Exp $
 # Kanadzuchi::MTA::
                               
  ######           ##          
@@ -134,6 +134,7 @@ sub reperit
 	my $causa = q();	# (String) Error reason
 	my $frcpt = $mhead->{'x-failed-recipients'};
 	my $ucode = Kanadzuchi::RFC3463->status('undefined','p','i');
+	my $endof = 0;		# (Integer) The line matched 'endof' regexp.
 
 	my $statintxt = q();	# (String) #n.n.n
 	my $rhostsaid = q();	# (String) Diagnostic-Code:
@@ -143,6 +144,8 @@ sub reperit
 	{
 		if( ($el =~ $RxEximMTA->{'begin'}) .. ($el =~ $RxEximMTA->{'endof'}) )
 		{
+			$endof = 1 if( $endof == 0 && $el =~ $RxEximMTA->{'endof'} );
+			next() if( $endof || $el =~ m{\A\z} );
 			# This message was created automatically by mail delivery software.
 			#
 			if( $el =~ $RxBounced->{'mail'} || $el =~ $RxBounced->{'rcpt'} )
@@ -158,7 +161,6 @@ sub reperit
 
 			if( $rhostsaid )
 			{
-				last() if( $el =~ $RxEximMTA->{'endof'} );
 				$rhostsaid .= ' '.$el;
 			}
 		}

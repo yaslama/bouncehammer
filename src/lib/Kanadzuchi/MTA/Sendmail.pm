@@ -1,4 +1,4 @@
-# $Id: Sendmail.pm,v 1.6 2010/11/13 19:18:03 ak Exp $
+# $Id: Sendmail.pm,v 1.6.2.1 2011/07/08 01:02:05 ak Exp $
 # Kanadzuchi::MTA::
                                                           
   #####                    ##                  ##  ###    
@@ -62,6 +62,7 @@ sub reperit
 	{
 		if( ($el =~ $RxSendmail->{'begin'}) .. ($el =~ $RxSendmail->{'endof'}) )
 		{
+			next() if( $xsmtp && $pstat );
 			if( ! length($xsmtp) & $el =~ m{\A[>]{3}[ ]([A-Z]{4})[ ]?} )
 			{
 				# ----- Transcript of session follows -----
@@ -83,8 +84,6 @@ sub reperit
 				$pstat = $1;
 				next();
 			}
-
-			last() if( $xsmtp && $pstat );
 		}
 	}
 
