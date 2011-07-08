@@ -1,4 +1,4 @@
-/* $Id: profile.css,v 1.7.2.2 2011/06/20 03:10:45 ak Exp $ */
+/* $Id: profile.css,v 1.7.2.3 2011/06/25 10:48:31 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Profile classes */
 div.profile {
@@ -18,7 +18,7 @@ div.profile {
 }
 
 div.profile table {
-	width: 90%;
+	width: 97%;
 	margin: 8px 4px 4px 4px;
 	font-size: 11px;
 	border-collapse: separate;

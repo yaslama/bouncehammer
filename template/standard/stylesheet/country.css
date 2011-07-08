@@ -1,4 +1,4 @@
-/* $Id: country.css,v 1.1 2010/07/11 06:48:32 ak Exp $ */
+/* $Id: country.css,v 1.1.2.1 2011/06/25 10:48:31 ak Exp $ */
 /* Copyright 2010 Cubicroot Co. Ltd. */
 /* List of contents classes */
 div.contents {
@@ -15,7 +15,7 @@ div.contents {
 }
 
 div.contents table {
-	width: 98%;
+	width: 97%;
 	margin: 8px 2px 4px 2px;
 	font-size: 11px;
 	border-collapse: separate;

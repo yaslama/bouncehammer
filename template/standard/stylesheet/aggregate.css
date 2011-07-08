@@ -1,4 +1,4 @@
-/* $Id: aggregate.css,v 1.1 2010/07/07 01:03:05 ak Exp $ */
+/* $Id: aggregate.css,v 1.1.2.1 2011/06/25 10:48:30 ak Exp $ */
 /* Copyright 2010 Cubicroot Co. Ltd. */
 /* Aggregation classes */
 div.aggregation {
@@ -15,7 +15,7 @@ div.aggregation {
 }
 
 div.aggregation table {
-	width: 560px;
+	width: 97%;
 	margin: 4px 2px 2px 2px;
 	font-size: 11px;
 	/*

@@ -1,4 +1,4 @@
-/* $Id: mastertable.css,v 1.7 2010/07/07 01:03:05 ak Exp $ */
+/* $Id: mastertable.css,v 1.7.2.1 2011/06/25 10:48:31 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Master table classes */
 table.stored {
@@ -51,20 +51,20 @@ tbody.mastertable tr td {
 }
 
 .mastertable .theName {
-	width: 169px;
+	width: 200px;
 }
 
 .mastertable .shortName {
-	width: 96px;
+	width: 127px;
 	padding: 4px 0 4px 0;
 }
 
 .mastertable .theDescription {
-	width: 256px;
+	width: 280px;
 }
 
 .mastertable .longDescription {
-	width: 320px;
+	width: 344px;
 	padding: 4px 0 4px 0;
 }
 
@@ -92,7 +92,7 @@ tbody.mastertable tr td {
 
 .mastertable input.readonlytext {
 	padding: 3px;
-	width: 295px;
+	width: 319px;
 	background: #e5e4e6;	/* Shiraumenezu */
 	border-style: solid;
 	border-color: #d4dcd6;	/* Sobakiri-iro */
@@ -104,15 +104,15 @@ tbody.mastertable tr td {
 }
 
 .mastertable .theName input.rewritabletext {
-	width: 160px;
+	width: 184px;
 }
 
 .mastertable .theDescription input.rewritabletext {
-	width: 248px;
+	width: 272px;
 }
 .mastertable input.removedtext {
 	padding: 3px;
-	width: 248px;
+	width: 272px;
 	border-style: solid;
 	border-color: #d4dcd6;	/* Sobakiri-iro */
 	border-width: 1px;

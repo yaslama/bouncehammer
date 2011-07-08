@@ -9,7 +9,7 @@
 	[%- SET tt_iframeheight = ( tt_iframeheight + ( pv_parsedmessages + 600 ) ) %]
 [%- END -%]
 [% IF pv_onlineparse == 1 %]
-<body style = 'margin: 0; padding: 0; width: 585px; text-align: left;' 
+<body style = 'margin: 0; padding: 0; width: 660px; text-align: left;' 
 	onLoad = "
 		parent.document.getElementById('jx_parseddata').style.height = '[% tt_iframeheight %]';
 		parent.document.getElementById('jx_doparse').value = '[% tt_word.parse %]';"

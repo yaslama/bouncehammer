@@ -1,4 +1,4 @@
-/* $Id: dailyupdates.css,v 1.1.2.1 2011/01/14 05:16:10 ak Exp $ */
+/* $Id: dailyupdates.css,v 1.1.2.2 2011/06/25 10:48:31 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Daily Updates table classes */
 fieldset.graphoption {
@@ -19,7 +19,7 @@ table.stored {
 table.dailyupdates {
 	margin: 2px 0 8px 2px;
 	border-collapse: collapse;
-	width: 99%;
+	width: 98%;
 }
 
 thead.dailyhead {

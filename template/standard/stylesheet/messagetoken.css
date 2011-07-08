@@ -1,8 +1,8 @@
-/* $Id: messagetoken.css,v 1.2 2010/03/25 02:11:57 ak Exp $ */
+/* $Id: messagetoken.css,v 1.2.2.1 2011/06/25 10:48:31 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Message token classes */
 div.messagetoken {
-	margin: 4px 2px;
+	margin: 2px;
 	padding: 4px 8px;
 	border-width: 1px;
 	border-color: #dcdddd; /* Shironezu */

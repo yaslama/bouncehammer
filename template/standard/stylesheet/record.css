@@ -1,4 +1,4 @@
-/* $Id: record.css,v 1.6 2010/06/25 19:19:06 ak Exp $ */
+/* $Id: record.css,v 1.6.2.1 2011/06/25 10:48:31 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* Record classes */
 div.record {
@@ -9,7 +9,7 @@ div.record {
 
 div.record .recordsummary {
 	margin: 0;
-	padding: 4px 1px 1px 1px;
+	padding: 4px 0px 1px 0px;
 	border-style: solid;
 	border-width: 1px;
 	border-color: #9ea1a3; /* Suzu-iro */
@@ -24,9 +24,14 @@ div.record .recordsummary:hover {
 	background: #f7fcfe; /* Unohana-iro */
 }
 
+div.record .recordsummary h4 {
+	background-color: #9ea1a3; /* Suzu-iro */
+	color: #f8fbf8; /* Hakuji */
+	text-shadow: -1px -1px 0 #7b7c7d; /* Namari-Iro */
+}
+
 div.record .recordsummary:hover h4 {
-	background: #a0d8ef; /* Sora-iro */
-	color: #383c3c; /* Youkan-iro */
+	background-color: #2ca9e1; /* Ama-iro */
 }
 
 div.record .isremoved
@@ -90,10 +95,10 @@ tr.boundary td {
 
 td.key { /* LHS */
 	margin: 2px 0;
-	padding: 2px 8px 2px 2px;
+	padding: 2px 8px 2px 3px;
 	font-weight: bold;
 	vertical-align: middle;
-	font-size: 11px;
+	font-size: 10px;
 }
 
 div.record td.key, div.record td.value, div.record td.extra {
@@ -122,7 +127,7 @@ td.value-in-summary {
 }
 
 input.selectable {
-	width: 370px;
+	width: 400px;
 	margin: 0;
 	padding: 2px;
 	color: #524e4d; /* Keshizumi-iro */
@@ -140,7 +145,7 @@ input.selectable:hover {
 }
 
 input.emailaddress {
-	width: 370px;
+	width: 400px;
 	padding: 1px 2px 1px 0;
 	color: #524e4d; /* Keshizumi-iro */
 	background: inherit;
