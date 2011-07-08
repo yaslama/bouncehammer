@@ -1,4 +1,4 @@
-# $Id: Address.pm,v 1.10.2.3 2011/05/13 06:31:58 ak Exp $
+# $Id: Address.pm,v 1.10.2.4 2011/07/08 01:03:46 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                    
@@ -144,7 +144,7 @@ sub canonify
 		$canon = shift @$addrs;
 	}
 
-	return q() if $canon eq q();
+	return q() if( ! defined $canon || $canon eq q() );
 	$canon =~ y{<>[]():;}{}d;	# Remove brackets, colons
 	$canon =~ y/{}'"`//d;		# Remove brackets, quotations
 	return $canon;
