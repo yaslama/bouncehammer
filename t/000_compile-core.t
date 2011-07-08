@@ -1,4 +1,4 @@
-# $Id: 000_compile-core.t,v 1.50.2.9 2011/04/29 07:00:03 ak Exp $
+# $Id: 000_compile-core.t,v 1.50.2.10 2011/06/25 10:49:41 ak Exp $
 use strict;
 use warnings;
 use lib qw(./t/lib ./dist/lib ./src/lib);
@@ -225,6 +225,7 @@ my $Optionals = [ qw{
 	Kanadzuchi::Archive::Zip
 	Kanadzuchi::MTA::JP::aubyKDDI
 	Kanadzuchi::MTA::US::Google
+	Kanadzuchi::MTA::US::Facebook
 } ];
 
 plan( tests => scalar(@$Modules) + scalar(@$Optionals) );
