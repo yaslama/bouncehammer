@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.14.2.7 2011/04/26 09:06:31 ak Exp $
+# $Id: WebMail.pm,v 1.14.2.8 2011/07/13 03:28:23 ak Exp $
 # -Id: AOL.pm,v 1.1 2009/08/29 07:33:21 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
 # -Id: Hotmail.pm,v 1.1 2009/08/29 07:33:22 ak Exp -
@@ -53,6 +53,7 @@ sub nominisexemplaria
 			# Facebook has half a billion users.
 			# http://www.facebook.com/
 			qr{\Afacebook[.]com\z},
+			qr{\Agroups.facebook[.]com\z},
 		],
 		'google' => [
 			# GMail http://mail.google.com/mail/
