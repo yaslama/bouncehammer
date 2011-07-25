@@ -1,11 +1,11 @@
-# $Id: Makefile.am,v 1.58.2.9 2011/06/22 05:35:58 ak Exp $
+# $Id: Makefile.am,v 1.58.2.10 2011/07/25 09:01:12 ak Exp $
 # -Id: Makefile.am,v 1.14 2009/12/01 10:35:23 ak Exp -
 # -Id: Makefile.am,v 1.14 2009/08/27 06:05:39 ak Exp -
 # Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # This is the auto-Makefile for bounceHammer, is processed by automake to create Makefile.in.
 ENGINENAME = Kanadzuchi
 SYSTEMNAME = bounceHammer
-SYSVERSION = 2.7.3
+SYSVERSION = 2.7.4
 CMD_MODULE = ./Modules.PL
 CMD_IMPLEM = ./Implement.PL
 PATCH_TBOP = ./diff/perl-TB-option-on-filehandle.patch
