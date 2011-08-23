@@ -1,4 +1,4 @@
-# $Id: Log.pm,v 1.21 2010/11/13 19:19:55 ak Exp $
+# $Id: Log.pm,v 1.21.2.1 2011/08/19 09:03:59 ak Exp $
 # -Id: Log.pm,v 1.2 2009/10/06 06:21:47 ak Exp -
 # -Id: Log.pm,v 1.11 2009/07/16 09:05:33 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -140,16 +140,11 @@ sub dumper
 	return(0) if( $self->{'count'} == 0 );
 
 	# Output header
-	if( $self->{'format'} eq 'csv' )
-	{
-		$self->{'header'} = 1;
-	}
-	else
+	if( $self->{'format'} ne 'csv' )
 	{
 		my $_t = localtime();
 		$OutputHeader->{ $self->{'format'} } = '# Generated: '.$_t->ymd('/').' '.$_t->hms(':').qq| \n|,
 	}
-
 
 	# Decide header and footer
 	if( $self->{'header'} )
