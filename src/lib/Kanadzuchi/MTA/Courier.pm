@@ -1,4 +1,4 @@
-# $Id: Courier.pm,v 1.3.2.1 2011/07/08 01:02:05 ak Exp $
+# $Id: Courier.pm,v 1.3.2.3 2011/08/23 21:28:27 ak Exp $
 # Kanadzuchi::MTA::
                                                  
   ####                        ##                 
@@ -39,6 +39,8 @@ my $RxCourier = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+sub version { '2.1.4' };
+sub description { 'Courier-MTA' };
 sub xsmtpagent { 'X-SMTP-Agent: Courier'.qq(\n); }
 sub reperit
 {

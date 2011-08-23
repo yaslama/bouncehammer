@@ -1,4 +1,4 @@
-# $Id: Facebook.pm,v 1.1.2.2 2011/07/08 01:02:06 ak Exp $
+# $Id: Facebook.pm,v 1.1.2.4 2011/08/23 21:28:28 ak Exp $
 # Kanadzuchi::MTA::US::
                                                        
  ######                   ##                   ##      
@@ -79,6 +79,8 @@ my $RxErrors = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+sub version { '0.1.5' };
+sub description { 'Facebook mail' };
 sub xsmtpagent { 'X-SMTP-Agent: US::Facebook'.qq(\n); }
 sub reperit
 {

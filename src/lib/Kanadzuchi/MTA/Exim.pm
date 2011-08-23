@@ -1,4 +1,4 @@
-# $Id: Exim.pm,v 1.6.2.2 2011/07/08 01:02:05 ak Exp $
+# $Id: Exim.pm,v 1.6.2.4 2011/08/23 21:28:27 ak Exp $
 # Kanadzuchi::MTA::
                               
  ######           ##          
@@ -95,6 +95,8 @@ my $RxTrError = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+sub version { '2.1.4' };
+sub description { 'Exim' };
 sub xsmtpagent { 'X-SMTP-Agent: Exim'.qq(\n); }
 sub emailheaders
 {
@@ -142,10 +144,11 @@ sub reperit
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
+		$endof = 1 if( $endof == 0 && $el =~ $RxEximMTA->{'endof'} );
+		next() if( $endof || $el =~ m{\A\z} );
+
 		if( ($el =~ $RxEximMTA->{'begin'}) .. ($el =~ $RxEximMTA->{'endof'}) )
 		{
-			$endof = 1 if( $endof == 0 && $el =~ $RxEximMTA->{'endof'} );
-			next() if( $endof || $el =~ m{\A\z} );
 			# This message was created automatically by mail delivery software.
 			#
 			if( $el =~ $RxBounced->{'mail'} || $el =~ $RxBounced->{'rcpt'} )

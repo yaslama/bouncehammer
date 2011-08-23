@@ -1,4 +1,4 @@
-# $Id: qmail.pm,v 1.7.2.1 2011/07/08 01:02:05 ak Exp $
+# $Id: qmail.pm,v 1.7.2.3 2011/08/23 21:28:27 ak Exp $
 # Kanadzuchi::MTA::
                          ##  ###    
   #####  ##  ##  ####         ##    
@@ -104,6 +104,8 @@ my $RxqmailError = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+sub version { '2.1.3' };
+sub description { 'qmail' };
 sub xsmtpagent { 'X-SMTP-Agent: qmail'.qq(\n); }
 sub reperit
 {

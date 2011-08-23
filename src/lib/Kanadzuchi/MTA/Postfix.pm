@@ -1,4 +1,4 @@
-# $Id: Postfix.pm,v 1.6.2.1 2011/07/08 01:02:05 ak Exp $
+# $Id: Postfix.pm,v 1.6.2.3 2011/08/23 21:28:27 ak Exp $
 # Kanadzuchi::MTA::
                                                
  #####                  ##    ###  ##          
@@ -67,6 +67,8 @@ my $RxErrors = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+sub version { '2.1.3' };
+sub description { 'Postfix' };
 sub xsmtpagent { 'X-SMTP-Agent: Postfix'.qq(\n); }
 sub reperit
 {

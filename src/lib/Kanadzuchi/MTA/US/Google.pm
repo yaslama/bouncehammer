@@ -1,4 +1,4 @@
-# $Id: Google.pm,v 1.5.2.2 2011/06/25 10:50:02 ak Exp $
+# $Id: Google.pm,v 1.5.2.4 2011/08/23 21:28:28 ak Exp $
 # -Id: Google.pm,v 1.2 2010/07/04 23:45:49 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: Google.pm,v 1.1 2009/07/31 09:04:38 ak Exp -
@@ -16,6 +16,11 @@ use strict;
 use warnings;
 use base 'Kanadzuchi::MTA';
 
+#  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
+# ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
+# ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
+#
 my $RxFromGmail = {
 	'from' => qr{[@]googlemail[.]com[>]?\z},
 	'begin' => qr{Delivery to the following recipient},
@@ -112,6 +117,8 @@ my $StateCodeMap = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+sub version { '2.1.4' };
+sub description { 'Google Gmail' };
 sub xsmtpagent { 'X-SMTP-Agent: US::Google'.qq(\n); }
 sub emailheaders
 {
