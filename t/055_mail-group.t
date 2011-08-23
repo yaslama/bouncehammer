@@ -1,4 +1,4 @@
-# $Id: 055_mail-group.t,v 1.31.2.14 2011/07/13 06:10:34 ak Exp $
+# $Id: 055_mail-group.t,v 1.31.2.15 2011/08/21 18:49:38 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -325,7 +325,7 @@ my $Domains = {
 	'ussmartphone'	=> [ qw( sprint.blackberry.net alltel.blackberry.com vzw.blackberry.net
 				 att.blackberry.com mycingular.blackberry.net ) ],
 	'uswebmail'	=> [ qw( bluetie.com lavabit.com luxsci.com inbox.com mail.com usa.com 
-				 pobox.com onepost.net mail2world.com myemail.com ) ],
+				 pobox.com onepost.net mail2world.com myemail.com shtrudel.com ) ],
 	'uysmartphone'	=> [ qw( movistar.uy.blackberry.com clarouy.blackberry.com ) ],
 	'vesmartphone'	=> [ qw( movistar.ve.blackberry.com ) ],
 	'vnsmartphone'	=> [ qw( viettel.blackberry.com ) ],
