@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.8.2.3 2011/03/24 05:40:59 ak Exp $
+# $Id: WebMail.pm,v 1.8.2.4 2011/08/21 18:48:47 ak Exp $
 # Copyright (C) 2010-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::US::
                                                    
@@ -129,10 +129,6 @@ sub nominisexemplaria
 			# MyEmail.com; http://www.myemail.com/
 			qr{\Amyemail[.]com\z},
 		],
-		'rock.com' => [
-			# Rock.com; http://www.rock.com/
-			qr{\Arock[.]com\z},
-		],
 		'pobox' => [
 			# http://www.pobox.com/index/
 			qr{\Aonepost[.]net\z},
@@ -140,6 +136,30 @@ sub nominisexemplaria
 			qr{\A(?:veri|foo)box[.]net\z},
 			qr{\A(?:penguin|permanental|siempre|immer)mail[.]com\z},
 			qr{\A(?:mailzone|lifetimeaddress)[.]com\z},
+		],
+		'rock.com' => [
+			# Rock.com; http://www.rock.com/
+			qr{\Arock[.]com\z},
+		],
+		'shtrudel' => [
+			# http://www.shtrudel.com/
+			qr{\Ashtrudel[.](?:at|biz|co[.]in|com|info|net|org|tk|tv|us)\z},
+			qr{\Ashtroodel[.](?:com|net|org)\z},
+			qr{\Ashtrudelmail[.](?:com|net)\z},
+
+			qr{\A(?:lim|53z)[.]org\z},
+			qr{\A(?:2[-]do|edited|netip)[.]biz\z},
+			qr{\A(?:4uy|7qa|augt|g37|myqtmail|pay1)[.]net\z},
+			qr{\A(?:5gmail|allwebmail|clieo|domain12|domainfive|e4dable|ema[-]il|email[-]il)[.]com\z},
+			qr{\A(?:everycorp|everylight|ez[-]webmail|faxdomain|frogemail|giganticmail|guruw)[.]com\z},
+			qr{\A(?:im7t|in[-]access|jagunda|maildn|maildone|mailwebaccess|mailx1|mailxweb|mailydaily)[.]com\z},
+			qr{\A(?:moreemails|mybzmail|mygigmail|myhugemail|myqtmail|onegiga|popju|postmymail)[.]com\z},
+			qr{\A(?:ptzu|q0p|qtwebmail|rpeat|siscs|speej|strudelmail|tipip|trywebmail|verbank)[.]com\z},
+			qr{\A(?:w8f|webmail12|wenax|whass|yseat)[.]com\z},
+
+			qr{\A(?:da|ismo)[.]bz\z},
+			qr{\A(?:qmail|qtmail|xweb)[.]co[.]il\z},
+			qr{\Aqttext[.](?:com|net)\z},
 		],
 	};
 }
@@ -155,8 +175,9 @@ sub classisnomina
 		'mail.com'	=> 'Generic',
 		'mail2world'	=> 'Generic',
 		'myemail'	=> 'Generic',
-		'rock.com'	=> 'Generic',
 		'pobox'		=> 'Generic',
+		'rock.com'	=> 'Generic',
+		'shtrudel'	=> 'Generic',
 	};
 }
 
