@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.7.2.1 2011/06/22 05:34:40 ak Exp $
+# $Id: Makefile.am,v 1.7.2.2 2011/08/23 21:27:13 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # This is the auto-Makefile for bounceHammer/template/standard/stylesheet,
 # is processed by automake to create Makefile.in.
@@ -11,6 +11,7 @@ pkgdata_DATA = bouncehammer.css \
 	dashboard.css \
 	mastertable.css \
 	messagetoken.css \
+	mtamodules.css \
 	nationalflag.css \
 	pagination.css \
 	profile.css \

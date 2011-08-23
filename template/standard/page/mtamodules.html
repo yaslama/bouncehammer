@@ -1,0 +1,108 @@
+[%- PROCESS "heads.tt" -%]
+[%- PROCESS "words.tt" -%]
+[%- PROCESS "terms.tt" -%]
+[%- PROCESS "hostgroup.tt" -%]
+[% INCLUDE "dtd-xhtml.html" %]
+<head>
+	[% INCLUDE "meta-http-equiv.html" %]
+	<title>[% pv_systemname %]/[% tt_head.listof %]/[% pv_listfile %]</title>
+	[% pv_prototype.define_javascript_functions %]
+	<script type = 'text/javascript'>
+		[% INCLUDE bouncehammer.js %]
+	</script>
+	<style type = 'text/css'>
+	<!--
+		[% INCLUDE bouncehammer.css %]
+		[% INCLUDE mtamodules.css %]
+	-->
+	</style>
+</head>
+<body>
+	<div id = 'ThePage'>
+		<h1>[% pv_head1title %]/[% tt_head.listof %]/[% pv_listfile %]</h1>
+		<div id = 'North-Ward'>
+			[% INCLUDE "div-menubar.html" %]
+		</div>
+		<div id = 'West-Ward'>
+			[%- SET tt_menu.listof.mtamodules = 'currentpage' -%]
+			[% INCLUDE "div-index.html" %]
+		</div>
+		<div id = 'East-Ward'>
+			[% INCLUDE "help-mta-modules.html" %]
+		</div>
+
+		<div id = 'Central-Ward'>
+			[%- IF pv_issample == 1 -%]
+				[%- SET tt_fileclass = 'errortext' -%]
+			[%- ELSE -%]
+				[%- SET tt_fileclass = 'x' -%]
+			[%- END -%]
+
+			<h2>[% tt_head.mtamodules %]([% tt_word.standard %])</h2>
+			<div class = 'contents'>
+				<table>
+					<thead>
+						<tr class = 'head'>
+							<th>[% tt_word.modulename %]</th>
+							<th>Version</th>
+							<th>[% tt_word.description%]</th>
+							<th>[% tt_word.path %]</th>
+						</tr>
+					</thead>
+					<tbody>
+					[%- FOREACH SM IN pv_liststdm -%]
+					<tr>
+						<td class = 'name [% IF SM.installed == 0 %]disabled[% END %]'>[% SM.name %]</td>
+						<td class = 'desc'>[% SM.version %]</td>
+						<td class = 'desc'>[% SM.description %]</td>
+						<td class = 'desc'>
+							[% IF SM.installed == 1 %]
+								[% SM.path %]
+							[% ELSE %]
+								<span class = 'disabled'>[% tt_word.notinstalled %]</span>
+							[% END %]
+						</td>
+					</tr>
+					[% END %]
+				</tbody>
+				</table>
+			</div>
+
+			<h2>[% tt_head.mtamodules %]([% tt_word.commercial %])</h2>
+			<div class = 'contents'>
+				<table>
+					<thead>
+						<tr class = 'head'>
+							<th>[% tt_word.modulename %]</th>
+							<th>Version</th>
+							<th>[% tt_word.description%]</th>
+							<th>[% tt_word.path %]</th>
+						</tr>
+					</thead>
+					<tbody>
+					[%- FOREACH CM IN pv_listcomm -%]
+					<tr>
+						<td class = 'name [% IF CM.installed == 0 %]disabled[% END %]'>[% CM.name %]</td>
+						<td class = 'desc'>[% CM.version %]</td>
+						<td class = 'desc'>[% CM.description %]</td>
+						<td class = 'desc'>
+							[% IF CM.installed == 1 %]
+								[% CM.path %]
+							[% ELSE %]
+								<span class = 'disabled'>[% tt_word.notinstalled %]</span>
+							[% END %]
+						</td>
+					</tr>
+					[% END %]
+				</tbody>
+				</table>
+			</div>
+		</div>
+		<div id = 'South-Ward'>
+		</div>
+		[% INCLUDE "div-pagefooter.html" %]
+
+	</div>
+</body>
+</html>
+

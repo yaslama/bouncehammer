@@ -1,4 +1,4 @@
-[%# $Id: heads.tt,v 1.6.2.2 2011/06/20 03:10:45 ak Exp $ -%]
+[%# $Id: heads.tt,v 1.6.2.3 2011/08/23 21:27:12 ak Exp $ -%]
 [%# Headlines in Japanese -%]
 [%- SET tt_head = { 
 		'aboutus'	=> 'bounceHammerについて',
@@ -12,6 +12,7 @@
 		'listof'	=> '設定内容一覧',
 		'mastertable'	=> 'マスターテーブル編集',
 		'messagetoken'	=> 'トークン生成',
+		'mtamodules'	=> 'MTAモジュール',
 		'parsingtest'	=> 'メール解析テスト',
 		'recorddetails'	=> '記録の詳細',
 		'reportbugs'	=> 'バグレポート送信先',
