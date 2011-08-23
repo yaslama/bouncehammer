@@ -1,4 +1,4 @@
-# $Id: MODULES,v 1.1.2.1 2011/08/23 21:28:27 ak Exp $
+# $Id: MODULES,v 1.1.2.2 2011/08/23 23:43:37 ak Exp $
 # Copyright (C) 2011 Cubicroot Co. Ltd.
 package Kanadzuchi::MTA::MODULES;
 use strict;
@@ -11,7 +11,9 @@ use warnings;
 #
 sub standard {
 	return [
-		'Sendmail', 'Postfix', 'qmail', 'Courier', 'Exim', 'Fallback',
+		'Sendmail', 'Postfix', 'qmail', 'Courier', 'Exim', 
+		'OpenSMTPD', 'ApacheJames', 'sSMTP',
+		'Fallback',
 		'JP::aubyKDDI', 'JP::Biglobe',
 		'US::Google', 'US::Facebook', 
 	];
