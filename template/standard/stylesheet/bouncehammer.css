@@ -1,4 +1,4 @@
-/* $Id: bouncehammer.css,v 1.21.2.6 2011/06/25 10:48:31 ak Exp $ */
+/* $Id: bouncehammer.css,v 1.21.2.7 2011/08/23 21:27:13 ak Exp $ */
 /* Copyright 2009,2010 Cubicroot Co. Ltd. */
 /* IDs */
 #ThePage {
@@ -70,8 +70,8 @@
 }
 
 #Legal {
-	margin: 0;
-	padding: 0;
+	margin: 4px 0;
+	padding: 4px;
 	font-size: 9px;
 	color: #727171; /* Nibi-iro */
 	border-color: #d4dcd6;	/* Sobakiri-iro */
@@ -146,7 +146,7 @@ h2 {
 	font-size: 16px;
 	font-family: 'Trebuchet MS', Verdana;
 	color: #426579; /* Noshimehana-iro */
-	text-shadow: 1px 1px 1px #eaf4fc; /* Geppaku */
+	text-shadow: 1px 1px 0px #eaf4fc; /* Geppaku */
 }
 
 h3 {}
