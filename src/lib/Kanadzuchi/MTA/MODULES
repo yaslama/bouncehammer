@@ -1,0 +1,26 @@
+# $Id: MODULES,v 1.1.2.1 2011/08/23 21:28:27 ak Exp $
+# Copyright (C) 2011 Cubicroot Co. Ltd.
+package Kanadzuchi::MTA::MODULES;
+use strict;
+use warnings;
+
+#  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
+# ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
+# ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
+# |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
+#
+sub standard {
+	return [
+		'Sendmail', 'Postfix', 'qmail', 'Courier', 'Exim', 'Fallback',
+		'JP::aubyKDDI', 'JP::Biglobe',
+		'US::Google', 'US::Facebook', 
+	];
+}
+
+sub commercial {
+	return [ 
+		'US::Exchange', 'US::IMailServer', 'US::SendGrid', 
+	];
+}
+
+1;
