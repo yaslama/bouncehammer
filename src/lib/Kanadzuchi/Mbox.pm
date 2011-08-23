@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.28.2.1 2011/07/08 01:03:27 ak Exp $
+# $Id: Mbox.pm,v 1.28.2.3 2011/08/23 21:29:53 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -106,7 +106,7 @@ sub postulat
 
 	# Experimental implementation for the future.
 	my $libmboxroot = '__KANADZUCHILIB__/Kanadzuchi/MTA';
-	my $iso3166list = [ 'JP', 'US' ];
+	my $iso3166list = [ 'User', 'JP', 'US' ];
 	my $iso3166conf = '__KANADZUCHIETC__/available-countries';
 	my $countryconf = ( -r $iso3166conf && -s _ && -T _ ) ? JSON::Syck::LoadFile($iso3166conf) : {};
 	my $didfileload = keys %$countryconf ? 1 : 0;
@@ -143,7 +143,7 @@ sub postulat
 		READDIR: while( my $de = readdir($dh) )
 		{
 			my $fp = $directory.'/'.$de;
-			
+
 			# the file is not *.pm, nor regular file, nor readable
 			next(READDIR) if( $fp !~ m{[.]pm\z} || ! -f $fp || ! -r _ );
 			next(READDIR) if( scalar @$mtaoption && ! grep { lc($de) eq $_ } @$mtaoption );
