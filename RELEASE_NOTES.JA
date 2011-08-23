@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES.JA,v 1.52.2.14 2011/08/23 21:49:10 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.52.2.15 2011/08/23 23:09:45 ak Exp $
 -----------------------------------------------------------------------
  ##                                      ##  ##                                     
  ##      ####  ##  ## #####   #### ####  ##  ##  ####  ##  ## ##  ##  ####  #####   
@@ -37,8 +37,8 @@
 
   新しいファイル:
     * lib/Kanadzuchi/MTA/MODULES
-    * lib/Kanadzuchi/MTA/User/ (FFR)
     * lib/Kanadzuchi/MTA/JP/Biglobe.pm
+    * lib/Kanadzuchi/MTA/User/Template.pm (FFR)
     * share/template/stylesheet/mtamodules.css
     * share/template/page/mtamodules.html
     * share/template/l10n/{ja,en}/help-mta-modules.html
