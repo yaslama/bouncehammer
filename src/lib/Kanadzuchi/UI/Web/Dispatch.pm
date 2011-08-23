@@ -1,4 +1,4 @@
-# $Id: Dispatch.pm,v 1.12 2010/08/28 17:22:09 ak Exp $
+# $Id: Dispatch.pm,v 1.12.2.1 2011/08/23 21:28:56 ak Exp $
 # -Id: Index.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Index.pm,v 1.3 2009/08/13 07:13:57 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -26,6 +26,7 @@ my $Settings = {
 	'webconfig'	=> '__KANADZUCHIETC__/webui.cf',
 	'neighbors'	=> '__KANADZUCHIETC__/neighbor-domains',
 	'countries'	=> '__KANADZUCHIETC__/available-countries',
+	'mtamodules'	=> '__KANADZUCHIROOT__/lib/Kanadzuchi/MTA',
 	'template'	=> '__KANADZUCHIDATA__/template',
 };
 
@@ -99,6 +100,7 @@ my $DispatchArgsToNew = {
 		'tf' => $Settings->{'template'},
 		'nd' => $Settings->{'neighbors'},
 		'cc' => $Settings->{'countries'},
+		'mm' => $Settings->{'mtamodules'},
 	},
 };
 
