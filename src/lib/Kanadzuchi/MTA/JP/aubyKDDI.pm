@@ -1,4 +1,4 @@
-# $Id: aubyKDDI.pm,v 1.6.2.3 2011/07/08 01:02:05 ak Exp $
+# $Id: aubyKDDI.pm,v 1.6.2.5 2011/08/23 21:28:27 ak Exp $
 # -Id: aubyKDDI.pm,v 1.1 2009/08/29 08:50:38 ak Exp -
 # -Id: aubyKDDI.pm,v 1.1 2009/07/31 09:04:51 ak Exp -
 # Kanadzuchi::MTA::JP::
@@ -20,6 +20,8 @@ use warnings;
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+sub version { '2.1.5' };
+sub description { 'au by KDDI' };
 sub xsmtpagent { 'X-SMTP-Agent: JP::aubyKDDI'.qq(\n); }
 sub emailheaders
 {
