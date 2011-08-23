@@ -1,5 +1,5 @@
-# $Id: MTA.pm,v 1.6 2010/12/12 06:23:51 ak Exp $
-# Copyright (C) 2010 Cubicroot Co. Ltd.
+# $Id: MTA.pm,v 1.6.2.1 2011/08/23 21:26:44 ak Exp $
+# Copyright (C) 2010-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::
                      
  ##  ## ###### ##    
@@ -20,6 +20,8 @@ use Kanadzuchi::Address;
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
+sub version { return '0.0.0'; }
+sub description { return q(); }
 sub emailheaders { return []; }
 sub reperit { return q(); }
 sub SMTPCOMMAND
