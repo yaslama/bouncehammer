@@ -1,11 +1,11 @@
 dnl #                                               -*- Autoconf -*-
 dnl # Process this file with autoconf to produce a configure script.
-dnl # $Id: configure.ac,v 1.68.2.14 2011/07/25 09:01:13 ak Exp $
+dnl # $Id: configure.ac,v 1.68.2.15 2011/08/23 21:48:42 ak Exp $
 dnl # -Id: configure.ac,v 1.8 2009/12/01 10:35:23 ak Exp -
 dnl # -Id: configure.ac,v 1.35 2009/08/27 05:09:04 ak Exp -
 dnl # Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 AC_PREREQ(2.61)
-AC_INIT([bounceHammer], [2.7.4], [bugs@bouncehammer.jp])
+AC_INIT([bounceHammer], [2.7.5], [bugs@bouncehammer.jp])
 AM_INIT_AUTOMAKE([foreign])
 AC_PREFIX_DEFAULT(/usr/local/bouncehammer)
 AC_CANONICAL_HOST
@@ -140,12 +140,13 @@ else
 fi
 
 dnl # Inspired from configure script in MRTG source package
-echo -n 'ordering CD from https://cubicroot.jp/order/bouncehammer-cdrom .'
+printf 'ordering CD from https://cubicroot.jp/order/bouncehammer-cdrom .'
 sleep 1
-echo -n '.'
+printf '.'
 sleep 1
-echo -n '. '
-echo 'just kidding ;-)'
+printf '. '
+printf 'just kidding ;-)'
+echo
 
 dnl # Checks for header files.
 
@@ -261,6 +262,7 @@ AC_CONFIG_FILES([Makefile
                  src/lib/Kanadzuchi/MTA/Makefile
                  src/lib/Kanadzuchi/MTA/JP/Makefile
                  src/lib/Kanadzuchi/MTA/US/Makefile
+                 src/lib/Kanadzuchi/MTA/User/Makefile
                  src/lib/Kanadzuchi/MIME/Makefile
                  src/lib/Kanadzuchi/Statistics/Makefile
                  src/lib/Kanadzuchi/Statistics/Stored/Makefile

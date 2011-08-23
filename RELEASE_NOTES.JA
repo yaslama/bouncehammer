@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES.JA,v 1.52.2.13 2011/07/25 09:01:13 ak Exp $
+ $Id: RELEASE_NOTES.JA,v 1.52.2.14 2011/08/23 21:49:10 ak Exp $
 -----------------------------------------------------------------------
  ##                                      ##  ##                                     
  ##      ####  ##  ## #####   #### ####  ##  ##  ####  ##  ## ##  ##  ####  #####   
@@ -23,6 +23,28 @@
   - http://twitter.com/bouncehammer
 -----------------------------------------------------------------------
 
+2.7.5/2.7.0	2011/08/25
+
+  細かな改善点:
+    * Biglobe(****@***.biglobe.ne.jp)のバウンスメール解析に対応。
+    * qip.ruのドメインを少し追加しました (RU::WebMail).
+    * Shtrudel M@ilのドメイン81個を追加しました (US::WebMail).
+    * WebUIにMTA解析モジュールのページを作りました。
+
+  修正されたバグ:
+    * Kanadzuchi/Log.pmでCSV形式での出力でフィールド名が複数出るバグを
+      修正しました。
+
+  新しいファイル:
+    * lib/Kanadzuchi/MTA/MODULES
+    * lib/Kanadzuchi/MTA/User/ (FFR)
+    * lib/Kanadzuchi/MTA/JP/Biglobe.pm
+    * share/template/stylesheet/mtamodules.css
+    * share/template/page/mtamodules.html
+    * share/template/l10n/{ja,en}/help-mta-modules.html
+
+
+-----------------------------------------------------------------------
 2.7.4/2.7.0	2011/07/29
 
   細かな改善点:

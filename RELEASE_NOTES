@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES,v 1.76.2.15 2011/07/25 09:01:13 ak Exp $
+ $Id: RELEASE_NOTES,v 1.76.2.16 2011/08/23 21:49:10 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -27,6 +27,27 @@
   - http://twitter.com/bouncehammer
 -----------------------------------------------------------------------
 
+2.7.5/2.7.0	2011/08/25
+
+  Assorted improvements and code cleanup:
+    * Support a bounced email from Biglobe (****@***.biglobe.ne.jp).
+    * Add some webmail domains of qip.ru (RU::WebMail).
+    * Add 81 webmail domains of Shtrudel M@il (US::WebMail).
+    * MTA Module list on the WebUI.
+
+  Fixed bugs:
+    * Fixed csv format bug in Kanadzuchi/Log.pm .
+
+  New files:
+    * lib/Kanadzuchi/MTA/MODULES
+    * lib/Kanadzuchi/MTA/User/ (FFR)
+    * lib/Kanadzuchi/MTA/JP/Biglobe.pm
+    * share/template/stylesheet/mtamodules.css
+    * share/template/page/mtamodules.html
+    * share/template/l10n/{ja,en}/help-mta-modules.html
+    
+
+-----------------------------------------------------------------------
 2.7.4/2.7.0	2011/07/29
 
   Assorted improvements and code cleanup:
