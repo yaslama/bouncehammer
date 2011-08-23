@@ -1,4 +1,4 @@
-# $Id: Biglobe.pm,v 1.1.2.2 2011/08/23 21:28:27 ak Exp $
+# $Id: Biglobe.pm,v 1.1.2.4 2011/08/23 23:19:02 ak Exp $
 # Kanadzuchi::MTA::JP::
                                                  
  #####    ##          ###         ##             
@@ -25,7 +25,7 @@ my $RxBiglobe = {
 };
 
 my $RxErrors = {
-	'userunknown' => [
+	'filtered' => [
 		qr{Mail Delivery Failed[.][.][.] User unknown},
 	],
 	'mailboxfull' => [
@@ -38,7 +38,7 @@ my $RxErrors = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub version { '0.1.2' };
+sub version { '0.1.3' };
 sub description { 'NEC Biglobe' };
 sub xsmtpagent { 'X-SMTP-Agent: JP::Biglobe'.qq(\n); }
 sub emailheaders
