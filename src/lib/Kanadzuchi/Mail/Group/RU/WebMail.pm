@@ -1,4 +1,4 @@
-# $Id: WebMail.pm,v 1.8 2010/06/16 08:15:45 ak Exp $
+# $Id: WebMail.pm,v 1.8.2.1 2011/08/20 20:13:49 ak Exp $
 # Copyright (C) 2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Group::RU::
                                                    
@@ -27,7 +27,8 @@ sub nominisexemplaria
 		'qip' => [
 			qr{\A(?:qip|pochta|front|hotbox|hotmail|land|newmail)[.]ru\z},
 			qr{\A(?:nightmail|nm|pochtamt|pop3|rbcmail|smtp)[.]ru\z},
-			qr{\A(?:fromru|mail15|mail333)[.]com\z},
+			qr{\A(?:5ballov|aeterna|ziza|memori|photofile|fotoplenka)[.]ru\z},
+			qr{\A(?:fromru|mail15|mail333|pochta)[.]com\z},
 			qr{\Akrovatka[.]su\z},
 			qr{\Apisem[.]net\z},
 		],
