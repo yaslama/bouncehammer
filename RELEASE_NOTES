@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES,v 1.76.2.17 2011/08/23 23:09:45 ak Exp $
+ $Id: RELEASE_NOTES,v 1.76.2.18 2011/08/24 06:44:21 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -30,7 +30,8 @@
 2.7.5/2.7.0	2011/08/25
 
   Assorted improvements and code cleanup:
-    * Support a bounced email from Biglobe (****@***.biglobe.ne.jp).
+    * Support a bounced email from Biglobe (****@***.biglobe.ne.jp) and
+      Biglobe-compatible emails (tmtv.ne.jp,inacatv.ne.jp,ttv.ne.jp).
     * Add some webmail domains of qip.ru (RU::WebMail).
     * Add 81 webmail domains of Shtrudel M@il (US::WebMail).
     * MTA Module list on the WebUI.
