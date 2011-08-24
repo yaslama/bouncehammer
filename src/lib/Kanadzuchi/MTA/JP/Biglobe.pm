@@ -1,4 +1,4 @@
-# $Id: Biglobe.pm,v 1.1.2.4 2011/08/23 23:19:02 ak Exp $
+# $Id: Biglobe.pm,v 1.1.2.5 2011/08/24 06:44:05 ak Exp $
 # Kanadzuchi::MTA::JP::
                                                  
  #####    ##          ###         ##             
@@ -22,6 +22,12 @@ my $RxBiglobe = {
 	'begin' => qr{\A   ----- The following addresses had delivery problems -----\z},
 	'error' => qr{\A   ----- Non-delivered information -----\z},
 	'endof' => qr{\AContent-Type: message/rfc822\z},
+	'from'  => [
+		'postmaster@biglobe.ne.jp',
+		'postmaster@inacatv.ne.jp',
+		'postmaster@tmtv.ne.jp',
+		'postmaster@ttv.ne.jp',
+	],
 };
 
 my $RxErrors = {
@@ -38,7 +44,7 @@ my $RxErrors = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub version { '0.1.3' };
+sub version { '0.1.5' };
 sub description { 'NEC Biglobe' };
 sub xsmtpagent { 'X-SMTP-Agent: JP::Biglobe'.qq(\n); }
 sub emailheaders
@@ -68,7 +74,7 @@ sub reperit
 	my $mhead = shift() || return q();
 	my $mbody = shift() || return q();
 
-	return q() unless( $mhead->{'from'} =~ m{\Apostmaster[@]biglobe[.]ne[.]jp\z} );
+	return q() unless( grep { $mhead->{'from'} eq $_ } @{ $RxBiglobe->{'from'} } );
 	return q() unless( $mhead->{'subject'} =~ m{\AReturned mail:} );
 
 	my $phead = q();
