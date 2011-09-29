@@ -1,11 +1,11 @@
 dnl #                                               -*- Autoconf -*-
 dnl # Process this file with autoconf to produce a configure script.
-dnl # $Id: configure.ac,v 1.68.2.15 2011/08/23 21:48:42 ak Exp $
+dnl # $Id: configure.ac,v 1.68.2.16 2011/09/01 01:10:07 ak Exp $
 dnl # -Id: configure.ac,v 1.8 2009/12/01 10:35:23 ak Exp -
 dnl # -Id: configure.ac,v 1.35 2009/08/27 05:09:04 ak Exp -
 dnl # Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 AC_PREREQ(2.61)
-AC_INIT([bounceHammer], [2.7.5], [bugs@bouncehammer.jp])
+AC_INIT([bounceHammer], [2.7.6], [bugs@bouncehammer.jp])
 AM_INIT_AUTOMAKE([foreign])
 AC_PREFIX_DEFAULT(/usr/local/bouncehammer)
 AC_CANONICAL_HOST
@@ -20,13 +20,28 @@ AC_SUBST(BUILDROOT)
 dnl # Checks for programs.
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-AC_PATH_PROG(SHELL, sh, :, /bin:/usr/bin:/usr/local/bin)
+AC_PATH_PROG(SHELL, sh, no, /bin:/usr/bin:/usr/local/bin)
+if test "x$SHELL" = xno; then
+	AC_MSG_ERROR([*** Cannot find sh program])
+fi
 
 AC_PROG_LN_S
-AC_PATH_PROG(CAT, cat, :, /bin:/usr/bin:/usr/local/bin)
+AC_PATH_PROG(CAT, cat, no, /bin:/usr/bin:/usr/local/bin)
+if test "x$CAT" = xno; then
+	AC_MSG_ERROR([*** Cannot find cat program])
+fi
 AC_PATH_PROG(CHMOD, chmod, :, /bin:/usr/bin:/usr/local/bin)
+if test "x$CHMOD" = xno; then
+	AC_MSG_ERROR([*** Cannot find chmod program])
+fi
 AC_PATH_PROG(TOUCH, touch, :, /bin:/usr/bin:/usr/local/bin)
+if test "x$TOUCH" = xno; then
+	AC_MSG_ERROR([*** Cannot find touch program])
+fi
 AC_PATH_PROG(PATCH, patch, :, /bin:/usr/bin:/usr/local/bin)
+if test "x$PATCH" = xno; then
+	AC_MSG_ERROR([*** Cannot find patch program])
+fi
 
 AC_PATH_PROGS(GREP, grep egrep, :, /bin:/usr/bin:/usr/local/bin)
 if test "x$GREP" = x; then
