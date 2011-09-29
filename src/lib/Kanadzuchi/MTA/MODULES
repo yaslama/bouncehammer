@@ -1,4 +1,4 @@
-# $Id: MODULES,v 1.1.2.2 2011/08/23 23:43:37 ak Exp $
+# $Id: MODULES,v 1.1.2.5 2011/09/17 09:16:17 ak Exp $
 # Copyright (C) 2011 Cubicroot Co. Ltd.
 package Kanadzuchi::MTA::MODULES;
 use strict;
@@ -11,17 +11,19 @@ use warnings;
 #
 sub standard {
 	return [
-		'Sendmail', 'Postfix', 'qmail', 'Courier', 'Exim', 
-		'OpenSMTPD', 'ApacheJames', 'sSMTP',
-		'Fallback',
+		'ApacheJames', 'Courier', 'Exim', 'Fallback',
+		'OpenSMTPD', 'Postfix', 'qmail', 'Sendmail', 'sSMTP',
 		'JP::aubyKDDI', 'JP::Biglobe',
-		'US::Google', 'US::Facebook', 
+		'US::Facebook', 'US::Google', 
 	];
 }
 
 sub commercial {
 	return [ 
-		'US::Exchange', 'US::IMailServer', 'US::SendGrid', 
+		'JP::Activehunter', 'JP::InterScan', 'JP::mFILTER',
+		'US::AmazonSES', 'US::Exchange', 'US::IMailServer', 
+		'US::MailChimp', 'US::MailFoundry', 'US::SendGrid',
+		'US::SurfControl',
 	];
 }
 
