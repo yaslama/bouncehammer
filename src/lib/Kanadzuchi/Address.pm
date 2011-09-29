@@ -1,4 +1,4 @@
-# $Id: Address.pm,v 1.10.2.4 2011/07/08 01:03:46 ak Exp $
+# $Id: Address.pm,v 1.10.2.5 2011/09/29 15:42:22 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::
                                                    
@@ -85,6 +85,10 @@ sub parse
 	{
 		next() unless( defined($x) );
 		next() unless( $x =~ m{[@]} );
+
+		# Avoid ``Invalid mailbox list:'' Error from Email::AddressParser
+		# If ESC(0x1b) is included in a phrase part of a mail address.
+		next() if( $x =~ m{[^\x20-\x7e]} );
 
 		PARSE_ADDRESS: foreach my $e ( Email::AddressParser->parse($x) )
 		{
