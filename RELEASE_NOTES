@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES,v 1.76.2.18 2011/08/24 06:44:21 ak Exp $
+ $Id: RELEASE_NOTES,v 1.76.2.19 2011/09/29 15:43:12 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -27,6 +27,20 @@
   - http://twitter.com/bouncehammer
 -----------------------------------------------------------------------
 
+2.7.6/2.7.0	2011/10/03
+
+  Assorted improvements and code cleanup:
+    * @m.facebook.com is classified into Webmail/facebook .
+    * @verizon.net is classified into Smartphone/verizon.
+
+  Fixed bugs:
+    * Fix the 3rd argument of AC_PATH_PROG() macro in ./configure .
+    * Fixed an issue that  bin/mailboxparser stops  with the error mes-
+      sage: ``Invalid mailbox list: ...'' if any ESC(0x1b) character is
+      contained in a phrase part of a email header. Thanks to Toyokawa.
+
+
+-----------------------------------------------------------------------
 2.7.5/2.7.0	2011/08/25
 
   Assorted improvements and code cleanup:
