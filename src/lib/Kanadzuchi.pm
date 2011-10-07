@@ -49,7 +49,7 @@ __PACKAGE__->mk_accessors(
 # ||__|||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|
 #
-our $VERSION = q{2.7.6};
+our $VERSION = q{2.7.6p1};
 our $SYSNAME = q{bounceHammer};
 our $SYSCONF = q{__KANADZUCHIROOT__/etc/bouncehammer.cf};
 

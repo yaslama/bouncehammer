@@ -5,7 +5,7 @@
 # This is the auto-Makefile for bounceHammer, is processed by automake to create Makefile.in.
 ENGINENAME = Kanadzuchi
 SYSTEMNAME = bounceHammer
-SYSVERSION = 2.7.6
+SYSVERSION = 2.7.6p1
 CMD_MODULE = ./Modules.PL
 CMD_IMPLEM = ./Implement.PL
 PATCH_TBOP = ./diff/perl-TB-option-on-filehandle.patch
