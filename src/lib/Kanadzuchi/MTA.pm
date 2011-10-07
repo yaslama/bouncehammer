@@ -1,4 +1,4 @@
-# $Id: MTA.pm,v 1.6.2.1 2011/08/23 21:26:44 ak Exp $
+# $Id: MTA.pm,v 1.6.2.2 2011/10/07 06:22:38 ak Exp $
 # Copyright (C) 2010-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::
                      
@@ -97,5 +97,18 @@ sub xsmtpstatus
 	return 'X-SMTP-Status: '.$dstat.qq(\n);
 }
 
+sub xsmtprecipient
+{ 
+	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	# |x|s|m|t|p|r|e|c|i|p|i|e|n|t|
+	# +-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	#
+	# @Description	Return pseudo-header for Final-Recipient
+	# @Param <str>	(String) Recipient Address
+	# @Returns	(String) Pseudo-header
+	my $class = shift(); 
+	my $xrcpt = shift() || return q();
+	return 'X-SMTP-Recipient: '.$xrcpt.qq(\n);
+}
 1;
 __END__
