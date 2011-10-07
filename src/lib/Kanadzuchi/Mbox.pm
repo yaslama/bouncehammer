@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.28.2.3 2011/08/23 21:29:53 ak Exp $
+# $Id: Mbox.pm,v 1.28.2.6 2011/10/07 02:38:30 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -106,7 +106,8 @@ sub postulat
 
 	# Experimental implementation for the future.
 	my $libmboxroot = '__KANADZUCHILIB__/Kanadzuchi/MTA';
-	my $iso3166list = [ 'User', 'JP', 'US' ];
+	my $additionals = [ 'User', 'Comm' ];
+	my $iso3166list = [ 'JP', 'US' ];
 	my $iso3166conf = '__KANADZUCHIETC__/available-countries';
 	my $countryconf = ( -r $iso3166conf && -s _ && -T _ ) ? JSON::Syck::LoadFile($iso3166conf) : {};
 	my $didfileload = keys %$countryconf ? 1 : 0;
@@ -157,6 +158,32 @@ sub postulat
 		closedir($dh);
 
 	} # End of foreach(EACH_COUNTRY)
+
+	ADDITIONALS: foreach my $amod ( @$additionals )
+	{
+		# Load user-defined modules and commercial MTA modules
+		my $directory = $libmboxroot.'/'.$amod;
+
+		next() unless( -d $directory && -r _ && -x _ );
+		opendir( my $dh, $directory );
+
+		READAM: while( my $de = readdir($dh) )
+		{
+			my $fp = $directory.'/'.$de;
+
+			# the file is not *.pm, nor regular file, nor readable
+			next(READAM) if( $fp !~ m{[.]pm\z} || ! -f $fp || ! -r _ );
+
+			$acclassname  = 'Kanadzuchi::MTA::'.$amod.'::'.$de;
+			$acclassname =~ s{[.]pm\z}{};
+
+			eval { require $fp; };
+			push( @$listofclass, $acclassname ) unless $@;
+		}
+
+		closedir($dh);
+
+	} # End of foreach(ADDITIONALS)
 
 	return $listofclass;
 }
@@ -416,7 +443,11 @@ sub parseit
 		next(PARSE_EMAILS) unless( $_mail->{'body'} );
 		$_mail->{'body'} =~ s{^[Ff]rom:[ ]*([^\n\r]+)[\n\r][ \t]+([^\n\r]+)}{From: $1 $2}gm;
 		$_mail->{'body'} =~ s{^[Tt]o:[ ]*([^\n\r]+)[\n\r][ \t]+([^\n\r]+)}{To: $1 $2}gm;
-		$_mail->{'body'} =~ s{^[Dd]iagnostic-[Cc]ode:[ ]*([^\n\r]+)[\n\r][ \t]+([^\n\r]+)}{Diagnostic-Code: $1 $2}gm;
+		$_mail->{'body'} =~ s{^[Dd]iagnostic-[Cc]ode:[\s]*([^\n\r]+)
+								[\n\r][\s\t]+([^\n\r]+)
+								[\n\r][\s\t]+([^\n\r]+)
+								[\n\r][\s\t]+([^\n\r]+) }
+					{Diagnostic-Code: $1 $2 $3 $4}gmx;
 
 		# Delete non-required headers
 		$_mail->{'body'} =~ y{\n}{\n}s;		# Delete blank lines
