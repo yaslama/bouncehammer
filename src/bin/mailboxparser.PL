@@ -1,9 +1,9 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.40.2.9 2011/06/20 03:10:33 ak Exp $
+# $Id: mailboxparser.PL,v 1.40.2.10 2011/10/07 06:22:03 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
-# Copyright (C) 2009,2010 Cubicroot Co. Ltd.
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::Command::
                                                                                         
                  ##  ###  ##                                                            

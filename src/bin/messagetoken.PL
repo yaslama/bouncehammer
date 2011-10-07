@@ -1,7 +1,7 @@
 #__PERLEXECUTABLE__
-# $Id: messagetoken.PL,v 1.8.2.3 2011/05/24 03:28:16 ak Exp $
+# $Id: messagetoken.PL,v 1.8.2.4 2011/10/07 06:22:03 ak Exp $
 # -Id: messagetoken.PL,v 1.3 2010/02/21 20:09:01 ak Exp -
-# Copyright (C) 2009,2010 Cubicroot Co. Ltd.
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi:Command::
                                                                                     
  ##  ##                                         ######         ##                   

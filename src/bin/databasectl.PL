@@ -1,9 +1,9 @@
 #__PERLEXECUTABLE__
-# $Id: databasectl.PL,v 1.23.2.7 2011/05/24 02:43:16 ak Exp $
+# $Id: databasectl.PL,v 1.23.2.8 2011/10/07 06:22:02 ak Exp $
 # -Id: databasectl.PL,v 1.16 2010/02/21 20:09:01 ak Exp -
 # -Id: databasectl.PL,v 1.1 2009/08/29 14:36:53 ak Exp -
 # -Id: databasectl.PL,v 1.15 2009/08/27 05:09:59 ak Exp -
-# Copyright (C) 2009,2010 Cubicroot Co. Ltd.
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::Command::
                                                                             
      ##          ##         ##                                  ##   ###    

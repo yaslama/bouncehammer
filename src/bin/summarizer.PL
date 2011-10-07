@@ -1,9 +1,9 @@
 #__PERLEXECUTABLE__
-# $Id: summarizer.PL,v 1.14.2.5 2011/05/24 03:28:16 ak Exp $
+# $Id: summarizer.PL,v 1.14.2.6 2011/10/07 06:22:03 ak Exp $
 # -Id: summarizer.PL,v 1.13 2010/02/22 05:09:01 ak Exp -
 # -Id: summarizer.PL,v 1.2 2009/10/06 09:10:32 ak Exp -
 # -Id: summarizer.PL,v 1.3 2009/08/27 05:09:59 ak Exp -
-# Copyright (C) 2009,2010 Cubicroot Co. Ltd.
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi:Command::
                                              ##                       
   ##### ##  ## ##  ## ##  ##  ####  #####        ###### ####  #####   
