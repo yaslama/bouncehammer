@@ -1,6 +1,7 @@
-# $Id: aubyKDDI.pm,v 1.6.2.6 2011/10/07 03:20:14 ak Exp $
+# $Id: aubyKDDI.pm,v 1.6.2.7 2011/10/07 06:23:15 ak Exp $
 # -Id: aubyKDDI.pm,v 1.1 2009/08/29 08:50:38 ak Exp -
 # -Id: aubyKDDI.pm,v 1.1 2009/07/31 09:04:51 ak Exp -
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::MTA::JP::
                                                             
                  ##              ##  ## ####   ####  ####   
@@ -222,7 +223,7 @@ sub reperit
 
 		if( Kanadzuchi::RFC2822->is_emailaddress($rcptintxt) )
 		{
-			$phead .= q(Final-Recipient: RFC822; ).$rcptintxt.qq(\n);
+			$phead .= __PACKAGE__->xsmtprecipient($rcptintxt);
 		}
 
 		$pstat  = $statintxt || Kanadzuchi::RFC3463->status( $causa, $typemap->{ $causa }, 'i' );

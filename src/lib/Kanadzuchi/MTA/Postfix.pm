@@ -1,4 +1,5 @@
-# $Id: Postfix.pm,v 1.6.2.4 2011/10/07 02:39:40 ak Exp $
+# $Id: Postfix.pm,v 1.6.2.5 2011/10/07 06:23:14 ak Exp $
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::MTA::
                                                
  #####                  ##    ###  ##          

@@ -1,4 +1,5 @@
-# $Id: Facebook.pm,v 1.1.2.4 2011/08/23 21:28:28 ak Exp $
+# $Id: Facebook.pm,v 1.1.2.5 2011/10/07 06:23:15 ak Exp $
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::MTA::US::
                                                        
  ######                   ##                   ##      
@@ -79,7 +80,7 @@ my $RxErrors = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub version { '0.1.5' };
+sub version { '0.1.6' };
 sub description { 'Facebook mail' };
 sub xsmtpagent { 'X-SMTP-Agent: US::Facebook'.qq(\n); }
 sub reperit
@@ -146,7 +147,7 @@ sub reperit
 	}
 
 	$pstat ||= Kanadzuchi::RFC3463->status('undefined','p','i');
-	$phead  .= 'Final-Recipient: RFC822; '.$rcptintxt.qq(\n);
+	$phead  .= __PACKAGE__->xsmtprecipient($rcptintxt);
 	$phead  .= __PACKAGE__->xsmtpstatus($pstat);
 	$phead  .= __PACKAGE__->xsmtpdiagnosis($rhostsaid);
 	$phead  .= __PACKAGE__->xsmtpcommand($xsmtp);

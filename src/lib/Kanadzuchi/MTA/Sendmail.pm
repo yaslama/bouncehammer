@@ -1,4 +1,5 @@
-# $Id: Sendmail.pm,v 1.6.2.3 2011/08/23 21:28:27 ak Exp $
+# $Id: Sendmail.pm,v 1.6.2.4 2011/10/07 06:23:14 ak Exp $
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::MTA::
                                                           
   #####                    ##                  ##  ###    
@@ -36,7 +37,7 @@ my $RxSendmail = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub version { '2.1.3' }
+sub version { '2.1.4' }
 sub description { 'V8Sendmail: /usr/sbin/sendmail' };
 sub xsmtpagent { 'X-SMTP-Agent: Sendmail'.qq(\n); }
 sub reperit
@@ -59,6 +60,7 @@ sub reperit
 	my $phead = q();	# (String) Pseudo email header
 	my $pstat = q();	# (String) Stauts code
 	my $xsmtp = q();	# (String) SMTP Command in transcript of session
+	my $xrcpt = q();	# (String) Recipient address in message body
 
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
@@ -84,14 +86,18 @@ sub reperit
 			{
 				# 554 5.0.0 Service unavailable
 				$pstat = $1;
+				$xrcpt = $1 if( $el =~ m{\A.+[<](.+[@].+)[>].*\z} );
 				next();
 			}
+
 		}
 	}
 
+	$phead .= __PACKAGE__->xsmtprecipient($xrcpt) if $xrcpt;
 	$phead .= __PACKAGE__->xsmtpcommand($xsmtp);
 	$phead .= __PACKAGE__->xsmtpstatus($pstat);
 	$phead .= __PACKAGE__->xsmtpagent();
+
 	return $phead;
 }
 

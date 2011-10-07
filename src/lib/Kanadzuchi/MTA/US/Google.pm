@@ -1,7 +1,8 @@
-# $Id: Google.pm,v 1.5.2.4 2011/08/23 21:28:28 ak Exp $
+# $Id: Google.pm,v 1.5.2.5 2011/10/07 06:23:15 ak Exp $
 # -Id: Google.pm,v 1.2 2010/07/04 23:45:49 ak Exp -
 # -Id: Google.pm,v 1.1 2009/08/29 08:50:36 ak Exp -
 # -Id: Google.pm,v 1.1 2009/07/31 09:04:38 ak Exp -
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::MTA::US::
 
   ####                        ###          
@@ -117,7 +118,7 @@ my $StateCodeMap = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub version { '2.1.4' };
+sub version { '2.1.5' };
 sub description { 'Google Gmail' };
 sub xsmtpagent { 'X-SMTP-Agent: US::Google'.qq(\n); }
 sub emailheaders
@@ -315,7 +316,7 @@ sub reperit
 	$phead .= __PACKAGE__->xsmtpagent();
 	$phead .= __PACKAGE__->xsmtpdiagnosis($rhostsaid);
 	$phead .= __PACKAGE__->xsmtpstatus($pstat);
-	$phead .= q(Final-Recipient: rfc822; ).$rcptintxt.qq(\n);
+	$phead .= __PACKAGE__->xsmtprecipient($rcptintxt);
 	$phead .= q(To: ).$rcptintxt.qq(\n);
 
 	return $phead;

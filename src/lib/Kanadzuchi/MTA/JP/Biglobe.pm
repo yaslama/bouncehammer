@@ -1,4 +1,5 @@
-# $Id: Biglobe.pm,v 1.1.2.5 2011/08/24 06:44:05 ak Exp $
+# $Id: Biglobe.pm,v 1.1.2.6 2011/10/07 06:23:15 ak Exp $
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::MTA::JP::
                                                  
  #####    ##          ###         ##             

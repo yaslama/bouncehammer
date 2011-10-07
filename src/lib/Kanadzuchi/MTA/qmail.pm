@@ -1,4 +1,5 @@
-# $Id: qmail.pm,v 1.7.2.4 2011/10/07 02:39:00 ak Exp $
+# $Id: qmail.pm,v 1.7.2.5 2011/10/07 06:23:14 ak Exp $
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::MTA::
                          ##  ###    
   #####  ##  ##  ####         ##    
@@ -229,17 +230,20 @@ sub reperit
 		$pstat = Kanadzuchi::RFC3463->status( ( $causa || 'undefined' ), 'p', 'i' );
 	}
 
+	# Detect a recipient address from $rhostsaid
+	$rcptintxt = $1 if( $rhostsaid =~ m{[<](.+[@].+)[>]:} );
+
 	# Add the pseudo Content-Type header if it does not exist.
 	$mhead->{'content-type'} ||= q(message/delivery-status);
 
 	if( Kanadzuchi::RFC2822->is_emailaddress($rcptintxt) )
 	{
-		$phead .= q(Final-Recipient: RFC822; ).$rcptintxt.qq(\n);
+		$phead .= __PACKAGE__->xsmtprecipient($rcptintxt);
 	}
 	else
 	{
 		$rcptintxt = Kanadzuchi::Address->canonify($rhostsaid);
-		$phead .= q(Final-Recipient: RFC822; ).$rcptintxt.qq(\n) 
+		$phead .= __PACKAGE__->xsmtprecipient($rcptintxt)
 				if( Kanadzuchi::RFC2822->is_emailaddress($rcptintxt) );
 	}
 

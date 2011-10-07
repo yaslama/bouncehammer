@@ -1,4 +1,5 @@
-# $Id: Exim.pm,v 1.6.2.4 2011/08/23 21:28:27 ak Exp $
+# $Id: Exim.pm,v 1.6.2.5 2011/10/07 06:23:14 ak Exp $
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::MTA::
                               
  ######           ##          
@@ -95,7 +96,7 @@ my $RxTrError = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub version { '2.1.4' };
+sub version { '2.1.5' };
 sub description { 'Exim' };
 sub xsmtpagent { 'X-SMTP-Agent: Exim'.qq(\n); }
 sub emailheaders
@@ -231,7 +232,7 @@ sub reperit
 		}
 	}
 
-	$phead .= 'Final-Recipient: '.$frcpt.qq(\n);
+	$phead .= __PACKAGE__->xsmtprecipient($frcpt);
 	$phead .= __PACKAGE__->xsmtpdiagnosis($rhostsaid);
 	$phead .= __PACKAGE__->xsmtpcommand($xsmtp);
 	$phead .= __PACKAGE__->xsmtpstatus($pstat);

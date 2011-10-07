@@ -1,4 +1,5 @@
-# $Id: Courier.pm,v 1.3.2.3 2011/08/23 21:28:27 ak Exp $
+# $Id: Courier.pm,v 1.3.2.4 2011/10/07 06:23:14 ak Exp $
+# Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::MTA::
                                                  
   ####                        ##                 
