@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.28.2.6 2011/10/07 02:38:30 ak Exp $
+# $Id: Mbox.pm,v 1.28.2.7 2011/10/07 06:23:14 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -500,6 +500,7 @@ sub parseit
 		$_mail->{'body'} =~ s{^[Xx]-SMTP-Command:[ ]*(.+)$}{<<<<: X-SMTP-Command: $1}m;
 		$_mail->{'body'} =~ s{^[Xx]-SMTP-Diagnosis:[ ]*(.+)$}{<<<<: X-SMTP-Diagnosis: $1}m;
 		$_mail->{'body'} =~ s{^[Xx]-SMTP-Status:[ ]*(.+)$}{<<<<: X-SMTP-Status: $1}m;
+		$_mail->{'body'} =~ s{^[Xx]-SMTP-Recipient:[ ]*(.+)$}{<<<<: X-SMTP-Recipient: $1}m;
 
 		$_mail->{'body'} =~ s{^\w.+[\r\n]}{}gm;			# Delete non-required headers
 		$_mail->{'body'} =~ s{^<<<<:\s}{}gm;			# Delete the mark
