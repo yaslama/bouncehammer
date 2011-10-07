@@ -1,4 +1,4 @@
-# $Id: Postfix.pm,v 1.6.2.3 2011/08/23 21:28:27 ak Exp $
+# $Id: Postfix.pm,v 1.6.2.4 2011/10/07 02:39:40 ak Exp $
 # Kanadzuchi::MTA::
                                                
  #####                  ##    ###  ##          
@@ -67,7 +67,7 @@ my $RxErrors = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub version { '2.1.3' };
+sub version { '2.1.4' };
 sub description { 'Postfix' };
 sub xsmtpagent { 'X-SMTP-Agent: Postfix'.qq(\n); }
 sub reperit
@@ -94,7 +94,7 @@ sub reperit
 	#   e.g.) From: MAILER-DAEMON (Mail Delivery System)
 	#         Subject: Undelivered Mail Returned to Sender
 	return q() unless( $mhead->{'subject'} =~ $RxPostfix->{'subject'} );
-	return q() unless( $mhead->{'from'} =~ $RxPostfix->{'from'} );
+	# return q() unless( $mhead->{'from'} =~ $RxPostfix->{'from'} );
 
 	my $phead = q();	# (String) Pseudo email header
 	my $pbody = q();	# (String) Pseudo body part
@@ -141,6 +141,7 @@ sub reperit
 	#
 	$rhostsaid =~ y{ }{ }s;
 	$rhostsaid =~ s{--\d+[.]\d+/\w.+\z}{};
+	$rhostsaid =~ s{\A(.+[(]in reply to .*[A-Z]{4}.*command[)]).*\z}{$1};
 
 	if( $rhostsaid =~ m{[(][#]([45][.][0-7][.]\d+)[)]} || $rhostsaid =~ m{\b([45][.]\d+[.]\d+)\b} )
 	{
