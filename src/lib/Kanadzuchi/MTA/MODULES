@@ -1,4 +1,4 @@
-# $Id: MODULES,v 1.1.2.6 2011/10/06 04:25:54 ak Exp $
+# $Id: MODULES,v 1.1.2.7 2011/10/07 08:56:03 ak Exp $
 # Copyright (C) 2011 Cubicroot Co. Ltd.
 package Kanadzuchi::MTA::MODULES;
 use strict;
@@ -23,6 +23,7 @@ sub commercial {
 		'Comm::Activehunter', 'Comm::InterScan', 'Comm::mFILTER',
 		'Comm::AmazonSES', 'Comm::Exchange', 'Comm::IMailServer', 
 		'Comm::MailFoundry', 'Comm::SendGrid', 'Comm::SurfControl',
+		'Comm::MXLogic',
 	];
 }
 
