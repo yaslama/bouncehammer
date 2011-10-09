@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.30.2.3 2011/10/07 06:23:15 ak Exp $
+# $Id: Bounced.pm,v 1.30.2.4 2011/10/08 06:46:08 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -502,14 +502,17 @@ sub is_filtered
 		}
 		else
 		{
-			if( $self->{'smtpcommand'} eq 'DATA' )
+
+			if( $self->{'smtpcommand'} ne 'RCPT' || $self->{'smtpcommand'} ne 'MAIL' )
 			{
 				my $uclass = q|Kanadzuchi::Mail::Why::UserUnknown|;
 				my $fclass = q|Kanadzuchi::Mail::Why::Filtered|;
+
 				eval { 
 					require Kanadzuchi::Mail::Why::UserUnknown;
 					require Kanadzuchi::Mail::Why::Filtered;
 				};
+
 				$isfi = 1 if( $fclass->textumhabet($self->{'diagnosticcode'})
 						|| $uclass->textumhabet($self->{'diagnosticcode'}) );
 			}
