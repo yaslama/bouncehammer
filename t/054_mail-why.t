@@ -1,4 +1,4 @@
-# $Id: 054_mail-why.t,v 1.8.2.1 2011/07/08 01:04:17 ak Exp $
+# $Id: 054_mail-why.t,v 1.8.2.2 2011/10/08 13:49:14 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -8,7 +8,7 @@ use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
 use Kanadzuchi::Test;
-use Test::More ( tests => 1003 );
+use Test::More ( tests => 1006 );
 
 #  ____ ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ 
 # ||G |||l |||o |||b |||a |||l |||       |||v |||a |||r |||s ||
@@ -36,6 +36,7 @@ my $Strings = {
 		q(Message filtered. Please see the faqs section on spam),
 		q(Blocked by policy: No spam please),
 		q(Message rejected due to suspected spam content),
+		q(The message was rejected because it contains prohibited virus or spam content),
 	],
 	'filtered' => [
 		q{due to extended inactivity new mail is not currently being accepted for this mailbox},
@@ -63,17 +64,19 @@ my $Strings = {
 	],
 	'notaccept' => [
 		q(Name service error for ...),
+		q(Sorry, Your remotehost looks suspiciously like spammer),
+		q{we do not accept mail from hosts with dynamic ip or generic dns ptr-records}, # MAIL.RU
+		q{we do not accept mail from dynamic ips}, # MAIL.RU
 	],
 	'rejected' => [
+		q{sender rejected},
 		q{domain of sender address example.jp does not exist},
 		q(Domain of sender address exampe.int does not exist),
-		q(Sorry, Your remotehost looks suspiciously like spammer),
 	],
         'relayingdenied'=> [ 
 		q(Relaying denied),
 	],
 	'securityerr' => [
-		q(The message was rejected because it contains prohibited virus or spam content),
 		q{553 sorry, that domain isn't in my list of allowed rcpthosts (#5.7.1)},
 	],
 	'systemerror' => [
