@@ -1,4 +1,4 @@
-# $Id: Postfix.pm,v 1.6.2.5 2011/10/07 06:23:14 ak Exp $
+# $Id: Postfix.pm,v 1.6.2.7 2011/10/08 13:51:04 ak Exp $
 # Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::MTA::
                                                
@@ -68,7 +68,7 @@ my $RxErrors = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub version { '2.1.4' };
+sub version { '2.1.5' };
 sub description { 'Postfix' };
 sub xsmtpagent { 'X-SMTP-Agent: Postfix'.qq(\n); }
 sub reperit
@@ -108,7 +108,7 @@ sub reperit
 	EACH_LINE: foreach my $el ( split( qq{\n}, $$mbody ) )
 	{
 		$endof = 1 if( $endof == 0 && $el =~ $RxPostfix->{'endof'} );
-		next() if( $endof || $el =~ m{\A--} || $el =~ m{\A\z} );
+		next() if $endof;
 
 		if( ( grep { $el =~ $_ } @{ $RxPostfix->{'begin'} }) .. ($el =~ $RxPostfix->{'endof'}) )
 		{
@@ -125,7 +125,7 @@ sub reperit
 			{
 				# <user@example.jp>: host mta.example.jp[192.0.2.44]
 				#    said: 550 Unknown user user@example.jp (in reply to RCPT TO command)
-				# last() if( $el =~ m{\A\z} || $el =~ m{\A--} );
+				$endof = 1 if( $el =~ m{\A\z} || $el =~ m{\A--} );
 				$rhostsaid .= q{ }.$el;
 				next();
 			}

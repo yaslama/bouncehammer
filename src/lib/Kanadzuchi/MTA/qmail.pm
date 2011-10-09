@@ -1,4 +1,4 @@
-# $Id: qmail.pm,v 1.7.2.5 2011/10/07 06:23:14 ak Exp $
+# $Id: qmail.pm,v 1.7.2.6 2011/10/08 13:51:04 ak Exp $
 # Copyright (C) 2009-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::MTA::
                          ##  ###    
@@ -105,7 +105,7 @@ my $RxqmailError = {
 # ||__|||__|||__|||__|||__|||_______|||__|||__|||__|||__|||__|||__|||__||
 # |/__\|/__\|/__\|/__\|/__\|/_______\|/__\|/__\|/__\|/__\|/__\|/__\|/__\|
 #
-sub version { '2.1.3' };
+sub version { '2.1.4' };
 sub description { 'qmail' };
 sub xsmtpagent { 'X-SMTP-Agent: qmail'.qq(\n); }
 sub reperit
@@ -176,6 +176,7 @@ sub reperit
 	$rhostsaid =~ y{ }{}s;
 	$rhostsaid =~ s{\A }{}g;
 	$rhostsaid =~ s{ \z}{}g;
+	$rhostsaid =~ s{ [-]{2,}.+\z}{};
 
 	# The line which begins with the string 'Sorry,...'
 	$xsmtp = 'CONN' if( $rhostsaid =~ $RxQSBMF->{'sorry'} );
