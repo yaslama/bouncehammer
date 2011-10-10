@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.40.2.10 2011/10/07 06:22:03 ak Exp $
+# $Id: mailboxparser.PL,v 1.40.2.11 2011/10/10 09:51:52 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -60,6 +60,7 @@ my $CLIOPTION = {
 	'backup'	=> ( 1 << 7 ),
 	'greed'		=> ( 1 << 8 ),
 	'batch'		=> ( 1 << 9 ),
+	'save'		=> ( 1 << 10 ),
 };
 
 #  __  __    _    ___ _   _ 
@@ -327,12 +328,23 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 	my $howmanyemails = 0;		# (Integer) How many email messages
 	my $howmanybounce = 0;		# (Integer) How many bounce messages
 	my $howmanyparsed = 0;		# (Integer) How many parsed messages
+	my $failedtoparse = [];		# (Ref->Array) messages which failed to parse, --save-failed-mesg option
 
 	# (Ref->Hash) Options of K::M::Bounced->eatit()
-	my $parseroptions = { 'verbose' => $Cmd->debuglevel(), 'skip' => $Skip, };
+	my $parseroptions = { 
+		'verbose' => $Cmd->debuglevel(), 
+		'skip' => $Skip,
+		'save' => ( $Cmd->operation & $Cmd->option->{'save'} ) ? 1 : 0,
+	};
 
 	PARSE_CHUNKS_OF_EMAIL: while( my $Mbox = shift @$chunksofemail )
 	{
+		#  ____   _    ____  ____  _____ 
+		# |  _ \ / \  |  _ \/ ___|| ____|
+		# | |_) / _ \ | |_) \___ \|  _|  
+		# |  __/ ___ \|  _ < ___) | |___ 
+		# |_| /_/   \_\_| \_\____/|_____|
+		#                                
 		my $mailboxparser;		# (Kanadzuchi::Mbox) Parser object
 		my $mboxpiterator;		# (Kanadzuchi::Iterator) Kanadzuchi::Mail::Bounced objects
 
@@ -374,13 +386,9 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 					});
 		}
 
-		#  ____                          
-		# |  _ \ __ _ _ __ ___  ___ _ __ 
-		# | |_) / _` | '__/ __|/ _ \ '__|
-		# |  __/ (_| | |  \__ \  __/ |   
-		# |_|   \__,_|_|  |___/\___|_|   
-		#                                
-		$mailboxparser->parseit( $progressbarcr ) || do { $progressbarcr->(); next(); };
+		$mailboxparser->parseit( 
+			$Cmd->operation & $Cmd->option->{'save'} ? 1 : 0,
+			$progressbarcr ) || do { $progressbarcr->(); next(); };
 		$howmanybounce += $mailboxparser->nmesgs();
 
 		#  _____    _  _____   ___ _____ 
@@ -390,7 +398,8 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 		# |_____/_/   \_\_|   |___| |_|  
 		# 
 		# Call Kanadzuchi::Mail::Bounced->eatit()
-		$mboxpiterator = Kanadzuchi::Mail::Bounced->eatit( $mailboxparser, $parseroptions, $progressbarcr );
+		$mboxpiterator = Kanadzuchi::Mail::Bounced->eatit( 
+					$mailboxparser, $failedtoparse, $parseroptions, $progressbarcr );
 		$howmanyparsed += $mboxpiterator->count();
 		$parseprogress->update( $mailboxparser->nmails * 2 ) if( $parseprogress );
 
@@ -425,6 +434,60 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			$kanadzuchilog->format($Fmt);
 			$kanadzuchilog->device('STDOUT');
 			$kanadzuchilog->dumper();
+		}
+
+	}
+	continue
+	{
+		if( ( $Cmd->operation & $Cmd->option->{'save'} ) && scalar(@$failedtoparse) )
+		{
+			#      __    _____ _    ___ _     _____ ____    _____ ___    ____   _    ____  ____  _____ 
+			#      \ \  |  ___/ \  |_ _| |   | ____|  _ \  |_   _/ _ \  |  _ \ / \  |  _ \/ ___|| ____|
+			#  _____\ \ | |_ / _ \  | || |   |  _| | | | |   | || | | | | |_) / _ \ | |_) \___ \|  _|  
+			# |_____/ / |  _/ ___ \ | || |___| |___| |_| |   | || |_| | |  __/ ___ \|  _ < ___) | |___ 
+			#      /_/  |_|/_/   \_\___|_____|_____|____/    |_| \___/  |_| /_/   \_\_| \_\____/|_____|
+			#                                                                                          
+			my $failprog = undef();
+			my $spooldir = $Zci->config->{'directory'}->{'spool'};
+			my $filename = q();
+			my $maildata = q();
+			my $feobject = undef();
+			my $fehandle = undef();
+
+			$spooldir = $Zci->config->{'directory'}->{'tmp'} unless( -w $spooldir );
+			$Cmd->d(2,sprintf( "Failed messages = %d\n", scalar @$failedtoparse ));
+			$Cmd->d(2,sprintf( "Failed messages are saved to = %s\n", $spooldir ));
+
+			if( $Cmd->stream->{out} && $Cmd->debuglevel > -1 )
+			{
+				eval {
+					require Term::ProgressBar;
+					$failprog = new Term::ProgressBar( { 
+								'fh' => \*STDERR,
+								'ETA' => 'linear',
+								'name' => 'Save failed messages',
+								'count' => scalar @$failedtoparse },
+							);
+				};
+			}
+
+			SAVE: while( my $fe = shift @$failedtoparse )
+			{
+				$filename = 'failed.'.$fe->{'message-id'}.'.eml';
+				$filename =~ y{/"'`|~*}{}d;
+				$filename =~ y/{}()<>[]//d;
+				$maildata = $fe->{'entiremesg'};
+				$feobject = new Path::Class::File( $spooldir.'/'.$filename );
+
+				$feobject->touch();
+				$failprog->update() if defined $failprog;
+
+				next(SAVE) if( ! -f $feobject->stringify() || ! -w _ );
+				my $fehandle = $feobject->openw();
+				print( $fehandle $maildata );
+				$fehandle->close();
+			}
+			$failedtoparse = [];
 		}
 
 	} # End of foreach(PARSE_CHUNKS_OF_EMAIL)
@@ -505,6 +568,7 @@ sub parse_options
 		$opt_outputdir,
 		$opt_remove,
 		$opt_safe,	# Obsolete
+		$opt_save,
 		$opt_skip,
 		$opt_skip_temperror,
 		$opt_skip_norelaying,
@@ -556,6 +620,7 @@ sub parse_options
 			'skip-norelaying'  => \$opt_skip_norelaying,
 			'skip-mailererror' => \$opt_skip_mailererror,
 			'skip-hostunknown' => \$opt_skip_hostunknown,
+			'save-failed-mesg' => \$opt_save,
 		);
 
 
@@ -649,9 +714,6 @@ sub parse_options
 		}
 	}
 
-	# Enable Parsing, greedily parse
-	if( $opt_greed ){ $operation |= $Cmd->option->{'greed'}; }
-
 	# Skip by the reason 
 	if( $opt_skip || $opt_skip_temperror || $opt_skip_norelaying 
 		|| $opt_skip_mailererror || $opt_skip_hostunknown ){
@@ -661,6 +723,9 @@ sub parse_options
 		if( $opt_skip || $opt_skip_mailererror ){ $Skip->{'mailererror'} = 1; }
 		if( $opt_skip || $opt_skip_hostunknown ){ $Skip->{'hostunknown'} = 1; }
 	}
+
+	$operation |= $Cmd->option->{'greed'} if $opt_greed;
+	$operation |= $Cmd->option->{'save'} if $opt_save;
 
 	$operation |= $Cmd->option->{'parse'};
 	return($operation);
@@ -683,6 +748,7 @@ sub help
 	printf( STDERR " * PARSING OPTIONS\n" );
 	printf( STDERR "    -g, --greed         : %s greedily parse messages\n", $Cmd->calledfrom() );
 	printf( STDERR "    -S, --safe          : Obsolete\n" );
+	printf( STDERR "    --save-failed-mesg  : Save original email which failed to parse.\n");
 	printf( STDERR "    -s, --skip          : Skip if the reason is the followings, \n");
 	printf( STDERR "    --skip-temperror    :  - Skip if the status is temporary error(4xx).\n");
 	printf( STDERR "    --skip-norelaying   :  - Skip if the reason is 'Relaying Denied'.\n");
