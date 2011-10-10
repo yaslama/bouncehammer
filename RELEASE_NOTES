@@ -1,4 +1,4 @@
- $Id: RELEASE_NOTES,v 1.76.2.21 2011/10/08 02:38:44 ak Exp $
+ $Id: RELEASE_NOTES,v 1.76.2.22 2011/10/10 09:56:54 ak Exp $
  -Id: RELEASE_NOTES,v 1.12 2009/12/01 10:35:23 ak Exp -
  -Id: RELEASE_NOTES,v 1.34 2009/08/27 05:09:04 ak Exp -
 -----------------------------------------------------------------------
@@ -28,10 +28,13 @@
   - http://www.facebook.com/bouncehammer
 -----------------------------------------------------------------------
 
-2.7.7/2.7.0	2011/XX/XX
+2.7.7/2.7.0	2011/11/14
+
+  New functionality:
+    * New command line option for bin/mailboxparser, --save-failed-mesg
+      is for save messages which are failed to parse.
 
   Assorted improvements and code cleanup:
-    * Support new iPhone email address of au by KDDI.
     * Update for commercial MTA modules.
     * Improved analytical accuracy for bounce messages via Exim, qmail,
       Sendmail, Postfix, and au by KDDI. Thanks to Toyokawa.
