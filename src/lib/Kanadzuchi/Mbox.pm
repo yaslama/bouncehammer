@@ -1,4 +1,4 @@
-# $Id: Mbox.pm,v 1.28.2.7 2011/10/07 06:23:14 ak Exp $
+# $Id: Mbox.pm,v 1.28.2.8 2011/10/10 09:52:33 ak Exp $
 # -Id: Parser.pm,v 1.10 2009/12/26 19:40:12 ak Exp -
 # -Id: Parser.pm,v 1.1 2009/08/29 08:50:27 ak Exp -
 # -Id: Parser.pm,v 1.4 2009/07/31 09:03:53 ak Exp -
@@ -350,9 +350,11 @@ sub parseit
 	# +-+-+-+-+-+-+-+
 	#
 	# @Description	Parse the email text
+	# @Param <ref>	(Integer) Flag for saving failed messages
 	# @Param <ref>	(Ref->Code) Callback function
 	# @Return	(Integer) n = The number of parsed messages
 	my $self = shift();
+	my $save = shift() || 0;
 	my $call = shift() || sub {};
 	my $ends = ENDOF;
 	my $seek = 0;
@@ -437,6 +439,8 @@ sub parseit
 		$_mail->{'body'} = __PACKAGE__->breakit( $_mail, \$_body );
 		$_head = q();
 
+		# 4. Save entire message
+		$_mail->{'data'} = $_email if $save;
 
 		# Parse message body
 		# Concatenate multiple-lined headers
@@ -527,6 +531,7 @@ sub parseit
 		}
 
 		push( @{ $self->{'messages'} }, {
+				'data' => $_mail->{'data'},
 				'from' => $_mail->{'from'},
 				'head' => $_mail->{'head'},
 				'body' => $_mail->{'body'}, } );

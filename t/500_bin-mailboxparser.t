@@ -1,4 +1,4 @@
-# $Id: 500_bin-mailboxparser.t,v 1.23 2010/07/11 09:20:39 ak Exp $
+# $Id: 500_bin-mailboxparser.t,v 1.23.2.1 2011/10/10 09:52:34 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -7,10 +7,10 @@
 use lib qw(./t/lib ./dist/lib ./src/lib);
 use strict;
 use warnings;
-use Test::More ( tests => 93 );
+use Test::More ( tests => 97 );
 
 SKIP: {
-	my $howmanyskips = 93;
+	my $howmanyskips = 97;
 	eval{ require IPC::Cmd; }; 
 	skip( 'Because no IPC::Cmd for testing', $howmanyskips ) if($@);
 
@@ -235,6 +235,24 @@ SKIP: {
 				unlink($copiedf) if( -w $copiedf );
 			}
 		}
+	}
+
+	SAVE_FAILED_MESG: {
+		my $inputfn = File::Basename::basename('./examples/cannot-parse.eml');
+		my $copiedf = $E->tempdir().q(/).$inputfn;
+		my $command = $E->perl().$E->command().q( -C).$E->config().q( ).$copiedf;
+		my $savedem = $E->tempdir().q(/failed.201108020833.p728XMw0031618@nijo.example.jp.eml);
+		my $xstatus = 0;
+		my $cmdexec = q();
+
+		ok( scalar(IPC::Cmd::run('command' => q|/bin/cp ./examples/cannot-parse.eml |.$E->tempdir())), q|Copying...| );
+		ok( -f $copiedf, q(Copied) );
+
+		$cmdexec = $command.qq| --save-failed-mesg > /dev/null|;
+		$xstatus = scalar(IPC::Cmd::run( 'command' => $cmdexec ));
+		ok( $xstatus, $cmdexec );
+		is( -f $savedem, 1, q|Saved message: |.$savedem );
+		unlink($copiedf) if( -w $copiedf );
 	}
 }
 

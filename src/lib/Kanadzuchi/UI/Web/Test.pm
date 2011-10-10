@@ -1,4 +1,4 @@
-# $Id: Test.pm,v 1.23.2.3 2011/03/25 00:17:29 ak Exp $
+# $Id: Test.pm,v 1.23.2.4 2011/10/10 09:52:34 ak Exp $
 # -Id: Test.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Test.pm,v 1.10 2009/08/17 12:39:31 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -161,7 +161,7 @@ sub onlineparser
 			$objzcimbox->slurpit() || last();
 			$objzcimbox->parseit() || last();
 			$mpiterator = Kanadzuchi::Mail::Bounced->eatit( 
-					$objzcimbox, { 'cache' => $temporaryd, 'verbose' => 0, 'fast' => 1, } );
+					$objzcimbox, [], { 'cache' => $temporaryd, 'verbose' => 0, 'fast' => 1, } );
 
 			unless( $mpiterator->count() )
 			{

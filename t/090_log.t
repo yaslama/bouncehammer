@@ -1,4 +1,4 @@
-# $Id: 090_log.t,v 1.9 2010/06/21 03:30:09 ak Exp $
+# $Id: 090_log.t,v 1.9.2.1 2011/10/10 09:52:34 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -64,7 +64,7 @@ foreach my $fmt ( 'json', 'yaml' )
 
 			$TD->mkpath() unless( -e $TD->stringify() );
 			$MR = Kanadzuchi::Mail::Bounced->eatit( 
-				$KP, { cache => $TD->stringify(), 'greed' => 1, 'verbose' => 0 } );
+				$KP, [], { cache => $TD->stringify(), 'greed' => 1, 'verbose' => 0 } );
 
 			isa_ok( $MR, q|Kanadzuchi::Iterator| );
 		}

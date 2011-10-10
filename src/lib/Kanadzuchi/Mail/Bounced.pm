@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.30.2.4 2011/10/08 06:46:08 ak Exp $
+# $Id: Bounced.pm,v 1.30.2.5 2011/10/10 09:52:34 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -27,6 +27,7 @@ use Kanadzuchi::RFC3463;
 use Kanadzuchi::Iterator;
 use Kanadzuchi::MIME::Parser;
 use Kanadzuchi::Time;
+use Digest::MD5;
 use Time::Piece;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
@@ -51,15 +52,18 @@ sub eatit
 	#
 	# @Description	Parse the Mailbox and find error messages
 	# @Param <ref>	(Kanadzuchi::Mbox) Parsed mailbox object
+	# @Param <ref>	(Ref->Array) Array for storing failed messages
 	# @Param <ref>	(Ref->Hash) Configuration
 	# @Param <ref>	(Ref->Code) Callback code for each loop
 	# @Return	(Ref->Array) K::M::Bounced::* objects
 	my $class = shift();
 	my $mailx = shift() || return Kanadzuchi::Iterator->new();
+	my $faild = shift() || [];
 	my $confx = shift() || { 'verbose' => 0 };
 	my $callb = shift() || sub { };
 	my $count = 0;
 
+	my $issuceeded = 0;		# (Integer) Sucessfully parsed
 	my $mimeparser;			# (Kanadzuchi::MIME::Parser) Parser object
 	my $thisobject;			# (K::M::Returned::*) Instance
 	my $mesgpieces = [];		# (Ref->Array) hold $thisobjects
@@ -319,6 +323,7 @@ sub eatit
 			);
 
 		$thisobject->{'reason'} = $thisobject->tellmewhy();
+		$issuceeded = 1;
 
 		if( grep( { $_ == 1 } values( %{$confx->{'skip'}} ) ) )
 		{
@@ -328,6 +333,20 @@ sub eatit
 		}
 
 		push( @$mesgpieces, $thisobject );
+
+	}
+	continue
+	{
+		# Store a message which is failed to parse
+		if( $confx->{'save'} && ! $issuceeded )
+		{
+			my $msgid = $_entity->{'head'}->{'message-id'};
+			my $email = $_entity->{'data'};
+
+			$msgid = Digest::MD5::md5_hex($email) unless $msgid;
+			push( @$faild, { 'message-id' => $msgid, 'entiremesg' => $email } );
+		}
+		$issuceeded = 0;
 
 	} # End of while(MIMEPARSER)
 
