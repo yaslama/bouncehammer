@@ -1,4 +1,4 @@
-# $Id: MailboxFull.pm,v 1.8 2010/11/13 19:12:55 ak Exp $
+# $Id: MailboxFull.pm,v 1.8.2.1 2011/10/11 03:03:55 ak Exp $
 # -Id: MailboxFull.pm,v 1.1 2009/08/29 07:33:28 ak Exp -
 # -Id: MailboxFull.pm,v 1.2 2009/05/11 08:22:29 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -29,6 +29,7 @@ sub exemplaria
 		qr{delivery failed: over quota},
 		qr{disc quota exceeded},
 		qr{exceeded storage allocation},
+		qr{mail file size exceeds the maximum size allowed for mail delivery},
 		qr{mail quota exceeded},
 		qr{mailbox over quota},
 		qr{mailbox full},

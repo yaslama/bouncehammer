@@ -1,4 +1,4 @@
-# $Id: SystemError.pm,v 1.1 2010/10/05 11:19:09 ak Exp $
+# $Id: SystemError.pm,v 1.1.2.1 2011/10/11 03:03:55 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Why::
 
@@ -24,6 +24,7 @@ sub exemplaria
 	return [
 		qr{local error in processing},
 		qr{mail system configuration error},
+		qr{maximum forwarding loop count exceeded},
 		qr{server configuration error},
 		qr{system config error},
 		qr{too many hops},

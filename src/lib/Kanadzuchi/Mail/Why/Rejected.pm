@@ -1,4 +1,4 @@
-# $Id: Rejected.pm,v 1.2.2.1 2011/10/08 13:49:14 ak Exp $
+# $Id: Rejected.pm,v 1.2.2.2 2011/10/11 03:03:55 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Why::
                                                        
@@ -23,6 +23,7 @@ sub exemplaria
 	my $class = shift();
 	return [ 
 		# Rejected due to envelope from address
+		qr{address rejected},
 		qr{domain of sender address .+ does not exist},
 		qr{sender rejected},
 	];

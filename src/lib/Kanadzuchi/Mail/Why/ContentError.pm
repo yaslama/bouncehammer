@@ -1,4 +1,4 @@
-# $Id: ContentError.pm,v 1.2.2.3 2011/10/08 13:49:13 ak Exp $
+# $Id: ContentError.pm,v 1.2.2.4 2011/10/11 03:03:55 ak Exp $
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
 # Kanadzuchi::Mail::Why::
                                                                                     
@@ -40,6 +40,7 @@ sub exemplaria
 		qr{this message contains invalid MIME headers},
 		qr{this message contains improperly-formatted binary content},
 		qr{this message contains text that uses unnecessary base64 encoding},
+		qr{we dont accept spam},
 	];
 }
 
