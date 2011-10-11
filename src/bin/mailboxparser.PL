@@ -1,5 +1,5 @@
 #__PERLEXECUTABLE__
-# $Id: mailboxparser.PL,v 1.40.2.11 2011/10/10 09:51:52 ak Exp $
+# $Id: mailboxparser.PL,v 1.40.2.12 2011/10/11 03:01:55 ak Exp $
 # -Id: mailboxparser.PL,v 1.21 2010/02/21 20:09:01 ak Exp -
 # -Id: mailboxparser.PL,v 1.2 2009/09/30 03:20:26 ak Exp -
 # -Id: mailboxparser.PL,v 1.16 2009/08/27 05:09:59 ak Exp -
@@ -435,7 +435,6 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 			$kanadzuchilog->device('STDOUT');
 			$kanadzuchilog->dumper();
 		}
-
 	}
 	continue
 	{
@@ -477,6 +476,7 @@ if( $Cmd->operation & $Cmd->option->{'parse'} )
 				$filename =~ y{/"'`|~*}{}d;
 				$filename =~ y/{}()<>[]//d;
 				$maildata = $fe->{'entiremesg'};
+				$maildata =~ s{^__THE_END_OF_THE_EMAIL__$}{}gmx;
 				$feobject = new Path::Class::File( $spooldir.'/'.$filename );
 
 				$feobject->touch();
