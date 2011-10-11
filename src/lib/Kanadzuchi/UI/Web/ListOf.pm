@@ -1,4 +1,4 @@
-# $Id: ListOf.pm,v 1.3.2.2 2011/10/09 04:53:42 ak Exp $
+# $Id: ListOf.pm,v 1.3.2.3 2011/10/11 10:39:23 ak Exp $
 # -Id: Summary.pm,v 1.1 2009/08/29 09:30:33 ak Exp -
 # -Id: Summary.pm,v 1.1 2009/08/18 02:37:53 ak Exp -
 # Copyright (C) 2009,2010 Cubicroot Co. Ltd.
@@ -104,6 +104,7 @@ sub listofcontents
 
 			if( grep { $mtamodule eq $_ } @$commercial )
 			{
+				$moduledata->{'name'} =~ s{\AComm::}{};
 				push( @$commodules, $moduledata );
 			}
 			else
