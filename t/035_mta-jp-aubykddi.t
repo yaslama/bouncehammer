@@ -1,4 +1,4 @@
-# $Id: 035_mta-jp-aubykddi.t,v 1.4.2.1 2011/10/07 06:23:14 ak Exp $
+# $Id: 035_mta-jp-aubykddi.t,v 1.4.2.2 2011/10/11 03:02:51 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -18,8 +18,9 @@ use Test::More ( tests => 11 );
 #
 my $Test = new Kanadzuchi::Test(
 		'class' => q|Kanadzuchi::MTA::JP::aubyKDDI|,
-		'methods' => [ 'xsmtpagent', 'xsmtpcommand', 'xsmtpdiagnosis', 'xsmtprecipient',
-				'xsmtpstatus', 'emailheaders', 'reperit', 'SMTPCOMMAND' ],
+		'methods' => [ 'xsmtpagent', 'xsmtpcommand', 'xsmtpdiagnosis',
+				'xsmtprecipient', 'xsmtpcharset', 'xsmtpstatus', 
+				'emailheaders', 'reperit', 'SMTPCOMMAND' ],
 		'instance' => undef(),
 );
 my $Head = {

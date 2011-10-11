@@ -1,4 +1,4 @@
-# $Id: Bounced.pm,v 1.30.2.5 2011/10/10 09:52:34 ak Exp $
+# $Id: Bounced.pm,v 1.30.2.6 2011/10/11 03:03:36 ak Exp $
 # -Id: Returned.pm,v 1.10 2010/02/17 15:32:18 ak Exp -
 # -Id: Returned.pm,v 1.2 2009/08/29 19:01:18 ak Exp -
 # -Id: Returned.pm,v 1.15 2009/08/21 02:44:15 ak Exp -
@@ -29,6 +29,7 @@ use Kanadzuchi::MIME::Parser;
 use Kanadzuchi::Time;
 use Digest::MD5;
 use Time::Piece;
+use Encode;
 
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||A |||c |||c |||e |||s |||s |||o |||r |||s ||
@@ -243,8 +244,19 @@ sub eatit
 		#
 		unless( $bouncemesg->{'diagnosticcode'} )
 		{
-			$tempheader->{'diagnosticcode'} =  $mimeparser->getit('Diagnostic-Code')
+			my $xsmtpcharset = $mimeparser->getit('X-SMTP-Charset') || q();
+			my $xsmtpdiagnos = $mimeparser->getit('X-SMTP-Diagnosis') || q();
+
+			if( $xsmtpcharset && $xsmtpdiagnos )
+			{
+				$tempheader->{'diagnosticcode'} = $xsmtpdiagnos;
+			}
+			else
+			{
+				$tempheader->{'diagnosticcode'} =  $mimeparser->getit('Diagnostic-Code')
 							|| $mimeparser->getit('X-SMTP-Diagnosis') || q();
+			}
+
 			$tempheader->{'diagnosticcode'} =~ y{`"'\r\n}{}d;	# Drop quotation marks and CR/LF
 			$tempheader->{'diagnosticcode'} =~ y{ }{}s;		# Squeeze spaces
 

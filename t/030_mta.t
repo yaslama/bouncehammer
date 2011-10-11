@@ -1,4 +1,4 @@
-# $Id: 030_mta.t,v 1.3.2.1 2011/10/07 06:23:13 ak Exp $
+# $Id: 030_mta.t,v 1.3.2.2 2011/10/11 03:02:51 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -19,7 +19,7 @@ use Test::More ( tests => 9 );
 my $Test = new Kanadzuchi::Test(
 		'class' => q|Kanadzuchi::MTA|,
 		'methods' => [ 'xsmtpagent', 'xsmtpcommand', 'xsmtpdiagnosis', 'xsmtprecipient',
-				'xsmtpstatus', 'emailheaders', 'reperit', 'SMTPCOMMAND' ],
+				'xsmtpcharset', 'xsmtpstatus', 'emailheaders', 'reperit', 'SMTPCOMMAND' ],
 		'instance' => undef(),
 );
 

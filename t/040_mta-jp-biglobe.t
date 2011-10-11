@@ -1,4 +1,4 @@
-# $Id: 040_mta-jp-biglobe.t,v 1.1.2.2 2011/10/07 06:23:14 ak Exp $
+# $Id: 040_mta-jp-biglobe.t,v 1.1.2.3 2011/10/11 03:02:52 ak Exp $
 #  ____ ____ ____ ____ ____ ____ ____ ____ ____ 
 # ||L |||i |||b |||r |||a |||r |||i |||e |||s ||
 # ||__|||__|||__|||__|||__|||__|||__|||__|||__||
@@ -18,8 +18,9 @@ use Test::More ( tests => 12 );
 #
 my $Test = new Kanadzuchi::Test(
 		'class' => q|Kanadzuchi::MTA::JP::Biglobe|,
-		'methods' => [ 'xsmtpagent', 'xsmtpcommand', 'xsmtpdiagnosis', 'xsmtprecipient',
-				'xsmtpstatus', 'emailheaders', 'reperit', 'SMTPCOMMAND' ],
+		'methods' => [ 'xsmtpagent', 'xsmtpcommand', 'xsmtpdiagnosis', 
+				'xsmtprecipient', 'xsmtpcharset', 'xsmtpstatus', 
+				'emailheaders', 'reperit', 'SMTPCOMMAND' ],
 		'instance' => undef(),
 );
 my $Head = {
