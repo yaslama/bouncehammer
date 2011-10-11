@@ -1,4 +1,4 @@
-# $Id: MTA.pm,v 1.6.2.2 2011/10/07 06:22:38 ak Exp $
+# $Id: MTA.pm,v 1.6.2.3 2011/10/11 03:02:24 ak Exp $
 # Copyright (C) 2010-2011 Cubicroot Co. Ltd.
 # Kanadzuchi::
                      
@@ -14,6 +14,7 @@ use warnings;
 use Kanadzuchi::RFC2822;
 use Kanadzuchi::RFC3463;
 use Kanadzuchi::Address;
+use Encode;
 
 #  ____ ____ ____ ____ ____ _________ ____ ____ ____ ____ ____ ____ ____ 
 # ||C |||l |||a |||s |||s |||       |||M |||e |||t |||h |||o |||d |||s ||
@@ -110,5 +111,20 @@ sub xsmtprecipient
 	my $xrcpt = shift() || return q();
 	return 'X-SMTP-Recipient: '.$xrcpt.qq(\n);
 }
+
+sub xsmtpcharset
+{ 
+	# +-+-+-+-+-+-+-+-+-+-+-+-+
+	# |x|s|m|t|p|c|h|a|r|s|e|t|
+	# +-+-+-+-+-+-+-+-+-+-+-+-+
+	#
+	# @Description	Return pseudo-header for Content-Type
+	# @Param <str>	(String) Recipient Address
+	# @Returns	(String) Pseudo-header
+	my $class = shift(); 
+	my $xchar = shift() || return q();
+	return 'X-SMTP-Charset: '.$xchar.qq(\n);
+}
+
 1;
 __END__
