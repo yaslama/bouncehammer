@@ -1,4 +1,4 @@
-[%# $Id: terms.tt,v 1.4.2.1 2011/06/20 03:10:45 ak Exp $ -%]
+[%# $Id: terms.tt,v 1.4.2.2 2011/10/12 03:29:07 ak Exp $ -%]
 [%# Terms in English -%]
 [%- SET tt_term = { 
 		'addresser'	=> 'Sender Address',
@@ -10,6 +10,7 @@
 		'frequency'	=> 'Frequency',
 		'hostgroup'	=> 'Host Group',
 		'mastertable'	=> 'MasterTable',
+		'mtamodule'	=> 'MTA Module',
 		'provider'	=> 'Provider',
 		'recipient'	=> 'Recipient Address',
 		'reason'	=> 'Reason',
